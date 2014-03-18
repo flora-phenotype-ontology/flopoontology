@@ -8,19 +8,44 @@ import org.semanticweb.owlapi.io.*
 import org.semanticweb.elk.owlapi.*
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary
 
-def ontfile = new File("plant_ontology.obo")
-def patofile = new File("quality.obo")
+def ontfile = new File("ont/plant_ontology.obo")
+def patofile = new File("ont/quality.obo")
 
+def id2super = [:]
 def id2name = [:]
-new File("quality.tbl").splitEachLine("\t") { line ->
-  def id = line[0]
-  def name = line[1]
-  id2name[id] = name
+def id = ""
+def values = new TreeSet()
+def attributes = new TreeSet()
+new File("ont/quality.obo").eachLine { line ->
+  if (line.startsWith("id:")) {
+    id = line.substring(3).trim()
+  }
+  if (line.startsWith("name:")) {
+    def name = line.substring(5).trim()
+    id2name[id] = name
+  }
+  if (line.startsWith("is_a:") && line.indexOf("!")>-1) {
+    def sc = line.substring(5, line.indexOf("!")-1).trim()
+    if (id2super[id] == null) {
+      id2super[id] = new TreeSet()
+    }
+    id2super[id].add(sc)
+  }
+  if (line.indexOf("attribute_slim")>-1) {
+    attributes.add(id)
+  }
+  if (line.indexOf("value_slim")>-1) {
+    values.add(id)
+  }
 }
-new File("plant_ontology.tbl").splitEachLine("\t") { line ->
-  def id = line[0]
-  def name = line[1]
-  id2name[id] = name
+new File("ont/plant_ontology.obo").eachLine { line ->
+  if (line.startsWith("id:")) {
+    id = line.substring(3).trim()
+  }
+  if (line.startsWith("name:")) {
+    def name = line.substring(5).trim()
+    id2name[id] = name
+  }
 }
 
 String formatClassNames(String s) {
@@ -60,7 +85,7 @@ ontset.add(ont)
 ont = manager.loadOntologyFromOntologyDocument(patofile)
 ontset.add(ont)
 
-ont = manager.createOntology(IRI.create("http://lc2.eu/temp.owl"), ontset)
+ont = manager.createOntology(IRI.create("http://phenomebrowser.net/ppo.owl"), ontset)
 
 OWLOntology outont = manager.createOntology(IRI.create("http://phenomebrowser.net/plant-phenotype.owl"))
 def onturi = "http://phenomebrowser.net/plant-phenotype.owl#"
@@ -113,26 +138,19 @@ def addAnno = {resource, prop, cont ->
 
 
 def phenotypes = new HashSet()
-new File("plant-data.tsv").splitEachLine("\t") { line ->
+new File("eq.txt").splitEachLine("\t") { line ->
 
-  def e = line[8]
-  if (e?.indexOf("_")>-1) {
-    e = e.substring(e.indexOf("_")+1)
-  }
-  def a = line[10]
-  if (a?.indexOf("_")>-1) {
-    a = a.substring(a.indexOf("_")+1)
-  }
-  def v = line[12]
-  if (v?.indexOf("_")>-1) {
-    v = v.substring(v.indexOf("_")+1)
-  }
+  def e = line[0]
+  def q = line[1]
   Expando exp = new Expando()
   exp.e = e
-  exp.a = a
-  exp.v = v
+  exp.q = q
   phenotypes.add(exp)
 }
+
+
+def clSuper = c("PPO:0")
+addAnno(clSuper,OWLRDFVocabulary.RDFS_LABEL,"plant phenotype")
 
 def count = 1 // global ID counter
 
@@ -141,13 +159,13 @@ def e2p = [:]
 /* Create abnormality of E classes */
 phenotypes.each { exp ->
   def e = id2class[exp.e]
-  def a = id2class[exp.a]
-  def v = id2class[exp.v]
+  def q = id2class[exp.q]
   if (e!=null && ! (e in edone)) {
     edone.add(e)
-    def cl = c("APO:$count")
+    def cl = c("PPO:$count")
     addAnno(cl,OWLRDFVocabulary.RDFS_LABEL,id2name[exp.e]+" phenotype")
     //    addAnno(cl,OWLRDFVocabulary.RDF_DESCRIPTION,"The mass of $oname that is used as input in a single $name is decreased.")
+    manager.addAxiom(outont, factory.getOWLSubClassOfAxiom(cl, clSuper))
     manager.addAxiom(outont, factory.getOWLEquivalentClassesAxiom(
 		       cl,
 		       fac.getOWLObjectSomeValuesFrom(
@@ -162,10 +180,10 @@ phenotypes.each { exp ->
   if (e2p[e]== null) {
     e2p[e] = new HashSet()
   }
-  if (e!=null && a!=null && ! (a in e2p[e])) {
-    e2p[e].add(a)
+  if (e!=null && q!=null && ! (q in e2p[e])) {
+    e2p[e].add(q)
     def cl = c("APO:$count")
-    addAnno(cl,OWLRDFVocabulary.RDFS_LABEL,id2name[exp.e]+" "+id2name[exp.a])
+    addAnno(cl,OWLRDFVocabulary.RDFS_LABEL,id2name[exp.e]+" "+id2name[exp.q])
     manager.addAxiom(outont, factory.getOWLEquivalentClassesAxiom(
 		       cl,
 		       fac.getOWLObjectSomeValuesFrom(
@@ -173,22 +191,45 @@ phenotypes.each { exp ->
 			 fac.getOWLObjectIntersectionOf(
 			   e,
 			   fac.getOWLObjectSomeValuesFrom(
-			     r("has-quality"), a)))))
+			     r("has-quality"), q)))))
     count += 1
-  }
-  if (e!=null && v!=null && ! (v in e2p[e])) {
-    e2p[e].add(v)
-    def cl = c("APO:$count")
-    addAnno(cl,OWLRDFVocabulary.RDFS_LABEL,id2name[exp.e]+" "+id2name[exp.v])
-    manager.addAxiom(outont, factory.getOWLEquivalentClassesAxiom(
-		       cl,
-		       fac.getOWLObjectSomeValuesFrom(
-			 r("has-part"),
-			 fac.getOWLObjectIntersectionOf(
-			   e,
-			   fac.getOWLObjectSomeValuesFrom(
-			     r("has-quality"), v)))))
-    count += 1
+
+    /* now get the trait from PATO and generate a class for the trait */
+    /* only if the Q is not already an attribute */
+    // do a BFS (maybe change)
+    def search = new LinkedList()
+    def found = false
+    if (! (exp.q in attributes)) {
+      if (id2super[exp.q]) {
+	search.addAll(id2super[exp.q])
+	while (!found && search.size()>0) {
+	  def nq = search.poll()
+	  if (!(nq in attributes)) {
+	    if (id2super[nq]) {
+	      search.addAll(id2super[nq])
+	    }
+	  } else if (id2class[nq] in e2p[e]) {
+	    found = true
+	  } else {
+	    e2p[e].add(id2class[nq])
+	    cl = c("APO:$count")
+	    addAnno(cl,OWLRDFVocabulary.RDFS_LABEL,id2name[exp.e]+" "+id2name[nq])
+	    manager.addAxiom(outont, factory.getOWLEquivalentClassesAxiom(
+			       cl,
+			       fac.getOWLObjectSomeValuesFrom(
+				 r("has-part"),
+				 fac.getOWLObjectIntersectionOf(
+				   e,
+				   fac.getOWLObjectSomeValuesFrom(
+				     r("has-quality"), id2class[nq])))))
+	    count += 1
+	    found = true
+	  }
+	}
+      } else {
+	println exp.q
+      }
+    }
   }
 }
 
