@@ -7,6 +7,7 @@ import org.apache.commons.io.IOUtils
 import opennlp.tools.namefind.*
 import java.util.concurrent.*
 
+def MINLENGTH = 3 // minimum length of a token to recognize
 
 def name2id = [:]
 new File("ont").eachFile { ontfile ->
@@ -45,12 +46,28 @@ new File("ont").eachFile { ontfile ->
 new File("glossary/Plant_glossary_term_category.csv").eachLine { line ->
   if (!line.startsWith("#") && line.length()>5) {
     def tok = line.split(",").collect { it.replaceAll("\"","") }
-    name2id[tok[0]] = tok[-1]
+    if (name2id[tok[0]] == null) {
+      name2id[tok[0]] = new TreeSet()
+    }
+    name2id[tok[0]].add(tok[-1])
   }
 }
 
 /* Now add the french - english translations */
-
+new File("glossary/Lexicon-english-french.csv").splitEachLine("\t") { line ->
+  def english = line[1]
+  def french = line[2]
+  def frenchpretty = line[3]
+  if (name2id[english]) {
+    if (french?.length()>1) {
+      name2id[french] = name2id[english]
+    }
+    if (frenchpretty?.length()>1) {
+      name2id[french] = name2id[english]
+    }
+    name2id[frenchpretty] = name2id[english]
+  }
+}
 
 TokenizerModel tokenizerModel = new TokenizerModel(new FileInputStream("en-token.bin"))
 Tokenizer tokenizer = new TokenizerME(tokenizerModel)
@@ -58,11 +75,12 @@ Tokenizer tokenizer = new TokenizerME(tokenizerModel)
 def tokens = name2id.keySet()
 Dictionary dict = new Dictionary(false)
 tokens.each { tok ->
-  tok = tok.toLowerCase()
-  StringList l = tokenizer.tokenize(tok)
-  dict.put(l)
+  tok = tok?.toLowerCase()
+  if (tok && tok.length()>MINLENGTH) {
+    StringList l = tokenizer.tokenize(tok)
+    dict.put(l)
+  }
 }
-
 DictionaryNameFinder finder = new DictionaryNameFinder(dict)
 
 XmlSlurper slurper = new XmlSlurper(false, false)
@@ -90,12 +108,10 @@ flora.treatment.each { treatment ->
 	  def tokenizedText = tokenizer.tokenize(ctext)
 	  def matches = finder.find(tokenizedText)
 	  def occurrences = Span.spansToStrings(matches, tokenizedText)
-
-	  print "$cclass("+name2id[cclass]+")\t$ctext\t"
-
+	  print "$cclass ("+name2id[cclass]+")\t$ctext\t"
 	  occurrences.each { match ->
 	    def matchids = name2id[match]
-	    matchids.each { print "$it ("+match+")\t" }
+	    matchids.each { print "$it("+match+")\t" }
 	  }
 	  println "\n"
 	}
