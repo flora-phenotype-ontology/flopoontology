@@ -265,7 +265,9 @@ taxon2phenotype.each { taxon, phenotype ->
       } 
     }
   }
-  manager.addAxiom(outont, factory.getOWLEquivalentClassesAxiom(tcl,factory.getOWLObjectIntersectionOf(phenoset)))
+  if (phenoset.size()>1) {
+    manager.addAxiom(outont, factory.getOWLEquivalentClassesAxiom(tcl,factory.getOWLObjectIntersectionOf(phenoset)))
+  }
 }
 
 manager.addAxiom(outont, fac.getOWLTransitiveObjectPropertyAxiom(r("has-part")))

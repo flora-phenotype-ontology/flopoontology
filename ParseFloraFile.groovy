@@ -112,7 +112,7 @@ DictionaryNameFinder finder = new DictionaryNameFinder(dict)
 //println name2id["petiole"]
 
 Map taxon2string = [:] // maps taxon node to taxon string
-List<String> rankOrder = new LinkedList<String>()
+List<String> rankOrder = ["order", "family", "subfamily", "tribe", "subtribe", "genus", "subgenus", "species", "subspecies", "variety"]
 Map<String, Set<EntityQuality>> previousCharacters = [:] // this maps taxonomic rank name to EQs
 Map<String, String> previousNames = [:] // this keeps the previously encountered taxon names; ordername -> value
 def taxon2eq = [:] // this is the raw EQ data for each taxon
@@ -133,32 +133,26 @@ new File("floras").eachFile { florafile ->
 	  nom.name.each { nomname -> /* first we determine the level of the tree in which we currently are; we will reuse information from the higher orders
 				     // mentioned before */
 	    def cname = nomname.@class.text()
-	    if (cname != "author" && cname != "year" && cname!= "paraut") {
+	    if (cname in rankOrder) {
 	      lastOrderRank = cname
 	      def cvalue = nomname.text()
-	      if (cname in rankOrder) { // we delete everything from the end of the list to the current rank from previousCharacters map
+	      // we delete everything from the end of the list to the current rank from previousCharacters map
 		/*	      rankOrder[-1..rankOrder.indexOf(cname)].each {
 			      previousCharacters[it] = null
 			      previousNames[it] = null
 			      }*/
-		previousCharacters[cname] = taxon2eq[nom]
-		previousNames[cname] = cvalue
-		rankOrder[0..rankOrder.indexOf(cname)].each { taxon2eq[nom].addAll(previousCharacters[it]) }
-	      } else { // here we just add information and expand the list
-		rankOrder.add(cname)
-		previousCharacters[cname] = taxon2eq[nom]
-		rankOrder[0..rankOrder.indexOf(cname)].each { taxon2eq[nom].addAll(previousCharacters[it]) }
-		previousNames[cname] = cvalue
-	      }
+	      previousCharacters[cname] = taxon2eq[nom]
+	      previousNames[cname] = cvalue
+	      rankOrder[0..rankOrder.indexOf(cname)].each { if (previousCharacters[it]) {taxon2eq[nom].addAll(previousCharacters[it]) } }
 	    }
-	    def taxonString = ""
-	    rankOrder[0..rankOrder.indexOf(lastOrderRank)].each {
-	      if (previousNames[it] != null) {
-		taxonString += "$it: "+previousNames[it]+"; "
-	      }
-	    }
-	    taxon2string[nom] = taxonString
 	  }
+	  def taxonString = ""
+	  rankOrder[0..rankOrder.indexOf(lastOrderRank)].each {
+	    if (previousNames[it] != null) {
+	      taxonString += "$it: "+previousNames[it]+"; "
+	    }
+	  }
+	  taxon2string[nom] = taxonString
 	}
       }
       if (name) {
