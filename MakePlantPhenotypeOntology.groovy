@@ -137,23 +137,29 @@ def addAnno = {resource, prop, cont ->
 
 
 
+def taxon2phenotype = [:]
 def phenotypes = new HashSet()
 new File("eq.txt").splitEachLine("\t") { line ->
-
-  def e = line[0]
-  def q = line[1]
+  def taxon = line[0]
+  if (taxon2phenotype[taxon] == null) {
+    taxon2phenotype[taxon] = new HashSet()
+  }
+  def e = line[1]
+  def q = line[2]
   Expando exp = new Expando()
   exp.e = e
   exp.q = q
   phenotypes.add(exp)
+  taxon2phenotype[taxon].add(exp)
 }
-
+//println taxon2phenotype
 
 def clSuper = c("PPO:0")
 addAnno(clSuper,OWLRDFVocabulary.RDFS_LABEL,"plant phenotype")
 
 def count = 1 // global ID counter
 
+def eq2cl = [:]
 def edone = new HashSet()
 def e2p = [:]
 /* Create abnormality of E classes */
@@ -162,6 +168,9 @@ phenotypes.each { exp ->
   def q = id2class[exp.q]
   if (e!=null && ! (e in edone)) {
     edone.add(e)
+    if (eq2cl[e] == null) {
+      eq2cl[exp.e]= [:]
+    }
     def cl = c("PPO:$count")
     addAnno(cl,OWLRDFVocabulary.RDFS_LABEL,id2name[exp.e]+" phenotype")
     //    addAnno(cl,OWLRDFVocabulary.RDF_DESCRIPTION,"The mass of $oname that is used as input in a single $name is decreased.")
@@ -182,7 +191,8 @@ phenotypes.each { exp ->
   }
   if (e!=null && q!=null && ! (q in e2p[e])) {
     e2p[e].add(q)
-    def cl = c("APO:$count")
+    def cl = c("PPO:$count")
+    eq2cl[exp.e][exp.q] = cl
     addAnno(cl,OWLRDFVocabulary.RDFS_LABEL,id2name[exp.e]+" "+id2name[exp.q])
     manager.addAxiom(outont, factory.getOWLEquivalentClassesAxiom(
 		       cl,
@@ -212,7 +222,7 @@ phenotypes.each { exp ->
 	    found = true
 	  } else {
 	    e2p[e].add(id2class[nq])
-	    cl = c("APO:$count")
+	    cl = c("PPO:$count")
 	    addAnno(cl,OWLRDFVocabulary.RDFS_LABEL,id2name[exp.e]+" "+id2name[nq])
 	    manager.addAxiom(outont, factory.getOWLEquivalentClassesAxiom(
 			       cl,
@@ -231,6 +241,31 @@ phenotypes.each { exp ->
       }
     }
   }
+}
+
+count = 1 // reset counter, add taxons in different namespace
+
+def taxon2class = [:]
+/* Now add all the taxons, as subclasses of their phenotypes for now; change later */
+taxon2phenotype.each { taxon, phenotype ->
+  def tcl = null
+  if (taxon2class[taxon] == null) {
+    tcl = c("TAXON:$count")
+    addAnno(tcl,OWLRDFVocabulary.RDFS_LABEL,taxon)
+    count += 1
+  } else {
+    tcl = taxon2class[taxon]
+  }
+  def phenoset = new HashSet()
+  phenotype.each { pheno ->
+    if (eq2cl[pheno.e] && eq2cl[pheno.e][pheno.q]) {
+      def pcl = eq2cl[pheno.e][pheno.q]
+      if (pcl) {
+	phenoset.add(pcl)
+      } 
+    }
+  }
+  manager.addAxiom(outont, factory.getOWLEquivalentClassesAxiom(tcl,factory.getOWLObjectIntersectionOf(phenoset)))
 }
 
 manager.addAxiom(outont, fac.getOWLTransitiveObjectPropertyAxiom(r("has-part")))
