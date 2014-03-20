@@ -1,5 +1,6 @@
 /* Parses all the flora files */
 
+import opennlp.tools.sentdetect.*
 import opennlp.tools.dictionary.*
 import opennlp.tools.tokenize.*
 import opennlp.tools.util.*
@@ -18,12 +19,14 @@ def fout2 = new PrintWriter(new BufferedWriter(new FileWriter("missing-e-or-q.tx
 def name2id = [:]
 new File("ont").eachFile { ontfile ->
   def id = ""
+  def fname = ""
   ontfile.eachLine { line ->
     if (line.startsWith("id:")) {
       id = line.substring(3).trim()
     }
     if (line.startsWith("name:")) {
       def name = line.substring(5).trim()
+      fname = name
       if (name2id[name] == null) {
         name2id[name] = new TreeSet()
       }
@@ -44,6 +47,11 @@ new File("ont").eachFile { ontfile ->
         }
         name2id[syn].add(id)
       }
+    }
+    if (line.startsWith("replaced_by:")) {
+      def i = line.substring(12).trim()
+      name2id[fname].remove(id)
+      name2id[fname].add(i)
     }
   }
 }
@@ -96,8 +104,56 @@ new File("glossary/Lexicon-english-french.csv").splitEachLine("\t") { line ->
   }
 }
 
+new File("glossary/terms/").eachFile { file ->
+  file.splitEachLine("\\|") { line ->
+    def name = line[3].trim().toLowerCase()
+    def type = line[0].trim().toLowerCase()
+    def defi = line[4].trim().toLowerCase()
+    def flag = false // false if anatomy, true if quality
+    if (type.endsWith("types")) {
+      flag = true
+    }
+
+    /* now we merge the ids of all the synonyms */
+    def splits = name.split(";")
+    if (splits.size()>1) {
+      def ss = new TreeSet()
+      splits.each { s ->
+	if (name2id[s]) {
+	  ss.addAll(name2id[s])
+	}
+      }
+      splits.each { s ->
+	name2id[s] = ss
+      }
+    }
+
+    name.split(";").each { syn ->
+      syn = syn.trim()
+      //      if (flag) { // quality
+	def flag2 = false // false if no PATO term in name2id[syn]
+	name2id[syn]?.each { if (it.startsWith("PATO") || (it.startsWith("PO"))) flag2 = true }
+	if (!name2id[syn] || !flag2) {
+	  println type+"\t"+syn+"\t"+name2id[syn]+"\t$defi\tMISSING"
+	}
+	//      }
+      /*else { // anatomy
+	def flag2 = false // false if no PO term in name2id[syn]
+	name2id[syn]?.each { if (it.startsWith("PO")) flag2 = true }
+	if (!name2id[syn] || !flag2) {
+	  println type+"\t"+syn+"\t"+name2id[syn]+"\t$defi\tMISSING ENTITY"
+	}
+      }
+      */
+    }
+  }
+}
+
 TokenizerModel tokenizerModel = new TokenizerModel(new FileInputStream("en-token.bin"))
 Tokenizer tokenizer = new TokenizerME(tokenizerModel)
+
+SentenceModel sentenceModel = new SentenceModel(new FileInputStream("en-sent.bin"))
+SentenceDetectorME sentenceDetector = new SentenceDetectorME(sentenceModel)
 
 def tokens = name2id.keySet()
 Dictionary dict = new Dictionary(false)
@@ -112,6 +168,8 @@ DictionaryNameFinder finder = new DictionaryNameFinder(dict)
 //println name2id["petiole"]
 
 Map taxon2string = [:] // maps taxon node to taxon string
+def author = null
+def year = null
 List<String> rankOrder = ["order", "family", "subfamily", "tribe", "subtribe", "genus", "subgenus", "species", "subspecies", "variety"]
 Map<String, Set<EntityQuality>> previousCharacters = [:] // this maps taxonomic rank name to EQs
 Map<String, String> previousNames = [:] // this keeps the previously encountered taxon names; ordername -> value
@@ -133,6 +191,8 @@ new File("floras").eachFile { florafile ->
 	  nom.name.each { nomname -> /* first we determine the level of the tree in which we currently are; we will reuse information from the higher orders
 				     // mentioned before */
 	    def cname = nomname.@class.text()
+	    if (cname == "author") { author = nomname.text() }
+	    if (cname == "year") { year = nomname.text() }
 	    if (cname in rankOrder) {
 	      lastOrderRank = cname
 	      def cvalue = nomname.text()
@@ -152,6 +212,7 @@ new File("floras").eachFile { florafile ->
 	      taxonString += "$it: "+previousNames[it]+"; "
 	    }
 	  }
+	  taxonString += "$author; $year"
 	  taxon2string[nom] = taxonString
 	}
       }
@@ -183,7 +244,31 @@ new File("floras").eachFile { florafile ->
 		}
 	      }
 
-	      def ctext = character.text().toLowerCase()
+	      def ctext = character.text()
+	      def sentences = sentenceDetector.sentDetect(ctext)
+
+	      sentences.each { sentence ->
+		sentence = sentence.toLowerCase()
+		def mainStructure = sentence.split(";")[0]
+		def tokenizedText = tokenizer.tokenize(mainStructure)
+		def matches = finder.find(tokenizedText)
+		def occurrences = Span.spansToStrings(matches, tokenizedText)
+		//	      print "$cclass ("+name2id[cclass]+")\t$ctext\t"
+		occurrences.each { match ->
+		  def matchids = name2id[match]
+		  eq.qualityName.add(match)
+		  matchids.each { 
+		    //		  print "$it("+match+")\t" 
+		    eq.quality.add(it)
+		  }
+		}
+	      }
+
+	      /*
+	      def pattern = ~/\d+(\.|\,)*\d*\s*(\-|x)\s*\d+(\.\d+|\,\d+)*\s*[a-z]+/
+	      (ctext =~ pattern).each { println it[0] }
+	      */
+	      ctext = ctext.toLowerCase()
 	      def tokenizedText = tokenizer.tokenize(ctext)
 	      def matches = finder.find(tokenizedText)
 	      def occurrences = Span.spansToStrings(matches, tokenizedText)
