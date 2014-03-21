@@ -1,5 +1,8 @@
 public class EntityQuality {
-  String entity
-  String quality
-  String entity2
+  def entity
+  def entityName
+  def quality
+  def qualityName
+  def entity2
+  def entity2Name
 }

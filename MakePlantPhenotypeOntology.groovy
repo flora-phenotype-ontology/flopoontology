@@ -8,6 +8,8 @@ import org.semanticweb.owlapi.io.*
 import org.semanticweb.elk.owlapi.*
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary
 
+def fout = new PrintWriter(new BufferedWriter(new FileWriter("taxon2ppo.txt")))
+
 def ontfile = new File("ont/plant_ontology.obo")
 def patofile = new File("ont/quality.obo")
 
@@ -243,6 +245,9 @@ phenotypes.each { exp ->
   }
 }
 
+clSuper = c("TAXON:0")
+addAnno(clSuper,OWLRDFVocabulary.RDFS_LABEL,"taxon")
+
 count = 1 // reset counter, add taxons in different namespace
 
 def taxon2class = [:]
@@ -250,16 +255,20 @@ def taxon2class = [:]
 taxon2phenotype.each { taxon, phenotype ->
   def tcl = null
   if (taxon2class[taxon] == null) {
+    
     tcl = c("TAXON:$count")
     addAnno(tcl,OWLRDFVocabulary.RDFS_LABEL,taxon)
+    
     count += 1
   } else {
     tcl = taxon2class[taxon]
   }
+  manager.addAxiom(outont, factory.getOWLSubClassOfAxiom(tcl, clSuper))
   def phenoset = new HashSet()
   phenotype.each { pheno ->
     if (eq2cl[pheno.e] && eq2cl[pheno.e][pheno.q]) {
       def pcl = eq2cl[pheno.e][pheno.q]
+      fout.println(tcl.toString()+"\t$taxon\t"+pcl.toString())
       if (pcl) {
 	phenoset.add(pcl)
       } 
@@ -269,6 +278,8 @@ taxon2phenotype.each { taxon, phenotype ->
     manager.addAxiom(outont, factory.getOWLEquivalentClassesAxiom(tcl,factory.getOWLObjectIntersectionOf(phenoset)))
   }
 }
+fout.flush()
+fout.close()
 
 manager.addAxiom(outont, fac.getOWLTransitiveObjectPropertyAxiom(r("has-part")))
 manager.addAxiom(outont, fac.getOWLTransitiveObjectPropertyAxiom(r("part-of")))
