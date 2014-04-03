@@ -8,16 +8,32 @@ import org.apache.lucene.search.*
 import org.apache.lucene.queryparser.classic.*
 import com.aliasi.medline.*
 import org.apache.lucene.analysis.fr.*
+import opennlp.tools.sentdetect.*
+import opennlp.tools.dictionary.*
+import opennlp.tools.tokenize.*
+import opennlp.tools.util.*
+import opennlp.tools.chunker.*
+import opennlp.tools.postag.*
+import opennlp.tools.namefind.*
+import java.util.concurrent.*
+
 
 String indexPath = "lucene-index"
+String ontologyIndexPath = "lucene-index-ontology"
 
 Directory dir = FSDirectory.open(new File(indexPath)) // RAMDirectory()
+Directory ontologyIndexDir = FSDirectory.open(new File(ontologyIndexPath)) // RAMDirectory()
 Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_47)
 Analyzer frenchAnalyzer = new FrenchAnalyzer(Version.LUCENE_47)
 IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_47, frenchAnalyzer)
 iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE)
 iwc.setRAMBufferSizeMB(32768.0)
 IndexWriter writer = new IndexWriter(dir, iwc)
+
+IndexWriterConfig iwcEnglish = new IndexWriterConfig(Version.LUCENE_47, analyzer)
+iwcEnglish.setOpenMode(IndexWriterConfig.OpenMode.CREATE)
+iwcEnglish.setRAMBufferSizeMB(32768.0)
+IndexWriter englishWriter = new IndexWriter(ontologyIndexDir, iwcEnglish)
 
 
 
@@ -69,21 +85,59 @@ new File("flora-gabon").eachFile { florafile ->
 	}
       }
 
-      // now index the descriptions
-      Document doc = new Document()
-      doc.add(new Field("taxon", taxonString, Field.Store.YES, Field.Index.NO))
+      // now index the descriptions: first we assemble the description text, then we sentencize, then we create a new document for each sentence
+      String description = ""
       taxon.feature.each { feature ->
 	if (feature.@class.text() == "description") {
 	  feature.char.each { character ->
 	    def cclass = character.@class.text().toLowerCase()
 	    def ctext = character.text()
-	    doc.add(new Field("description", ctext, TextField.TYPE_STORED))
+	    description += ctext + " "
+	    //	    
 	  }
 	}
       }
-      writer.addDocument(doc)
+      /* now split the description in sentences */
+      SentenceModel sentenceModel = new SentenceModel(new FileInputStream("models/fr-sent.bin"))
+      SentenceDetectorME sentenceDetector = new SentenceDetectorME(sentenceModel)
+      def sentences = sentenceDetector.sentDetect(description)
+      sentences.each { sentence ->
+	Document doc = new Document()
+	doc.add(new Field("taxon", taxonString, Field.Store.YES, Field.Index.NO))
+	doc.add(new Field("description", sentence, TextField.TYPE_STORED))
+	writer.addDocument(doc)
+      }
     }
   }
 }
-writer.close()
 
+
+/* Final part: we also add all the ontology terms to the index so that we can easier search for them */
+
+
+def ontologyDirectory = "ont/"
+new File("ont").eachFile { ontfile ->
+  def id = ""
+  ontfile.eachLine { line ->
+    if (line.startsWith("id:")) {
+      id = line.substring(3).trim()
+    }
+    if (line.startsWith("name:")) {
+      def name = line.substring(5).trim()
+      Document doc = new Document()
+      doc.add(new Field("id", id, Field.Store.YES, Field.Index.NO))
+      doc.add(new Field("label", name, TextField.TYPE_STORED))
+      englishWriter.addDocument(doc)
+    }
+    if (line.startsWith("synonym:")) {
+      def syn = line.substring(line.indexOf("\"")+1, line.lastIndexOf("\"")).trim()
+      Document doc = new Document()
+      doc.add(new Field("id", id, Field.Store.YES, Field.Index.NO))
+      doc.add(new Field("label", syn, TextField.TYPE_STORED))
+      englishWriter.addDocument(doc)
+    }
+  }
+}
+
+writer.close()
+englishWriter.close()
