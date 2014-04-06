@@ -57,16 +57,28 @@ kew.Specieslist.each { species ->
   def subspecies = species."infraepi"[0].text()
   def taxonString = "Family: $family, Genus: $genus, Species: $sname, Sub: $subspecies"
   def description = species."description"[0].text()
+  def habitat = species."habitat"[0].text()
 
   /* now split the description in sentences */
   SentenceModel sentenceModel = new SentenceModel(new FileInputStream("models/en-sent.bin"))
   SentenceDetectorME sentenceDetector = new SentenceDetectorME(sentenceModel)
   def sentences = sentenceDetector.sentDetect(description)
-  sentences.each { sentence ->
-    Document doc = new Document()
-    doc.add(new Field("taxon", taxonString, Field.Store.YES, Field.Index.NO))
-    doc.add(new Field("description", sentence, TextField.TYPE_STORED))
-    writer.addDocument(doc)
+  sentences.each { sentence1 ->
+    sentence1.split(";").each { sentence ->
+      Document doc = new Document()
+      doc.add(new Field("taxon", taxonString, Field.Store.YES, Field.Index.NO))
+      doc.add(new Field("description", sentence, TextField.TYPE_STORED))
+      writer.addDocument(doc)
+    }
+  }
+  sentences = sentenceDetector.sentDetect(habitat)
+  sentences.each { sentence1 ->
+    sentence1.split(";").each { sentence ->
+      Document doc = new Document()
+      doc.add(new Field("taxon", taxonString, Field.Store.YES, Field.Index.NO))
+      doc.add(new Field("habitat", sentence, TextField.TYPE_STORED))
+      writer.addDocument(doc)
+    }
   }
 }
 
@@ -122,15 +134,38 @@ new File("flora-malesiana").eachFile { florafile ->
 	  }
 	}
       }
+      String habitat = ""
+      taxon.feature.each { feature ->
+	if (feature.@class.text() == "habitatecology") {
+	  feature.char.each { character ->
+	    def cclass = character.@class.text().toLowerCase()
+	    def ctext = character.text()
+	    habitat += ctext + " "
+	    //	    
+	  }
+	}
+      }
       /* now split the description in sentences */
       SentenceModel sentenceModel = new SentenceModel(new FileInputStream("models/en-sent.bin"))
       SentenceDetectorME sentenceDetector = new SentenceDetectorME(sentenceModel)
       def sentences = sentenceDetector.sentDetect(description)
-      sentences.each { sentence ->
-	Document doc = new Document()
-	doc.add(new Field("taxon", taxonString, Field.Store.YES, Field.Index.NO))
-	doc.add(new Field("description", sentence, TextField.TYPE_STORED))
-	writer.addDocument(doc)
+      sentences.each { sentence1 ->
+	sentence1.split(";").each { sentence ->
+	  Document doc = new Document()
+	  doc.add(new Field("taxon", taxonString, Field.Store.YES, Field.Index.NO))
+	  doc.add(new Field("description", sentence, TextField.TYPE_STORED))
+	  writer.addDocument(doc)
+	}
+      }
+      /* now split the description in sentences */
+      sentences = sentenceDetector.sentDetect(habitat)
+      sentences.each { sentence1 ->
+	sentence1.split(";").each { sentence ->
+	  Document doc = new Document()
+	  doc.add(new Field("taxon", taxonString, Field.Store.YES, Field.Index.NO))
+	  doc.add(new Field("habitat", sentence, TextField.TYPE_STORED))
+	  writer.addDocument(doc)
+	}
       }
     }
   }

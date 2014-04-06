@@ -30,11 +30,12 @@ iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE)
 iwc.setRAMBufferSizeMB(32768.0)
 IndexWriter writer = new IndexWriter(dir, iwc)
 
+/*
 IndexWriterConfig iwcEnglish = new IndexWriterConfig(Version.LUCENE_47, analyzer)
 iwcEnglish.setOpenMode(IndexWriterConfig.OpenMode.CREATE)
 iwcEnglish.setRAMBufferSizeMB(32768.0)
 IndexWriter englishWriter = new IndexWriter(ontologyIndexDir, iwcEnglish)
-
+*/
 
 
 
@@ -50,16 +51,32 @@ Map<String, String> previousNames = [:] // this keeps the previously encountered
 new File("flora-central-africa/fdacDescriptions.csv").splitEachLine("\\|") { line ->
   def taxonString = "ID: "+line[0]+", Family: "+line[1]+", Genus: "+line[2]+", Species: "+line[3]+", Authority: "+line[4]+", Subspecies: "+line[5]+", Subspecies authority: "+line[6]+", Variety: "+line[7]
   def description = line[12]
+  def habitat = line[21]
   /* now split the description in sentences */
   if (description) {
     SentenceModel sentenceModel = new SentenceModel(new FileInputStream("models/fr-sent.bin"))
     SentenceDetectorME sentenceDetector = new SentenceDetectorME(sentenceModel)
     def sentences = sentenceDetector.sentDetect(description)
-    sentences.each { sentence ->
-      Document doc = new Document()
-      doc.add(new Field("taxon", taxonString, Field.Store.YES, Field.Index.NO))
-      doc.add(new Field("description", sentence, TextField.TYPE_STORED))
-      writer.addDocument(doc)
+    sentences.each { sentence1 ->
+      sentence1.split(";").each { sentence ->
+	Document doc = new Document()
+	doc.add(new Field("taxon", taxonString, Field.Store.YES, Field.Index.NO))
+	doc.add(new Field("description", sentence, TextField.TYPE_STORED))
+	writer.addDocument(doc)
+      }
+    }
+  }
+  if (habitat) {
+    SentenceModel sentenceModel = new SentenceModel(new FileInputStream("models/fr-sent.bin"))
+    SentenceDetectorME sentenceDetector = new SentenceDetectorME(sentenceModel)
+    def sentences = sentenceDetector.sentDetect(habitat)
+    sentences.each { sentence1 ->
+      sentence1.split(";").each { sentence ->
+	Document doc = new Document()
+	doc.add(new Field("taxon", taxonString, Field.Store.YES, Field.Index.NO))
+	doc.add(new Field("habitat", sentence, TextField.TYPE_STORED))
+	writer.addDocument(doc)
+      }
     }
   }
 }
@@ -116,24 +133,48 @@ new File("flora-gabon").eachFile { florafile ->
 	  }
 	}
       }
+      String habitat = ""
+      taxon.feature.each { feature ->
+	if (feature.@class.text() == "habitatecology") {
+	  feature.char.each { character ->
+	    def cclass = character.@class.text().toLowerCase()
+	    def ctext = character.text()
+	    habitat += ctext + " "
+	    //	    
+	  }
+	}
+      }
       /* now split the description in sentences */
       SentenceModel sentenceModel = new SentenceModel(new FileInputStream("models/fr-sent.bin"))
       SentenceDetectorME sentenceDetector = new SentenceDetectorME(sentenceModel)
       def sentences = sentenceDetector.sentDetect(description)
-      sentences.each { sentence ->
-	Document doc = new Document()
-	doc.add(new Field("taxon", taxonString, Field.Store.YES, Field.Index.NO))
-	doc.add(new Field("description", sentence, TextField.TYPE_STORED))
-	writer.addDocument(doc)
+      sentences.each { sentence1 ->
+	sentence1.split(";").each { sentence ->
+	  Document doc = new Document()
+	  doc.add(new Field("taxon", taxonString, Field.Store.YES, Field.Index.NO))
+	  doc.add(new Field("description", sentence, TextField.TYPE_STORED))
+	  writer.addDocument(doc)
+	}
+      }
+      /* now split the description in sentences */
+      sentences = sentenceDetector.sentDetect(habitat)
+      sentences.each { sentence1 ->
+	sentence1.split(";").each { sentence ->
+	  Document doc = new Document()
+	  doc.add(new Field("taxon", taxonString, Field.Store.YES, Field.Index.NO))
+	  doc.add(new Field("habitat", sentence, TextField.TYPE_STORED))
+	  writer.addDocument(doc)
+	}
       }
     }
   }
 }
 
 
+
 /* Final part: we also add all the ontology terms to the index so that we can easier search for them */
 
-
+/*
 def ontologyDirectory = "ont/"
 new File("ont").eachFile { ontfile ->
   def id = ""
@@ -157,6 +198,6 @@ new File("ont").eachFile { ontfile ->
     }
   }
 }
-
+*/
 writer.close()
-englishWriter.close()
+//englishWriter.close()
