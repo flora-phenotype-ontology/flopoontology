@@ -8,7 +8,29 @@ import org.semanticweb.owlapi.io.*
 import org.semanticweb.elk.owlapi.*
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary
 
-def fout = new PrintWriter(new BufferedWriter(new FileWriter("taxon2ppo.txt")))
+def cli = new CliBuilder()
+cli.with {
+usage: 'Self'
+  h longOpt:'help', 'this information'
+  i longOpt:'input-file', 'input file',args:1, required:true
+  o longOpt:'ontology-output-file', 'output ontology file',args:1, required:true
+  a longOpt:'annotation-output-file', 'output annotation file (FLOPO annotations)',args:1, required:true
+  t longOpt:'add-taxons', 'adds taxons as subclasses of phenotypes', args:0
+  //  t longOpt:'threads', 'number of threads', args:1
+  //  k longOpt:'stepsize', 'steps before splitting jobs', arg:1
+}
+
+def opt = cli.parse(args)
+if( !opt ) {
+  //  cli.usage()
+  return
+}
+if( opt.h ) {
+  cli.usage()
+  return
+}
+
+def fout = new PrintWriter(new BufferedWriter(new FileWriter(opt.a)))
 
 def ontfile = new File("ont/plant_ontology.obo")
 def patofile = new File("ont/quality.obo")
@@ -18,6 +40,7 @@ def id2name = [:]
 def id = ""
 def values = new TreeSet()
 def attributes = new TreeSet()
+def obsolete = new TreeSet()
 new File("ont/quality.obo").eachLine { line ->
   if (line.startsWith("id:")) {
     id = line.substring(3).trim()
@@ -39,6 +62,9 @@ new File("ont/quality.obo").eachLine { line ->
   if (line.indexOf("value_slim")>-1) {
     values.add(id)
   }
+  if (line.indexOf("is_obsolete: true")>-1) {
+    obsolete.add(id)
+  }
 }
 new File("ont/plant_ontology.obo").eachLine { line ->
   if (line.startsWith("id:")) {
@@ -57,24 +83,6 @@ String formatClassNames(String s) {
   s
 }
 
-def cli = new CliBuilder()
-cli.with {
-usage: 'Self'
-  h longOpt:'help', 'this information'
-  o longOpt:'output-file', 'output file',args:1, required:true
-  //  t longOpt:'threads', 'number of threads', args:1
-  //  k longOpt:'stepsize', 'steps before splitting jobs', arg:1
-}
-
-def opt = cli.parse(args)
-if( !opt ) {
-  //  cli.usage()
-  return
-}
-if( opt.h ) {
-  cli.usage()
-  return
-}
 
 OWLOntologyManager manager = OWLManager.createOWLOntologyManager()
 
@@ -141,23 +149,25 @@ def addAnno = {resource, prop, cont ->
 
 def taxon2phenotype = [:]
 def phenotypes = new HashSet()
-new File("eq.txt").splitEachLine("\t") { line ->
+new File(opt.i).splitEachLine("\t") { line ->
   def taxon = line[0]
   if (taxon2phenotype[taxon] == null) {
     taxon2phenotype[taxon] = new HashSet()
   }
-  def e = line[1]
-  def q = line[2]
-  Expando exp = new Expando()
-  exp.e = e
-  exp.q = q
-  phenotypes.add(exp)
-  taxon2phenotype[taxon].add(exp)
+  def e = line[2]
+  def q = line[4]
+  if (q && e && ! (q in obsolete) && ! (e in obsolete)) {
+    Expando exp = new Expando()
+    exp.e = e
+    exp.q = q
+    phenotypes.add(exp)
+    taxon2phenotype[taxon].add(exp)
+  }
 }
 //println taxon2phenotype
 
-def clSuper = c("PPO:0")
-addAnno(clSuper,OWLRDFVocabulary.RDFS_LABEL,"plant phenotype")
+def clSuper = c("FLOPO:0")
+addAnno(clSuper,OWLRDFVocabulary.RDFS_LABEL,"flora phenotype")
 
 def count = 1 // global ID counter
 
@@ -173,7 +183,7 @@ phenotypes.each { exp ->
     if (eq2cl[e] == null) {
       eq2cl[exp.e]= [:]
     }
-    def cl = c("PPO:$count")
+    def cl = c("FLOPO:$count")
     addAnno(cl,OWLRDFVocabulary.RDFS_LABEL,id2name[exp.e]+" phenotype")
     //    addAnno(cl,OWLRDFVocabulary.RDF_DESCRIPTION,"The mass of $oname that is used as input in a single $name is decreased.")
     manager.addAxiom(outont, factory.getOWLSubClassOfAxiom(cl, clSuper))
@@ -191,9 +201,9 @@ phenotypes.each { exp ->
   if (e2p[e]== null) {
     e2p[e] = new HashSet()
   }
-  if (e!=null && q!=null && ! (q in e2p[e])) {
+  if (e!=null && q!=null && ! (q in e2p[e]) ) {
     e2p[e].add(q)
-    def cl = c("PPO:$count")
+    def cl = c("FLOPO:$count")
     eq2cl[exp.e][exp.q] = cl
     addAnno(cl,OWLRDFVocabulary.RDFS_LABEL,id2name[exp.e]+" "+id2name[exp.q])
     manager.addAxiom(outont, factory.getOWLEquivalentClassesAxiom(
@@ -224,7 +234,7 @@ phenotypes.each { exp ->
 	    found = true
 	  } else {
 	    e2p[e].add(id2class[nq])
-	    cl = c("PPO:$count")
+	    cl = c("FLOPO:$count")
 	    addAnno(cl,OWLRDFVocabulary.RDFS_LABEL,id2name[exp.e]+" "+id2name[nq])
 	    manager.addAxiom(outont, factory.getOWLEquivalentClassesAxiom(
 			       cl,
@@ -239,14 +249,16 @@ phenotypes.each { exp ->
 	  }
 	}
       } else {
-	println exp.q
+	// println exp.q
       }
     }
   }
 }
 
-clSuper = c("TAXON:0")
-addAnno(clSuper,OWLRDFVocabulary.RDFS_LABEL,"taxon")
+if (opt.t) {
+  clSuper = c("TAXON:0")
+  addAnno(clSuper,OWLRDFVocabulary.RDFS_LABEL,"taxon")
+}
 
 count = 1 // reset counter, add taxons in different namespace
 
@@ -255,15 +267,17 @@ def taxon2class = [:]
 taxon2phenotype.each { taxon, phenotype ->
   def tcl = null
   if (taxon2class[taxon] == null) {
-    
     tcl = c("TAXON:$count")
-    addAnno(tcl,OWLRDFVocabulary.RDFS_LABEL,taxon)
-    
+    if (opt.t) {
+      addAnno(tcl,OWLRDFVocabulary.RDFS_LABEL,taxon)
+    }
     count += 1
   } else {
     tcl = taxon2class[taxon]
   }
-  manager.addAxiom(outont, factory.getOWLSubClassOfAxiom(tcl, clSuper))
+  if (opt.t) {
+    manager.addAxiom(outont, factory.getOWLSubClassOfAxiom(tcl, clSuper))
+  }
   def phenoset = new HashSet()
   phenotype.each { pheno ->
     if (eq2cl[pheno.e] && eq2cl[pheno.e][pheno.q]) {
@@ -275,7 +289,9 @@ taxon2phenotype.each { taxon, phenotype ->
     }
   }
   if (phenoset.size()>1) {
-    manager.addAxiom(outont, factory.getOWLEquivalentClassesAxiom(tcl,factory.getOWLObjectIntersectionOf(phenoset)))
+    if (opt.t) {
+      manager.addAxiom(outont, factory.getOWLEquivalentClassesAxiom(tcl,factory.getOWLObjectIntersectionOf(phenoset)))
+    }
   }
 }
 fout.flush()
