@@ -30,12 +30,12 @@ iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE)
 iwc.setRAMBufferSizeMB(32768.0)
 IndexWriter writer = new IndexWriter(dir, iwc)
 
-/*
+
 IndexWriterConfig iwcEnglish = new IndexWriterConfig(Version.LUCENE_47, analyzer)
 iwcEnglish.setOpenMode(IndexWriterConfig.OpenMode.CREATE)
 iwcEnglish.setRAMBufferSizeMB(32768.0)
 IndexWriter englishWriter = new IndexWriter(ontologyIndexDir, iwcEnglish)
-*/
+
 
 
 
@@ -174,7 +174,6 @@ new File("flora-gabon").eachFile { florafile ->
 
 /* Final part: we also add all the ontology terms to the index so that we can easier search for them */
 
-/*
 def ontologyDirectory = "ont/"
 new File("ont").eachFile { ontfile ->
   def id = ""
@@ -198,6 +197,6 @@ new File("ont").eachFile { ontfile ->
     }
   }
 }
-*/
+
 writer.close()
-//englishWriter.close()
+englishWriter.close()

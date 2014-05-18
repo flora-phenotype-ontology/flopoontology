@@ -21,8 +21,8 @@ import java.util.concurrent.*
 String indexPath = "lucene-index-english"
 String ontologyIndexPath = "lucene-index-ontology"
 
-Directory dir = FSDirectory.open(new File(indexPath)) // RAMDirectory()
-Directory ontologyIndexDir = FSDirectory.open(new File(ontologyIndexPath)) // RAMDirectory()
+Directory dir = FSDirectory.open(new File(indexPath))
+Directory ontologyIndexDir = FSDirectory.open(new File(ontologyIndexPath))
 Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_47)
 IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_47, analyzer)
 iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE)
@@ -173,7 +173,7 @@ new File("flora-malesiana").eachFile { florafile ->
 
 /* Final part: we also add all the ontology terms to the index so that we can easier search for them */
 
-
+/*
 def ontologyDirectory = "ont/"
 new File("ont").eachFile { ontfile ->
   def id = ""
@@ -197,6 +197,6 @@ new File("ont").eachFile { ontfile ->
     }
   }
 }
-
+*/
 writer.close()
 englishWriter.close()
