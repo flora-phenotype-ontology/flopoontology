@@ -34,8 +34,15 @@ iwcEnglish.setOpenMode(IndexWriterConfig.OpenMode.CREATE)
 iwcEnglish.setRAMBufferSizeMB(32768.0)
 IndexWriter englishWriter = new IndexWriter(ontologyIndexDir, iwcEnglish)
 
-
-
+FieldType fieldType = new FieldType()
+fieldType.setStoreTermVectors(true)
+fieldType.setStoreTermVectorPositions(true)
+fieldType.setStoreTermVectorOffsets(true)
+fieldType.setStoreTermVectorPayloads(true)
+fieldType.setIndexed(true)
+fieldType.setTokenized(true)
+fieldType.setStored(true)
+fieldType.setIndexOptions(FieldInfo.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
 
 def author = null
 def year = null
@@ -67,7 +74,7 @@ kew.Specieslist.each { species ->
     sentence1.split(";").each { sentence ->
       Document doc = new Document()
       doc.add(new Field("taxon", taxonString, Field.Store.YES, Field.Index.NO))
-      doc.add(new Field("description", sentence, TextField.TYPE_STORED))
+      doc.add(new Field("description", sentence, fieldType))
       writer.addDocument(doc)
     }
   }
@@ -76,7 +83,7 @@ kew.Specieslist.each { species ->
     sentence1.split(";").each { sentence ->
       Document doc = new Document()
       doc.add(new Field("taxon", taxonString, Field.Store.YES, Field.Index.NO))
-      doc.add(new Field("habitat", sentence, TextField.TYPE_STORED))
+      doc.add(new Field("habitat", sentence, fieldType))
       writer.addDocument(doc)
     }
   }
@@ -150,7 +157,7 @@ new File("flora-malesiana").eachFile { florafile ->
       SentenceDetectorME sentenceDetector = new SentenceDetectorME(sentenceModel)
       def sentences = sentenceDetector.sentDetect(description)
       sentences.each { sentence1 ->
-	sentence1.split(";").each { sentence ->
+	sentence1.split(";;;").each { sentence ->
 	  Document doc = new Document()
 	  doc.add(new Field("taxon", taxonString, Field.Store.YES, Field.Index.NO))
 	  doc.add(new Field("description", sentence, TextField.TYPE_STORED))
@@ -160,7 +167,7 @@ new File("flora-malesiana").eachFile { florafile ->
       /* now split the description in sentences */
       sentences = sentenceDetector.sentDetect(habitat)
       sentences.each { sentence1 ->
-	sentence1.split(";").each { sentence ->
+	sentence1.split(";;;").each { sentence ->
 	  Document doc = new Document()
 	  doc.add(new Field("taxon", taxonString, Field.Store.YES, Field.Index.NO))
 	  doc.add(new Field("habitat", sentence, TextField.TYPE_STORED))
@@ -172,7 +179,6 @@ new File("flora-malesiana").eachFile { florafile ->
 }
 
 /* Final part: we also add all the ontology terms to the index so that we can easier search for them */
-
 /*
 def ontologyDirectory = "ont/"
 new File("ont").eachFile { ontfile ->

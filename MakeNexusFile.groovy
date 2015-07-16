@@ -6,15 +6,6 @@ new File(args[0]).splitEachLine("\t") { line ->
   taxa.add(t)
 }
 
-println "#NEXUS"
-println "BEGIN TAXA;\n\tTITLE taxa_block;\n\tDIMENSIONS  NTAX="+taxa.size()+";"
-println "\tTAXLABELS"
-print "\t\t"
-taxa.each {
-  print "\'$it\' "
-}
-println "\t;\nEND;\n\n"
-
 def characters = new TreeSet()
 def values = [:].withDefault { [:] } // taxon -> character -> value or taxon -> character -> null if no value
 def cvalues = new TreeSet()
@@ -56,6 +47,26 @@ character2value.each { c, v ->
     }
   }
 }
+
+def tempSet = new TreeSet()
+values.each { taxon, c2v ->
+  if (c2v.size()<10) { // at least 10 characters for this taxon, otherwise omit
+    tempSet.add(taxon)
+  }
+}
+tempSet.each { tax ->
+  taxa.remove(tax)
+  values.remove(tax)
+}
+
+println "#NEXUS"
+println "BEGIN TAXA;\n\tTITLE taxa_block;\n\tDIMENSIONS  NTAX="+taxa.size()+";"
+println "\tTAXLABELS"
+print "\t\t"
+taxa.each {
+  print "\'$it\' "
+}
+println "\t;\nEND;\n\n"
 
 println "BEGIN CHARACTERS;"
 println "\tTITLE  Untitled_Character_Matrix;"

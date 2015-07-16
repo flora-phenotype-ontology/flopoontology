@@ -79,33 +79,30 @@ name2id.each { name, ids ->
 	    def docId = doc.doc
 	    Document hitDoc = searcher.doc(docId)
 	    def sentence = hitDoc.get("description")
-	    FastVectorHighlighter highlighter = new FastVectorHighlighter(true, true)
-	    FieldQuery fQuery = highlighter.getFieldQuery(query)
-	    FieldQuery fQuery1 = highlighter.getFieldQuery(q1)
-	    FieldQuery fQuery2 = highlighter.getFieldQuery(q2)
-	    
-	    highlighter.getBestFragments(fQuery1, reader, docId, "description", 25000, 16).each { frag1 ->
-	      highlighter.getBestFragments(fQuery2, reader, docId, "description", 25000, 16).each { frag2 ->
-		int index1 = frag1.indexOf("<b>")
-		def eindex1 = frag1.indexOf("</b>")
+	    Highlighter highlighter = new Highlighter(new QueryScorer(q1))
+	    Highlighter highlighter2 = new Highlighter(new QueryScorer(q2))
+	    highlighter.getBestFragments(analyzer, "description", sentence, 50).each { frag1 ->
+	      highlighter2.getBestFragments(analyzer, "description", sentence, 50).each { frag2 ->
+		int index1 = frag1.indexOf("<B>")
+		def eindex1 = frag1.indexOf("</B>")
 		while (index1 >= 0) {
-		  int index2 = frag2.indexOf("<b>")
-		  def eindex2 = frag2.indexOf("</b>")
+		  int index2 = frag2.indexOf("<B>")
+		  def eindex2 = frag2.indexOf("</B>")
 		  while (index2 >= 0) {
 		    if (eindex1 < index2) {
 		      def nf = frag1.substring(0, index1) + "<E>"+frag1.substring(index1+3, eindex1)+"</E>"+frag2.substring(eindex1-3,index2)+"<Q>"+frag2.substring(index2+3, eindex2)+"</Q>"+frag2.substring(eindex2+3)
-		      def finalFragment = nf.replaceAll("<b>","").replaceAll("</b>","")
+		      def finalFragment = nf.replaceAll("<B>","").replaceAll("</B>","")
 		      fout.println("$name\t$name2\t$finalFragment")
 		    } else if (eindex2 < index1) {
 		      def nf = frag2.substring(0, index2) + "<Q>"+frag2.substring(index2+3, eindex2)+"</Q>"+frag1.substring(eindex2-3,index1)+"<E>"+frag1.substring(index1+3, eindex1)+"</E>"+frag1.substring(eindex1+4)
-		      def finalFragment = nf.replaceAll("<b>","").replaceAll("</b>","")
+		      def finalFragment = nf.replaceAll("<B>","").replaceAll("</B>","")
 		      fout.println("$name\t$name2\t$finalFragment")
 		    }
-		    index2 = frag2.indexOf("<b>", eindex2+1);
-		    eindex2 = frag2.indexOf("</b>", eindex2+1);
+		    index2 = frag2.indexOf("<B>", eindex2+1);
+		    eindex2 = frag2.indexOf("</B>", eindex2+1);
 		  }
-		  index1 = frag1.indexOf("<b>", eindex1);
-		  eindex1 = frag1.indexOf("</b>", eindex1);
+		  index1 = frag1.indexOf("<B>", eindex1+1);
+		  eindex1 = frag1.indexOf("</B>", eindex1+1);
 		}
 	      }
 	    }
