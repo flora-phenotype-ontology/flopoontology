@@ -6,4 +6,4 @@ There are three components:
 2. Lucene-based indexing: this is a refactoring of the original code that uses the Lucence indexes and analyzers.
 3. MakePlantPhenotypeOntology generates a phenotype ontology from the generated descriptions.
 
-The resulting ontology is available under a CC-0 license. All code is available under the BSD license.
+The resulting ontology is available under a CC-0 license in the `ontology` folder. All code is available under the BSD license.
