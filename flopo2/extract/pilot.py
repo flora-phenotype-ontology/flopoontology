@@ -17,8 +17,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import time
 from collections import defaultdict
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import TimeoutError as FuturesTimeout
 from pathlib import Path
 
 from flopo2.eval.scoring import Assertion, EvalReport, score_segment
@@ -39,29 +41,42 @@ def _gold_assertions(seg: dict) -> list[Assertion]:
 
 
 def run_pilot(silver: Path, cfg: EngineConfig, limit: int | None, ancestors=None,
-              client: OpenRouterClient | None = None, concurrency: int = 8) -> dict:
+              client: OpenRouterClient | None = None, concurrency: int = 8,
+              max_seconds: float = 3600.0) -> dict:
     segs = [json.loads(l) for l in Path(silver).read_text(encoding="utf-8").splitlines() if l.strip()]
     if limit:
         segs = segs[:limit]
-    client = client or OpenRouterClient()
+    client = client or OpenRouterClient(max_connections=max(8, concurrency * 2))
     report = EvalReport()
     by_lang: dict[str, EvalReport] = defaultdict(EvalReport)
 
-    # Parallelize the I/O-bound extraction (API calls); score sequentially so EvalReport stays
-    # single-threaded. Results are gathered in input order.
+    # Parallelize the I/O-bound extraction (API calls); score as results complete so EvalReport
+    # stays single-threaded. work() never raises — a failed segment yields no predictions — and a
+    # global wall-clock cap means one stuck segment can't block the whole run.
     def work(seg):
-        return seg, extract_segment(client, cfg, seg)
+        try:
+            return seg, extract_segment(client, cfg, seg)
+        except Exception:  # defensive: extraction must never crash the pool
+            return seg, []
 
     done = 0
     with ThreadPoolExecutor(max_workers=concurrency) as pool:
-        for seg, preds in pool.map(work, segs):
-            gold = _gold_assertions(seg)
-            score_segment(preds, gold, seg.get("text", ""), ancestors=ancestors, report=report)
-            score_segment(preds, gold, seg.get("text", ""), ancestors=ancestors,
-                          report=by_lang[seg.get("language", "?")])
-            done += 1
-            print(f"  {done}/{len(segs)} preds={len(preds)} gold={len(gold)} "
-                  f"cost=${client.usage.cost_usd:.3f}", end="\r")
+        futs = {pool.submit(work, s): s for s in segs}
+        try:
+            for fut in as_completed(futs, timeout=max_seconds):
+                seg, preds = fut.result()
+                gold = _gold_assertions(seg)
+                score_segment(preds, gold, seg.get("text", ""), ancestors=ancestors, report=report)
+                score_segment(preds, gold, seg.get("text", ""), ancestors=ancestors,
+                              report=by_lang[seg.get("language", "?")])
+                done += 1
+                print(f"  {done}/{len(segs)} preds={len(preds)} gold={len(gold)} "
+                      f"cost=${client.usage.cost_usd:.3f}", end="\r", flush=True)
+        except FuturesTimeout:
+            for f in futs:
+                f.cancel()
+            print(f"\n[run_pilot] wall-clock cap {max_seconds:.0f}s hit; scored {done}/{len(segs)} "
+                  f"segments (rest skipped)", flush=True)
     print()
     return {
         "config": {"models": cfg.models, "grounding": cfg.grounding, "samples": cfg.samples},
@@ -86,11 +101,19 @@ def main() -> None:
     ap.add_argument("--samples", type=int, default=1)
     ap.add_argument("--temperature", type=float, default=0.3)
     ap.add_argument("--limit", type=int, default=20)
+    ap.add_argument("--concurrency", type=int, default=8)
+    ap.add_argument("--lenient", action="store_true",
+                    help="enable hierarchical (PO/PATO ancestor-distance) scoring via ont/*.obo")
     ap.add_argument("-o", "--out", type=Path)
     args = ap.parse_args()
     cfg = EngineConfig(models=args.models, grounding=args.grounding,
                        samples=args.samples, temperature=args.temperature)
-    result = run_pilot(args.silver, cfg, args.limit)
+    ancestors = None
+    if args.lenient:
+        from flopo2.eval.hierarchy import build_ancestors
+        ancestors = build_ancestors()
+    result = run_pilot(args.silver, cfg, args.limit, ancestors=ancestors,
+                       concurrency=args.concurrency)
     text = json.dumps(result, indent=2, ensure_ascii=False)
     print(text)
     if args.out:

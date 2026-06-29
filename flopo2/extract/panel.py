@@ -19,8 +19,9 @@ from flopo2.extract.pilot import run_pilot
 DEFAULT_PANEL = [
     "openai/gpt-oss-120b",
     "qwen/qwen3-32b",
-    "mistralai/mistral-small",
+    "mistralai/mistral-small-3.2-24b-instruct",
     "deepseek/deepseek-v3.2",
+    "z-ai/glm-4.6",
 ]
 
 
