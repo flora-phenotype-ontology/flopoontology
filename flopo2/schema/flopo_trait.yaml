@@ -1,0 +1,114 @@
+id: https://w3id.org/flopo/flopo-trait
+name: flopo-trait
+title: FLOPO 2.0 Trait Extraction Schema
+description: >-
+  LinkML schema for ontology-grounded extraction of plant phenotype assertions from flora
+  descriptions. It is the single contract for both extraction engines (Graph-RAG and SPIRES+OAK),
+  drives structured/validated LLM output, and generates the curated-database DDL. Each
+  TraitAssertion is one entity-quality observation for a taxon, grounded to PO (entity) and PATO
+  (quality) — optionally a TO trait and a UO unit — with the source span for provenance.
+  The ``annotators`` annotations make this directly usable as an OntoGPT/SPIRES template (OAK
+  grounds the named slots against the listed ontologies).
+license: https://creativecommons.org/publicdomain/zero/1.0/
+default_prefix: flopo_trait
+default_range: string
+
+prefixes:
+  flopo_trait: https://w3id.org/flopo/flopo-trait/
+  linkml: https://w3id.org/linkml/
+  PO: http://purl.obolibrary.org/obo/PO_
+  PATO: http://purl.obolibrary.org/obo/PATO_
+  TO: http://purl.obolibrary.org/obo/TO_
+  UO: http://purl.obolibrary.org/obo/UO_
+  RO: http://purl.obolibrary.org/obo/RO_
+  BFO: http://purl.obolibrary.org/obo/BFO_
+
+imports:
+  - linkml:types
+
+# ---------------------------------------------------------------------------------------------
+classes:
+
+  TraitExtraction:
+    tree_root: true
+    description: >-
+      The set of trait assertions extracted from a single text segment (one organ block of one
+      taxon). Carries the provenance needed to trace every assertion back to its source.
+    attributes:
+      taxon_name:
+        description: Verbatim taxon name string from the source treatment.
+      organ_hint:
+        description: The FlorML char-class / subheading the segment came from (anatomical prior).
+      assertions:
+        description: The trait assertions found in this segment.
+        multivalued: true
+        inlined_as_list: true
+        range: TraitAssertion
+
+  TraitAssertion:
+    description: >-
+      One grounded entity-quality observation: an anatomical entity (PO) bears a quality (PATO),
+      optionally with a measured value/unit, modifier, or negation, justified by a source span.
+    attributes:
+      anatomical_entity:
+        description: The plant anatomical structure the quality inheres in (Plant Ontology).
+        required: true
+        annotations:
+          annotators: "sqlite:obo:po"
+          prompt: >-
+            The plant part or anatomical structure described (e.g. leaf, petal, stem, ovary).
+      quality:
+        description: The phenotypic quality or attribute (PATO).
+        required: true
+        annotations:
+          annotators: "sqlite:obo:pato"
+          prompt: >-
+            The quality, attribute, or state asserted of the anatomical structure
+            (e.g. red, ovate, glabrous, length, pubescent).
+      trait:
+        description: Optional pre-composed plant trait this corresponds to (Trait Ontology).
+        annotations:
+          annotators: "sqlite:obo:to"
+      value_text:
+        description: Categorical/free-text value of the trait when not numeric (e.g. "ovate").
+      value_low:
+        description: Lower bound of a measured range (e.g. 3 in "3-7 cm"). Numbers only.
+        range: float
+      value_high:
+        description: Upper bound of a measured range (e.g. 7 in "3-7 cm"). Numbers only.
+        range: float
+      unit:
+        description: Measurement unit (Units of measurement ontology), e.g. cm, mm.
+        annotations:
+          annotators: "sqlite:obo:uo"
+      modifier:
+        description: Frequency/degree hedge attached to the assertion in the text.
+        range: FrequencyModifier
+      negated:
+        description: True if the text asserts the ABSENCE of the quality (e.g. "leaves not hairy").
+        range: boolean
+        ifabsent: "boolean(false)"
+      cardinality:
+        description: Count when the trait is a number of parts (e.g. "stamens 6"). Free text to allow ranges.
+      source_text:
+        description: >-
+          The exact span of the source segment that justifies this assertion (provenance /
+          anti-hallucination anchor). MUST be copied verbatim from the input.
+        required: true
+      confidence:
+        description: Model self-reported confidence in [0,1]; refined later by self-consistency voting.
+        range: float
+
+# ---------------------------------------------------------------------------------------------
+enums:
+
+  FrequencyModifier:
+    description: Frequency/degree hedges common in floras ("usually pubescent", "rarely glabrous").
+    permissible_values:
+      always:
+      usually:
+      often:
+      sometimes:
+      occasionally:
+      rarely:
+      never:
