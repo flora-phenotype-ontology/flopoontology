@@ -81,5 +81,45 @@ def test_extract_segment_grounds(monkeypatch, tmp_path):
     assert out[0].po_id == "PO_0009046" and out[0].pato_id == "PATO_0000322"
 
 
+def test_chat_json_never_raises(monkeypatch):
+    """A network/HTTP failure must return None, not propagate (so the pool can't be crashed)."""
+    from flopo2.extract.router import OpenRouterClient
+
+    c = OpenRouterClient(api_key="x", client=object())  # dummy transport; _post is overridden
+
+    def boom(payload):
+        raise RuntimeError("network down")
+
+    monkeypatch.setattr(c, "_post", boom)
+    assert c.chat_json("m", "s", "u") is None
+    assert c.usage.calls == 0  # failed calls are not counted
+
+
+def test_run_pilot_survives_segment_failure(monkeypatch, tmp_path):
+    """One segment raising inside extraction must not abort the run; all segments still score."""
+    import json as _json
+
+    from flopo2.extract import engine, pilot
+
+    segs = [
+        {"text": "a", "language": "en", "organ": "leaf",
+         "assertions": [{"po_id": "PO_1", "pato_id": "PATO_1", "source_text": "a"}]},
+        {"text": "b", "language": "en", "organ": "leaf", "assertions": []},   # will raise
+        {"text": "c", "language": "fr", "organ": "stem", "assertions": []},
+    ]
+    silver = tmp_path / "silver.jsonl"
+    silver.write_text("\n".join(_json.dumps(s) for s in segs))
+
+    def flaky_extract(client, cfg, seg):
+        if seg["text"] == "b":
+            raise RuntimeError("boom")
+        return []
+
+    monkeypatch.setattr(pilot, "extract_segment", flaky_extract)
+    cfg = engine.EngineConfig(models=["m"], grounding="spires", samples=1)
+    res = pilot.run_pilot(silver, cfg, limit=None, client=StubClient([]), concurrency=2)
+    assert res["segments"] == 3  # completed without crashing despite the middle failure
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))
