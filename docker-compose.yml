@@ -1,0 +1,47 @@
+# FLOPO 2.0 service stack. The curated trait database is the source of truth; the API + web serve
+# it; deployment target is phenomebrowser.net. Bring up incrementally as phases land:
+#   docker compose up db            # Phase 0/7: Postgres
+#   docker compose up db api web    # Phase 9: full site
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: flopo
+      POSTGRES_USER: flopo
+      POSTGRES_PASSWORD: ${FLOPO_DB_PASSWORD:-flopo}
+    ports:
+      - "5432:5432"
+    volumes:
+      - flopo_pgdata:/var/lib/postgresql/data
+      # schema.sql is applied on first init (created in Phase 7)
+      - ./flopo2/db:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U flopo -d flopo"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # FastAPI over the DB views (per-species/trait/class pages, search, matrix export, SPARQL).
+  # Built in Phase 9.
+  api:
+    build: ./web/api
+    profiles: ["web"]
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://flopo:${FLOPO_DB_PASSWORD:-flopo}@db:5432/flopo
+    ports:
+      - "8000:8000"
+
+  # Trait-explorer frontend. Built in Phase 9.
+  web:
+    build: ./web/frontend
+    profiles: ["web"]
+    depends_on:
+      - api
+    ports:
+      - "8080:80"
+
+volumes:
+  flopo_pgdata:
