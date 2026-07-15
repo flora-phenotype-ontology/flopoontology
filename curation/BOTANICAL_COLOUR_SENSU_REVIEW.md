@@ -2,21 +2,22 @@
 
 Date: 2026-07-15
 
-This is a review-only design. It changes no PATO or FLOPO class and reserves no identifier. The
-machine-readable companion is `botanical_colour_sensu_proposals.tsv`; its curator columns are
-blank. `botanical_colour_prototypes.tsv` remains the evidence inventory from which the proposals
-were separated.
+This design was approved on 2026-07-15 with an explicit ownership boundary: PATO contains only the
+unqualified generic colour classes, while every source-qualified `sensu` class is a FLOPO-local
+supporting quality asserted below its generic PATO colour. The machine-readable companion is
+`botanical_colour_sensu_proposals.tsv`; `botanical_colour_prototypes.tsv` remains the evidence
+inventory from which the proposals were separated.
 
 ## Recommendation
 
-Represent a historically variable colour name by an unqualified lexical umbrella and one
-operational subclass per documented standard:
+Represent a historically variable colour name by an unqualified PATO lexical umbrella and one
+FLOPO-local operational subclass per documented standard:
 
 ```text
 scarlet
-├── scarlet sensu Saccardo (1891), category 15
-├── scarlet sensu Ridgway (1912), plate I chip 5
-└── scarlet sensu Wilson Horticultural Colour Chart (1938/1940), H19
+├── FLOPO: scarlet sensu Saccardo (1891), category 15
+├── FLOPO: scarlet sensu Ridgway (1912), plate I chip 5
+└── FLOPO: scarlet sensu Wilson Horticultural Colour Chart (1938/1940), H19
 ```
 
 An observation containing only `scarlet` maps to the umbrella. It maps to a sensu child only when
@@ -57,11 +58,10 @@ sensu child. They require a separately defined modifier or a compound FLOPO phen
 
 ## Existing-term migration
 
-`PATO:0104031 cream` currently has the RHS fifth-edition 158A/158B operational definition. Preserve
-that formal referent: rename it `cream sensu RHS Colour Chart fifth edition`, retain the definition,
-and place it below a new generic `cream` colour umbrella. Move the unrestricted exact synonym
-`creamy` to the generic umbrella. Existing annotations should be migrated to the generic class
-unless their source actually named RHS 158A/158B.
+`PATO:0104031 cream` is retained as the generic PATO `cream` class and carries the unrestricted
+exact synonym `creamy`. Its former RHS fifth-edition 158A/158B sense moves to a new FLOPO-local
+class below PATO:0104031, alongside a separate Saccardo sense. Unqualified annotations remain on
+PATO:0104031; an explicit chart or chip reference selects the corresponding FLOPO child.
 
 `PATO:0001425 rosy` and `PATO:0001942 brown green`/`olive green` need separate semantic review
 before being reused as the generic `rose` or `olive` umbrella. Their current definitions do not
@@ -75,9 +75,9 @@ from the operational region and be checked independently.
 lustre, and his gold-yellow includes splendour; botanical uses can also arise from hairs, wax,
 surface reflection, maturation, or drying. Keep their unqualified forms as FLOPO appearance
 phenotypes or contextual terminology entries. A genuinely chromatic source value such as Ridgway
-`Old Gold` may still be a source-qualified PATO colour, but it must not be made a subclass of a
-FLOPO appearance phenotype. The terminology layer can relate these cross-category senses without
-turning the lexical cluster into an ontology superclass.
+`Old Gold` may be a FLOPO-local source-qualified quality below an appropriate generic PATO colour,
+but it must not be made a subclass of a FLOPO appearance phenotype. The terminology layer can
+relate these cross-category senses without turning the lexical cluster into an ontology superclass.
 
 Compound colours remain in FLOPO. Alternatives such as `greenish or pinkish` use a union; mixtures
 use an explicit component relation and are not conjunctive subclasses of all component colours.
@@ -98,7 +98,10 @@ Before proposing or materializing upstream terms:
    not substituted for them.
 7. Every proposed source-specific class passes positive closest-match examples, boundary examples,
    and counterexamples drawn from a different standard.
-8. PATO and FLOPO reasoner checks find no new unsatisfiable class and no phenotype/quality category
+8. PATO contains no source-qualified `sensu` class from this proposal. Every such class has a
+   FLOPO identifier, is a supporting quality rather than a phenotype, and has exactly one generic
+   PATO colour parent.
+9. PATO and FLOPO reasoner checks find no new unsatisfiable class and no phenotype/quality category
    crossing.
 
 ## Evidence
@@ -109,4 +112,3 @@ Before proposing or materializing upstream terms:
 - ISCC-NBS centroid paper: `EVID:NIST_CENTROIDS`
 - UPOV/RHS comparison protocol: `EVID:UPOV_TGP14`
 - Hamly's approximate Ridgway-to-Munsell key: DOI:10.1364/JOSA.39.000592
-

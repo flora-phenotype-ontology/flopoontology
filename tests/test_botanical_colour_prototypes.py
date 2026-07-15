@@ -69,6 +69,22 @@ def test_source_qualified_prototypes_feed_sensu_hierarchies_not_one_exact_mappin
     assert by_first_surface["gold"]["mapping_status"] == (
         "multiple_source_prototypes_not_one_generic_value"
     )
-    assert "generic scarlet umbrella" in by_first_surface["scarlet"][
+    assert "generic PATO scarlet umbrella" in by_first_surface["scarlet"][
         "ontology_recommendation"
     ]
+    for surface in (
+        "cream",
+        "crimson",
+        "scarlet",
+        "lemon",
+        "mahogany",
+        "salmon",
+        "chestnut",
+        "chocolate",
+        "olive",
+        "rose",
+        "straw",
+    ):
+        recommendation = by_first_surface[surface]["ontology_recommendation"]
+        assert "PATO" in recommendation
+        assert "FLOPO-local sensu" in recommendation
