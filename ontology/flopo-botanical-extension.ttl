@@ -1,0 +1,299 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix obo: <http://purl.obolibrary.org/obo/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+obo:FLOPO_0900032 a owl:Class ;
+    rdfs:label "whole plant growth form"@en ;
+    obo:IAO_0000115 "A whole-plant phenotype distinguished by the characteristic architecture, support habit, or persistence of the whole plant and its principal shoot system."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical proposal LOCAL:whole_plant_growth_form; local supporting classes remain biologically parented beneath PO or PATO rather than beneath a provenance-only extension class."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:modified "2026-07-15"^^xsd:date ;
+    dcterms:source <https://tncvasconcelos.github.io/papers/Sperottoetal2020_climbers.pdf> ;
+    rdfs:subClassOf obo:FLOPO_0000089 .
+
+obo:FLOPO_0900048 a owl:Class ;
+    rdfs:label "plant latex phenotype"@en ;
+    obo:IAO_0000115 "A portion of plant substance phenotype whose distinguishing feature concerns plant latex."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical proposal LOCAL:latex_phenotype; local supporting classes remain biologically parented beneath PO or PATO rather than beneath a provenance-only extension class."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:modified "2026-07-15"^^xsd:date ;
+    dcterms:source <https://plantnet.rbgsyd.nsw.gov.au/cgi-bin/NSWfl.pl?glossary=yes&page=nswfl&alpha=I-L>,
+        <https://pmc.ncbi.nlm.nih.gov/articles/PMC5586393/> ;
+    rdfs:subClassOf obo:FLOPO_0900047 ;
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000051 ;
+            owl:someValuesFrom [ a owl:Class ;
+                    owl:intersectionOf ( [ a owl:Restriction ;
+                                owl:onProperty obo:BFO_0000050 ;
+                                owl:someValuesFrom obo:FLOPO_0980431 ] [ a owl:Restriction ;
+                                owl:onProperty obo:RO_0000053 ;
+                                owl:someValuesFrom obo:PATO_0000001 ] ) ] ] .
+
+obo:FLOPO_0900067 a owl:Class ;
+    rdfs:label "trifoliolate leaf phenotype"@en ;
+    obo:IAO_0000115 "A leaf phenotype in which the bearer is a compound leaf with exactly three leaflets."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical proposal LOCAL:trifoliolate_leaf; local supporting classes remain biologically parented beneath PO or PATO rather than beneath a provenance-only extension class."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:modified "2026-07-15"^^xsd:date ;
+    dcterms:source <https://plantnet.rbgsyd.nsw.gov.au/cgi-bin/NSWfl.pl?glossary=yes&page=nswfl&alpha=T-U>,
+        <https://sweetgum.nybg.org/science/glossary/glossary-details/?irn=1611> ;
+    rdfs:subClassOf obo:FLOPO_0000004 ;
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000051 ;
+            owl:someValuesFrom [ a owl:Class ;
+                    owl:intersectionOf ( obo:PO_0025034 [ a owl:Restriction ;
+                                owl:onProperty obo:RO_0000053 ;
+                                owl:someValuesFrom obo:FLOPO_0980424 ] [ a owl:Restriction ;
+                                owl:onClass obo:PO_0020049 ;
+                                owl:onProperty obo:BFO_0000051 ;
+                                owl:qualifiedCardinality "3"^^xsd:nonNegativeInteger ] ) ] ] .
+
+obo:FLOPO_0980419 a owl:Class ;
+    rdfs:label "plant structure phenotype"@en ;
+    obo:IAO_0000115 "A plant anatomical entity phenotype whose distinguishing feature inheres in a plant structure or one of its parts."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical proposal TOP:plant_structure_phenotype; local supporting classes remain biologically parented beneath PO or PATO rather than beneath a provenance-only extension class."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-07-15"^^xsd:date ;
+    rdfs:subClassOf obo:FLOPO_0980418 ;
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000051 ;
+            owl:someValuesFrom [ a owl:Class ;
+                    owl:intersectionOf ( [ a owl:Restriction ;
+                                owl:onProperty obo:BFO_0000050 ;
+                                owl:someValuesFrom obo:PO_0009011 ] [ a owl:Restriction ;
+                                owl:onProperty obo:RO_0000053 ;
+                                owl:someValuesFrom obo:PATO_0000001 ] ) ] ] .
+
+obo:FLOPO_0980420 a owl:Class ;
+    rdfs:label "plant anatomical space phenotype"@en ;
+    obo:IAO_0000115 "A plant continuant-target phenotype whose distinguishing feature concerns a plant anatomical space or its boundary."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical proposal TOP:plant_anatomical_space_phenotype; local supporting classes remain biologically parented beneath PO or PATO rather than beneath a provenance-only extension class."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-07-15"^^xsd:date ;
+    rdfs:subClassOf obo:FLOPO_0980417 ;
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000051 ;
+            owl:someValuesFrom [ a owl:Class ;
+                    owl:intersectionOf ( [ a owl:Restriction ;
+                                owl:onProperty obo:BFO_0000050 ;
+                                owl:someValuesFrom obo:PO_0025117 ] [ a owl:Restriction ;
+                                owl:onProperty obo:RO_0000053 ;
+                                owl:someValuesFrom obo:PATO_0000001 ] ) ] ] .
+
+obo:FLOPO_0980423 a owl:Class ;
+    rdfs:label "plant process phenotype"@en ;
+    obo:IAO_0000115 "A plant occurrent-target phenotype whose distinguishing feature inheres in a biological process involving a plant bearer."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical proposal TOP:plant_process_phenotype; local supporting classes remain biologically parented beneath PO or PATO rather than beneath a provenance-only extension class."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-07-15"^^xsd:date ;
+    rdfs:subClassOf obo:FLOPO_0980422 ;
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000051 ;
+            owl:someValuesFrom [ a owl:Class ;
+                    owl:intersectionOf ( obo:PO_0025131 [ a owl:Restriction ;
+                                owl:onProperty obo:RO_0000056 ;
+                                owl:someValuesFrom [ a owl:Class ;
+                                        owl:intersectionOf ( obo:GO_0008150 [ a owl:Restriction ;
+                                                    owl:onProperty obo:RO_0000053 ;
+                                                    owl:someValuesFrom obo:PATO_0001236 ] ) ] ] ) ] ] .
+
+obo:FLOPO_0980426 a owl:Class ;
+    rdfs:label "bifoliolate leaf phenotype"@en ;
+    obo:IAO_0000115 "A leaf phenotype in which the bearer is a compound leaf with exactly two leaflets."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical proposal LOCAL:bifoliolate_leaf; local supporting classes remain biologically parented beneath PO or PATO rather than beneath a provenance-only extension class."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-07-15"^^xsd:date ;
+    dcterms:source <https://ausflora.net/wp-content/uploads/2017/06/flora-of-australia-glossary-e28094-ferns-cycads-conifers-and-vascular-plants.pdf> ;
+    rdfs:subClassOf obo:FLOPO_0000004 ;
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000051 ;
+            owl:someValuesFrom [ a owl:Class ;
+                    owl:intersectionOf ( obo:PO_0025034 [ a owl:Restriction ;
+                                owl:onProperty obo:RO_0000053 ;
+                                owl:someValuesFrom obo:FLOPO_0980425 ] [ a owl:Restriction ;
+                                owl:onClass obo:PO_0020049 ;
+                                owl:onProperty obo:BFO_0000051 ;
+                                owl:qualifiedCardinality "2"^^xsd:nonNegativeInteger ] ) ] ] .
+
+obo:FLOPO_0980428 a owl:Class ;
+    rdfs:label "stinging trichome phenotype"@en ;
+    obo:IAO_0000115 "A trichome phenotype in which the trichome has the disposition to deliver an irritating portion of plant substance to an animal upon contact or breakage."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical proposal LOCAL:stinging_trichome; local supporting classes remain biologically parented beneath PO or PATO rather than beneath a provenance-only extension class."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-07-15"^^xsd:date ;
+    dcterms:source <https://plantnet.rbgsyd.nsw.gov.au/cgi-bin/NSWfl.pl?glossary=yes&page=nswfl&alpha=S> ;
+    rdfs:subClassOf obo:FLOPO_0000355 ;
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000051 ;
+            owl:someValuesFrom [ a owl:Class ;
+                    owl:intersectionOf ( obo:PO_0000282 [ a owl:Restriction ;
+                                owl:onProperty obo:RO_0000053 ;
+                                owl:someValuesFrom obo:FLOPO_0980427 ] ) ] ] .
+
+obo:FLOPO_0980430 a owl:Class ;
+    rdfs:label "foliage phenotype"@en ;
+    obo:IAO_0000115 "A plant material aggregate phenotype whose distinguishing feature concerns foliage or one of its member leaves."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical proposal LOCAL:foliage_phenotype; local supporting classes remain biologically parented beneath PO or PATO rather than beneath a provenance-only extension class."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-07-15"^^xsd:date ;
+    dcterms:source <https://www.rhs.org.uk/advice/beginners-guide/glossary> ;
+    rdfs:subClassOf obo:FLOPO_0980421 ;
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000051 ;
+            owl:someValuesFrom [ a owl:Class ;
+                    owl:intersectionOf ( [ a owl:Restriction ;
+                                owl:onProperty obo:BFO_0000050 ;
+                                owl:someValuesFrom obo:FLOPO_0980429 ] [ a owl:Restriction ;
+                                owl:onProperty obo:RO_0000053 ;
+                                owl:someValuesFrom obo:PATO_0000001 ] ) ] ] .
+
+obo:flopo-botanical-extension.owl a owl:Ontology ;
+    rdfs:label "FLOPO botanical extension module"@en ;
+    dcterms:license <https://creativecommons.org/publicdomain/zero/1.0/> ;
+    dcterms:modified "2026-07-15"^^xsd:date ;
+    owl:imports <http://purl.obolibrary.org/obo/flopo/imports/go_import.owl>,
+        obo:pato.owl,
+        obo:po.owl .
+
+obo:FLOPO_0000089 a owl:Class ;
+    rdfs:label "whole plant phenotype"@en ;
+    obo:IAO_0000115 "A plant anatomical entity phenotype whose distinguishing feature inheres in a whole plant or one of its parts."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical proposal TOP:whole_plant_phenotype; local supporting classes remain biologically parented beneath PO or PATO rather than beneath a provenance-only extension class."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:modified "2026-07-15"^^xsd:date ;
+    rdfs:subClassOf obo:FLOPO_0980418 ;
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000051 ;
+            owl:someValuesFrom [ a owl:Class ;
+                    owl:intersectionOf ( [ a owl:Restriction ;
+                                owl:onProperty obo:BFO_0000050 ;
+                                owl:someValuesFrom obo:PO_0000003 ] [ a owl:Restriction ;
+                                owl:onProperty obo:RO_0000053 ;
+                                owl:someValuesFrom obo:PATO_0000001 ] ) ] ] .
+
+obo:FLOPO_0900047 a owl:Class ;
+    rdfs:label "portion of plant substance phenotype"@en ;
+    obo:IAO_0000115 "A plant anatomical entity phenotype whose distinguishing feature inheres in a portion of plant substance or one of its parts."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical proposal TOP:plant_substance_phenotype; local supporting classes remain biologically parented beneath PO or PATO rather than beneath a provenance-only extension class."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:modified "2026-07-15"^^xsd:date ;
+    rdfs:subClassOf obo:FLOPO_0980418 ;
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000051 ;
+            owl:someValuesFrom [ a owl:Class ;
+                    owl:intersectionOf ( [ a owl:Restriction ;
+                                owl:onProperty obo:BFO_0000050 ;
+                                owl:someValuesFrom obo:PO_0025161 ] [ a owl:Restriction ;
+                                owl:onProperty obo:RO_0000053 ;
+                                owl:someValuesFrom obo:PATO_0000001 ] ) ] ] .
+
+obo:FLOPO_0980421 a owl:Class ;
+    rdfs:label "plant material aggregate phenotype"@en ;
+    obo:IAO_0000115 "A plant anatomical entity phenotype whose distinguishing feature concerns a collection of plant material entities considered together without requiring them to form one connected structure."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical proposal TOP:plant_material_aggregate_phenotype; local supporting classes remain biologically parented beneath PO or PATO rather than beneath a provenance-only extension class."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-07-15"^^xsd:date ;
+    rdfs:subClassOf obo:FLOPO_0980418 .
+
+obo:FLOPO_0980422 a owl:Class ;
+    rdfs:label "plant occurrent-target phenotype"@en ;
+    obo:IAO_0000115 "A flora phenotype whose distinguishing feature is a feature of a plant biological process in which a plant bearer participates."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical proposal TOP:occurrent_target_phenotype; local supporting classes remain biologically parented beneath PO or PATO rather than beneath a provenance-only extension class."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-07-15"^^xsd:date ;
+    rdfs:subClassOf obo:FLOPO_0000000 .
+
+obo:FLOPO_0980424 a owl:Class ;
+    rdfs:label "trifoliolate"@en ;
+    obo:IAO_0000115 "A relational cardinality quality inhering in a compound leaf by virtue of the leaf having exactly three leaflets."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical proposal LOCAL:trifoliolate_quality; local supporting classes remain biologically parented beneath PO or PATO rather than beneath a provenance-only extension class."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-07-15"^^xsd:date ;
+    dcterms:source <https://plantnet.rbgsyd.nsw.gov.au/cgi-bin/NSWfl.pl?glossary=yes&page=nswfl&alpha=T-U>,
+        <https://sweetgum.nybg.org/science/glossary/glossary-details/?irn=1611> ;
+    rdfs:subClassOf obo:PATO_0001555 .
+
+obo:FLOPO_0980425 a owl:Class ;
+    rdfs:label "bifoliolate"@en ;
+    obo:IAO_0000115 "A relational cardinality quality inhering in a compound leaf by virtue of the leaf having exactly two leaflets."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical proposal LOCAL:bifoliolate_quality; local supporting classes remain biologically parented beneath PO or PATO rather than beneath a provenance-only extension class."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-07-15"^^xsd:date ;
+    dcterms:source <https://ausflora.net/wp-content/uploads/2017/06/flora-of-australia-glossary-e28094-ferns-cycads-conifers-and-vascular-plants.pdf> ;
+    rdfs:subClassOf obo:PATO_0001555 .
+
+obo:FLOPO_0980427 a owl:Class ;
+    rdfs:label "stinging"@en ;
+    obo:IAO_0000115 "A disposition inhering in a plant structure by virtue of its capacity to deliver an irritating portion of plant substance to an animal when contacted or broken."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical proposal LOCAL:stinging_disposition; local supporting classes remain biologically parented beneath PO or PATO rather than beneath a provenance-only extension class."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-07-15"^^xsd:date ;
+    dcterms:source <https://plantnet.rbgsyd.nsw.gov.au/cgi-bin/NSWfl.pl?glossary=yes&page=nswfl&alpha=S> ;
+    rdfs:subClassOf obo:PATO_0001727 .
+
+obo:FLOPO_0980429 a owl:Class ;
+    rdfs:label "foliage"@en ;
+    obo:IAO_0000115 "A plant anatomical entity consisting of the leaves borne by one whole plant or shoot system at a specified time, considered collectively."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical proposal LOCAL:foliage_entity; local supporting classes remain biologically parented beneath PO or PATO rather than beneath a provenance-only extension class."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-07-15"^^xsd:date ;
+    dcterms:source <https://www.rhs.org.uk/advice/beginners-guide/glossary> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000115 ;
+            owl:someValuesFrom obo:PO_0025034 ],
+        [ a owl:Restriction ;
+            owl:allValuesFrom obo:PO_0025034 ;
+            owl:onProperty obo:BFO_0000115 ],
+        obo:PO_0025131 .
+
+obo:FLOPO_0980431 a owl:Class ;
+    rdfs:label "plant latex"@en ;
+    obo:IAO_0000115 "A portion of plant substance that is the cytoplasmic fluid of laticifer cells, commonly containing particles suspended or emulsified in an aqueous phase and capable of exuding when laticiferous tissue is damaged."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical proposal LOCAL:plant_latex_entity; local supporting classes remain biologically parented beneath PO or PATO rather than beneath a provenance-only extension class."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-07-15"^^xsd:date ;
+    dcterms:source <https://plantnet.rbgsyd.nsw.gov.au/cgi-bin/NSWfl.pl?glossary=yes&page=nswfl&alpha=I-L>,
+        <https://pmc.ncbi.nlm.nih.gov/articles/PMC5586393/> ;
+    rdfs:subClassOf obo:PO_0025161 .
+
+obo:FLOPO_0000000 a owl:Class ;
+    rdfs:label "flora phenotype"@en ;
+    obo:IAO_0000115 "A phenotype classification applying to a plant or plant-derived material bearer by virtue of an observable or measurable feature of a plant continuant, or of a plant process in which the bearer participates."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical proposal TOP:flora_phenotype; local supporting classes remain biologically parented beneath PO or PATO rather than beneath a provenance-only extension class."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:modified "2026-07-15"^^xsd:date .
+
+obo:FLOPO_0980417 a owl:Class ;
+    rdfs:label "plant continuant-target phenotype"@en ;
+    obo:IAO_0000115 "A flora phenotype whose distinguishing feature inheres in a plant continuant, including a whole plant, plant anatomical entity, plant substance, or plant anatomical space."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical proposal TOP:continuant_target_phenotype; local supporting classes remain biologically parented beneath PO or PATO rather than beneath a provenance-only extension class."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-07-15"^^xsd:date ;
+    rdfs:subClassOf obo:FLOPO_0000000 .
+
+obo:FLOPO_0980418 a owl:Class ;
+    rdfs:label "plant anatomical entity phenotype"@en ;
+    obo:IAO_0000115 "A plant continuant-target phenotype whose distinguishing feature inheres in a plant anatomical entity or one of its parts."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical proposal TOP:anatomical_entity_phenotype; local supporting classes remain biologically parented beneath PO or PATO rather than beneath a provenance-only extension class."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-07-15"^^xsd:date ;
+    rdfs:subClassOf obo:FLOPO_0980417 ;
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000051 ;
+            owl:someValuesFrom [ a owl:Class ;
+                    owl:intersectionOf ( [ a owl:Restriction ;
+                                owl:onProperty obo:BFO_0000050 ;
+                                owl:someValuesFrom obo:PO_0025131 ] [ a owl:Restriction ;
+                                owl:onProperty obo:RO_0000053 ;
+                                owl:someValuesFrom obo:PATO_0000001 ] ) ] ] .
+
+[] a owl:Restriction ;
+    rdfs:subClassOf owl:Nothing ;
+    owl:onProperty obo:BFO_0000051 ;
+    owl:someValuesFrom [ a owl:Class ;
+            owl:intersectionOf ( obo:PO_0025131 [ a owl:Restriction ;
+                        owl:onProperty obo:RO_0000053 ;
+                        owl:someValuesFrom obo:PATO_0001236 ] ) ] .
