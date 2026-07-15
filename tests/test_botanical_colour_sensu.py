@@ -79,6 +79,8 @@ def test_every_sensu_colour_has_an_operational_source_and_generic_parent():
 
     assert sensu_rows
     for row in sensu_rows:
+        assert row["intended_ontology"] == "FLOPO"
+        assert not row["current_id"]
         assert " sensu " in row["preferred_label"]
         assert row["standard"]
         assert row["standard_designation"]
@@ -135,11 +137,13 @@ def test_scarlet_has_three_sensu_children_and_only_the_optional_view_is_closed()
     assert "Never use" in union_view["annotation_policy"]
 
 
-def test_existing_rhs_cream_identifier_keeps_its_source_specific_referent():
+def test_existing_cream_identifier_is_generic_and_rhs_sense_moves_to_flopo():
     rows = _by_key()
 
-    assert rows["COLOR:cream"]["current_id"] == ""
-    assert rows["COLOR:cream_rhs_5"]["current_id"] == "PATO:0104031"
+    assert rows["COLOR:cream"]["current_id"] == "PATO:0104031"
+    assert rows["COLOR:cream"]["intended_ontology"] == "PATO"
+    assert rows["COLOR:cream_rhs_5"]["current_id"] == ""
+    assert rows["COLOR:cream_rhs_5"]["intended_ontology"] == "FLOPO"
     assert rows["COLOR:cream_rhs_5"]["asserted_parent"] == "COLOR:cream"
     assert "158A or 158B" in rows["COLOR:cream_rhs_5"][
         "definition_or_recognition_rule"
