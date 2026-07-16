@@ -1,0 +1,37 @@
+name: OBO Dashboard release gate
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  obo-dashboard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install gate test dependencies
+        run: >-
+          python3 -m pip install
+          'PyYAML>=6.0,<7'
+          'pytest>=8,<10'
+          'rdflib>=7,<8'
+      - name: Test the gate's fail-closed policy
+        run: >-
+          python3 -m pytest -q
+          tests/test_obo_dashboard_gate.py
+          tests/test_pre_push_hook.py
+          tests/test_flopo_dashboard_remediation.py
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/flopo-obo-dashboard
+          key: obo-dashboard-${{ runner.os }}-${{ hashFiles('config/obo_dashboard.yml') }}
+      - name: Run official OBO Dashboard against ontology/flopo.owl
+        run: python3 tools/obo_dashboard_gate.py
+      - name: Preserve the Dashboard and ROBOT reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: flopo-obo-dashboard
+          path: ~/.cache/flopo-obo-dashboard/dashboard/flopo
