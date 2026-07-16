@@ -201,7 +201,7 @@ obo:FLOPO_0980417 a owl:Class ; rdfs:label "plant continuant-target phenotype"@e
     first = release.read_text(encoding="utf-8")
     assert "old flora phenotype" not in first
     assert first.count(BEGIN_MARKER) == 1
-    assert "flopo/imports/go_import.owl" in first
+    assert "master/ontology/imports/go_import.owl" in first
     assert "flopo/releases/2026-07-15/flopo.owl" in first
 
     assert update_release(release, extension, "2026-07-15") == 2

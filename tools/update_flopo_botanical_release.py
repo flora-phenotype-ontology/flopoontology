@@ -15,7 +15,11 @@ from tools.update_flopo_release import _extension_fragment, _update_release_meta
 
 OBO = "http://purl.obolibrary.org/obo/"
 MODULE = URIRef(OBO + "flopo-botanical-extension.owl")
-GO_MODULE = OBO + "flopo/imports/go_import.owl"
+GO_MODULE = (
+    "https://raw.githubusercontent.com/flora-phenotype-ontology/"
+    "flopoontology/master/ontology/imports/go_import.owl"
+)
+LEGACY_GO_MODULE = OBO + "flopo/imports/go_import.owl"
 BEGIN_MARKER = "  <!-- BEGIN GENERATED FLOPO BOTANICAL EXTENSION -->"
 END_MARKER = "  <!-- END GENERATED FLOPO BOTANICAL EXTENSION -->"
 LEGACY_PROCESS_QUALITY = OBO + "PATO_0001236"
@@ -110,6 +114,9 @@ def _remove_legacy_process_quality_constraint(text: str) -> tuple[str, bool]:
 
 def _ensure_go_import(text: str) -> str:
     import_line = f'    <owl:imports rdf:resource="{GO_MODULE}"/>'
+    text = text.replace(
+        f'    <owl:imports rdf:resource="{LEGACY_GO_MODULE}"/>', import_line
+    )
     if import_line in text:
         return text
     ontology_start = re.search(r"  <owl:Ontology\b[^>]*>\n", text)

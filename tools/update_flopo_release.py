@@ -20,6 +20,7 @@ from rdflib.compare import to_canonical_graph
 
 
 OBO = Namespace("http://purl.obolibrary.org/obo/")
+OBO_IN_OWL = Namespace("http://www.geneontology.org/formats/oboInOwl#")
 VALUE_ONTOLOGY = URIRef(OBO + "flopo-value-extensions.owl")
 BEGIN_MARKER = "  <!-- BEGIN GENERATED FLOPO VALUE EXTENSION -->"
 END_MARKER = "  <!-- END GENERATED FLOPO VALUE EXTENSION -->"
@@ -29,6 +30,7 @@ PREDICATE_PREFIXES = {
     str(OWL): "owl",
     str(DCTERMS): "dcterms",
     str(OBO): "obo",
+    str(OBO_IN_OWL): "oboInOwl",
 }
 
 

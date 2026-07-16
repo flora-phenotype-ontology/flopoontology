@@ -1,0 +1,25 @@
+title: FLOPO pre-release OBO Dashboard gate
+description: Run the official OBO Dashboard against the local FLOPO release artifact.
+
+ontologies:
+  custom:
+    - id: flopo
+      preferredPrefix: FLOPO
+      mirror_from: https://raw.githubusercontent.com/flora-phenotype-ontology/flopoontology/master/ontology/flopo.owl
+      base_ns:
+        - http://purl.obolibrary.org/obo/FLOPO_
+        - http://purl.obolibrary.org/obo/flopo#
+
+prefer_base: false
+profile:
+  baseprofile: https://raw.githubusercontent.com/ontodev/robot/v1.9.8/robot-core/src/main/resources/report_profile.txt
+
+report_truncation_limit: 300
+redownload_after_hours: 1000000
+force_regenerate_dashboard_after_hours: 0
+skip_existing: false
+dashboard_report_timeout_seconds: 1800
+
+environment:
+  ROBOT_JAR: build/robot.jar
+  ROBOT: robot

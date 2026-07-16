@@ -1,0 +1,194 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix obo: <http://purl.obolibrary.org/obo/> .
+@prefix oboInOwl: <http://www.geneontology.org/formats/oboInOwl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+obo:flopo-dashboard-remediation.owl a owl:Ontology ;
+    rdfs:label "FLOPO OBO Dashboard semantic remediation"@en ;
+    dcterms:license <https://creativecommons.org/publicdomain/zero/1.0/> ;
+    dcterms:modified "2026-07-16"^^xsd:date .
+
+obo:FLOPO_0002893 a owl:Class ;
+    rdfs:label "sepal circular"@en ;
+    obo:IAO_0000115 "A phenotype in which a sepal exhibits the quality of being circular."@en ;
+    oboInOwl:hasExactSynonym "sepal round"@en,
+        "sepal rounded"@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:modified "2026-07-16"^^xsd:date ;
+    owl:equivalentClass [
+        a owl:Restriction ;
+        owl:onProperty obo:BFO_0000051 ;
+        owl:someValuesFrom [
+            a owl:Class ;
+            owl:intersectionOf (
+                obo:PO_0009031
+                [
+                    a owl:Restriction ;
+                    owl:onProperty obo:RO_0000053 ;
+                    owl:someValuesFrom obo:PATO_0000411
+                ]
+            )
+        ]
+    ] .
+
+obo:FLOPO_0980057 a owl:Class ;
+    rdfs:label "obsolete sepal round"@en ;
+    obo:IAO_0000116 "Obsoleted because it duplicated the circular-sepal phenotype. The round and rounded labels are retained as exact synonyms on the replacement."@en ;
+    obo:IAO_0100001 obo:FLOPO_0002893 ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:modified "2026-07-16"^^xsd:date ;
+    owl:deprecated true .
+
+obo:FLOPO_0001692 a owl:Class ;
+    rdfs:label "petal circular"@en ;
+    obo:IAO_0000115 "A phenotype in which a petal exhibits the quality of being circular."@en ;
+    oboInOwl:hasExactSynonym "petal round"@en,
+        "petal rounded"@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:modified "2026-07-16"^^xsd:date ;
+    owl:equivalentClass [
+        a owl:Restriction ;
+        owl:onProperty obo:BFO_0000051 ;
+        owl:someValuesFrom [
+            a owl:Class ;
+            owl:intersectionOf (
+                obo:PO_0009032
+                [
+                    a owl:Restriction ;
+                    owl:onProperty obo:RO_0000053 ;
+                    owl:someValuesFrom obo:PATO_0000411
+                ]
+            )
+        ]
+    ] .
+
+obo:FLOPO_0980059 a owl:Class ;
+    rdfs:label "obsolete petal rounded"@en ;
+    obo:IAO_0000116 "Obsoleted because it duplicated the circular-petal phenotype. The round and rounded labels are retained as exact synonyms on the replacement."@en ;
+    obo:IAO_0100001 obo:FLOPO_0001692 ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:modified "2026-07-16"^^xsd:date ;
+    owl:deprecated true .
+
+obo:FLOPO_0980063 a owl:Class ;
+    rdfs:label "fruit apiculate"@en ;
+    rdfs:subClassOf obo:FLOPO_0015223 ;
+    obo:IAO_0000115 "A fruit phenotype in which the fruit has a small, abrupt point demarcated from the rest of the organ."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:modified "2026-07-16"^^xsd:date ;
+    dcterms:source <https://plantnet.rbgsyd.nsw.gov.au/cgi-bin/NSWfl.pl?alpha=A&glossary=yes&page=nswfl#apiculate> .
+
+obo:FLOPO_0000467 a owl:Class ;
+    rdfs:label "secretory tissue phenotype"@en ;
+    rdfs:subClassOf obo:FLOPO_0000000 ;
+    obo:IAO_0000115 "A phenotype affecting a portion of secretory tissue or one of its parts."@en ;
+    oboInOwl:hasExactSynonym "portion of secretory tissue phenotype"@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:modified "2026-07-16"^^xsd:date ;
+    owl:equivalentClass [
+        a owl:Restriction ;
+        owl:onProperty obo:BFO_0000051 ;
+        owl:someValuesFrom [
+            a owl:Class ;
+            owl:intersectionOf (
+                [
+                    a owl:Restriction ;
+                    owl:onProperty obo:BFO_0000050 ;
+                    owl:someValuesFrom obo:PO_0005656
+                ]
+                [
+                    a owl:Restriction ;
+                    owl:onProperty obo:RO_0000053 ;
+                    owl:someValuesFrom obo:PATO_0000001
+                ]
+            )
+        ]
+    ] .
+
+obo:FLOPO_0900053 a owl:Class ;
+    rdfs:label "obsolete secretory tissue phenotype"@en ;
+    obo:IAO_0000116 "Obsoleted because it duplicated FLOPO:0000467. The shorter label has been promoted to the replacement class."@en ;
+    obo:IAO_0100001 obo:FLOPO_0000467 ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:modified "2026-07-16"^^xsd:date ;
+    owl:deprecated true .
+
+obo:FLOPO_0900054 a owl:Class ;
+    rdfs:label "secretory tissue amount"@en ;
+    rdfs:subClassOf obo:FLOPO_0000467 ;
+    obo:IAO_0000115 "A secretory tissue phenotype in which a portion of secretory tissue bears an amount quality."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:modified "2026-07-16"^^xsd:date ;
+    owl:equivalentClass [
+        a owl:Restriction ;
+        owl:onProperty obo:BFO_0000051 ;
+        owl:someValuesFrom [
+            a owl:Class ;
+            owl:intersectionOf (
+                [
+                    a owl:Restriction ;
+                    owl:onProperty obo:BFO_0000050 ;
+                    owl:someValuesFrom obo:PO_0005656
+                ]
+                [
+                    a owl:Restriction ;
+                    owl:onProperty obo:RO_0000053 ;
+                    owl:someValuesFrom obo:PATO_0000070
+                ]
+            )
+        ]
+    ] .
+
+obo:FLOPO_0900055 a owl:Class ;
+    rdfs:label "secretory tissue present"@en ;
+    rdfs:subClassOf obo:FLOPO_0000467 ;
+    obo:IAO_0000115 "A secretory tissue phenotype in which a portion of secretory tissue is present."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:modified "2026-07-16"^^xsd:date ;
+    owl:equivalentClass [
+        a owl:Restriction ;
+        owl:onProperty obo:BFO_0000051 ;
+        owl:someValuesFrom [
+            a owl:Class ;
+            owl:intersectionOf (
+                [
+                    a owl:Restriction ;
+                    owl:onProperty obo:BFO_0000050 ;
+                    owl:someValuesFrom obo:PO_0005656
+                ]
+                [
+                    a owl:Restriction ;
+                    owl:onProperty obo:RO_0000053 ;
+                    owl:someValuesFrom obo:PATO_0000467
+                ]
+            )
+        ]
+    ] .
+
+obo:FLOPO_0900056 a owl:Class ;
+    rdfs:label "secretory tissue absent"@en ;
+    rdfs:subClassOf obo:FLOPO_0000467 ;
+    obo:IAO_0000115 "A secretory tissue phenotype in which a portion of secretory tissue is absent."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:modified "2026-07-16"^^xsd:date ;
+    owl:equivalentClass [
+        a owl:Restriction ;
+        owl:onProperty obo:BFO_0000051 ;
+        owl:someValuesFrom [
+            a owl:Class ;
+            owl:intersectionOf (
+                [
+                    a owl:Restriction ;
+                    owl:onProperty obo:BFO_0000050 ;
+                    owl:someValuesFrom obo:PO_0005656
+                ]
+                [
+                    a owl:Restriction ;
+                    owl:onProperty obo:RO_0000053 ;
+                    owl:someValuesFrom obo:PATO_0000462
+                ]
+            )
+        ]
+    ] .
