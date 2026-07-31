@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from hashlib import sha256
 from pathlib import Path
 
 from rdflib import OWL, RDF, RDFS, Graph, Literal, URIRef
@@ -8,6 +9,7 @@ from rdflib import OWL, RDF, RDFS, Graph, Literal, URIRef
 ROOT = Path(__file__).resolve().parents[1]
 RELEASE = ROOT / "ontology" / "flopo.owl"
 ARCHIVE = ROOT / "releases" / "2026-07-15"
+CURRENT_ARCHIVE = ROOT / "releases" / "2026-07-31"
 OBO = "http://purl.obolibrary.org/obo/"
 FLOPO_ROOT = URIRef(OBO + "FLOPO_0000000")
 REPLACED_BY = URIRef(OBO + "IAO_0100001")
@@ -62,6 +64,29 @@ def test_archive_manifest_records_the_exact_previous_public_release():
         manifest["artifacts"]["flopo.owl"]["sha256"]
         == "a76bd4d1120ee9896ce396d4bb28558018c8dbedc77a4114223be7f9e3f24bc6"
     )
+
+
+def test_current_manifest_matches_the_frozen_release_artifacts():
+    manifest = json.loads(
+        (CURRENT_ARCHIVE / "manifest.json").read_text(encoding="utf-8")
+    )
+    assert manifest["source_commit"] == "f3e3029ce87edc43dfaf2c3a09a97958eda63c8f"
+    assert manifest["version_info"] == "2026-07-31"
+    assert manifest["flopo_class_count"] == 24689
+    assert manifest["deprecated_class_count"] == 1166
+    assert (
+        sha256(RELEASE.read_bytes()).hexdigest()
+        == manifest["artifacts"]["flopo.owl"]["sha256"]
+    )
+    assert (
+        sha256((ROOT / "ontology" / "flopo-inferred.owl").read_bytes()).hexdigest()
+        == manifest["artifacts"]["flopo-inferred.owl"]["sha256"]
+    )
+    assert set(
+        (CURRENT_ARCHIVE / "flopo-class-iris.txt")
+        .read_text(encoding="utf-8")
+        .splitlines()
+    ) == _flopo_classes(_graph())
 
 
 def test_flora_phenotype_has_exactly_the_two_approved_upper_children():
