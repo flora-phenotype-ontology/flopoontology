@@ -15,7 +15,7 @@ from collections import Counter
 from collections.abc import Iterator
 from pathlib import Path
 
-from flopo2.ingest import fdac, florml, kew
+from flopo2.ingest import collenette, fdac, florml, kew
 from flopo2.ingest.models import TextSegment
 
 # The in-repo corpus. FlorML directories + the fdac CSV + the Kew Access export. Modern sources
@@ -47,6 +47,8 @@ def _is_kew(path: Path) -> bool:
 def iter_path(target: Path) -> Iterator[TextSegment]:
     if target.is_dir():
         yield from florml.iter_segments_dir(target)
+    elif "collenette" in target.name.lower() and target.suffix.lower() in {".pdf", ".txt"}:
+        yield from collenette.iter_segments(target)
     elif target.suffix.lower() == ".csv":
         yield from fdac.iter_segments(target)
     elif _is_kew(target):
@@ -81,9 +83,14 @@ def cmd_dump(target: Path | None, root: Path, out: Path | None) -> None:
     segs = iter_path(target) if target else iter_corpus(root)
     fh = out.open("w") if out else None
     n = 0
+    source_positions: Counter[tuple[str, str]] = Counter()
     try:
         for s in segs:
-            line = json.dumps(s.to_row(), ensure_ascii=False)
+            row = s.to_row()
+            source_key = (s.source, s.source_id)
+            row["source_segment_index"] = source_positions[source_key]
+            source_positions[source_key] += 1
+            line = json.dumps(row, ensure_ascii=False)
             if fh:
                 fh.write(line + "\n")
             elif n < 5:

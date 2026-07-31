@@ -23,16 +23,25 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
+# Bounded timeouts so a single hung request fails fast and retries instead of stalling a worker
+# indefinitely (the cause of the graphrag run hanging for 11 minutes).
+DEFAULT_TIMEOUT = httpx.Timeout(connect=10.0, read=90.0, write=10.0, pool=10.0)
+
 # Approx OpenRouter prices ($/M tokens) for cost accounting (June 2026; see resources/openrouter-budget.md).
 PRICES = {
     "openai/gpt-oss-120b": (0.03, 0.15),
     "openai/gpt-oss-20b": (0.03, 0.14),
     "qwen/qwen3-32b": (0.08, 0.28),
     "qwen/qwen3-235b-a22b": (0.195, 1.56),
-    "mistralai/mistral-small": (0.15, 0.60),
+    "mistralai/mistral-small-3.2-24b-instruct": (0.075, 0.20),
+    "mistralai/mistral-small-2603": (0.15, 0.60),
     "deepseek/deepseek-v3.2": (0.23, 0.34),
     "z-ai/glm-4.6": (0.43, 1.74),
+    "z-ai/glm-4.7-flash": (0.06, 0.40),
     "z-ai/glm-5.2": (0.95, 3.00),
+    "minimax/minimax-m3": (0.30, 1.20),
+    "xiaomi/mimo-v2.5": (0.105, 0.28),
+    "xiaomi/mimo-v2.5-pro": (0.435, 0.87),
 }
 
 _FENCE = re.compile(r"^```(?:json)?|```$", re.MULTILINE)
@@ -54,7 +63,8 @@ class Usage:
             self.calls += 1
             self.input_tokens += in_tok
             self.output_tokens += out_tok
-            pin, pout = PRICES.get(model, (0.0, 0.0))
+            base_model = model.split(":", 1)[0]
+            pin, pout = PRICES.get(base_model, (0.0, 0.0))
             self.cost_usd += in_tok / 1e6 * pin + out_tok / 1e6 * pout
             self.by_model[model] = self.by_model.get(model, 0) + 1
 
@@ -77,13 +87,19 @@ def parse_json(content: str) -> dict | None:
 
 
 class OpenRouterClient:
-    def __init__(self, api_key: str | None = None, timeout: float = 120.0,
-                 client: httpx.Client | None = None):
+    def __init__(self, api_key: str | None = None, timeout: httpx.Timeout | float | None = None,
+                 client: httpx.Client | None = None, max_connections: int = 32,
+                 provider: dict | None = None):
         self.api_key = api_key or os.environ.get("OPENROUTER_API_KEY", "")
-        self._client = client or httpx.Client(timeout=timeout)
+        if client is None:
+            limits = httpx.Limits(max_connections=max_connections,
+                                  max_keepalive_connections=max_connections)
+            client = httpx.Client(timeout=timeout or DEFAULT_TIMEOUT, limits=limits)
+        self._client = client
         self.usage = Usage()
+        self.provider = provider or {}
 
-    @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=2, max=30), reraise=True)
+    @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=1, max=8), reraise=True)
     def _post(self, payload: dict) -> dict:
         r = self._client.post(
             OPENROUTER_URL,
@@ -98,7 +114,11 @@ class OpenRouterClient:
         return r.json()
 
     def chat_json(self, model: str, system: str, user: str, temperature: float = 0.0) -> dict | None:
-        """One chat completion expecting a JSON object; returns parsed dict (or None)."""
+        """One chat completion expecting a JSON object; returns parsed dict (or None).
+
+        Never raises: network/HTTP/JSON failures (after retries) return None so a single bad
+        segment can't crash or stall the extraction pool.
+        """
         payload = {
             "model": model,
             "temperature": temperature,
@@ -106,8 +126,15 @@ class OpenRouterClient:
                          {"role": "user", "content": user}],
             "response_format": {"type": "json_object"},
         }
-        resp = self._post(payload)
-        usage = resp.get("usage", {})
+        if self.provider:
+            payload["provider"] = self.provider
+        try:
+            resp = self._post(payload)
+        except Exception:
+            return None
+        if not isinstance(resp, dict):
+            return None
+        usage = resp.get("usage") or {}
         self.usage.add(model, usage.get("prompt_tokens", 0), usage.get("completion_tokens", 0))
         content = (resp.get("choices") or [{}])[0].get("message", {}).get("content", "")
         return parse_json(content)

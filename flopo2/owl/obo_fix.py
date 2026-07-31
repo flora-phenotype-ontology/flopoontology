@@ -21,7 +21,9 @@ import argparse
 from pathlib import Path
 
 from rdflib import OWL, RDF, RDFS, BNode, Graph, Literal, URIRef
-from rdflib.namespace import DC, XSD
+from rdflib.namespace import XSD
+
+from flopo2.owl.io import parse_ontology
 
 OBO = "http://purl.obolibrary.org/obo/"
 DCTERMS = "http://purl.org/dc/terms/"
@@ -68,8 +70,7 @@ def _prune_bnode(g: Graph, node) -> None:
 
 def fix(in_owl: Path, registry: Path, po_lex: Path, pato_lex: Path, date: str,
         out_owl: Path) -> dict:
-    g = Graph()
-    g.parse(in_owl.as_posix())
+    g = parse_ontology(in_owl)
     stats = {"deprecated_normalized": 0, "axioms_stripped_from_deprecated": 0,
              "refs_to_deprecated_removed": 0, "definitions_added": 0}
 

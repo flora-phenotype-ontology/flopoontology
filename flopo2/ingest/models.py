@@ -62,6 +62,10 @@ class TextSegment:
     char_start: int  # offset of this block within the taxon's concatenated description
     char_end: int
     language: str  # "fr" / "en"
+    # Zero-based document-order occurrence within one (source, source_id) input. Source offsets
+    # can legitimately repeat when a flora contains duplicate taxon/organ blocks, so this ordinal
+    # is part of lossless segment identity rather than an extraction-generated database id.
+    source_segment_index: int = 0
 
     def to_row(self) -> dict:
         d = asdict(self)

@@ -30,6 +30,7 @@ PREDICATE_PREFIXES = {
     str(DCTERMS): "dcterms",
     str(OBO): "obo",
     str(OBO_IN_OWL): "oboInOwl",
+    "https://w3id.org/flopo/annotation/": "flopoann",
 }
 
 
@@ -47,23 +48,17 @@ def _without_generated_block(text: str) -> str:
     return pattern.sub("\n", text, count=1)
 
 
-def _extension_fragment(
-    extension_path: Path, *, node_id_prefix: str = "FLOPOValue_"
+def _graph_fragment(
+    source: Graph, *, node_id_prefix: str = "FLOPOValue_"
 ) -> tuple[str, int]:
-    source = Graph()
-    source.parse(extension_path.as_posix())
+    """Serialize one small RDF graph as a deterministic RDF/XML body fragment."""
+
     local_classes = {
         cls
         for cls in source.subjects(RDF.type, OWL.Class)
         if isinstance(cls, URIRef) and str(cls).startswith(str(OBO) + "FLOPO_")
     }
-
-    fragment_graph = Graph()
-    for triple in source:
-        if triple[0] != VALUE_ONTOLOGY:
-            fragment_graph.add(triple)
-
-    canonical = to_canonical_graph(fragment_graph)
+    canonical = to_canonical_graph(source)
 
     def node_key(node) -> tuple[str, str]:
         return ("0" if isinstance(node, URIRef) else "1", str(node))
@@ -108,6 +103,18 @@ def _extension_fragment(
         lines.extend(object_xml(predicate, obj) for predicate, obj in statements)
         lines.append("  </rdf:Description>")
     return "\n".join(lines), len(local_classes)
+
+
+def _extension_fragment(
+    extension_path: Path, *, node_id_prefix: str = "FLOPOValue_"
+) -> tuple[str, int]:
+    source = Graph()
+    source.parse(extension_path.as_posix())
+    fragment_graph = Graph()
+    for triple in source:
+        if triple[0] != VALUE_ONTOLOGY:
+            fragment_graph.add(triple)
+    return _graph_fragment(fragment_graph, node_id_prefix=node_id_prefix)
 
 
 def _update_release_metadata(text: str, release_date: str) -> str:

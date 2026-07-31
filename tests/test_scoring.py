@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from flopo2.eval.scoring import Assertion, flip_rate, score_segment
+from flopo2.eval.scoring import Assertion, assertion_vote_key, flip_rate, score_segment
 
 # Tiny PO/PATO ancestry stub for hierarchical matching.
 # pink (PATO:X) is a kind of color; flower-part ⊂ flower.
@@ -85,6 +85,113 @@ def test_flip_rate():
     assert flip_rate([run1, run2, run3]) == 0.5
     assert flip_rate([run1, run1, run1]) == 0.0
     assert flip_rate([run1]) == 0.0  # single run: trivially stable
+
+
+def test_vote_key_canonicalizes_value_term_order():
+    forward = A(
+        "PO_flower",
+        "PATO_color",
+        value_operator="all_of",
+        value_term_ids=("PATO_red", "PATO_yellow"),
+    )
+    reversed_ = A(
+        "PO_flower",
+        "PATO_color",
+        value_operator="all_of",
+        value_term_ids=("PATO_yellow", "PATO_red"),
+    )
+    assert assertion_vote_key(forward) == assertion_vote_key(reversed_)
+
+
+def test_vote_key_contains_every_logical_and_numeric_facet():
+    assertion = A(
+        "PO_leaf",
+        "PATO_length",
+        negated=True,
+        negation_scope="quality",
+        value_operator="one_of",
+        value_term_ids=("PATO_long", "PATO_short"),
+        value_low=2.0,
+        value_high=5.0,
+        unit="mm",
+        value_low_inclusive=False,
+        value_high_inclusive=True,
+    )
+    assert assertion_vote_key(assertion) == (
+        "PO_leaf",
+        "PATO_length",
+        True,
+        "quality",
+        "one_of",
+        ("PATO_long", "PATO_short"),
+        2.0,
+        5.0,
+        "mm",
+        False,
+        True,
+    )
+
+
+def test_flip_rate_uses_complete_semantic_identity():
+    quality_negation = A(
+        "PO_leaf",
+        "PATO_length",
+        negated=True,
+        negation_scope="quality",
+        value_high=5.0,
+        value_high_inclusive=False,
+        unit="mm",
+    )
+    absence_negation = A(
+        "PO_leaf",
+        "PATO_length",
+        negated=True,
+        negation_scope="absence",
+        value_high=5.0,
+        value_high_inclusive=False,
+        unit="mm",
+    )
+    assert flip_rate([[quality_negation], [absence_negation]]) == 1.0
+
+    larger_bound = A(
+        "PO_leaf",
+        "PATO_length",
+        negated=True,
+        negation_scope="quality",
+        value_high=10.0,
+        value_high_inclusive=False,
+        unit="mm",
+    )
+    assert flip_rate([[quality_negation], [larger_bound]]) == 1.0
+
+
+def test_disjunction_and_numeric_metrics():
+    gold = [
+        A(
+            "PO_flower",
+            "PATO_color",
+            value_operator="one_of",
+            value_term_ids=("PATO_red", "PATO_yellow"),
+            value_low=2.0,
+            value_high=3.0,
+            unit="cm",
+        )
+    ]
+    prediction = [
+        A(
+            "PO_flower",
+            "PATO_color",
+            value_operator="one_of",
+            value_term_ids=("PATO_yellow", "PATO_red"),
+            value_low=2.0,
+            value_high=3.0,
+            unit="cm",
+        )
+    ]
+    report = score_segment(prediction, gold)
+    assert report.disjunction_accuracy == 1.0
+    assert report.value_logic_accuracy == 1.0
+    assert report.numeric_accuracy == 1.0
 
 
 def test_stratified_sampler_deterministic():

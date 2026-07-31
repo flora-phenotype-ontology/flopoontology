@@ -32,6 +32,8 @@ from pathlib import Path
 from rdflib import OWL, RDF, RDFS, Graph, URIRef
 from rdflib.collection import Collection
 
+from flopo2.owl.io import parse_ontology
+
 OBO = "http://purl.obolibrary.org/obo/"
 HAS_PART = URIRef(OBO + "BFO_0000051")
 PART_OF = URIRef(OBO + "BFO_0000050")
@@ -90,7 +92,7 @@ def _signature_of(g: Graph, cls: URIRef) -> str:
 
         named_entity: URIRef | None = None  # direct PO entity  → "E Q" / "E T"
         partof_entity: URIRef | None = None  # part_of some PO   → "E phenotype"
-        quality: URIRef | None = None
+        qualities: list[object] = []
         for m in members:
             if isinstance(m, URIRef):
                 named_entity = m
@@ -100,21 +102,33 @@ def _signature_of(g: Graph, cls: URIRef) -> str:
                 continue
             mprop, mfiller = r
             if mprop == HAS_QUALITY:
-                quality = mfiller if isinstance(mfiller, URIRef) else None
+                if mfiller is not None:
+                    qualities.append(mfiller)
             elif mprop == PART_OF and isinstance(mfiller, URIRef):
                 partof_entity = mfiller
 
-        if partof_entity is not None and quality == QUALITY_ROOT:
+        if partof_entity is not None and qualities == [QUALITY_ROOT]:
             return f"PHENO|{_curie(partof_entity)}"
-        if named_entity is not None and quality is not None:
-            return f"EQ|{_curie(named_entity)}|{_curie(quality)}"
+        if named_entity is not None and len(qualities) == 1:
+            quality = qualities[0]
+            if isinstance(quality, URIRef):
+                return f"EQ|{_curie(named_entity)}|{_curie(quality)}"
+            union_head = next(g.objects(quality, OWL.unionOf), None)
+            if union_head is not None:
+                values = sorted(_curie(value) for value in Collection(g, union_head) if isinstance(value, URIRef))
+                if values:
+                    return f"EQV|{_curie(named_entity)}|ONE_OF|{'&'.join(values)}"
+        if named_entity is not None and len(qualities) > 1 and all(
+            isinstance(quality, URIRef) for quality in qualities
+        ):
+            values = sorted(_curie(quality) for quality in qualities)
+            return f"EQV|{_curie(named_entity)}|ALL_OF|{'&'.join(values)}"
     return "OTHER"
 
 
 def build_registry(owl_path: Path) -> list[RegistryEntry]:
     """Parse a FLOPO OWL file and build the signature→IRI registry entries."""
-    g = Graph()
-    g.parse(owl_path.as_posix())
+    g = parse_ontology(owl_path)
     entries: list[RegistryEntry] = []
     for cls in g.subjects(RDF.type, OWL.Class):
         if not isinstance(cls, URIRef):
@@ -169,22 +183,77 @@ class IdAllocator:
     """Assigns FLOPO IRIs: reuse the existing IRI for a known signature, else mint the next id.
 
     This is the enforcement point for the identifier-stability directive. Construct it from the
-    registry, then call :meth:`iri_for` during the OWL build. Newly minted ids are tracked so the
-    same new signature gets a stable id within a single build run.
+    released registry and, when present, the reviewed pre-release reservations; then call
+    :meth:`iri_for` during the OWL build. Newly minted ids are tracked so the same new signature
+    gets a stable id within a single build run. Reserved numbers are never minted for a different
+    signature.
     """
 
-    def __init__(self, entries: list[RegistryEntry]):
+    def __init__(
+        self,
+        entries: list[RegistryEntry],
+        reservations: list[RegistryEntry] | None = None,
+    ):
         # Only EQ/PHENO signatures key reusable IRIs; OTHER (manual/subclass-only) classes are kept
         # reserved by number but are not signature-addressable.
         self._by_sig: dict[str, str] = {
             e.signature: e.iri for e in entries if e.signature != "OTHER"
         }
         self._reserved_nums: set[int] = {e.flopo_num for e in entries}
+        by_num = {e.flopo_num: e for e in entries}
+        by_iri = {e.iri: e for e in entries}
+        self._reservation_by_sig: dict[str, str] = {}
+
+        def same_identity(left: RegistryEntry, right: RegistryEntry) -> bool:
+            return (
+                left.iri == right.iri
+                and left.flopo_num == right.flopo_num
+                and left.signature == right.signature
+            )
+
+        for reservation in reservations or []:
+            numeric_collision = by_num.get(reservation.flopo_num)
+            iri_collision = by_iri.get(reservation.iri)
+            if numeric_collision is not None and not same_identity(
+                numeric_collision, reservation
+            ):
+                raise ValueError(
+                    "reserved FLOPO number collides with the release registry: "
+                    f"{reservation.flopo_num}"
+                )
+            if iri_collision is not None and not same_identity(
+                iri_collision, reservation
+            ):
+                raise ValueError(
+                    "reserved FLOPO IRI collides with the release registry: "
+                    f"{reservation.iri}"
+                )
+            if reservation.signature == "OTHER":
+                raise ValueError(
+                    f"reviewed reservation lacks a reusable signature: {reservation.iri}"
+                )
+            existing_iri = self._by_sig.get(reservation.signature)
+            if existing_iri is not None and existing_iri != reservation.iri:
+                raise ValueError(
+                    "reviewed signature collides with an existing FLOPO IRI: "
+                    f"{reservation.signature}"
+                )
+            self._reserved_nums.add(reservation.flopo_num)
+            self._by_sig[reservation.signature] = reservation.iri
+            # A reservation that has since entered the release registry is harmless and no
+            # longer needs to be reported separately.
+            if iri_collision is None:
+                self._reservation_by_sig[reservation.signature] = reservation.iri
+            by_num[reservation.flopo_num] = reservation
+            by_iri[reservation.iri] = reservation
         self._next = max(self._reserved_nums, default=0) + 1
         self.minted: dict[str, str] = {}
+        self.reused_reservations: dict[str, str] = {}
 
     def iri_for(self, signature: str) -> str:
         """Return the stable FLOPO IRI for a signature, reusing or minting as needed."""
+        if signature in self._reservation_by_sig:
+            self.reused_reservations[signature] = self._reservation_by_sig[signature]
         if signature in self._by_sig:
             return self._by_sig[signature]
         if signature in self.minted:

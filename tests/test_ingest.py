@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from flopo2.ingest import fdac, florml
+from flopo2.ingest import collenette, fdac, florml
 from flopo2.ingest.models import MORPHOLOGY_FEATURES
 
 FLORML = """<?xml version="1.0" encoding="utf-8"?>
@@ -102,3 +102,25 @@ def test_morphology_feature_set():
     assert "description" in MORPHOLOGY_FEATURES
     assert "specimens" not in MORPHOLOGY_FEATURES
     assert "taxonomy" not in MORPHOLOGY_FEATURES
+
+
+def test_collenette_species_entries_from_ocr_text():
+    text = """ACANTHACEAE
+
+Anisotes trisulcus @
+A stiffly erect dark green leafy shrub 3.5 m high; bright orange-red
+tubular flowers 3 cm long; no scent.
+10 km SW of Jabal Abu Hassan; in a rocky wadi. 3,000 ft.
+
+Asystasia gangetica @
+An erect leafy herb 1 m tall; creamy-white flowers 1.2 cm wide with a
+deep purple blotch in the throat; no scent.
+\f
+INDEX OF PLANT NAMES
+Anisotes trisulcus 26
+"""
+    segs = list(collenette.iter_segments_from_text(text, source_id="sample"))
+    assert [s.taxon.name_string for s in segs] == ["Anisotes trisulcus", "Asystasia gangetica"]
+    assert segs[0].taxon.family == "Acanthaceae"
+    assert segs[0].source_id.startswith("sample:page-1")
+    assert "bright orange-red" in segs[0].text
