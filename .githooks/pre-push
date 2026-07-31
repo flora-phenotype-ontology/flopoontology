@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
+TMP_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/flopo-pre-push.XXXXXXXX")"
+trap 'rm -rf "$TMP_ROOT"' EXIT
+declare -A CHECKED=()
+REF_COUNT=0
+ZERO_SHA="0000000000000000000000000000000000000000"
+
+check_commit() {
+  local commit="$1"
+  local label="$2"
+  if [[ "$commit" == "$ZERO_SHA" || -n "${CHECKED[$commit]:-}" ]]; then
+    return
+  fi
+  CHECKED[$commit]=1
+
+  local candidate="$TMP_ROOT/$commit"
+  mkdir -p "$candidate"
+  git archive "$commit" -- \
+    ontology/flopo.owl \
+    config/obo_dashboard.yml \
+    tools/obo_dashboard_gate.py | tar -x -C "$candidate"
+  echo "Running the official OBO Dashboard gate for $label ($commit)..."
+  python3 "$candidate/tools/obo_dashboard_gate.py"
+}
+
+while read -r local_ref local_sha remote_ref _remote_sha; do
+  REF_COUNT=$((REF_COUNT + 1))
+  check_commit "$local_sha" "$local_ref -> $remote_ref"
+done
+
+# Running the hook directly is a convenient way to test the current commit.
+if [[ "$REF_COUNT" -eq 0 ]]; then
+  check_commit "$(git rev-parse HEAD)" "HEAD"
+fi

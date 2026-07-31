@@ -11,15 +11,15 @@ from __future__ import annotations
 
 import argparse
 import re
-from datetime import date
+from datetime import UTC, datetime
 from pathlib import Path
 from xml.sax.saxutils import escape, quoteattr
 
 from rdflib import DCTERMS, OWL, RDF, RDFS, BNode, Graph, Literal, Namespace, URIRef
 from rdflib.compare import to_canonical_graph
 
-
 OBO = Namespace("http://purl.obolibrary.org/obo/")
+OBO_IN_OWL = Namespace("http://www.geneontology.org/formats/oboInOwl#")
 VALUE_ONTOLOGY = URIRef(OBO + "flopo-value-extensions.owl")
 BEGIN_MARKER = "  <!-- BEGIN GENERATED FLOPO VALUE EXTENSION -->"
 END_MARKER = "  <!-- END GENERATED FLOPO VALUE EXTENSION -->"
@@ -29,6 +29,7 @@ PREDICATE_PREFIXES = {
     str(OWL): "owl",
     str(DCTERMS): "dcterms",
     str(OBO): "obo",
+    str(OBO_IN_OWL): "oboInOwl",
 }
 
 
@@ -46,7 +47,9 @@ def _without_generated_block(text: str) -> str:
     return pattern.sub("\n", text, count=1)
 
 
-def _extension_fragment(extension_path: Path) -> tuple[str, int]:
+def _extension_fragment(
+    extension_path: Path, *, node_id_prefix: str = "FLOPOValue_"
+) -> tuple[str, int]:
     source = Graph()
     source.parse(extension_path.as_posix())
     local_classes = {
@@ -76,7 +79,7 @@ def _extension_fragment(extension_path: Path) -> tuple[str, int]:
         if isinstance(node, URIRef):
             return f"rdf:about={quoteattr(str(node))}"
         if isinstance(node, BNode):
-            return f"rdf:nodeID={quoteattr('FLOPOValue_' + str(node))}"
+            return f"rdf:nodeID={quoteattr(node_id_prefix + str(node))}"
         raise ValueError(f"unsupported RDF subject: {node!r}")
 
     def object_xml(predicate: URIRef, obj) -> str:
@@ -84,7 +87,7 @@ def _extension_fragment(extension_path: Path) -> tuple[str, int]:
         if isinstance(obj, URIRef):
             return f"    <{qname} rdf:resource={quoteattr(str(obj))}/>"
         if isinstance(obj, BNode):
-            return f"    <{qname} rdf:nodeID={quoteattr('FLOPOValue_' + str(obj))}/>"
+            return f"    <{qname} rdf:nodeID={quoteattr(node_id_prefix + str(obj))}/>"
         if isinstance(obj, Literal):
             attribute = ""
             if obj.language:
@@ -169,7 +172,7 @@ def main() -> None:
         type=Path,
         default=Path("ontology/flopo-value-extensions.ttl"),
     )
-    parser.add_argument("--date", default=date.today().isoformat())
+    parser.add_argument("--date", default=datetime.now(UTC).date().isoformat())
     args = parser.parse_args()
     count = update_release(args.release, args.extension, args.date)
     print(f"embedded {count} FLOPO value classes in {args.release}")
