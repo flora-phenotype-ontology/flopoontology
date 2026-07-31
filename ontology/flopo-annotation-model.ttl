@@ -1,0 +1,211 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix envo: <http://purl.obolibrary.org/obo/> .
+@prefix obo: <http://purl.obolibrary.org/obo/> .
+@prefix flopoann: <https://w3id.org/flopo/annotation/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sio: <http://semanticscience.org/resource/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://w3id.org/flopo/annotation> a owl:Ontology ;
+    dcterms:description "Application vocabulary for sourced flora assertions, their modality, quantitative phenotype values, and seasonal context."@en ;
+    dcterms:license <https://creativecommons.org/publicdomain/zero/1.0/> ;
+    dcterms:title "FLOPO flora assertion annotation model"@en ;
+    owl:imports <http://purl.obolibrary.org/obo/envo.owl>,
+        <http://purl.obolibrary.org/obo/po.owl>,
+        <http://semanticscience.org/ontology/sio.owl> ;
+    owl:versionInfo "2026-07-18" .
+
+flopoann:SourceStatement a owl:Class ;
+    rdfs:label "flora source statement"@en ;
+    rdfs:subClassOf sio:SIO_001183, prov:Entity ;
+    skos:definition "A verbatim statement retained from a flora treatment and used as evidence for one or more formal phenotype assertions."@en .
+
+flopoann:FloraAssertion a owl:Class ;
+    rdfs:label "formal flora assertion"@en ;
+    rdfs:subClassOf sio:SIO_001183, prov:Entity ;
+    skos:definition "A formal, source-scoped characterization of a taxon using an OWL phenotype class description."@en .
+
+flopoann:ExtractionActivity a owl:Class ;
+    rdfs:label "flora assertion extraction activity"@en ;
+    rdfs:subClassOf sio:SIO_000594, prov:Activity ;
+    skos:definition "A data transformation that derives a formal flora assertion from a retained source statement."@en .
+
+flopoann:SeasonContext a owl:Class ;
+    rdfs:label "season context"@en ;
+    rdfs:subClassOf envo:ENVO_03000096 ;
+    skos:definition "A season used to temporally qualify a phenotype statement in a flora."@en .
+
+flopoann:DevelopmentalStageContext a owl:Class ;
+    rdfs:label "developmental stage context"@en ;
+    rdfs:subClassOf obo:PO_0009012 ;
+    skos:definition "A Plant Ontology developmental-stage process during which a phenotype obtains."@en .
+
+flopoann:spring_season a owl:Class ;
+    rdfs:label "spring season"@en ;
+    rdfs:subClassOf flopoann:SeasonContext .
+
+flopoann:summer_season a owl:Class ;
+    rdfs:label "summer season"@en ;
+    rdfs:subClassOf flopoann:SeasonContext .
+
+flopoann:autumn_season a owl:Class ;
+    rdfs:label "autumn season"@en ;
+    rdfs:subClassOf flopoann:SeasonContext ;
+    skos:altLabel "fall season"@en .
+
+flopoann:winter_season a owl:Class ;
+    rdfs:label "winter season"@en ;
+    rdfs:subClassOf flopoann:SeasonContext .
+
+flopoann:wet_season a owl:Class ;
+    rdfs:label "wet season"@en ;
+    rdfs:subClassOf flopoann:SeasonContext ;
+    skos:altLabel "rainy season"@en .
+
+flopoann:dry_season a owl:Class ;
+    rdfs:label "dry season"@en ;
+    rdfs:subClassOf flopoann:SeasonContext .
+
+flopoann:FrequencyQualifier a owl:Class ;
+    rdfs:label "frequency qualifier"@en .
+
+flopoann:EpistemicModality a owl:Class ;
+    rdfs:label "epistemic modality"@en .
+
+flopoann:ValueQualifier a owl:Class ;
+    rdfs:label "value qualifier"@en .
+
+flopoann:DegreeQualifier a owl:Class ;
+    rdfs:label "degree qualifier"@en .
+
+flopoann:universal a flopoann:FrequencyQualifier .
+flopoann:usually a flopoann:FrequencyQualifier .
+flopoann:often a flopoann:FrequencyQualifier .
+flopoann:sometimes a flopoann:FrequencyQualifier .
+flopoann:occasionally a flopoann:FrequencyQualifier .
+flopoann:rarely a flopoann:FrequencyQualifier .
+flopoann:never a flopoann:FrequencyQualifier .
+flopoann:unspecified a flopoann:FrequencyQualifier .
+
+flopoann:asserted a flopoann:EpistemicModality .
+flopoann:probable a flopoann:EpistemicModality .
+flopoann:possible a flopoann:EpistemicModality .
+flopoann:uncertain a flopoann:EpistemicModality .
+flopoann:reported a flopoann:EpistemicModality .
+
+flopoann:exact a flopoann:ValueQualifier .
+flopoann:approximately a flopoann:ValueQualifier .
+flopoann:nearly a flopoann:ValueQualifier .
+flopoann:almost a flopoann:ValueQualifier .
+
+flopoann:unmodified a flopoann:DegreeQualifier .
+flopoann:slightly a flopoann:DegreeQualifier .
+flopoann:moderately a flopoann:DegreeQualifier .
+flopoann:very a flopoann:DegreeQualifier .
+flopoann:extremely a flopoann:DegreeQualifier .
+flopoann:completely a flopoann:DegreeQualifier .
+
+flopoann:present_during a owl:ObjectProperty ;
+    rdfs:label "present during"@en ;
+    rdfs:domain sio:SIO_010056 ;
+    rdfs:range envo:ENVO_03000096 ;
+    skos:definition "Relates a phenotype manifestation to a season during at least part of which it obtains."@en .
+
+flopoann:present_during_developmental_stage a owl:ObjectProperty ;
+    rdfs:label "present during developmental stage"@en ;
+    rdfs:domain sio:SIO_010056 ;
+    rdfs:range obo:PO_0009012 ;
+    skos:definition "Relates a phenotype manifestation to a PO plant-structure development-stage process during which it obtains."@en .
+
+flopoann:has_value_unit a owl:ObjectProperty ;
+    rdfs:label "has phenotype value unit"@en ;
+    skos:definition "Relates a quantitative phenotype value restriction to its unit without asserting a measurement process or result."@en .
+
+flopoann:in_geographic_context a owl:ObjectProperty ;
+    rdfs:label "in geographic context"@en .
+
+flopoann:has_source_statement a owl:ObjectProperty ;
+    rdfs:label "has source statement"@en ;
+    rdfs:domain flopoann:FloraAssertion ;
+    rdfs:range flopoann:SourceStatement ;
+    rdfs:subPropertyOf sio:SIO_000253 .
+
+flopoann:refers_to_class_description a owl:ObjectProperty ;
+    rdfs:label "refers to class description"@en ;
+    rdfs:domain flopoann:FloraAssertion ;
+    rdfs:subPropertyOf sio:SIO_000628 ;
+    owl:deprecated true ;
+    skos:definition "Legacy punned object-property link superseded by the phenotype_class annotation property."@en .
+
+flopoann:phenotype_class a owl:AnnotationProperty ;
+    rdfs:label "phenotype class"@en ;
+    skos:definition "Links a flora assertion or observation annotation to the IRI of its named OWL phenotype class in the FLOPO annotation extension. The IRI denotes a class, not an assertion individual."@en .
+
+flopoann:refers_to_taxon a owl:ObjectProperty ;
+    rdfs:label "refers to taxon"@en ;
+    rdfs:domain flopoann:FloraAssertion ;
+    rdfs:subPropertyOf sio:SIO_000628 .
+
+flopoann:has_frequency_qualifier a owl:ObjectProperty ;
+    rdfs:label "has frequency qualifier"@en ;
+    rdfs:domain flopoann:FloraAssertion ;
+    rdfs:range flopoann:FrequencyQualifier .
+
+flopoann:has_epistemic_modality a owl:ObjectProperty ;
+    rdfs:label "has epistemic modality"@en ;
+    rdfs:domain flopoann:FloraAssertion ;
+    rdfs:range flopoann:EpistemicModality .
+
+flopoann:has_value_qualifier a owl:ObjectProperty ;
+    rdfs:label "has value qualifier"@en ;
+    rdfs:domain flopoann:FloraAssertion ;
+    rdfs:range flopoann:ValueQualifier .
+
+flopoann:has_degree_qualifier a owl:ObjectProperty ;
+    rdfs:label "has degree qualifier"@en ;
+    rdfs:domain flopoann:FloraAssertion ;
+    rdfs:range flopoann:DegreeQualifier .
+
+flopoann:has_magnitude a owl:DatatypeProperty, owl:FunctionalProperty ;
+    rdfs:label "has phenotype magnitude"@en ;
+    rdfs:range xsd:decimal ;
+    skos:definition "The inherent numerical magnitude used in a quantitative phenotype class description; not a measurement result."@en .
+
+flopoann:start_month a owl:DatatypeProperty, owl:FunctionalProperty ;
+    rdfs:label "start month"@en ;
+    rdfs:range xsd:integer .
+
+flopoann:end_month a owl:DatatypeProperty, owl:FunctionalProperty ;
+    rdfs:label "end month"@en ;
+    rdfs:range xsd:integer .
+
+flopoann:modality_cue a owl:AnnotationProperty .
+flopoann:logical_status a owl:AnnotationProperty .
+flopoann:source_statement a owl:AnnotationProperty .
+flopoann:formal_assertion a owl:AnnotationProperty .
+flopoann:supported_by_assertion a owl:AnnotationProperty .
+flopoann:source_text a owl:AnnotationProperty .
+flopoann:source_start a owl:AnnotationProperty .
+flopoann:source_end a owl:AnnotationProperty .
+flopoann:source_document a owl:AnnotationProperty .
+flopoann:source_segment_index a owl:AnnotationProperty .
+flopoann:extractor a owl:AnnotationProperty .
+flopoann:mapping_provenance a owl:AnnotationProperty .
+flopoann:season_text a owl:AnnotationProperty .
+flopoann:developmental_stage_text a owl:AnnotationProperty .
+flopoann:curation_status a owl:AnnotationProperty .
+flopoann:confidence a owl:AnnotationProperty .
+flopoann:document_start a owl:AnnotationProperty .
+flopoann:document_end a owl:AnnotationProperty .
+flopoann:sentence_index a owl:AnnotationProperty .
+flopoann:source_collection a owl:AnnotationProperty .
+flopoann:source_identifier a owl:AnnotationProperty .
+flopoann:language a owl:AnnotationProperty .
+flopoann:hemisphere a owl:AnnotationProperty .
+flopoann:expression_digest a owl:AnnotationProperty .
+flopoann:canonical_expression_signature a owl:AnnotationProperty .
+flopoann:supporting_assertion_count a owl:AnnotationProperty .

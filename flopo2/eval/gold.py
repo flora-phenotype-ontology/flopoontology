@@ -103,12 +103,24 @@ def _assertion_from_json(organ: str, d: dict) -> Assertion:
         po_id=d.get("po_id", ""),
         pato_id=d.get("pato_id", ""),
         negated=bool(d.get("negated", False)),
+        negation_scope=d.get("negation_scope", "") or "",
         organ=d.get("organ", organ),
         source_text=d.get("source_text", ""),
         value_low=d.get("value_low"),
         value_high=d.get("value_high"),
+        value_low_inclusive=d.get("value_low_inclusive", True),
+        value_high_inclusive=d.get("value_high_inclusive", True),
         unit=d.get("unit", ""),
         value_text=d.get("value_text", ""),
+        value_operator=d.get("value_operator", "atomic") or "atomic",
+        value_term_ids=tuple(d.get("value_terms", []) or d.get("value_term_ids", []) or []),
+        bearer_context_qualities=tuple(d.get("bearer_context_qualities", []) or []),
+        developmental_stage_contexts=tuple(
+            d.get("developmental_stage_contexts", []) or []
+        ),
+        developmental_stage_operator=(
+            d.get("developmental_stage_operator", "atomic") or "atomic"
+        ),
     )
 
 

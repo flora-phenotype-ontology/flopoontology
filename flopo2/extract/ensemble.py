@@ -19,7 +19,7 @@ from concurrent.futures import TimeoutError as FuturesTimeout
 from pathlib import Path
 
 from flopo2.eval.hierarchy import build_ancestors
-from flopo2.eval.scoring import Assertion, EvalReport, score_segment
+from flopo2.eval.scoring import Assertion, EvalReport, assertion_vote_key, score_segment
 from flopo2.extract.engine import EngineConfig, extract_segment
 from flopo2.extract.pilot import _gold_assertions
 from flopo2.extract.router import OpenRouterClient
@@ -33,7 +33,8 @@ MODELS = {
 
 
 def _key(a: Assertion) -> tuple:
-    return (a.po_id, a.pato_id, a.negated)
+    """Compatibility wrapper around the shared semantic vote identity."""
+    return assertion_vote_key(a)
 
 
 def main() -> None:
@@ -45,7 +46,11 @@ def main() -> None:
     ap.add_argument("-o", "--out", type=Path, default=Path("gold/ensemble_results.json"))
     args = ap.parse_args()
 
-    segs = [json.loads(l) for l in args.silver.read_text(encoding="utf-8").splitlines() if l.strip()]
+    segs = [
+        json.loads(line)
+        for line in args.silver.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
     if args.limit:
         segs = segs[: args.limit]
     client = OpenRouterClient(max_connections=max(8, args.concurrency * 2))

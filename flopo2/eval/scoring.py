@@ -39,16 +39,75 @@ class Assertion:
     po_id: str
     pato_id: str
     negated: bool = False
+    negation_scope: str = ""
     organ: str = ""
     source_text: str = ""
+    source_start: int | None = None
+    source_end: int | None = None
+    bearer_start: int | None = None
+    bearer_end: int | None = None
+    modality_start: int | None = None
+    modality_end: int | None = None
+    extractor: str = ""
     value_low: float | None = None
     value_high: float | None = None
+    value_low_inclusive: bool = True
+    value_high_inclusive: bool = True
     unit: str = ""
     value_text: str = ""
+    trait: str = ""
+    modifier: str = ""
+    cardinality: str = ""
+    confidence: float | None = None
+    raw_entity_text: str = ""
+    raw_quality_text: str = ""
+    entity_mention_id: str = ""
+    quality_mention_ids: tuple[str, ...] = ()
+    value_operator: str = "atomic"
+    value_term_ids: tuple[str, ...] = ()
+    bearer_context_qualities: tuple[str, ...] = ()
+    developmental_stage_contexts: tuple[dict[str, object], ...] = ()
+    developmental_stage_operator: str = "atomic"
+    normalization_status: str = ""
+    mapping_provenance: tuple[str, ...] = ()
+    source_statement_id: str = ""
+    frequency_qualifier: str = "unspecified"
+    epistemic_modality: str = "asserted"
+    value_qualifier: str = "exact"
+    degree_qualifier: str = "unmodified"
+    modality_text: str = ""
+    season_contexts: tuple[dict[str, object], ...] = ()
+    season_operator: str = "atomic"
 
     @property
     def key(self) -> tuple[str, str]:
         return (self.po_id, self.pato_id)
+
+
+def assertion_vote_key(a: "Assertion") -> tuple:
+    """Complete semantic identity for self-consistency and ensemble voting.
+
+    Two assertions may combine (vote as one) only when they denote the *same* phenotype. The
+    historical keys carried bearer, quality, negation, and some categorical value information but
+    differed between callers and omitted parts of the logical or quantitative semantics. Value
+    terms are canonicalized because OWL intersections and unions are order-insensitive. Numeric
+    identity (bounds, unit, and bound inclusivity) and negation scope are also part of the key, so
+    logically incompatible assertions can never contribute to the same vote.
+    """
+
+    return (
+        a.po_id,
+        a.pato_id,
+        a.negated,
+        a.negation_scope,
+        a.value_operator,
+        tuple(sorted(a.value_term_ids or ())),
+        a.value_low,
+        a.value_high,
+        a.unit,
+        a.value_low_inclusive,
+        a.value_high_inclusive,
+    )
 
 
 @dataclass
@@ -121,12 +180,20 @@ def _norm_text(s: str) -> str:
 class EvalReport:
     exact: PRF = field(default_factory=PRF)
     lenient: PRF = field(default_factory=PRF)
+    entity: PRF = field(default_factory=PRF)
+    quality: PRF = field(default_factory=PRF)
     negation_correct: int = 0
     negation_total: int = 0
     hallucinations: int = 0
     predictions: int = 0
     grounding_confusion: Counter = field(default_factory=Counter)
     by_organ: dict[str, PRF] = field(default_factory=lambda: defaultdict(PRF))
+    value_logic_correct: int = 0
+    value_logic_total: int = 0
+    disjunction_correct: int = 0
+    disjunction_total: int = 0
+    numeric_correct: int = 0
+    numeric_total: int = 0
 
     @property
     def negation_accuracy(self) -> float:
@@ -136,13 +203,30 @@ class EvalReport:
     def hallucination_rate(self) -> float:
         return self.hallucinations / self.predictions if self.predictions else 0.0
 
+    @property
+    def value_logic_accuracy(self) -> float:
+        return self.value_logic_correct / self.value_logic_total if self.value_logic_total else 1.0
+
+    @property
+    def disjunction_accuracy(self) -> float:
+        return self.disjunction_correct / self.disjunction_total if self.disjunction_total else 1.0
+
+    @property
+    def numeric_accuracy(self) -> float:
+        return self.numeric_correct / self.numeric_total if self.numeric_total else 1.0
+
     def summary(self) -> dict:
         return {
             "exact": self.exact.as_dict(),
             "lenient": self.lenient.as_dict(),
+            "entity": self.entity.as_dict(),
+            "quality": self.quality.as_dict(),
             "negation_accuracy": round(self.negation_accuracy, 4),
             "hallucination_rate": round(self.hallucination_rate, 4),
             "predictions": self.predictions,
+            "value_logic_accuracy": round(self.value_logic_accuracy, 4),
+            "disjunction_accuracy": round(self.disjunction_accuracy, 4),
+            "numeric_accuracy": round(self.numeric_accuracy, 4),
             "top_confusions": self.grounding_confusion.most_common(10),
             "by_organ": {k: v.as_dict() for k, v in sorted(self.by_organ.items())},
         }
@@ -164,6 +248,23 @@ def score_segment(
     r.exact.fp += exact_prf.fp
     r.exact.fn += exact_prf.fn
 
+    entity_prf, _ = _match(
+        [Assertion(p.po_id, "_") for p in preds],
+        [Assertion(g.po_id, "_") for g in gold],
+        ancestors=None,
+    )
+    r.entity.tp += entity_prf.tp
+    r.entity.fp += entity_prf.fp
+    r.entity.fn += entity_prf.fn
+    quality_prf, _ = _match(
+        [Assertion("_", p.pato_id) for p in preds],
+        [Assertion("_", g.pato_id) for g in gold],
+        ancestors=None,
+    )
+    r.quality.tp += quality_prf.tp
+    r.quality.fp += quality_prf.fp
+    r.quality.fn += quality_prf.fn
+
     len_prf, pairs = _match(preds, gold, ancestors=ancestors)
     r.lenient.tp += len_prf.tp
     r.lenient.fp += len_prf.fp
@@ -184,6 +285,28 @@ def score_segment(
             r.negation_correct += 1
         if p.po_id != g.po_id:  # right region (matched), wrong specific PO term
             r.grounding_confusion[(g.po_id, p.po_id)] += 1
+        if g.value_term_ids or g.value_operator != "atomic":
+            r.value_logic_total += 1
+            logic_correct = (
+                p.value_operator == g.value_operator
+                and set(p.value_term_ids) == set(g.value_term_ids)
+            )
+            if logic_correct:
+                r.value_logic_correct += 1
+            if g.value_operator == "one_of":
+                r.disjunction_total += 1
+                if logic_correct:
+                    r.disjunction_correct += 1
+        if g.value_low is not None or g.value_high is not None or g.unit:
+            r.numeric_total += 1
+            if (
+                p.value_low == g.value_low
+                and p.value_high == g.value_high
+                and p.value_low_inclusive == g.value_low_inclusive
+                and p.value_high_inclusive == g.value_high_inclusive
+                and _norm_text(p.unit) == _norm_text(g.unit)
+            ):
+                r.numeric_correct += 1
 
     # Hallucination: source span must appear verbatim in the segment text.
     if segment_text:
@@ -208,12 +331,12 @@ def score_dataset(
 def flip_rate(runs: Sequence[Sequence[Assertion]]) -> float:
     """Self-consistency flip-rate across N repeated extraction runs of the same input.
 
-    Fraction of distinct assertion keys (PO, PATO, negated) that are NOT present in every run.
-    0.0 = perfectly reproducible; higher = more stochastic (the Asteraceae 16.7% analogue).
+    Fraction of distinct semantic assertion keys that are NOT present in every run. 0.0 =
+    perfectly reproducible; higher = more stochastic (the Asteraceae 16.7% analogue).
     """
     if len(runs) < 2:
         return 0.0
-    keysets = [{(a.po_id, a.pato_id, a.negated) for a in run} for run in runs]
+    keysets = [{assertion_vote_key(a) for a in run} for run in runs]
     union = set().union(*keysets)
     if not union:
         return 0.0
