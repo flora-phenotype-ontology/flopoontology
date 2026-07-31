@@ -15,7 +15,12 @@ from tools.build_flopo_botanical_extension import (
     PATO_PROCESS_CHARACTERISTIC,
     PARTICIPATES_IN,
 )
-from tools.update_flopo_botanical_release import BEGIN_MARKER, update_release
+from tools.update_flopo_botanical_release import (
+    BEGIN_MARKER,
+    GO_MODULE,
+    LEGACY_GO_MODULE,
+    update_release,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -175,6 +180,7 @@ def test_botanical_release_update_replaces_existing_class_and_is_idempotent(tmp_
  xmlns:owl="http://www.w3.org/2002/07/owl#"
  xmlns:dcterms="http://purl.org/dc/terms/">
   <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/flopo.owl">
+    <owl:imports rdf:resource="http://purl.obolibrary.org/obo/flopo/imports/go_import.owl"/>
     <owl:versionIRI rdf:resource="http://purl.obolibrary.org/obo/flopo/releases/2026-07-13/flopo.owl"/>
     <owl:versionInfo>2026-07-13</owl:versionInfo>
   </owl:Ontology>
@@ -201,7 +207,8 @@ obo:FLOPO_0980417 a owl:Class ; rdfs:label "plant continuant-target phenotype"@e
     first = release.read_text(encoding="utf-8")
     assert "old flora phenotype" not in first
     assert first.count(BEGIN_MARKER) == 1
-    assert "flopo/imports/go_import.owl" in first
+    assert first.count(GO_MODULE) == 1
+    assert LEGACY_GO_MODULE not in first
     assert "flopo/releases/2026-07-15/flopo.owl" in first
 
     assert update_release(release, extension, "2026-07-15") == 2
