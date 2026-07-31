@@ -9,7 +9,7 @@ from pathlib import Path
 
 from rdflib import DCTERMS, OWL, RDF, RDFS, XSD, BNode, Graph, Literal, Namespace, URIRef
 from rdflib.collection import Collection
-
+from rdflib.compare import to_canonical_graph
 
 OBO = Namespace("http://purl.obolibrary.org/obo/")
 MODULE = URIRef(OBO + "flopo-botanical-extension.owl")
@@ -20,10 +20,12 @@ FLOPO_ROOT = URIRef(OBO + "FLOPO_0000000")
 HAS_PART = URIRef(OBO + "BFO_0000051")
 PART_OF = URIRef(OBO + "BFO_0000050")
 HAS_MEMBER_PART = URIRef(OBO + "BFO_0000115")
+HAS_COMPONENT = URIRef(OBO + "RO_0002180")
 HAS_CHARACTERISTIC = URIRef(OBO + "RO_0000053")
 PARTICIPATES_IN = URIRef(OBO + "RO_0000056")
 IAO_DEFINITION = URIRef(OBO + "IAO_0000115")
 IAO_EDITOR_NOTE = URIRef(OBO + "IAO_0000116")
+IAO_REPLACED_BY = URIRef(OBO + "IAO_0100001")
 PATO_CHARACTERISTIC = URIRef(OBO + "PATO_0000001")
 PATO_PROCESS_CHARACTERISTIC = URIRef(OBO + "PATO_0001236")
 GO_BIOLOGICAL_PROCESS = URIRef(OBO + "GO_0008150")
@@ -32,10 +34,32 @@ CONTRIBUTOR = URIRef("https://orcid.org/0000-0001-8149-5890")
 EXISTING_KEYS = {
     "TOP:flora_phenotype": "FLOPO_0000000",
     "TOP:whole_plant_phenotype": "FLOPO_0000089",
+    "TOP:plant_structure_phenotype": "FLOPO_0018579",
     "TOP:plant_substance_phenotype": "FLOPO_0900047",
+    "TOP:plant_anatomical_space_phenotype": "FLOPO_0017857",
     "LOCAL:trifoliolate_leaf": "FLOPO_0900067",
     "LOCAL:latex_phenotype": "FLOPO_0900048",
     "LOCAL:whole_plant_growth_form": "FLOPO_0900032",
+}
+
+DUPLICATE_REPLACEMENTS = {
+    iri_value: replacement
+    for iri_value, replacement in (
+        ("FLOPO_0980419", "FLOPO_0018579"),
+        ("FLOPO_0980420", "FLOPO_0017857"),
+    )
+}
+
+# This class is maintained by the independently reviewed Dashboard-remediation
+# module. Its source module carries the migrated parent, avoiding two generated
+# modules owning and serializing the same logical definition.
+EXTERNAL_REPARENTING_OWNERS = {"FLOPO_0000467"}
+
+LOGICAL_PREDICATES = {
+    RDFS.subClassOf,
+    OWL.equivalentClass,
+    OWL.disjointWith,
+    OWL.disjointUnionOf,
 }
 
 
@@ -50,6 +74,12 @@ def _rows(path: Path, key: str) -> dict[str, dict[str, str]]:
     if len(indexed) != len(rows):
         raise ValueError(f"duplicate {key} in {path}")
     return indexed
+
+
+def _flopo_iri(value: str) -> URIRef:
+    if value.startswith("http://"):
+        return URIRef(value)
+    return iri(value)
 
 
 def _copy_bnode_subgraph(source: Graph, target: Graph, subject) -> None:
@@ -88,6 +118,51 @@ def _remove_orphan_bnode_subgraphs(graph: Graph) -> None:
     }
     for orphan in all_bnodes - reachable:
         graph.remove((orphan, None, None))
+
+
+def _obsolete_duplicate(
+    source: Graph,
+    graph: Graph,
+    duplicate: URIRef,
+    replacement: URIRef,
+    release_date: str,
+) -> None:
+    incoming = {
+        (subject, predicate)
+        for subject, predicate in source.subject_predicates(duplicate)
+        if predicate in LOGICAL_PREDICATES or predicate == RDF.first
+    }
+    if incoming:
+        raise ValueError(
+            f"duplicate class {duplicate} still has incoming logical references: "
+            f"{sorted((str(subject), str(predicate)) for subject, predicate in incoming)}"
+        )
+
+    for predicate in LOGICAL_PREDICATES:
+        graph.remove((duplicate, predicate, None))
+    label = next(graph.objects(duplicate, RDFS.label), None)
+    if label is None:
+        raise ValueError(f"duplicate class {duplicate} has no label")
+    label_text = str(label)
+    if not label_text.startswith("obsolete "):
+        label_text = f"obsolete {label_text}"
+    graph.set((duplicate, RDFS.label, Literal(label_text, lang=label.language or "en")))
+    graph.set((duplicate, OWL.deprecated, Literal(True, datatype=XSD.boolean)))
+    graph.set((duplicate, IAO_REPLACED_BY, replacement))
+    graph.set((duplicate, DCTERMS.modified, Literal(release_date, datatype=XSD.date)))
+    graph.add((duplicate, DCTERMS.contributor, CONTRIBUTOR))
+    graph.add(
+        (
+            duplicate,
+            IAO_EDITOR_NOTE,
+            Literal(
+                "Obsoleted because this identifier duplicated an older FLOPO class with "
+                "the same label and logical definition. The older identifier remains the "
+                "active canonical term.",
+                lang="en",
+            ),
+        )
+    )
 
 
 def _restriction(
@@ -199,7 +274,7 @@ def _source_urls(
         token = token.strip()
         if token in evidence and evidence[token]["url"]:
             urls.add(URIRef(evidence[token]["url"]))
-        elif token.startswith("http://") or token.startswith("https://"):
+        elif token.startswith(("http://", "https://")):
             urls.add(URIRef(token))
     return urls
 
@@ -209,11 +284,13 @@ def build_module(
     proposals_path: Path,
     id_registry_path: Path,
     evidence_path: Path,
+    reparenting_path: Path,
     release_date: str,
 ) -> tuple[Graph, set[URIRef]]:
     proposals = _rows(proposals_path, "proposal_key")
     id_rows = _rows(id_registry_path, "proposal_key")
     evidence = _rows(evidence_path, "evidence_id")
+    reparenting = _rows(reparenting_path, "flopo_id")
     accepted_keys = {
         key
         for key, row in proposals.items()
@@ -244,6 +321,38 @@ def build_module(
 
     source = Graph()
     source.parse(release_path.as_posix())
+    reparented = {_flopo_iri(row["flopo_id"]) for row in reparenting.values()}
+    external_reparenting = {
+        _flopo_iri(class_id) for class_id in EXTERNAL_REPARENTING_OWNERS
+    }
+    if not external_reparenting <= reparented:
+        raise ValueError("external reparenting owner is absent from the conservation ledger")
+    intended_root_children = {
+        ids["TOP:continuant_target_phenotype"],
+        ids["TOP:occurrent_target_phenotype"],
+    }
+    actual_root_children = {
+        child
+        for child in source.subjects(RDFS.subClassOf, FLOPO_ROOT)
+        if isinstance(child, URIRef) and str(child).startswith(str(OBO) + "FLOPO_")
+    }
+    legacy_root_children = reparented | intended_root_children
+    already_migrated = actual_root_children == intended_root_children and all(
+        (
+            _flopo_iri(row["flopo_id"]),
+            RDFS.subClassOf,
+            _flopo_iri(row["new_parent"]),
+        )
+        in source
+        for row in reparenting.values()
+    )
+    if actual_root_children != legacy_root_children and not already_migrated:
+        raise ValueError(
+            "top-level reparenting table does not conserve direct root children: "
+            f"missing={sorted(map(str, actual_root_children - legacy_root_children))}, "
+            f"extra={sorted(map(str, legacy_root_children - actual_root_children))}"
+        )
+
     graph = Graph()
     graph.bind("dcterms", DCTERMS)
     graph.bind("obo", OBO)
@@ -264,8 +373,18 @@ def build_module(
         )
     )
 
-    modified_existing = {ids[key] for key in EXISTING_KEYS}
+    duplicates = {
+        iri(duplicate): iri(replacement)
+        for duplicate, replacement in DUPLICATE_REPLACEMENTS.items()
+    }
+    modified_existing = (
+        {ids[key] for key in EXISTING_KEYS}
+        | (reparented - external_reparenting)
+        | set(duplicates)
+    )
     for cls in modified_existing:
+        if (cls, RDF.type, OWL.Class) not in source:
+            raise ValueError(f"modified class is absent from the release: {cls}")
         _copy_bnode_subgraph(source, graph, cls)
 
     def annotate(key: str, *, new: bool) -> URIRef:
@@ -307,25 +426,13 @@ def build_module(
         )
     )
 
-    plant_structure = annotate("TOP:plant_structure_phenotype", new=True)
+    plant_structure = annotate("TOP:plant_structure_phenotype", new=False)
+    graph.remove((plant_structure, RDFS.subClassOf, None))
     graph.add((plant_structure, RDFS.subClassOf, anatomical))
-    graph.add(
-        (
-            plant_structure,
-            OWL.equivalentClass,
-            _phenotype_target(graph, iri("PO:0009011"), "plant_structure_phenotype"),
-        )
-    )
 
-    anatomical_space = annotate("TOP:plant_anatomical_space_phenotype", new=True)
+    anatomical_space = annotate("TOP:plant_anatomical_space_phenotype", new=False)
+    graph.remove((anatomical_space, RDFS.subClassOf, None))
     graph.add((anatomical_space, RDFS.subClassOf, continuant))
-    graph.add(
-        (
-            anatomical_space,
-            OWL.equivalentClass,
-            _phenotype_target(graph, iri("PO:0025117"), "anatomical_space_phenotype"),
-        )
-    )
 
     aggregate = annotate("TOP:plant_material_aggregate_phenotype", new=True)
     graph.add((aggregate, RDFS.subClassOf, anatomical))
@@ -378,6 +485,26 @@ def build_module(
     graph.remove((plant_substance, RDFS.subClassOf, None))
     graph.add((plant_substance, RDFS.subClassOf, anatomical))
 
+    # Reparent every legacy bearer-specific root through the approved continuant
+    # hierarchy. The table is a complete conservation ledger: build_module fails if
+    # even one old direct child is absent or an unexpected child appears.
+    for row in reparenting.values():
+        cls = _flopo_iri(row["flopo_id"])
+        if cls in external_reparenting:
+            continue
+        parent = _flopo_iri(row["new_parent"])
+        source_label = next(source.objects(cls, RDFS.label), None)
+        if source_label is None or str(source_label) != row["label"]:
+            raise ValueError(f"top-level mapping label mismatch for {cls}")
+        graph.remove((cls, RDFS.subClassOf, FLOPO_ROOT))
+        graph.add((cls, RDFS.subClassOf, parent))
+
+    # Two July 2026 upper-level identifiers duplicated older FLOPO bearer classes.
+    # Preserve the published IRIs as annotation-only obsolete shells and point them
+    # to the original active identifiers rather than changing the originals.
+    for duplicate, replacement in duplicates.items():
+        _obsolete_duplicate(source, graph, duplicate, replacement, release_date)
+
     # FLOPO-local qualities and their composed phenotypes.
     trifoliolate_quality = annotate("LOCAL:trifoliolate_quality", new=True)
     graph.add((trifoliolate_quality, RDFS.subClassOf, iri("PATO:0001555")))
@@ -391,7 +518,7 @@ def build_module(
     graph.add((trifoliolate_leaf, RDFS.subClassOf, iri("FLOPO:0000004")))
     trifoliolate_count = _restriction(
         graph,
-        HAS_PART,
+        HAS_COMPONENT,
         exactly=3,
         on_class=iri("PO:0020049"),
         name="trifoliolate_leaflet_count",
@@ -414,7 +541,7 @@ def build_module(
     graph.add((bifoliolate_leaf, RDFS.subClassOf, iri("FLOPO:0000004")))
     bifoliolate_count = _restriction(
         graph,
-        HAS_PART,
+        HAS_COMPONENT,
         exactly=2,
         on_class=iri("PO:0020049"),
         name="bifoliolate_leaflet_count",
@@ -531,6 +658,11 @@ def main() -> None:
         default=Path("curation/botanical_evidence.tsv"),
     )
     parser.add_argument(
+        "--reparenting",
+        type=Path,
+        default=Path("curation/flopo_top_level_reparenting.tsv"),
+    )
+    parser.add_argument(
         "-o",
         "--out",
         type=Path,
@@ -543,10 +675,15 @@ def main() -> None:
         args.proposals,
         args.id_registry,
         args.evidence,
+        args.reparenting,
         args.date,
     )
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(str(graph.serialize(format="turtle")).rstrip() + "\n", encoding="utf-8")
+    canonical = to_canonical_graph(graph)
+    args.out.write_text(
+        str(canonical.serialize(format="turtle")).rstrip() + "\n",
+        encoding="utf-8",
+    )
     print(f"classes {len(set(graph.subjects(RDF.type, OWL.Class)))}")
     print(f"modified_existing {len(modified)}")
     print(f"output {args.out}")

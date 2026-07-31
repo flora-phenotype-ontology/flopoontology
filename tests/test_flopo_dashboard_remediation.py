@@ -16,7 +16,6 @@ from tools.update_flopo_dashboard_remediation import (
     update_release,
 )
 
-
 ROOT = Path(__file__).resolve().parents[1]
 MODULE = ROOT / "ontology" / "flopo-dashboard-remediation.ttl"
 RELEASE = ROOT / "ontology" / "flopo.owl"
@@ -48,6 +47,11 @@ def test_remediation_module_preserves_distinctions_and_replacement_history():
     assert "small, abrupt point" in str(next(graph.objects(apiculate, IAO_DEFINITION)))
 
     secretory_parent = URIRef(OBO + "FLOPO_0000467")
+    assert (
+        secretory_parent,
+        RDFS.subClassOf,
+        URIRef(OBO + "FLOPO_0018579"),
+    ) in graph
     for child_id in ("FLOPO_0900054", "FLOPO_0900055", "FLOPO_0900056"):
         child = URIRef(OBO + child_id)
         assert (child, RDFS.subClassOf, secretory_parent) in graph

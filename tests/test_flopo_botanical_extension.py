@@ -9,11 +9,13 @@ from rdflib.collection import Collection
 from tools.build_flopo_botanical_extension import (
     GO_BIOLOGICAL_PROCESS,
     HAS_CHARACTERISTIC,
+    HAS_COMPONENT,
     HAS_MEMBER_PART,
     HAS_PART,
+    IAO_REPLACED_BY,
     OBO,
-    PATO_PROCESS_CHARACTERISTIC,
     PARTICIPATES_IN,
+    PATO_PROCESS_CHARACTERISTIC,
 )
 from tools.update_flopo_botanical_release import (
     BEGIN_MARKER,
@@ -22,11 +24,11 @@ from tools.update_flopo_botanical_release import (
     update_release,
 )
 
-
 ROOT = Path(__file__).resolve().parents[1]
 MODULE_PATH = ROOT / "ontology" / "flopo-botanical-extension.ttl"
 ID_REGISTRY = ROOT / "config" / "flopo_botanical_id_registry.tsv"
 APPROVALS = ROOT / "curation" / "curator_approvals.tsv"
+REPARENTING = ROOT / "curation" / "flopo_top_level_reparenting.tsv"
 
 
 def _restriction(graph: Graph, node, prop: URIRef):
@@ -45,9 +47,13 @@ def test_botanical_module_has_stable_unique_approved_ids_and_provenance():
         rows = list(csv.DictReader(handle, delimiter="\t"))
     ids = [row["flopo_id"] for row in rows]
 
-    assert len(rows) == 15
+    assert len(rows) == 13
     assert len(ids) == len(set(ids))
-    assert ids == [f"FLOPO_{number:07d}" for number in range(980417, 980432)]
+    assert ids == [
+        f"FLOPO_{number:07d}"
+        for number in range(980417, 980432)
+        if number not in {980419, 980420}
+    ]
 
     graph = Graph().parse(MODULE_PATH)
     contributor = URIRef("https://orcid.org/0000-0001-8149-5890")
@@ -73,6 +79,57 @@ def test_botanical_module_has_stable_unique_approved_ids_and_provenance():
         (node, RDF.type, OWL.Class) not in graph
         for node in graph.subjects(OWL.intersectionOf, None)
     )
+
+
+def test_original_upper_classes_are_active_and_new_duplicates_are_obsolete():
+    graph = Graph().parse(MODULE_PATH)
+    replacements = {
+        "FLOPO_0980419": "FLOPO_0018579",
+        "FLOPO_0980420": "FLOPO_0017857",
+    }
+    for duplicate_id, original_id in replacements.items():
+        duplicate = URIRef(OBO + duplicate_id)
+        original = URIRef(OBO + original_id)
+        assert (original, RDF.type, OWL.Class) in graph
+        assert (original, OWL.deprecated, None) not in graph
+        assert (duplicate, OWL.deprecated, None) in graph
+        assert (duplicate, IAO_REPLACED_BY, original) in graph
+        assert str(next(graph.objects(duplicate, RDFS.label))).startswith("obsolete ")
+        assert not set(graph.objects(duplicate, RDFS.subClassOf))
+        assert not set(graph.objects(duplicate, OWL.equivalentClass))
+
+
+def test_top_level_reparenting_ledger_is_complete_and_conservative():
+    with REPARENTING.open(encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle, delimiter="\t"))
+    assert len(rows) == 256
+    assert len({row["flopo_id"] for row in rows}) == 256
+    assert {row["review_status"] for row in rows} == {"deterministic", "approved"}
+
+    category_counts: dict[str, int] = {}
+    for row in rows:
+        category_counts[row["category"]] = category_counts.get(row["category"], 0) + 1
+    assert category_counts == {
+        "anatomical_space": 9,
+        "anatomical_space_root": 1,
+        "manual_pedicel": 1,
+        "plant_structure": 242,
+        "plant_structure_root": 1,
+        "plant_substance": 2,
+    }
+
+    graph = Graph().parse(MODULE_PATH)
+    for row in rows:
+        cls = URIRef(OBO + row["flopo_id"])
+        parent = URIRef(OBO + row["new_parent"])
+        if row["flopo_id"] == "FLOPO_0000467":
+            dashboard = Graph().parse(
+                ROOT / "ontology" / "flopo-dashboard-remediation.ttl"
+            )
+            assert (cls, RDFS.subClassOf, parent) in dashboard
+            continue
+        assert (cls, RDFS.subClassOf, parent) in graph
+        assert (cls, RDFS.subClassOf, URIRef(OBO + "FLOPO_0000000")) not in graph
 
 
 def test_process_phenotype_axiom_has_an_explicit_bearer_as_participant():
@@ -140,7 +197,21 @@ def test_leaflet_cardinality_foliage_membership_and_local_parenting():
             and (member, OWL.qualifiedCardinality, None) in graph
         )
         assert int(next(graph.objects(count, OWL.qualifiedCardinality))) == cardinality
+        assert (count, OWL.onProperty, HAS_COMPONENT) in graph
         assert (count, OWL.onClass, URIRef(OBO + "PO_0020049")) in graph
+
+    assert not any(
+        (restriction, OWL.onProperty, HAS_PART) in graph
+        for predicate in (
+            OWL.cardinality,
+            OWL.minCardinality,
+            OWL.maxCardinality,
+            OWL.qualifiedCardinality,
+            OWL.minQualifiedCardinality,
+            OWL.maxQualifiedCardinality,
+        )
+        for restriction in graph.subjects(predicate, None)
+    )
 
     foliage = URIRef(OBO + "FLOPO_0980429")
     foliage_restrictions = {

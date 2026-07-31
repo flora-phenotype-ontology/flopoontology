@@ -6,14 +6,13 @@ from __future__ import annotations
 import argparse
 import re
 import xml.etree.ElementTree as ET
-from datetime import date
+from datetime import UTC, datetime
 from pathlib import Path
 
 from rdflib import OWL, RDF, XSD, Graph, Literal, URIRef
 
 from tools.update_flopo_botanical_release import _remove_named_owl_class
 from tools.update_flopo_release import _extension_fragment, _update_release_metadata
-
 
 OBO = "http://purl.obolibrary.org/obo/"
 MODULE = URIRef(OBO + "flopo-dashboard-remediation.owl")
@@ -82,7 +81,9 @@ def _module_fragment(module_path: Path) -> tuple[str, set[str]]:
         if (old_iri, OWL.equivalentClass, None) in graph:
             raise ValueError(f"obsolete class retained logical definition: {old}")
 
-    fragment, _class_count = _extension_fragment(module_path)
+    fragment, _class_count = _extension_fragment(
+        module_path, node_id_prefix="FLOPODashboard_"
+    )
     header_pattern = re.compile(
         rf"  <rdf:Description rdf:about={re.escape(chr(34) + str(MODULE) + chr(34))}>"
         rf".*?  </rdf:Description>\n?",
@@ -224,7 +225,7 @@ def main() -> None:
         type=Path,
         default=Path("ontology/flopo-dashboard-remediation.ttl"),
     )
-    parser.add_argument("--date", default=date.today().isoformat())
+    parser.add_argument("--date", default=datetime.now(UTC).date().isoformat())
     args = parser.parse_args()
     count = update_release(args.release, args.module, args.date)
     print(f"remediated {count} FLOPO classes")

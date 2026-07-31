@@ -5,13 +5,12 @@ from __future__ import annotations
 
 import argparse
 import re
-from datetime import date
+from datetime import UTC, datetime
 from pathlib import Path
 
 from rdflib import OWL, RDF, Graph, URIRef
 
 from tools.update_flopo_release import _extension_fragment, _update_release_metadata
-
 
 OBO = "http://purl.obolibrary.org/obo/"
 MODULE = URIRef(OBO + "flopo-botanical-extension.owl")
@@ -40,26 +39,42 @@ def _without_generated_block(text: str) -> str:
 
 
 def _remove_named_owl_class(text: str, class_iri: str) -> tuple[str, bool]:
-    """Remove one nested owl:Class element without using a fragile non-greedy regex."""
+    """Remove every RDF/XML description of one named OWL class.
 
-    opening = f'<owl:Class rdf:about="{class_iri}">'
-    start = text.find(opening)
-    if start < 0:
-        return text, False
-    line_start = text.rfind("\n", 0, start) + 1
-    token = re.compile(r"<owl:Class\b|</owl:Class>")
-    depth = 0
-    for match in token.finditer(text, start):
-        if match.group(0).startswith("<owl:Class"):
-            depth += 1
-        else:
-            depth -= 1
-            if depth == 0:
-                end = match.end()
-                if end < len(text) and text[end] == "\n":
-                    end += 1
-                return text[:line_start] + text[end:], True
-    raise ValueError(f"unterminated owl:Class element for {class_iri}")
+    The historical release uses nested ``owl:Class`` elements, while generated
+    extension blocks use flat ``rdf:Description`` elements with an explicit class
+    type. A class can occur in both forms after successive release updaters. Removing
+    only the first occurrence leaves duplicate definitions and stale parent axioms.
+    """
+
+    def remove_one(document: str, tag: str) -> tuple[str, bool]:
+        opening = f'<{tag} rdf:about="{class_iri}">'
+        start = document.find(opening)
+        if start < 0:
+            return document, False
+        line_start = document.rfind("\n", 0, start) + 1
+        token = re.compile(rf"<{re.escape(tag)}\b|</{re.escape(tag)}>")
+        depth = 0
+        for match in token.finditer(document, start):
+            if match.group(0).startswith(f"<{tag}"):
+                depth += 1
+            else:
+                depth -= 1
+                if depth == 0:
+                    end = match.end()
+                    if end < len(document) and document[end] == "\n":
+                        end += 1
+                    return document[:line_start] + document[end:], True
+        raise ValueError(f"unterminated {tag} element for {class_iri}")
+
+    removed_any = False
+    for tag in ("owl:Class", "rdf:Description"):
+        while True:
+            text, removed = remove_one(text, tag)
+            if not removed:
+                break
+            removed_any = True
+    return text, removed_any
 
 
 def _remove_legacy_process_quality_constraint(text: str) -> tuple[str, bool]:
@@ -137,7 +152,9 @@ def _module_fragment(extension_path: Path) -> tuple[str, int, set[str]]:
         for cls in graph.subjects(RDF.type, OWL.Class)
         if isinstance(cls, URIRef) and str(cls).startswith(OBO + "FLOPO_")
     }
-    fragment, class_count = _extension_fragment(extension_path)
+    fragment, class_count = _extension_fragment(
+        extension_path, node_id_prefix="FLOPOBotanical_"
+    )
     # _extension_fragment currently knows the value-module ontology IRI. Remove this
     # module's header explicitly if it occurs in its generic RDF description output.
     header_pattern = re.compile(
@@ -184,7 +201,7 @@ def main() -> None:
         type=Path,
         default=Path("ontology/flopo-botanical-extension.ttl"),
     )
-    parser.add_argument("--date", default=date.today().isoformat())
+    parser.add_argument("--date", default=datetime.now(UTC).date().isoformat())
     args = parser.parse_args()
     count = update_release(args.release, args.extension, args.date)
     print(f"embedded_or_replaced {count} FLOPO botanical classes")
