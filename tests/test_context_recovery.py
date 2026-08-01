@@ -5,8 +5,7 @@ from pathlib import Path
 
 from flopo2.extract.baseline import extract_segment_with_unresolved
 from flopo2.extract.context_recovery import LocativeMapping, recover_file, recover_record
-from flopo2.verify.missing_bearers import _po_exact_forms
-from flopo2.verify.missing_bearers import _po_forms
+from flopo2.verify.missing_bearers import _po_exact_forms, _po_forms
 
 
 def _record(text: str, *, organ: str = "leaves", language: str = "en") -> dict:
@@ -607,6 +606,157 @@ def test_canonical_missing_bearer_reason_still_honours_postposed_immature_scope(
     assert audit[0]["disposition"] == "retained"
 
 
+def test_reviewed_hair_alias_reuses_existing_trichome_without_context_review():
+    text = "Hairs white."
+    start = text.index("white")
+    record = {
+        **_record(text, organ="description"),
+        "assertions": [],
+        "unresolved_spans": [
+            {
+                "start": start,
+                "end": start + len("white"),
+                "surface_form": "white",
+                "reason": "missing_or_unsupported_bearer",
+                "candidate_pato_id": "PATO_0000323",
+                "extractor": "test",
+            }
+        ],
+    }
+
+    recovered, audit = recover_record(
+        record,
+        _po_exact_forms(),
+        _po_forms(Path("config/po_lexicon.tsv")),
+    )
+
+    assert recovered["unresolved_spans"] == []
+    assert (recovered["assertions"][0]["po_id"], recovered["assertions"][0]["pato_id"]) == (
+        "PO_0000282",
+        "PATO_0000323",
+    )
+    assert audit[0]["vocabulary_status"] == "accepted_existing_po"
+    assert audit[0]["attachment_status"] == "direct_attachment"
+
+
+def test_reviewed_hair_vocabulary_does_not_make_pilosity_a_quality_of_trichome():
+    text = "Hairs pubescent."
+    start = text.index("pubescent")
+    record = {
+        **_record(text, organ="description"),
+        "assertions": [],
+        "unresolved_spans": [
+            {
+                "start": start,
+                "end": start + len("pubescent"),
+                "surface_form": "pubescent",
+                "reason": "missing_or_unsupported_bearer",
+                "candidate_pato_id": "PATO_0001320",
+                "extractor": "test",
+            }
+        ],
+    }
+
+    recovered, audit = recover_record(
+        record,
+        _po_exact_forms(),
+        _po_forms(Path("config/po_lexicon.tsv")),
+    )
+
+    assert recovered["assertions"] == []
+    assert recovered["unresolved_spans"]
+    assert audit[0]["bearer_po_id"] == "PO_0000282"
+    assert audit[0]["vocabulary_status"] == "accepted_existing_po"
+    assert audit[0]["attachment_status"] == "syntax_hold"
+
+
+def test_explicit_margin_reuses_organ_specific_po_but_remote_margin_is_not_attached():
+    direct_text = "Margins red."
+    direct_start = direct_text.index("red")
+    direct_record = {
+        **_record(direct_text, organ="leaves"),
+        "assertions": [],
+        "unresolved_spans": [
+            {
+                "start": direct_start,
+                "end": direct_start + len("red"),
+                "surface_form": "red",
+                "reason": "missing_or_unsupported_bearer",
+                "candidate_pato_id": "PATO_0000322",
+                "extractor": "test",
+            }
+        ],
+    }
+    recovered, audit = recover_record(
+        direct_record,
+        _po_exact_forms(),
+        _po_forms(Path("config/po_lexicon.tsv")),
+    )
+    assert recovered["unresolved_spans"] == []
+    assert recovered["assertions"][0]["po_id"] == "PO_0020128"
+    assert audit[0]["vocabulary_status"] == "accepted_existing_po"
+    assert audit[0]["attachment_status"] == "container_attachment"
+    assert audit[0]["method"] == "reviewed_organ_specific_margin"
+
+    held_text = "Petals with fringed edges, externally tomentose."
+    held_start = held_text.index("tomentose")
+    held_record = {
+        **_record(held_text, organ="petals"),
+        "assertions": [],
+        "unresolved_spans": [
+            {
+                "start": held_start,
+                "end": held_start + len("tomentose"),
+                "surface_form": "tomentose",
+                "reason": "missing_or_unsupported_bearer",
+                "candidate_pato_id": "PATO_0001499",
+                "extractor": "test",
+            }
+        ],
+    }
+    held, held_audit = recover_record(
+        held_record,
+        _po_exact_forms(),
+        _po_forms(Path("config/po_lexicon.tsv")),
+    )
+    assert held["assertions"] == []
+    assert held["unresolved_spans"]
+    assert held_audit[0]["bearer_po_id"] == "PO_0025008"
+    assert held_audit[0]["vocabulary_status"] == "accepted_existing_po"
+    assert held_audit[0]["attachment_status"] == "container_attachment"
+    assert held_audit[0]["disposition"] == "retained"
+
+    referenced_text = (
+        "Petals with several lateral veins ascending obliquely through the blade, "
+        "branched near the margin."
+    )
+    referenced_start = referenced_text.index("branched")
+    referenced_record = {
+        **_record(referenced_text, organ="petals"),
+        "assertions": [],
+        "unresolved_spans": [
+            {
+                "start": referenced_start,
+                "end": referenced_start + len("branched"),
+                "surface_form": "branched",
+                "reason": "missing_or_unsupported_bearer",
+                "candidate_pato_id": "PATO_0000402",
+                "extractor": "test",
+            }
+        ],
+    }
+    referenced, referenced_audit = recover_record(
+        referenced_record,
+        _po_exact_forms(),
+        _po_forms(Path("config/po_lexicon.tsv")),
+    )
+    assert referenced["assertions"] == []
+    assert referenced["unresolved_spans"]
+    assert referenced_audit[0]["bearer_po_id"] == "PO_0025008"
+    assert referenced_audit[0]["vocabulary_status"] == "accepted_existing_po"
+    assert referenced_audit[0]["attachment_status"] == "container_attachment"
+
+
 def test_leaf_scoped_bare_rachis_does_not_fall_back_to_whole_leaf():
     recovered, audit = _recover(
         "Rachis de 6-20 cm de longueur, pubescent ferrugineux chez les jeunes feuilles",
@@ -859,6 +1009,8 @@ def test_scoped_nearer_noun_and_structural_bridge_block_exact_bearer_recovery():
 def test_language_tagged_po_synonym_is_not_an_unscoped_exact_bearer():
     forms = _po_exact_forms()
     assert ("anther",) in forms
+    assert forms[("hair",)] == {"PO_0000282"}
+    assert forms[("poils",)] == {"PO_0000282"}
     assert ("antera",) not in forms  # PO marks this EXACT Spanish.
     assert ("vexillum",) in forms  # Untagged EXACT remains eligible.
     assert ("part", "of") not in forms  # A following OBO typedef is not a PO term.
@@ -881,9 +1033,7 @@ def test_reviewed_locative_subregion_mapping_can_promote_atomic_expression():
     )
     assert assertion["source_text"] == "Pétales glabres à l’extérieur"
     assert assertion["normalization_status"] == "reviewed"
-    assert "locative_attachment:organ_specific_abaxial_epidermis" in assertion[
-        "mapping_provenance"
-    ]
+    assert "locative_attachment:organ_specific_abaxial_epidermis" in assertion["mapping_provenance"]
     assert audit[0]["disposition"] == "recovered_existing_po_locative_subregion"
 
 
@@ -897,9 +1047,7 @@ def test_reviewed_locative_uses_tight_evidence_before_unrelated_disjunction():
         container_surface="Pétales",
     )
     assertion = next(
-        row
-        for row in recovered["assertions"]
-        if row.get("normalization_status") == "reviewed"
+        row for row in recovered["assertions"] if row.get("normalization_status") == "reviewed"
     )
     assert assertion["source_text"] == "Pétales glabres à l’extérieur"
     assert "ou" not in assertion["source_text"].casefold().split()
@@ -916,9 +1064,7 @@ def test_reviewed_locative_drops_container_prefix_with_unrelated_disjunction():
         container_surface="Pétales",
     )
     assertion = next(
-        row
-        for row in recovered["assertions"]
-        if row.get("normalization_status") == "reviewed"
+        row for row in recovered["assertions"] if row.get("normalization_status") == "reviewed"
     )
     assert assertion["source_text"] == "glabres à l’extérieur"
     assert audit[0]["disposition"] == "recovered_existing_po_locative_subregion"
@@ -954,9 +1100,7 @@ def test_relational_trichome_locative_stays_expression_pending():
 
 def test_recovery_file_is_distinct_and_emits_complete_audit(tmp_path):
     input_path = tmp_path / "baseline.jsonl"
-    input_path.write_text(
-        json.dumps(_record("Young leaves pubescent."), ensure_ascii=False) + "\n"
-    )
+    input_path.write_text(json.dumps(_record("Young leaves pubescent."), ensure_ascii=False) + "\n")
     output_path = tmp_path / "recovered.jsonl"
     audit_path = tmp_path / "audit.tsv"
     stats = recover_file(input_path, output_path, audit_path)
