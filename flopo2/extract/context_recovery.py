@@ -34,8 +34,11 @@ from flopo2.extract.baseline import (
 )
 from flopo2.extract.measurement import Measurement, parse_measurements
 from flopo2.verify.missing_bearers import _fold as _fold_bearer
-from flopo2.verify.missing_bearers import _po_exact_forms
-from flopo2.verify.missing_bearers import _po_forms
+from flopo2.verify.missing_bearers import (
+    _po_exact_forms,
+    _po_forms,
+    classify_bearer_candidate,
+)
 
 
 @dataclass(frozen=True)
@@ -53,6 +56,16 @@ class BearerMatch:
     start: int
     end: int
     method: str
+
+
+@dataclass(frozen=True)
+class AcceptedBearerCandidate:
+    """Accepted PO vocabulary whose attachment is not yet necessarily proven."""
+
+    po_id: str
+    surface: str
+    group_key: str
+    attachment_status: str
 
 
 @dataclass(frozen=True)
@@ -311,11 +324,46 @@ CONTEXT_FIELDNAMES = (
     "candidate_pato_id",
     "bearer_po_id",
     "bearer_surface",
+    "vocabulary_status",
+    "attachment_status",
     "context_quality",
     "context_text",
     "disposition",
     "method",
     "clause",
+)
+CONTAINER_ATTACHMENT_KEYS = {
+    "abaxial_surface",
+    "adaxial_surface",
+    "keel",
+    "margin",
+    "vein",
+}
+ORGAN_SPECIFIC_MARGIN_IDS = {
+    "PO_0005021",
+    "PO_0006034",
+    "PO_0020128",
+    "PO_0025008",
+    "PO_0025010",
+    "PO_0025011",
+    "PO_0025015",
+    "PO_0025019",
+    "PO_0025020",
+}
+TRICHOME_INCOMPATIBLE_PILOSITY_IDS = {
+    "PATO_0000453",  # glabrous: the bearer lacks hairs
+    "PATO_0000454",  # hairy: the bearer is covered with hairs
+    "PATO_0001320",  # pubescent: the bearer is covered with short hairs
+    "PATO_0002341",  # tomentose: the bearer is covered with matted hairs
+}
+EXPLICIT_MARGIN = re.compile(
+    r"(?<!\w)(?:margins?|borders?|edges?|bords?|marges?)(?!\w)",
+    re.IGNORECASE,
+)
+MARGIN_REFERENCE_BRIDGE = re.compile(
+    r"(?<!\w)(?:near|beside|towards?|approaching|adjacent\s+to|close\s+to|"
+    r"pr[èe]s\s+de|vers|aupr[èe]s\s+de)(?!\w)",
+    re.IGNORECASE,
 )
 PROMOTABLE_LOCATIVE_RULES = {
     "organ_specific_abaxial_epidermis",
@@ -414,9 +462,17 @@ def _questioned_value(text: str, start: int, end: int) -> bool:
     return bool(re.match(r"^\s*\(\s*\?\s*\)", text[end : min(len(text), end + 16)]))
 
 
-def _candidate_atomic_safe(text: str, start: int, end: int, pato_id: str) -> bool:
+def _candidate_atomic_safe(
+    text: str,
+    start: int,
+    end: int,
+    pato_id: str,
+    bearer_po_id: str = "",
+) -> bool:
     """Reject a cue that is only one component of unresolved source-level logic or scope."""
 
+    if bearer_po_id == "PO_0000282" and pato_id in TRICHOME_INCOMPATIBLE_PILOSITY_IDS:
+        return False
     phrase, _phrase_left = _comma_phrase(text, start)
     if (
         TRANSITION.search(phrase)
@@ -478,12 +534,16 @@ def _candidate_atomic_safe(text: str, start: int, end: int, pato_id: str) -> boo
             match.group(1) for match in (prior_word, next_word) if match is not None
         )
         neighborhood = f"{before[-48:]} {after[:48]}"
-        if (
-            PILOSITY_NEIGHBOR.search(neighbors)
-            or PATTERN_NEIGHBOR.search(neighbors)
-            or PILOSITY_NEIGHBOR.search(neighborhood)
-            or PATTERN_NEIGHBOR.search(neighborhood)
-        ):
+        pattern_neighbor = PATTERN_NEIGHBOR.search(neighbors) or PATTERN_NEIGHBOR.search(
+            neighborhood
+        )
+        pilosity_neighbor = PILOSITY_NEIGHBOR.search(neighbors) or PILOSITY_NEIGHBOR.search(
+            neighborhood
+        )
+        # A nearby hair word normally means that colour belongs to an unresolved covering rather
+        # than to the broad organ.  Once the reviewed bearer itself is PO:trichome, that same
+        # lexical evidence is precisely what makes the attachment safe.
+        if pattern_neighbor or (pilosity_neighbor and bearer_po_id != "PO_0000282"):
             return False
     return True
 
@@ -540,7 +600,7 @@ def _local_context(
         or DISJUNCTIVE_BRIDGE.search(phrase)
         or HEDGED_CONTEXT.search(phrase)
         or SURFACE_LOCATIVE.search(phrase)
-        or not _candidate_atomic_safe(text, start, end, primary_pato_id)
+        or not _candidate_atomic_safe(text, start, end, primary_pato_id, bearer.po_id)
     ):
         return None
     candidates: list[tuple[int, ContextCue, int, int]] = []
@@ -1108,7 +1168,7 @@ def _lexical_bearer(
                 continue
             between = phrase[min(end, local_position) : max(start, local_position)]
             if re.search(
-                r"[;:.!?()]|\b(?:and|or|et|ou|with|avec|"
+                r"[;:.!?()]|\b(?:and|or|but|otherwise|except|et|ou|mais|sinon|sauf|with|avec|"
                 r"divided\s+into|composed\s+of|divis[ée](?:e?s?)?\s+en|"
                 r"compos[ée](?:e?s?)?\s+de)\b",
                 between,
@@ -1294,6 +1354,72 @@ def _lexical_bearer(
     return BearerMatch(best[3], best[4], left + best[5], left + best[6], "unique_po_lexical_form")
 
 
+def _accepted_vocabulary_candidate(
+    record: dict,
+    unresolved: dict,
+    candidate_po_forms: dict[tuple[str, ...], set[str]],
+) -> AcceptedBearerCandidate | None:
+    """Return accepted PO vocabulary without claiming a grammatical attachment."""
+
+    text = str(record.get("text", "") or "")
+    position = int(unresolved.get("start", 0) or 0)
+    clause, clause_start = _clause_at(text, position)
+    group_key, label, disposition, po_id, _note = classify_bearer_candidate(
+        str(record.get("organ", "") or ""),
+        clause,
+        position - clause_start,
+        candidate_po_forms,
+    )
+    if disposition != "reuse_existing_po" or not po_id:
+        return None
+    attachment_status = (
+        "container_attachment" if group_key in CONTAINER_ATTACHMENT_KEYS else "syntax_hold"
+    )
+    return AcceptedBearerCandidate(
+        po_id=po_id,
+        surface=label,
+        group_key=group_key,
+        attachment_status=attachment_status,
+    )
+
+
+def _explicit_organ_margin_bearer(
+    record: dict,
+    unresolved: dict,
+    candidate: AcceptedBearerCandidate,
+) -> BearerMatch | None:
+    """Promote a locally explicit margin only when PO already encodes its container."""
+
+    if candidate.group_key != "margin" or candidate.po_id not in ORGAN_SPECIFIC_MARGIN_IDS:
+        return None
+    text = str(record.get("text", "") or "")
+    start = int(unresolved.get("start", 0) or 0)
+    end = int(unresolved.get("end", start) or start)
+    phrase, left = _comma_phrase(text, start)
+    local_start = start - left
+    local_end = end - left
+    matches = sorted(
+        EXPLICIT_MARGIN.finditer(phrase),
+        key=lambda match: _span_distance(match.start(), match.end(), local_start, local_end),
+    )
+    if not matches:
+        return None
+    match = matches[0]
+    gap = _span_distance(match.start(), match.end(), local_start, local_end)
+    if gap > 32:
+        return None
+    between = phrase[min(match.end(), local_start) : max(match.start(), local_start)]
+    if STRUCTURAL_BRIDGE.search(between) or MARGIN_REFERENCE_BRIDGE.search(between):
+        return None
+    return BearerMatch(
+        candidate.po_id,
+        match.group(0),
+        left + match.start(),
+        left + match.end(),
+        "reviewed_organ_specific_margin",
+    )
+
+
 def recover_record(
     record: dict,
     po_forms: dict[tuple[str, ...], set[str]],
@@ -1324,6 +1450,7 @@ def recover_record(
     for unresolved in record.get("unresolved_spans", []) or []:
         reason = unresolved.get("reason", "")
         bearer: BearerMatch | None = None
+        accepted_candidate: AcceptedBearerCandidate | None = None
         context: tuple[ContextCue, int, int] | None = None
         disposition = "retained"
         locative: LocativeMapping | None = None
@@ -1345,11 +1472,18 @@ def recover_record(
                 disposition = "recovered_bearer_context_quality"
         elif reason == "missing_or_unsupported_bearer":
             bearer = _lexical_bearer(record, unresolved, po_forms, candidate_po_forms)
+            if bearer is None:
+                accepted_candidate = _accepted_vocabulary_candidate(
+                    record, unresolved, candidate_po_forms
+                )
+                if accepted_candidate is not None:
+                    bearer = _explicit_organ_margin_bearer(record, unresolved, accepted_candidate)
             if bearer is not None and _candidate_atomic_safe(
                 text,
                 int(unresolved["start"]),
                 int(unresolved["end"]),
                 str(unresolved.get("candidate_pato_id", "") or ""),
+                bearer.po_id,
             ):
                 disposition = "recovered_existing_po_bearer"
         elif reason == "unsupported_alternative_or_transition":
@@ -1443,6 +1577,43 @@ def recover_record(
 
         if reason in {"developmental_stage_context", "missing_or_unsupported_bearer"} or locative:
             clause, _left = _clause_at(text, int(unresolved.get("start", 0)))
+            audit_po_id = (
+                bearer.po_id
+                if bearer is not None
+                else (accepted_candidate.po_id if accepted_candidate is not None else "")
+            )
+            audit_surface = (
+                bearer.surface
+                if bearer is not None
+                else (accepted_candidate.surface if accepted_candidate is not None else "")
+            )
+            audit_method = (
+                bearer.method
+                if bearer is not None
+                else (
+                    f"accepted_existing_po_candidate:{accepted_candidate.group_key}"
+                    if accepted_candidate is not None
+                    else ""
+                )
+            )
+            vocabulary_status = (
+                "accepted_existing_po" if audit_po_id.startswith("PO_") else "unresolved_vocabulary"
+            )
+            if (
+                locative is not None
+                or (
+                    accepted_candidate is not None
+                    and accepted_candidate.attachment_status == "container_attachment"
+                )
+                or (bearer is not None and bearer.method == "reviewed_organ_specific_margin")
+            ):
+                attachment_status = "container_attachment"
+            elif (
+                disposition.startswith("recovered") or disposition == "duplicate_existing_assertion"
+            ):
+                attachment_status = "direct_attachment"
+            else:
+                attachment_status = "syntax_hold"
             audit.append(
                 {
                     "source": record.get("source", ""),
@@ -1453,8 +1624,10 @@ def recover_record(
                     "reason": reason,
                     "surface_form": unresolved.get("surface_form", ""),
                     "candidate_pato_id": unresolved.get("candidate_pato_id", ""),
-                    "bearer_po_id": bearer.po_id if bearer else "",
-                    "bearer_surface": bearer.surface if bearer else "",
+                    "bearer_po_id": audit_po_id,
+                    "bearer_surface": audit_surface,
+                    "vocabulary_status": vocabulary_status,
+                    "attachment_status": attachment_status,
                     "context_quality": context[0].pato_id if context else "",
                     "context_text": (
                         text[context[1] : context[2]]
@@ -1462,7 +1635,7 @@ def recover_record(
                         else (locative.locative_phrase if locative else "")
                     ),
                     "disposition": disposition,
-                    "method": bearer.method if bearer else "",
+                    "method": audit_method,
                     "clause": re.sub(r"\s+", " ", clause).strip(),
                 }
             )
@@ -1496,6 +1669,8 @@ def recover_file(
     audit_path.parent.mkdir(parents=True, exist_ok=True)
     counts: Counter[str] = Counter()
     sources: Counter[str] = Counter()
+    vocabulary_statuses: Counter[str] = Counter()
+    attachment_statuses: Counter[str] = Counter()
     with (
         Path(input_path).open(encoding="utf-8") as source,
         Path(output_path).open("w", encoding="utf-8") as output,
@@ -1521,6 +1696,8 @@ def recover_file(
             for row in audit:
                 writer.writerow(row)
                 counts[row["disposition"]] += 1
+                vocabulary_statuses[row["vocabulary_status"]] += 1
+                attachment_statuses[row["attachment_status"]] += 1
                 if row["disposition"].startswith("recovered"):
                     sources[row["source"]] += 1
             output.write(json.dumps(recovered, ensure_ascii=False) + "\n")
@@ -1528,6 +1705,8 @@ def recover_file(
     return {
         **dict(counts),
         "recovered_by_source": dict(sorted(sources.items())),
+        "vocabulary_statuses": dict(sorted(vocabulary_statuses.items())),
+        "attachment_statuses": dict(sorted(attachment_statuses.items())),
         "reviewed_locative_mappings": len(locative_mappings),
         "output": str(output_path),
         "audit": str(audit_path),
