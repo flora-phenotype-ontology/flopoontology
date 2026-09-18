@@ -1,0 +1,534 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix obo: <http://purl.obolibrary.org/obo/> .
+@prefix oboInOwl: <http://www.geneontology.org/formats/oboInOwl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+obo:FLOPO_0022142 a owl:Class ;
+    rdfs:label "whole plant herbaceous"^^xsd:string ;
+    obo:IAO_0000115 "A whole plant growth form phenotype in which the whole plant is herbaceous (PATO:0002352), its upper parts dying back to the rootstock at the end of the growing season."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal FLOPO-CAND:herb (curation/botanical_concept_proposals.tsv, curator decision accept_with_revision on 2026-09-18). Revised in place: the referent is unchanged, so the identifier is kept (definition, synonym-scope or parent repair)."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:modified "2026-09-18"^^xsd:date ;
+    dcterms:source <https://www.upov.int/documents/d/upov/tgp-documents-en-tgp_14.pdf> ;
+    oboInOwl:hasRelatedSynonym "herb"@en,
+        "herbs"@en ;
+    rdfs:subClassOf obo:FLOPO_0900032 ;
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000051 ;
+            owl:someValuesFrom [ a owl:Class ;
+                    owl:intersectionOf ( obo:PO_0000003 [ a owl:Restriction ;
+                                owl:onProperty obo:RO_0000053 ;
+                                owl:someValuesFrom obo:PATO_0002352 ] ) ] ] .
+
+obo:FLOPO_0900033 a owl:Class ;
+    rdfs:label "whole plant arborescent"@en ;
+    obo:IAO_0000115 "A whole plant growth form phenotype in which the plant has a tree-like habit, with a single dominant self-supporting main stem bearing a crown and attaining tree stature."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal FLOPO-CAND:arborescent_growth (curation/botanical_concept_proposals.tsv, curator decision accept_with_revision on 2026-09-18). Revised in place: the referent is unchanged, so the identifier is kept (definition, synonym-scope or parent repair)."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:modified "2026-09-18"^^xsd:date ;
+    dcterms:source <https://ausflora.net/wp-content/uploads/2017/06/flora-of-australia-glossary-e28094-ferns-cycads-conifers-and-vascular-plants.pdf> ;
+    oboInOwl:hasExactSynonym "tree"@en ;
+    rdfs:subClassOf obo:FLOPO_0900032 .
+
+obo:FLOPO_0900034 a owl:Class ;
+    rdfs:label "whole plant frutescent"@en ;
+    obo:IAO_0000115 "A whole plant growth form phenotype in which the plant is woody and perennial, with several stems or main branches arising at or near ground level and no single dominant trunk."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal FLOPO-CAND:shrubby_growth (curation/botanical_concept_proposals.tsv, curator decision accept_with_revision on 2026-09-18). Revised in place: the referent is unchanged, so the identifier is kept (definition, synonym-scope or parent repair)."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:modified "2026-09-18"^^xsd:date ;
+    dcterms:source <https://plantnet.rbgsyd.nsw.gov.au/cgi-bin/NSWfl.pl?glossary=yes&page=nswfl&alpha=S> ;
+    oboInOwl:hasExactSynonym "bush"@en,
+        "shrub"@en ;
+    oboInOwl:hasRelatedSynonym "shrubby"@en ;
+    rdfs:subClassOf obo:FLOPO_0900032 .
+
+obo:FLOPO_0900035 a owl:Class ;
+    rdfs:label "whole plant lianescent"@en ;
+    obo:IAO_0000115 "A whole plant climbing phenotype in which the climbing shoot axes are woody throughout their length."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal FLOPO-CAND:liana (curation/botanical_concept_proposals.tsv, curator decision accept_with_revision on 2026-09-18). Revised in place: the referent is unchanged, so the identifier is kept (definition, synonym-scope or parent repair)."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:modified "2026-09-18"^^xsd:date ;
+    dcterms:source <https://tncvasconcelos.github.io/papers/Sperottoetal2020_climbers.pdf> ;
+    oboInOwl:hasExactSynonym "liana"@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000051 ;
+            owl:someValuesFrom [ a owl:Class ;
+                    owl:intersectionOf ( obo:PO_0025029 [ a owl:Restriction ;
+                                owl:onProperty obo:RO_0000053 ;
+                                owl:someValuesFrom obo:PATO_0002348 ] ) ] ],
+        obo:FLOPO_0985031 .
+
+obo:FLOPO_0900039 a owl:Class ;
+    rdfs:label "shoot axis ligneous"@en ;
+    obo:IAO_0000115 "A shoot axis phenotype in which the shoot axis is ligneous (PATO:0002348), that is, woody in structure."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal MAP-CAND:woody (curation/botanical_concept_proposals.tsv, curator decision accept on 2026-09-18). Revised in place: the referent is unchanged, so the identifier is kept (definition, synonym-scope or parent repair)."@en,
+        "Mapping target for woody shoot axes (MAP-CAND:woody); the underlying quality is PATO:0002348 ligneous."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:modified "2026-09-18"^^xsd:date ;
+    oboInOwl:hasExactSynonym "shoot axis woody"@en,
+        "woody"@en ;
+    rdfs:subClassOf obo:FLOPO_0900038 .
+
+obo:FLOPO_0900044 a owl:Class ;
+    rdfs:label "whole plant aquatic"@en ;
+    obo:IAO_0000115 "A whole-plant ecological phenotype in which the plant grows in water."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal FLOPO-PATTERN:aquatic_position (curation/botanical_concept_proposals.tsv, curator decision accept on 2026-09-18). Revised in place: the referent is unchanged, so the identifier is kept (definition, synonym-scope or parent repair)."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:modified "2026-09-18"^^xsd:date ;
+    dcterms:source <https://ausflora.net/wp-content/uploads/2017/06/flora-of-australia-glossary-e28094-ferns-cycads-conifers-and-vascular-plants.pdf> ;
+    rdfs:subClassOf obo:FLOPO_0900043 .
+
+obo:FLOPO_0985000 a owl:Class ;
+    rdfs:label "campanulate"@en ;
+    obo:IAO_0000115 "A shape quality inhering in a bearer by virtue of having an inflated tubular basal portion that widens gradually toward a distal limb or lobes."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PATO-CAND:campanulate (curation/botanical_concept_proposals.tsv, curator decision accept on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PATO (curation/upstream_drafts/pato-pr-1-botanical-qualities.md); replace it with the PATO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://www.mobot.org/mobot/latindict/keyDetail.aspx?keyWord=campanulatus>,
+        <https://www.upov.int/documents/d/upov/tgp-documents-en-tgp_14.pdf> ;
+    oboInOwl:hasRelatedSynonym "bell-shaped"@en ;
+    rdfs:subClassOf obo:PATO_0000052 .
+
+obo:FLOPO_0985001 a owl:Class ;
+    rdfs:label "filiform"@en ;
+    obo:IAO_0000115 "A shape quality inhering in a bearer by virtue of the bearer being long, very slender, and circular or nearly circular in transverse section, thereby resembling a thread."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PATO-CAND:filiform (curation/botanical_concept_proposals.tsv, curator decision accept_with_revision on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PATO (curation/upstream_drafts/pato-pr-1-botanical-qualities.md); replace it with the PATO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://www.mobot.org/mobot/latindict/keyDetail.aspx?keyWord=filiform>,
+        <https://www.upov.int/documents/d/upov/tgp-documents-en-tgp_14.pdf> ;
+    rdfs:subClassOf obo:PATO_0000052 .
+
+obo:FLOPO_0985002 a owl:Class ;
+    rdfs:label "hastate"@en ;
+    obo:IAO_0000115 "A shape quality inhering in a flat bearer by virtue of having two approximately triangular basal lobes directed outward to either side of the main axis."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PATO-CAND:hastate (curation/botanical_concept_proposals.tsv, curator decision accept on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PATO (curation/upstream_drafts/pato-pr-1-botanical-qualities.md); replace it with the PATO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://plantnet.rbgsyd.nsw.gov.au/cgi-bin/NSWfl.pl?glossary=yes&ill=Fig.+7+I&page=nswfl&term=hastate>,
+        <https://www.mobot.org/mobot/latindict/keyDetail.aspx?keyWord=hastatus>,
+        <https://www.upov.int/documents/d/upov/tgp-documents-en-tgp_14.pdf> ;
+    rdfs:subClassOf obo:PATO_0000052 .
+
+obo:FLOPO_0985003 a owl:Class ;
+    rdfs:label "reflexed"@en ;
+    obo:IAO_0000115 "A shape quality inhering in a bearer by virtue of the bearer being abruptly bent backward or abaxially downward."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PATO-CAND:reflexed (curation/botanical_concept_proposals.tsv, curator decision accept on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PATO (curation/upstream_drafts/pato-pr-1-botanical-qualities.md); replace it with the PATO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://sweetgum.nybg.org/science/glossary/glossary-details/?irn=1363>,
+        <https://www.upov.int/documents/d/upov/tgp-documents-en-tgp_14.pdf> ;
+    rdfs:subClassOf obo:PATO_0000617 .
+
+obo:FLOPO_0985004 a owl:Class ;
+    rdfs:label "winged"@en ;
+    obo:IAO_0000115 "A shape quality inhering in a bearer by virtue of the bearer having one or more conspicuous, thin, flattened extensions that project from its main body."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PATO-CAND:winged (curation/botanical_concept_proposals.tsv, curator decision accept on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PATO (curation/upstream_drafts/pato-pr-1-botanical-qualities.md); replace it with the PATO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://sweetgum.nybg.org/science/glossary/glossary-details/?irn=2950>,
+        <https://www.aos.org/orchids/orchid-basics/orchid-glossary> ;
+    oboInOwl:hasExactSynonym "alate"@en ;
+    rdfs:subClassOf obo:PATO_0000052 .
+
+obo:FLOPO_0985005 a owl:Class ;
+    rdfs:label "ascending"@en ;
+    obo:IAO_0000115 "An oblique orientation quality inhering in a bearer by virtue of the bearer being directed gradually upward at an oblique angle."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PATO-CAND:ascending (curation/botanical_concept_proposals.tsv, curator decision accept_with_revision on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PATO (curation/upstream_drafts/pato-pr-1-botanical-qualities.md); replace it with the PATO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://www.upov.int/documents/d/upov/tgp-documents-en-tgp_14.pdf> ;
+    rdfs:subClassOf obo:PATO_0002481 .
+
+obo:FLOPO_0985006 a owl:Class ;
+    rdfs:label "spreading"@en ;
+    obo:IAO_0000115 "An orientation quality inhering in a bearer by virtue of the bearer being directed outward and diverging from a principal axis."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PATO-CAND:spreading (curation/botanical_concept_proposals.tsv, curator decision accept on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PATO (curation/upstream_drafts/pato-pr-1-botanical-qualities.md); replace it with the PATO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://www.upov.int/documents/d/upov/tgp-documents-en-tgp_14.pdf> ;
+    rdfs:subClassOf obo:PATO_0000133 .
+
+obo:FLOPO_0985007 a owl:Class ;
+    rdfs:label "lanate"@en ;
+    obo:IAO_0000115 "A pilosity quality inhering in a bearer by virtue of the bearer being covered with long, somewhat matted and tangled trichomes that give a wool-like appearance."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PATO-CAND:lanate (curation/botanical_concept_proposals.tsv, curator decision accept on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PATO (curation/upstream_drafts/pato-pr-1-botanical-qualities.md); replace it with the PATO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://sweetgum.nybg.org/science/glossary/glossary-details/?irn=939>,
+        <https://www.upov.int/documents/d/upov/tgp-documents-en-tgp_14.pdf> ;
+    oboInOwl:hasRelatedSynonym "woolly"@en ;
+    rdfs:subClassOf obo:PATO_0000454 .
+
+obo:FLOPO_0985008 a owl:Class ;
+    rdfs:label "sericeous"@en ;
+    obo:IAO_0000115 "A pilosity quality inhering in a bearer by virtue of the bearer being covered with long, soft, slender, appressed trichomes that give a silk-like appearance."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PATO-CAND:sericeous (curation/botanical_concept_proposals.tsv, curator decision accept on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PATO (curation/upstream_drafts/pato-pr-1-botanical-qualities.md); replace it with the PATO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://sweetgum.nybg.org/science/glossary/glossary-details/?irn=1450>,
+        <https://www.upov.int/documents/d/upov/tgp-documents-en-tgp_14.pdf> ;
+    oboInOwl:hasRelatedSynonym "silky"@en ;
+    rdfs:subClassOf obo:PATO_0000454 .
+
+obo:FLOPO_0985009 a owl:Class ;
+    rdfs:label "entire"@en ;
+    obo:IAO_0000115 "An edge shape quality inhering in a bearer by virtue of the bearer's edge being continuous and even, without teeth, lobes, or other incisions."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PATO-CAND:entire_margin (curation/botanical_concept_proposals.tsv, curator decision accept_with_revision on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PATO (curation/upstream_drafts/pato-pr-1-botanical-qualities.md); replace it with the PATO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://sweetgum.nybg.org/science/glossary/glossary-details/?irn=626>,
+        <https://www.upov.int/documents/d/upov/tgp-documents-en-tgp_14.pdf> ;
+    oboInOwl:hasRelatedSynonym "entire margin"@en ;
+    rdfs:subClassOf obo:PATO_0001975 .
+
+obo:FLOPO_0985010 a owl:Class ;
+    rdfs:label "annual life span"@en ;
+    obo:IAO_0000115 "A life span quality inhering in a bearer by virtue of the bearer's expected natural life span being no more than one year."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PATO-CAND:annual_life_span (curation/botanical_concept_proposals.tsv, curator decision accept on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PATO (curation/upstream_drafts/pato-pr-1-botanical-qualities.md); replace it with the PATO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://sweetgum.nybg.org/science/glossary/glossary-details/?irn=272>,
+        <https://www.rhs.org.uk/advice/beginners-guide/glossary> ;
+    oboInOwl:hasExactSynonym "annual"@en ;
+    rdfs:subClassOf obo:PATO_0000050 .
+
+obo:FLOPO_0985011 a owl:Class ;
+    rdfs:label "perennial life span"@en ;
+    obo:IAO_0000115 "A life span quality inhering in a bearer by virtue of the bearer's expected natural life span being more than two years."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PATO-CAND:perennial_life_span (curation/botanical_concept_proposals.tsv, curator decision accept_with_revision on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PATO (curation/upstream_drafts/pato-pr-1-botanical-qualities.md); replace it with the PATO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://sweetgum.nybg.org/science/glossary/glossary-details/?irn=1182>,
+        <https://www.rhs.org.uk/advice/beginners-guide/glossary> ;
+    oboInOwl:hasExactSynonym "perennial"@en ;
+    rdfs:subClassOf obo:PATO_0000050 .
+
+obo:FLOPO_0985012 a owl:Class ;
+    rdfs:label "dissected"@en ;
+    obo:IAO_0000115 "A split quality inhering in a bearer by virtue of the bearer being divided, at least partially, by incisions into visibly distinct segments that may remain connected."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PATO-CAND:dissected (curation/botanical_concept_proposals.tsv, curator decision accept_with_revision on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PATO (curation/upstream_drafts/pato-pr-1-botanical-qualities.md); replace it with the PATO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://plantnet.rbgsyd.nsw.gov.au/cgi-bin/NSWfl.pl?glossary=yes&page=nswfl&alpha=D-E> ;
+    rdfs:subClassOf obo:PATO_0001786 .
+
+obo:FLOPO_0985013 a owl:Class ;
+    rdfs:label "clasping"@en ;
+    obo:IAO_0000115 "A positional quality inhering in a bearer by virtue of the bearer at least partially enclosing an axis to which it is attached."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PATO-CAND:clasping (curation/botanical_concept_proposals.tsv, curator decision accept_with_revision on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PATO (curation/upstream_drafts/pato-pr-1-botanical-qualities.md); replace it with the PATO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://plantnet.rbgsyd.nsw.gov.au/cgi-bin/NSWfl.pl?glossary=yes&page=nswfl&alpha=C>,
+        <https://sweetgum.nybg.org/science/glossary/glossary-details/?irn=467> ;
+    oboInOwl:hasNarrowSynonym "amplexicaul"@en ;
+    rdfs:subClassOf obo:PATO_0000140 .
+
+obo:FLOPO_0985014 a owl:Class ;
+    rdfs:label "mealy"@en ;
+    obo:IAO_0000115 "A surface texture quality inhering in a bearer by virtue of the bearer being covered with a coarse, flour-like powder."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PATO-CAND:mealy_surface (curation/botanical_concept_proposals.tsv, curator decision accept on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PATO (curation/upstream_drafts/pato-pr-1-botanical-qualities.md); replace it with the PATO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://ausflora.net/wp-content/uploads/2017/06/flora-of-australia-glossary-e28094-ferns-cycads-conifers-and-vascular-plants.pdf>,
+        <https://plantnet.rbgsyd.nsw.gov.au/cgi-bin/NSWfl.pl?glossary=yes&page=nswfl&alpha=F-H>,
+        <https://plantnet.rbgsyd.nsw.gov.au/cgi-bin/NSWfl.pl?glossary=yes&page=nswfl&alpha=M-O> ;
+    rdfs:subClassOf obo:PATO_0000150 .
+
+obo:FLOPO_0985015 a owl:Class ;
+    rdfs:label "plicate"@en ;
+    obo:IAO_0000115 "A folded quality inhering in a bearer by virtue of the bearer being folded back and forth longitudinally like a fan."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PATO-CAND:plicate (curation/botanical_concept_proposals.tsv, curator decision accept on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PATO (curation/upstream_drafts/pato-pr-1-botanical-qualities.md); replace it with the PATO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://ausflora.net/wp-content/uploads/2017/06/flora-of-australia-glossary-e28094-ferns-cycads-conifers-and-vascular-plants.pdf>,
+        <https://plantnet.rbgsyd.nsw.gov.au/cgi-bin/NSWfl.pl?glossary=yes&page=nswfl&alpha=P> ;
+    oboInOwl:hasRelatedSynonym "pleated"@en ;
+    rdfs:subClassOf obo:PATO_0001910 .
+
+obo:FLOPO_0985016 a owl:Class ;
+    rdfs:label "floccose"@en ;
+    obo:IAO_0000115 "A pilosity quality inhering in a bearer by virtue of the bearer having tufts of long, soft hairs that tend to rub off as small wool-like masses."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PATO-CAND:floccose_cottony (curation/botanical_concept_proposals.tsv, curator decision accept on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PATO (curation/upstream_drafts/pato-pr-1-botanical-qualities.md); replace it with the PATO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://ausflora.net/wp-content/uploads/2017/06/flora-of-australia-glossary-e28094-ferns-cycads-conifers-and-vascular-plants.pdf>,
+        <https://plantnet.rbgsyd.nsw.gov.au/cgi-bin/NSWfl.pl?glossary=yes&page=nswfl&alpha=F-H>,
+        <https://www.upov.int/documents/d/upov/tgp-documents-en-tgp_14.pdf> ;
+    oboInOwl:hasNarrowSynonym "flocculose"@en ;
+    oboInOwl:hasRelatedSynonym "cottony"@en ;
+    rdfs:subClassOf obo:PATO_0000454 .
+
+obo:FLOPO_0985017 a owl:Class ;
+    rdfs:label "corolla lip"@en ;
+    obo:IAO_0000115 "A collective organ part structure composed of distal portions of one or more fused petals that form one side of a bilabiate corolla."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PO-CAND:corolla_lip (curation/botanical_concept_proposals.tsv, curator decision accept on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PO (curation/upstream_drafts/po-pr-5-anatomy-classes.md); replace it with the PO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://pmc.ncbi.nlm.nih.gov/articles/PMC2735325/> ;
+    oboInOwl:hasRelatedSynonym "lip"@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000050 ;
+            owl:someValuesFrom obo:PO_0025581 ],
+        obo:PO_0025269 .
+
+obo:FLOPO_0985018 a owl:Class ;
+    rdfs:label "corolla tube"@en ;
+    obo:IAO_0000115 "A collective organ part structure composed of the proximal fused portions of two or more petals in a fused corolla, extending distally to where the petal portions diverge or become free."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PO-CAND:corolla_tube (curation/botanical_concept_proposals.tsv, curator decision accept on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PO (curation/upstream_drafts/po-pr-5-anatomy-classes.md); replace it with the PO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://sweetgum.nybg.org/science/glossary/glossary-details/?irn=1937>,
+        <https://www.upov.int/documents/d/upov/tgp-documents-en-tgp_14.pdf> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000050 ;
+            owl:someValuesFrom obo:PO_0025581 ],
+        obo:PO_0025269 .
+
+obo:FLOPO_0985019 a owl:Class ;
+    rdfs:label "parasitic plant haustorium"@en ;
+    obo:IAO_0000115 "A plant organ of a parasitic plant that penetrates host tissue and forms a connection through which water or nutrients can be transferred between host and parasite."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PO-CAND:parasitic_plant_haustorium (curation/botanical_concept_proposals.tsv, curator decision accept on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PO (curation/upstream_drafts/po-pr-5-anatomy-classes.md); replace it with the PO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://pmc.ncbi.nlm.nih.gov/articles/PMC10752351/> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000050 ;
+            owl:someValuesFrom obo:PO_0000003 ],
+        obo:PO_0009008 .
+
+obo:FLOPO_0985021 a owl:Class ;
+    rdfs:label "corolline corona"@en ;
+    obo:IAO_0000115 "A floral corona whose appendages develop from the corolla."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PO-CAND:corolline_corona (curation/botanical_concept_proposals.tsv, curator decision accept_with_revision on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PO (curation/upstream_drafts/po-pr-5-anatomy-classes.md); replace it with the PO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://doi.org/10.1590/0102-33062016abb0424> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000050 ;
+            owl:someValuesFrom obo:PO_0009059 ],
+        obo:FLOPO_0985020 .
+
+obo:FLOPO_0985022 a owl:Class ;
+    rdfs:label "staminal corona"@en ;
+    obo:IAO_0000115 "A floral corona whose appendages develop from stamen filaments or a filament tube."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PO-CAND:staminal_corona (curation/botanical_concept_proposals.tsv, curator decision accept_with_revision on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PO (curation/upstream_drafts/po-pr-5-anatomy-classes.md); replace it with the PO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://doi.org/10.1590/0102-33062016abb0424> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000050 ;
+            owl:someValuesFrom obo:PO_0009061 ],
+        obo:FLOPO_0985020 .
+
+obo:FLOPO_0985023 a owl:Class ;
+    rdfs:label "plant organ apex"@en ;
+    obo:IAO_0000115 "A cardinal organ part that is the distal region of a plant organ."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PO-CAND:plant_structure_apex (curation/botanical_concept_proposals.tsv, curator decision accept_with_revision on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PO (curation/upstream_drafts/po-pr-5-anatomy-classes.md); replace it with the PO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://sweetgum.nybg.org/science/glossary/glossary-details/?irn=290> ;
+    oboInOwl:hasExactSynonym "apices"@en ;
+    rdfs:subClassOf obo:PO_0025001 .
+
+obo:FLOPO_0985024 a owl:Class ;
+    rdfs:label "plant organ base"@en ;
+    obo:IAO_0000115 "A cardinal organ part that is the proximal region of a plant organ."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PO-CAND:plant_structure_base (curation/botanical_concept_proposals.tsv, curator decision accept_with_revision on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PO (curation/upstream_drafts/po-pr-5-anatomy-classes.md); replace it with the PO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://sweetgum.nybg.org/science/glossary/glossary-details/?irn=342> ;
+    rdfs:subClassOf obo:PO_0025001 .
+
+obo:FLOPO_0985025 a owl:Class ;
+    rdfs:label "trunk"@en ;
+    obo:IAO_0000115 "A stem that is the single dominant, persistent, self-supporting main axis of a tree-form plant, extending from ground level and bearing the principal branches."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PO-CAND:trunk (curation/botanical_concept_proposals.tsv, curator decision accept_with_revision on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PO (curation/upstream_drafts/po-pr-5-anatomy-classes.md); replace it with the PO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://sweetgum.nybg.org/science/glossary/glossary-details/?irn=130>,
+        <https://sweetgum.nybg.org/science/glossary/glossary-details/?irn=1740> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000050 ;
+            owl:someValuesFrom obo:PO_0000003 ],
+        obo:PO_0009047 .
+
+obo:FLOPO_0985026 a owl:Class ;
+    rdfs:label "frond"@en ;
+    obo:IAO_0000115 "A vascular leaf of a fern, cycad, or palm, including its lamina and stipe or petiole when present."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PO-CAND:frond (curation/botanical_concept_proposals.tsv, curator decision accept on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PO (curation/upstream_drafts/po-pr-5-anatomy-classes.md); replace it with the PO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://ausflora.net/wp-content/uploads/2017/06/flora-of-australia-glossary-e28094-ferns-cycads-conifers-and-vascular-plants.pdf>,
+        <https://plantatlas.usf.edu/flip/glossary.aspx>,
+        <https://plantnet.rbgsyd.nsw.gov.au/cgi-bin/NSWfl.pl?glossary=yes&page=nswfl&alpha=F-H>,
+        <https://sweetgum.nybg.org/science/glossary/glossary-details/?irn=3106> ;
+    rdfs:subClassOf obo:PO_0009025 .
+
+obo:FLOPO_0985028 a owl:Class ;
+    rdfs:label "pinnule"@en ;
+    obo:IAO_0000115 "A cardinal organ part that is a secondary or higher-order division of a pinna of a pinnately compound leaf."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PO-CAND:pinnule (curation/botanical_concept_proposals.tsv, curator decision accept_with_revision on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PO (curation/upstream_drafts/po-pr-5-anatomy-classes.md); replace it with the PO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://sweetgum.nybg.org/science/glossary/glossary-details/?irn=2382> ;
+    oboInOwl:hasExactSynonym "pinnules"@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000050 ;
+            owl:someValuesFrom obo:FLOPO_0985027 ],
+        [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000050 ;
+            owl:someValuesFrom obo:PO_0020043 ],
+        obo:PO_0025001 .
+
+obo:FLOPO_0985029 a owl:Class ;
+    rdfs:label "cyathium"@en ;
+    obo:IAO_0000115 "An inflorescence consisting of several naked staminate flowers, usually one naked pistillate flower, and a subtending cup-shaped involucre."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PO-CAND:cyathium (curation/botanical_concept_proposals.tsv, curator decision accept on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PO (curation/upstream_drafts/po-pr-5-anatomy-classes.md); replace it with the PO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://sweetgum.nybg.org/science/glossary/glossary-details/?irn=568> ;
+    oboInOwl:hasExactSynonym "cyathia"@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000051 ;
+            owl:someValuesFrom obo:PO_0009100 ],
+        [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000051 ;
+            owl:someValuesFrom obo:PO_0025600 ],
+        obo:PO_0009049 .
+
+obo:FLOPO_0985030 a owl:Class ;
+    rdfs:label "tree crown"@en ;
+    obo:IAO_0000115 "A shoot system that is part of a tree and comprises the branches and foliage borne above the lowest principal branch of the trunk."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PO-CAND:tree_crown (curation/botanical_concept_proposals.tsv, curator decision accept_with_revision on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PO (curation/upstream_drafts/po-pr-5-anatomy-classes.md); replace it with the PO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://ausflora.net/wp-content/uploads/2017/06/flora-of-australia-glossary-e28094-ferns-cycads-conifers-and-vascular-plants.pdf> ;
+    rdfs:subClassOf obo:PO_0009006 .
+
+obo:FLOPO_0985032 a owl:Class ;
+    rdfs:label "whole plant vine phenotype"@en ;
+    obo:IAO_0000115 "A whole plant climbing phenotype in which the climbing shoot axes are not woody."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal FLOPO-CAND:vine (curation/botanical_concept_proposals.tsv, curator decision accept_with_revision on 2026-09-18). FLOPO-local whole-plant phenotype."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://tncvasconcelos.github.io/papers/Sperottoetal2020_climbers.pdf> ;
+    oboInOwl:hasRelatedSynonym "vine"@en ;
+    rdfs:subClassOf obo:FLOPO_0985031 .
+
+obo:FLOPO_0985033 a owl:Class ;
+    rdfs:label "simple scrambling climbing phenotype"@en ;
+    obo:IAO_0000115 "A climbing phenotype in which the plant grows over support without active searching movement or a specialized attachment structure."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal FLOPO-CAND:simple_scrambling (curation/botanical_concept_proposals.tsv, curator decision accept on 2026-09-18). FLOPO-local whole-plant phenotype."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://tncvasconcelos.github.io/papers/Sperottoetal2020_climbers.pdf> ;
+    rdfs:subClassOf obo:FLOPO_0985031 .
+
+obo:FLOPO_0985034 a owl:Class ;
+    rdfs:label "twining climbing phenotype"@en ;
+    obo:IAO_0000115 "A climbing phenotype in which the main stem coils helically around an external support."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal FLOPO-CAND:twining (curation/botanical_concept_proposals.tsv, curator decision accept on 2026-09-18). FLOPO-local whole-plant phenotype."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://tncvasconcelos.github.io/papers/Sperottoetal2020_climbers.pdf> ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000051 ;
+            owl:someValuesFrom [ a owl:Class ;
+                    owl:intersectionOf ( obo:PO_0009047 [ a owl:Restriction ;
+                                owl:onProperty obo:RO_0000053 ;
+                                owl:someValuesFrom obo:PATO_0000404 ] ) ] ],
+        obo:FLOPO_0985031 .
+
+obo:FLOPO_0985035 a owl:Class ;
+    rdfs:label "whole plant leafless phenotype"@en ;
+    obo:IAO_0000115 "A whole-plant phenotype in which the plant lacks all leaves at the described life stage."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal FLOPO-CAND:leafless (curation/botanical_concept_proposals.tsv, curator decision accept on 2026-09-18). FLOPO-local whole-plant phenotype."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    oboInOwl:hasRelatedSynonym "leafless"@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000051 ;
+            owl:someValuesFrom [ a owl:Class ;
+                    owl:intersectionOf ( obo:PO_0000003 [ a owl:Restriction ;
+                                owl:onProperty obo:RO_0000053 ;
+                                owl:someValuesFrom [ a owl:Class ;
+                                        owl:intersectionOf ( obo:PATO_0002000 [ a owl:Restriction ;
+                                                    owl:onProperty obo:RO_0002503 ;
+                                                    owl:someValuesFrom obo:PO_0025034 ] ) ] ] ) ] ],
+        obo:FLOPO_0000089 .
+
+obo:FLOPO_0985036 a owl:Class ;
+    rdfs:label "whole plant caespitose phenotype"@en ;
+    obo:IAO_0000115 "A whole-plant growth phenotype in which shoots arise in dense clumps or tufts from a compact base."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal FLOPO-CAND:caespitose_growth (curation/botanical_concept_proposals.tsv, curator decision accept on 2026-09-18). FLOPO-local whole-plant phenotype."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://sweetgum.nybg.org/science/glossary/glossary-details/?irn=390> ;
+    oboInOwl:hasExactSynonym "caespitose"@en ;
+    rdfs:subClassOf obo:FLOPO_0900032 .
+
+obo:FLOPO_0985037 a owl:Class ;
+    rdfs:label "ground-oriented whole-plant growth phenotype"@en ;
+    obo:IAO_0000115 "A whole plant growth form phenotype in which the principal shoot axes extend along or close to the ground surface rather than being self-supporting and upright."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal FLOPO-PATTERN:creeping_trailing_sprawling (curation/botanical_concept_proposals.tsv, curator decision accept_with_revision on 2026-09-18). FLOPO-local whole-plant phenotype."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://ausflora.net/wp-content/uploads/2017/06/flora-of-australia-glossary-e28094-ferns-cycads-conifers-and-vascular-plants.pdf>,
+        <https://plantnet.rbgsyd.nsw.gov.au/cgi-bin/NSWfl.pl?glossary=yes&page=nswfl&alpha=P>,
+        <https://plantnet.rbgsyd.nsw.gov.au/cgi-bin/NSWfl.pl?glossary=yes&page=nswfl&alpha=S> ;
+    oboInOwl:hasRelatedSynonym "creeping"@en,
+        "sprawling"@en,
+        "trailing"@en ;
+    rdfs:subClassOf obo:FLOPO_0900032 .
+
+obo:flopo-botanical-extension-2.owl a owl:Ontology ;
+    rdfs:label "FLOPO botanical extension module 2"@en ;
+    dcterms:license <https://creativecommons.org/publicdomain/zero/1.0/> ;
+    dcterms:modified "2026-09-18"^^xsd:date ;
+    owl:imports obo:pato.owl,
+        obo:po.owl .
+
+obo:FLOPO_0985027 a owl:Class ;
+    rdfs:label "pinna"@en ;
+    obo:IAO_0000115 "A cardinal organ part that is a primary division of a pinnately compound leaf."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal PO-CAND:pinna (curation/botanical_concept_proposals.tsv, curator decision accept on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PO (curation/upstream_drafts/po-pr-5-anatomy-classes.md); replace it with the PO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://sweetgum.nybg.org/science/glossary/glossary-details/?irn=1228> ;
+    oboInOwl:hasExactSynonym "pinnae"@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000050 ;
+            owl:someValuesFrom obo:PO_0020043 ],
+        obo:PO_0025001 .
+
+obo:RO_0002503 a owl:ObjectProperty ;
+    rdfs:label "towards"@en .
+
+obo:FLOPO_0985020 a owl:Class ;
+    rdfs:label "floral corona"@en ;
+    obo:IAO_0000115 "A collective organ part structure that is a ring or series of floral appendages situated between the corolla and the androecium and derived from the corolla, the androecium, or both."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal SURFACE-CAND:corona (curation/botanical_concept_proposals.tsv, curator decision accept_with_revision on 2026-09-18). Provisional FLOPO-local representation of a class proposed to PO (curation/upstream_drafts/po-pr-5-anatomy-classes.md); replace it with the PO identifier via IAO:0100001 once assigned. No PO or PATO identifier is minted locally."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://doi.org/10.1590/0102-33062016abb0424>,
+        <https://sweetgum.nybg.org/science/glossary/glossary-details/?irn=2259> ;
+    oboInOwl:hasRelatedSynonym "corona"@en ;
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000050 ;
+            owl:someValuesFrom obo:PO_0009046 ],
+        obo:PO_0025269 .
+
+obo:FLOPO_0985031 a owl:Class ;
+    rdfs:label "whole plant climbing phenotype"@en ;
+    obo:IAO_0000115 "A whole-plant phenotype in which, after some growth, the plant cannot mechanically sustain its stem without an external support."@en ;
+    obo:IAO_0000116 "Approved FLOPO botanical concept proposal FLOPO-CAND:climber (curation/botanical_concept_proposals.tsv, curator decision accept_with_revision on 2026-09-18). FLOPO-local whole-plant phenotype."@en ;
+    dcterms:contributor <https://orcid.org/0000-0001-8149-5890> ;
+    dcterms:created "2026-09-18"^^xsd:date ;
+    dcterms:source <https://tncvasconcelos.github.io/papers/Sperottoetal2020_climbers.pdf> ;
+    oboInOwl:hasExactSynonym "climber"@en,
+        "scandent"@en ;
+    rdfs:subClassOf obo:FLOPO_0900032 .

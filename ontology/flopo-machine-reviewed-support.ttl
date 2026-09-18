@@ -1,0 +1,40 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix obo: <http://purl.obolibrary.org/obo/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix flopoann: <https://w3id.org/flopo/annotation/> .
+
+<http://purl.obolibrary.org/obo/flopo-machine-reviewed-support.owl> a owl:Ontology ;
+    owl:imports <http://purl.obolibrary.org/obo/po.owl> ;
+    dcterms:created "2026-08-04"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/publicdomain/zero/1.0/> ;
+    rdfs:label "Machine-reviewed FLOPO anatomy support classes"@en .
+
+obo:BFO_0000050 a owl:ObjectProperty .
+obo:IAO_0000115 a owl:AnnotationProperty .
+obo:IAO_0000116 a owl:AnnotationProperty .
+flopoann:machine_review_campaign a owl:AnnotationProperty .
+flopoann:machine_review_item a owl:AnnotationProperty .
+flopoann:machine_review_signature a owl:AnnotationProperty .
+flopoann:machine_review_status a owl:AnnotationProperty .
+flopoann:machine_reviewer a owl:AnnotationProperty .
+flopoann:machine_adjudicator a owl:AnnotationProperty .
+
+obo:FLOPO_0980978 a owl:Class ;
+    rdfs:label "orchid labellum"@en ;
+    obo:IAO_0000115 "A petal that is the median member of the inner perianth whorl of an orchid (Orchidaceae) flower and that is morphologically differentiated in size, shape, colour or ornamentation from the two lateral petals of the same whorl."@en ;
+    rdfs:subClassOf obo:PO_0009032 ;
+    rdfs:subClassOf [ a owl:Restriction ; owl:onProperty obo:BFO_0000050 ; owl:someValuesFrom obo:PO_0009059 ] ;
+    dcterms:created "2026-08-04"^^xsd:date ;
+    flopoann:machine_review_campaign "campaign_ea95684709ffbe10a4253c09" ;
+    flopoann:machine_review_item "cluster_d43c458f894901c1b3131a23" ;
+    flopoann:machine_review_signature "a132a1f200c17b727fdc618998eec1282b7941dbcf76960d6ba0ea06126646ac" ;
+    flopoann:machine_review_status "llm_consensus" ;
+    flopoann:machine_reviewer "reviewer_claude_opus_4_8" ;
+    flopoann:machine_reviewer "reviewer_gpt_5_6" ;
+    flopoann:machine_adjudicator "adversary_glm_5_2" ;
+    obo:IAO_0000116 "Provisional FLOPO-local anatomy bridge admitted by independent machine review and adversarial validation; not human reviewed."@en ;
+    dcterms:source <https://www.aos.org/orchids/orchid-basics/orchid-glossary> ;
+    dcterms:source <https://pmc.ncbi.nlm.nih.gov/articles/PMC6795766/> .
