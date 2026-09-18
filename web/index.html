@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FLOPO v2 Trait Browser</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <h1>FLOPO v2</h1>
+        <p>Plant phenotypes as entity-quality assertions, linked to taxa and source evidence.</p>
+      </div>
+      <div class="metrics" id="metrics"></div>
+    </header>
+
+    <main class="layout">
+      <aside class="sidebar">
+        <label class="search">
+          <span>Search</span>
+          <input id="search" type="search" placeholder="taxon, organ, quality, evidence" />
+        </label>
+        <div class="filter-block">
+          <span>Quality</span>
+          <div id="qualityFilters" class="chips"></div>
+        </div>
+        <div class="filter-block">
+          <span>Organ</span>
+          <div id="organFilters" class="chips"></div>
+        </div>
+        <button id="clearFilters" type="button">Clear filters</button>
+      </aside>
+
+      <section class="workspace">
+        <nav class="tabs" aria-label="Views">
+          <button class="tab active" data-view="taxa" type="button">Taxa</button>
+          <button class="tab" data-view="traits" type="button">Traits</button>
+          <button class="tab" data-view="compare" type="button">Compare</button>
+          <button class="tab" data-view="identify" type="button">Identify</button>
+        </nav>
+
+        <section id="taxaView" class="view active">
+          <div class="split">
+            <div>
+              <div class="section-head">
+                <h2>Taxa</h2>
+                <span id="taxonCount"></span>
+              </div>
+              <div id="taxonList" class="list"></div>
+            </div>
+            <article id="taxonDetail" class="detail"></article>
+          </div>
+        </section>
+
+        <section id="traitsView" class="view">
+          <div class="split">
+            <div>
+              <div class="section-head">
+                <h2>Trait Types</h2>
+                <span id="traitCount"></span>
+              </div>
+              <div id="traitList" class="list"></div>
+            </div>
+            <article id="traitDetail" class="detail"></article>
+          </div>
+        </section>
+
+        <section id="compareView" class="view">
+          <div class="compare-grid">
+            <label>Taxon A <select id="compareA"></select></label>
+            <label>Taxon B <select id="compareB"></select></label>
+          </div>
+          <div id="compareResult" class="detail wide"></div>
+        </section>
+
+        <section id="identifyView" class="view">
+          <div class="section-head">
+            <h2>Trait-Based Identification</h2>
+            <span>Select observed traits to rank taxa by semantic overlap.</span>
+          </div>
+          <div id="identifyTraits" class="trait-picker"></div>
+          <div id="identifyResult" class="detail wide"></div>
+        </section>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
