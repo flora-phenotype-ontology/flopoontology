@@ -37,7 +37,11 @@ PRICES = {
     "mistralai/mistral-small-2603": (0.15, 0.60),
     "deepseek/deepseek-v3.2": (0.23, 0.34),
     "z-ai/glm-4.6": (0.43, 1.74),
+    "z-ai/glm-4.7-flash": (0.06, 0.40),
     "z-ai/glm-5.2": (0.95, 3.00),
+    "minimax/minimax-m3": (0.30, 1.20),
+    "xiaomi/mimo-v2.5": (0.105, 0.28),
+    "xiaomi/mimo-v2.5-pro": (0.435, 0.87),
 }
 
 _FENCE = re.compile(r"^```(?:json)?|```$", re.MULTILINE)
@@ -59,7 +63,8 @@ class Usage:
             self.calls += 1
             self.input_tokens += in_tok
             self.output_tokens += out_tok
-            pin, pout = PRICES.get(model, (0.0, 0.0))
+            base_model = model.split(":", 1)[0]
+            pin, pout = PRICES.get(base_model, (0.0, 0.0))
             self.cost_usd += in_tok / 1e6 * pin + out_tok / 1e6 * pout
             self.by_model[model] = self.by_model.get(model, 0) + 1
 
@@ -83,7 +88,8 @@ def parse_json(content: str) -> dict | None:
 
 class OpenRouterClient:
     def __init__(self, api_key: str | None = None, timeout: httpx.Timeout | float | None = None,
-                 client: httpx.Client | None = None, max_connections: int = 32):
+                 client: httpx.Client | None = None, max_connections: int = 32,
+                 provider: dict | None = None):
         self.api_key = api_key or os.environ.get("OPENROUTER_API_KEY", "")
         if client is None:
             limits = httpx.Limits(max_connections=max_connections,
@@ -91,6 +97,7 @@ class OpenRouterClient:
             client = httpx.Client(timeout=timeout or DEFAULT_TIMEOUT, limits=limits)
         self._client = client
         self.usage = Usage()
+        self.provider = provider or {}
 
     @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=1, max=8), reraise=True)
     def _post(self, payload: dict) -> dict:
@@ -119,6 +126,8 @@ class OpenRouterClient:
                          {"role": "user", "content": user}],
             "response_format": {"type": "json_object"},
         }
+        if self.provider:
+            payload["provider"] = self.provider
         try:
             resp = self._post(payload)
         except Exception:

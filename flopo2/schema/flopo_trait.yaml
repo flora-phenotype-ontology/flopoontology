@@ -5,8 +5,8 @@ description: >-
   LinkML schema for ontology-grounded extraction of plant phenotype assertions from flora
   descriptions. It is the single contract for both extraction engines (Graph-RAG and SPIRES+OAK),
   drives structured/validated LLM output, and generates the curated-database DDL. Each
-  TraitAssertion is one entity-quality observation for a taxon, grounded to PO (entity) and PATO
-  (quality) — optionally a TO trait and a UO unit — with the source span for provenance.
+  TraitAssertion is one entity-quality flora assertion for a taxon, grounded to PO (entity) and
+  PATO (quality) — optionally a TO trait and a UO unit — with the source span for provenance.
   The ``annotators`` annotations make this directly usable as an OntoGPT/SPIRES template (OAK
   grounds the named slots against the listed ontologies).
 license: https://creativecommons.org/publicdomain/zero/1.0/
@@ -16,12 +16,20 @@ default_range: string
 prefixes:
   flopo_trait: https://w3id.org/flopo/flopo-trait/
   linkml: https://w3id.org/linkml/
+  BTERM: https://w3id.org/flopo/botanical-term/
+  FLOPO: http://purl.obolibrary.org/obo/FLOPO_
   PO: http://purl.obolibrary.org/obo/PO_
   PATO: http://purl.obolibrary.org/obo/PATO_
   TO: http://purl.obolibrary.org/obo/TO_
   UO: http://purl.obolibrary.org/obo/UO_
   RO: http://purl.obolibrary.org/obo/RO_
   BFO: http://purl.obolibrary.org/obo/BFO_
+  SIO: http://semanticscience.org/resource/SIO_
+  PROV: http://www.w3.org/ns/prov#
+  ENVO: http://purl.obolibrary.org/obo/ENVO_
+  FLOPOANN: https://w3id.org/flopo/annotation/
+  FLOPOAC: https://w3id.org/flopo/annotation-class/
+  BSPO: http://purl.obolibrary.org/obo/BSPO_
 
 imports:
   - linkml:types
@@ -35,28 +43,146 @@ classes:
       The set of trait assertions extracted from a single text segment (one organ block of one
       taxon). Carries the provenance needed to trace every assertion back to its source.
     attributes:
+      annotation_extension_iri:
+        description: >-
+          IRI of the annotation-extension ontology that defines the phenotype_class_iri targets
+          used in this materialized record.
+      source_segment_index:
+        description: >-
+          Zero-based document-order occurrence within one source file. This distinguishes
+          repeated taxon/organ/text blocks whose local character offsets are otherwise identical.
+        range: integer
       taxon_name:
         description: Verbatim taxon name string from the source treatment.
       organ_hint:
         description: The FlorML char-class / subheading the segment came from (anatomical prior).
+      source_statements:
+        description: >-
+          Lossless, first-class source statements in this segment. Every assertion must identify
+          the statement that supports it before database or OWL serialization.
+        multivalued: true
+        inlined_as_list: true
+        range: SourceStatement
+      term_mentions:
+        description: Botanical terminology spans detected before contextual EQ extraction.
+        multivalued: true
+        inlined_as_list: true
+        range: TermMention
+      unresolved_spans:
+        description: >-
+          Source spans that contain a possible trait but cannot yet be represented as a safe
+          atomic assertion. These remain first-class audit evidence rather than being discarded.
+        multivalued: true
+        inlined_as_list: true
+        range: UnresolvedTraitSpan
       assertions:
         description: The trait assertions found in this segment.
         multivalued: true
         inlined_as_list: true
         range: TraitAssertion
 
+  SourceStatement:
+    class_uri: FLOPOANN:SourceStatement
+    description: >-
+      A verbatim flora statement retained as evidence. Its identifier includes document and
+      segment identity as well as offsets and text, so identical wording in different treatments
+      remains distinct evidence.
+    attributes:
+      statement_id:
+        identifier: true
+        required: true
+        description: Stable source-scoped identifier assigned by the provenance normalizer.
+      verbatim_text:
+        required: true
+        description: Exact source text selected by start and end.
+      start:
+        required: true
+        range: integer
+        description: Zero-based inclusive offset in the source segment.
+      end:
+        required: true
+        range: integer
+        description: Zero-based exclusive offset in the source segment.
+      document_start:
+        range: integer
+        description: Zero-based inclusive offset in the source document, when available.
+      document_end:
+        range: integer
+        description: Zero-based exclusive offset in the source document, when available.
+      language:
+        description: BCP 47 language code for the retained statement.
+      sentence_index:
+        range: integer
+        description: Zero-based sentence or statement occurrence within the source segment, if known.
+
+  UnresolvedTraitSpan:
+    description: >-
+      A verbatim candidate trait span withheld from assertion promotion because its negation,
+      composition, bearer, modifier, or ontology interpretation is unresolved.
+    attributes:
+      start:
+        description: Zero-based inclusive character offset in the source segment.
+        range: integer
+        required: true
+      end:
+        description: Zero-based exclusive character offset in the source segment.
+        range: integer
+        required: true
+      surface_form:
+        description: Exact source text selected by start and end.
+        required: true
+      reason:
+        description: Stable machine-readable reason the candidate was withheld.
+        required: true
+      candidate_pato_id:
+        description: PATO identifier suggested by the lexical cue, if any.
+      original_reason:
+        description: Stable unresolved reason retained before a context-specific recovery pass.
+      negation_residual_reason:
+        description: Machine-readable reason a negated candidate remains unresolved.
+      negation_residual_detail:
+        description: Human-readable audit detail explaining the negation residual disposition.
+      partial_promotion:
+        description: >-
+          True when part of this source span was promoted to one or more assertions while the
+          retained residual still needs normalization or ontology curation.
+        range: boolean
+      pending_bearer:
+        description: Bearer phrase still awaiting PO or reviewed FLOPO-local anatomy grounding.
+      promoted_po_ids:
+        description: PO identifiers already promoted from a partially resolved source span.
+        multivalued: true
+      extractor:
+        description: Extraction implementation that produced this unresolved record.
+        required: true
+
   TraitAssertion:
     description: >-
-      One grounded entity-quality observation: an anatomical entity (PO) bears a quality (PATO),
-      optionally with a measured value/unit, modifier, or negation, justified by a source span.
+      One grounded entity-quality statement: an anatomical entity (PO) bears a quality (PATO),
+      optionally with a quantitative phenotype value, bearer context quality, modality, season,
+      negation, or structured qualitative value relation, justified by a retained source
+      statement. FAC-representable flora data is normally a source-scoped universal or qualified
+      TBox claim, not an observation or measurement event; qualitative relations remain at the
+      assertion level and never become taxon TBox axioms.
     attributes:
+      phenotype_class_iri:
+        description: >-
+          Authoritative semantic annotation target: the stable IRI of the equivalent OWL class
+          expression in the FLOPO annotation extension. It is outside the FLOPO term namespace,
+          is generated deterministically after extraction, and is required for FAC-representable
+          materialized assertions. It is absent when qualitative_value_relation is present.
+        slot_uri: FLOPOANN:phenotype_class
       anatomical_entity:
-        description: The plant anatomical structure the quality inheres in (Plant Ontology).
+        description: >-
+          The plant anatomical structure the quality inheres in: normally a Plant Ontology class,
+          or a reviewed FLOPO-local extension of the PO hierarchy when PO lacks the bearer.
         required: true
         annotations:
           annotators: "sqlite:obo:po"
           prompt: >-
             The plant part or anatomical structure described (e.g. leaf, petal, stem, ovary).
+            Prefer PO; use a FLOPO-local anatomy class only when it has an approved definition,
+            asserted superclass, and any applicable parthood axiom.
       quality:
         description: The phenotypic quality or attribute (PATO).
         required: true
@@ -69,25 +195,179 @@ classes:
         description: Optional pre-composed plant trait this corresponds to (Trait Ontology).
         annotations:
           annotators: "sqlite:obo:to"
+      raw_entity_text:
+        description: Verbatim or minimally normalized entity expression emitted by the extractor.
+      raw_quality_text:
+        description: Verbatim or minimally normalized quality/value expression emitted by the extractor.
+      bearer_start:
+        description: >-
+          Zero-based inclusive offset of the verbatim bearer mention raw_entity_text in the source
+          segment. Provenance only: it locates the exact bearer occurrence supporting this
+          assertion and is null when the bearer is only the record organ heading with no local
+          mention. It is not part of any FAC / logical signature.
+        range: integer
+      bearer_end:
+        description: >-
+          Zero-based exclusive offset of the verbatim bearer mention raw_entity_text in the source
+          segment. Paired with bearer_start and never part of a FAC / logical signature.
+        range: integer
+      entity_mention_id:
+        description: Identifier of the terminology mention supporting anatomical_entity.
+      quality_mention_ids:
+        description: Identifiers of terminology mentions supporting the quality or its values.
+        multivalued: true
       value_text:
         description: Categorical/free-text value of the trait when not numeric (e.g. "ovate").
+      value_operator:
+        description: >-
+          Derived extraction/indexing field used to construct and verify phenotype_class_iri.
+          one_of preserves textual alternatives and must never be converted to conjunctive is_a
+          axioms; this field is not the authoritative semantic annotation target.
+        range: ValueOperator
+        ifabsent: "ValueOperator(atomic)"
+      value_terms:
+        description: Grounded PATO or FLOPO identifiers for atomic, conjunctive, or alternative values.
+        multivalued: true
+      value_operands:
+        description: >-
+          Source-ordered operands of the categorical value expression, each with its own verbatim
+          evidence and optional degree, approximation, or frequency qualifier ("glabrous or
+          sparsely pubescent"). Every operand names one atomic grounded value. Operands never
+          enter the FAC signature: when every operand carries at most an entailing degree or a
+          frequency qualifier, the set of operand values equals value_terms (or the atomic
+          quality) and the FAC class is unchanged. An operand with a non-entailing approximation
+          (approximately, nearly, almost, sub) makes the assertion non-FAC-representable, so it
+          then carries no phenotype_class_iri. When absent, value_terms alone keeps its meaning.
+        multivalued: true
+        inlined_as_list: true
+        range: ValueOperand
+      bearer_scope:
+        description: >-
+          Provenance of a positional or sub-part restriction of the named organ, such as
+          "beneath", "à la face supérieure", "at the apex" or "stellate-". The logical content
+          lives in anatomical_entity (bearer substituted by a more specific PO part such as leaf
+          lamina abaxial epidermis) or in part_restrictions; this record keeps the outer organ and
+          the exact cue so the source statement can be verified. It never participates in the FAC
+          signature.
+        inlined: true
+        range: BearerScope
+      qualitative_value_relation:
+        description: >-
+          A source-ordered relation between two grounded categorical values. This captures a
+          qualitative continuum, explicit taxon-level variation, or a temporal transition without
+          pretending that the endpoints form a finite OWL union. It is a structured annotation
+          and is deliberately excluded from FAC and reusable FLOPO class materialization.
+        inlined: true
+        range: QualitativeValueRelation
+      bearer_context_qualities:
+        description: >-
+          Additional PATO qualities that inhere in the same anatomical bearer and form part of
+          the OWL phenotype class description, for example young or mature. These are conjunctive
+          bearer qualities, not developmental-stage process classes or assertion modalities.
+        multivalued: true
+      part_restrictions:
+        description: >-
+          Qualities borne by a specifically typed anatomical part of this assertion's bearer.
+          These compile as nested has-part restrictions and must never be flattened into qualities
+          of the outer bearer. The list is canonicalized and sorted for stable FAC identity.
+        multivalued: true
+        inlined_as_list: true
+        range: PartRestriction
+      developmental_stage_contexts:
+        description: >-
+          PO developmental or life-cycle stages during which this phenotype is present. These
+          contextualize the phenotype class as a whole; age or maturity qualities inhering in the
+          anatomical bearer belong in bearer_context_qualities instead.
+        multivalued: true
+        inlined_as_list: true
+        range: DevelopmentalStageContext
+      developmental_stage_operator:
+        description: >-
+          Logical relationship among multiple developmental-stage contexts. one_of is compiled
+          as an anonymous OWL union in the FAC definition and never minted in FLOPO proper.
+        range: ValueOperator
+        ifabsent: "ValueOperator(atomic)"
       value_low:
-        description: Lower bound of a measured range (e.g. 3 in "3-7 cm"). Numbers only.
+        description: Lower bound of a quantitative phenotype range (e.g. 3 in "3-7 cm").
         range: float
       value_high:
-        description: Upper bound of a measured range (e.g. 7 in "3-7 cm"). Numbers only.
+        description: Upper bound of a quantitative phenotype range (e.g. 7 in "3-7 cm").
         range: float
+      value_low_inclusive:
+        description: >-
+          Whether value_low is an inclusive bound. True (default) renders xsd:minInclusive; False
+          renders xsd:minExclusive for a strict lower bound. Only meaningful when value_low is set.
+        range: boolean
+        ifabsent: "True"
+      value_high_inclusive:
+        description: >-
+          Whether value_high is an inclusive bound. True (default) renders xsd:maxInclusive; False
+          renders xsd:maxExclusive for a strict upper bound such as the French participial
+          "n'atteignant pas 0,5 mm" (reaching less than 0.5 mm). Only meaningful when value_high is
+          set. Distinct FAC identity from an otherwise identical inclusive bound.
+        range: boolean
+        ifabsent: "True"
       unit:
-        description: Measurement unit (Units of measurement ontology), e.g. cm, mm.
+        description: Unit for the quantitative phenotype value (Units of Measurement Ontology).
         annotations:
           annotators: "sqlite:obo:uo"
       modifier:
-        description: Frequency/degree hedge attached to the assertion in the text.
+        description: >-
+          Deprecated combined hedge field retained for wire compatibility. New data must populate
+          the orthogonal frequency, epistemic, value, and degree qualifier fields.
         range: FrequencyModifier
+      frequency_qualifier:
+        description: Frequency force of the flora statement; unspecified preserves an absent cue.
+        range: FrequencyQualifier
+        ifabsent: "FrequencyQualifier(unspecified)"
+      epistemic_modality:
+        description: Epistemic force with which the source presents the statement.
+        range: EpistemicModality
+        ifabsent: "EpistemicModality(asserted)"
+      value_qualifier:
+        description: Exactness or approximation of a categorical or numerical value.
+        range: ValueQualifier
+        ifabsent: "ValueQualifier(exact)"
+      degree_qualifier:
+        description: Degree cue kept separate from frequency and epistemic modality.
+        range: DegreeQualifier
+        ifabsent: "DegreeQualifier(unmodified)"
+      modality_text:
+        description: Exact lexical cue or phrase (for example "usually" or "possibly").
+      modality_start:
+        description: >-
+          Zero-based inclusive offset of the verbatim modality cue modality_text in the source
+          segment, when a cue is present. Provenance only and never part of a FAC / logical
+          signature.
+        range: integer
+      modality_end:
+        description: >-
+          Zero-based exclusive offset of the verbatim modality cue modality_text in the source
+          segment. Paired with modality_start and never part of a FAC / logical signature.
+        range: integer
+      season_contexts:
+        description: Seasonal contexts that are part of this phenotype class description.
+        multivalued: true
+        inlined_as_list: true
+        range: SeasonContext
+      season_operator:
+        description: >-
+          Logical relationship among multiple seasonal contexts. one_of is represented as an
+          anonymous union in the annotation-extension class definition and never minted as a
+          FLOPO vocabulary class.
+        range: ValueOperator
+        ifabsent: "ValueOperator(atomic)"
       negated:
-        description: True if the text asserts the ABSENCE of the quality (e.g. "leaves not hairy").
+        description: True if the source makes an explicitly scoped negative phenotype assertion.
         range: boolean
         ifabsent: "boolean(false)"
+      negation_scope:
+        description: >-
+          OWL scope of an explicit negation. quality asserts an existing bearer that does not
+          satisfy the quality expression; absence asserts that no part satisfying the complete
+          bearer-plus-quality expression exists. Required whenever negated is true and omitted
+          otherwise.
+        range: NegationScope
       cardinality:
         description: Count when the trait is a number of parts (e.g. "stamens 6"). Free text to allow ranges.
       source_text:
@@ -95,15 +375,402 @@ classes:
           The exact span of the source segment that justifies this assertion (provenance /
           anti-hallucination anchor). MUST be copied verbatim from the input.
         required: true
+      source_statement_id:
+        description: >-
+          Identifier of the retained SourceStatement supporting this formal assertion. It is
+          assigned deterministically before persistence when an older extractor omits it.
+      source_start:
+        description: Zero-based inclusive offset of source_text in its source segment.
+        range: integer
+      source_end:
+        description: Zero-based exclusive offset of source_text in its source segment.
+        range: integer
+      extractor:
+        description: Extraction implementation that produced the assertion (e.g. openrouter or deterministic_baseline).
       confidence:
         description: Model self-reported confidence in [0,1]; refined later by self-consistency voting.
         range: float
+      normalization_status:
+        description: How the entity/quality normalization was obtained or why it remains unresolved.
+        range: NormalizationStatus
+      mapping_provenance:
+        description: Stable registry term identifiers or retrieval methods supporting normalization.
+        multivalued: true
+
+  PartRestriction:
+    description: >-
+      A reviewed relational phenotype component in which the assertion bearer has a typed part
+      that bears one or more qualities.
+    attributes:
+      property:
+        description: >-
+          Relation from the assertion bearer to the typed part. The initial relational grammar
+          permits only BFO:0000051 has part.
+        required: true
+        range: PartRestrictionProperty
+      filler_class:
+        description: >-
+          PO class, or reviewed FLOPO-local anatomical support class, identifying the part. A
+          pinned BSPO positional class (for example BSPO:0000073 apical region, BSPO:0000074
+          basal region, BSPO:0000006 anatomical margin) is allowed when PO has no part class for
+          that organ; the has-part nesting makes it a region of the enclosing bearer.
+        required: true
+      qualities:
+        description: >-
+          PATO or FLOPO quality classes borne by the typed part. May be empty only when nested
+          part_restrictions are present ("stellate-pubescent beneath": abaxial epidermis has part
+          trichome that is star shaped); the validator requires qualities or nested parts.
+        multivalued: true
+      part_restrictions:
+        description: >-
+          Nested typed parts of this part, maximum total depth two (bearer > part > part).
+          Canonicalized and sorted like the top-level list; emitted in the FAC signature only when
+          present, so every depth-one FAC identity is unchanged.
+        multivalued: true
+        inlined_as_list: true
+        range: PartRestriction
+      part_text:
+        description: >-
+          Exact source cue naming the part, e.g. "hairs", "beneath", "stellate-", "au sommet".
+          Provenance only; never part of the FAC signature.
+      part_start:
+        description: Zero-based inclusive offset of part_text in the source segment.
+        range: integer
+      part_end:
+        description: Zero-based exclusive offset of part_text in the source segment.
+        range: integer
+
+  BearerScope:
+    description: >-
+      Evidence that the asserted bearer is a positional part or surface of the organ named in the
+      source. Annotation-level provenance; the logical bearer is anatomical_entity or a
+      part_restrictions filler.
+    attributes:
+      outer_bearer:
+        description: PO or FLOPO class of the organ as named, e.g. PO:0020039 leaf lamina.
+        required: true
+      scope_class:
+        description: >-
+          PO, pinned BSPO, or reviewed FLOPO class denoting the positional part used, e.g.
+          PO:0000049 leaf lamina abaxial epidermis or BSPO:0000073 apical region.
+        required: true
+      mode:
+        description: How the scope was compiled into the class expression.
+        required: true
+        range: BearerScopeMode
+      scope_text:
+        description: Exact positional cue, e.g. "beneath", "à la face inférieure".
+        required: true
+      scope_start:
+        description: Zero-based inclusive offset of scope_text in the source segment.
+        required: true
+        range: integer
+      scope_end:
+        description: Zero-based exclusive offset of scope_text in the source segment.
+        required: true
+        range: integer
+
+  ValueOperand:
+    description: >-
+      One source-ordered operand of a categorical value expression or one endpoint of a
+      qualitative value relation, with its own verbatim evidence and qualifiers.
+    attributes:
+      operand_index:
+        description: Zero-based source order of the operand within its expression.
+        required: true
+        range: integer
+      value:
+        description: >-
+          Grounded PATO or reviewed FLOPO value named by the operand head, e.g. PATO elliptic
+          for "narrowly elliptic".
+        required: true
+      text:
+        description: Exact source text of the whole operand including qualifier cues.
+        required: true
+      start:
+        description: Zero-based inclusive offset of text in the source segment.
+        required: true
+        range: integer
+      end:
+        description: Zero-based exclusive offset of text in the source segment.
+        required: true
+        range: integer
+      degree_qualifier:
+        description: Degree cue applying to this operand only.
+        range: DegreeQualifier
+        ifabsent: "DegreeQualifier(unmodified)"
+      value_qualifier:
+        description: Approximation cue applying to this operand only (±, nearly, sub-).
+        range: ValueQualifier
+        ifabsent: "ValueQualifier(exact)"
+      frequency_qualifier:
+        description: Frequency cue applying to this operand only ("or rarely hairy").
+        range: FrequencyQualifier
+        ifabsent: "FrequencyQualifier(unspecified)"
+      qualifier_text:
+        description: >-
+          Exact qualifier cue(s) for this operand, e.g. "narrowly", "± densely". Provenance
+          only; it lies inside the operand text.
+      qualifier_start:
+        description: Zero-based inclusive offset of qualifier_text in the source segment.
+        range: integer
+      qualifier_end:
+        description: Zero-based exclusive offset of qualifier_text in the source segment.
+        range: integer
+
+  QualitativeValueRelation:
+    description: >-
+      A fully grounded, source-anchored relation between two categorical phenotype values. The
+      relation is kept at the flora-assertion level because a continuum includes unstated
+      intermediate states, taxon-level alternatives describe variation across members, and a
+      temporal transition places its endpoints at different times. None is equivalent to a
+      conjunction or finite disjunction of the endpoint classes.
+    attributes:
+      interpretation:
+        description: Semantic reading of the source connector and its two endpoint values.
+        required: true
+        range: QualitativeRelationInterpretation
+      from_value:
+        description: >-
+          Grounded PATO or reviewed FLOPO value at the left/source-first endpoint. For a temporal
+          transition this is the initial state; for other readings source order is retained without
+          asserting temporal direction.
+        required: true
+      to_value:
+        description: >-
+          Grounded PATO or reviewed FLOPO value at the right/source-second endpoint. For a temporal
+          transition this is the later state.
+        required: true
+      from_operand:
+        description: >-
+          Optional structured left endpoint carrying per-endpoint qualifiers ("narrowly linear").
+          Its value must equal from_value and its text/offsets must equal
+          from_text/from_start/from_end.
+        inlined: true
+        range: ValueOperand
+      to_operand:
+        description: Optional structured right endpoint; same rules as from_operand.
+        inlined: true
+        range: ValueOperand
+      from_text:
+        description: Exact source text denoting from_value.
+        required: true
+      from_start:
+        description: Zero-based inclusive offset of from_text in the source segment.
+        required: true
+        range: integer
+      from_end:
+        description: Zero-based exclusive offset of from_text in the source segment.
+        required: true
+        range: integer
+      connector_text:
+        description: Exact connector text supporting the interpretation, for example "to" or "becoming".
+        required: true
+      connector_start:
+        description: Zero-based inclusive offset of connector_text in the source segment.
+        required: true
+        range: integer
+      connector_end:
+        description: Zero-based exclusive offset of connector_text in the source segment.
+        required: true
+        range: integer
+      to_text:
+        description: Exact source text denoting to_value.
+        required: true
+      to_start:
+        description: Zero-based inclusive offset of to_text in the source segment.
+        required: true
+        range: integer
+      to_end:
+        description: Zero-based exclusive offset of to_text in the source segment.
+        required: true
+        range: integer
+
+  SeasonContext:
+    description: >-
+      A source-retained seasonal qualification that is compiled into the OWL phenotype class
+      description. Named seasons may use ENVO or FLOPO annotation vocabulary terms; calendar
+      intervals use month bounds and remain geographically scoped.
+    attributes:
+      season_term:
+        description: >-
+          CURIE of a named season, for example ENVO:03000129 or FLOPOANN:wet_season.
+      season_text:
+        required: true
+        description: Exact seasonal phrase copied from the source statement.
+      start:
+        range: integer
+        description: Inclusive offset of season_text in the source segment, when available.
+      end:
+        range: integer
+        description: Exclusive offset of season_text in the source segment, when available.
+      start_month:
+        range: integer
+        description: Calendar start month in the inclusive range 1 through 12.
+      end_month:
+        range: integer
+        description: Calendar end month in the inclusive range 1 through 12.
+      hemisphere:
+        range: Hemisphere
+        description: Hemisphere context if explicitly established; never inferred from a season word alone.
+      geographic_context:
+        description: Geographic entity CURIE or source-retained region label qualifying the season.
+      temporal_relation:
+        range: SeasonRelation
+        ifabsent: "SeasonRelation(present_during)"
+        description: Relation used when compiling the seasonal class restriction.
+
+  DevelopmentalStageContext:
+    description: >-
+      A source-retained PO developmental or life-cycle stage that temporally scopes a phenotype
+      class. It is distinct from a PATO age/maturity quality of the anatomical bearer and from a
+      specimen-preparation state such as "when dry".
+    attributes:
+      stage_term:
+        required: true
+        description: PO (or reviewed FLOPO-local PO extension) class for the developmental stage.
+      stage_text:
+        required: true
+        description: Exact developmental-stage phrase copied from the source statement.
+      start:
+        range: integer
+        description: Inclusive offset of stage_text in the source segment, when available.
+      end:
+        range: integer
+        description: Exclusive offset of stage_text in the source segment, when available.
+      temporal_relation:
+        range: DevelopmentalStageRelation
+        ifabsent: "DevelopmentalStageRelation(present_during)"
+        description: Relation used when compiling the stage restriction on the phenotype.
+
+  TermMention:
+    description: A source-text span matched to prior botanical terminology before extraction.
+    attributes:
+      mention_id:
+        description: Segment-local stable identifier used to link an assertion to this mention.
+        identifier: true
+        required: true
+      start:
+        description: Zero-based inclusive character offset of the mention in the source segment.
+        range: integer
+        required: true
+      end:
+        description: Zero-based exclusive character offset of the mention in the source segment.
+        range: integer
+        required: true
+      surface_form:
+        description: Verbatim text covered by the mention span.
+        required: true
+      normalized_form:
+        description: Case-, accent-, and punctuation-normalized form used for lookup.
+        required: true
+      language:
+        description: BCP 47 language code inherited from the source segment or glossary.
+      semantic_roles:
+        description: Candidate botanical roles such as entity, attribute, or value.
+        multivalued: true
+      registry_term_ids:
+        description: Stable BTERM records whose forms match this span.
+        multivalued: true
+      candidates:
+        description: Ranked PO, PATO, or FLOPO normalization candidates for the span.
+        multivalued: true
+        inlined_as_list: true
+        range: TermCandidate
+      longest_match:
+        description: True when no longer overlapping terminology match contains this span.
+        range: boolean
+      overlap_group:
+        description: Segment-local number shared by overlapping mention alternatives.
+        range: integer
+      match_type:
+        description: Lookup method, for example exact, inflection, or retrieved.
+      organ_context:
+        description: Organ heading used as a soft ranking prior for this mention.
+      logical_operator:
+        description: Logical relationship among component_ids when this is a compound expression.
+        range: ValueOperator
+      component_ids:
+        description: PATO or FLOPO values forming a reviewed conjunction or disjunction.
+        multivalued: true
+      attribute_id:
+        description: PATO attribute used when the mention denotes a categorical value expression.
+
+  TermCandidate:
+    description: A constrained ontology normalization candidate for a botanical source span.
+    attributes:
+      target_id:
+        description: CURIE of the proposed PO, PATO, or FLOPO normalization target.
+        required: true
+      label:
+        description: Preferred label of the target at registry build time.
+        required: true
+      namespace:
+        description: Target ontology namespace, restricted operationally to PO, PATO, or FLOPO.
+        required: true
+      score:
+        description: Reproducible hybrid retrieval score in the closed interval [0,1].
+        range: float
+        required: true
+      mapping_relation:
+        description: SKOS or FLOPO relation asserted or proposed between source term and target.
+      review_status:
+        description: Curation state; only a human workflow may assign reviewed status.
+      registry_term_ids:
+        description: Stable BTERM records supporting this candidate.
+        multivalued: true
+      evidence:
+        description: Retrieval, synonym-scope, or curation evidence supporting the candidate.
+        multivalued: true
 
 # ---------------------------------------------------------------------------------------------
 enums:
 
+  PartRestrictionProperty:
+    description: Object properties allowed in the initial nested relational phenotype grammar.
+    permissible_values:
+      BFO_0000051:
+
+  ValueOperator:
+    description: Logical structure of categorical values in the source text.
+    permissible_values:
+      atomic:
+      all_of:
+      one_of:
+
+  QualitativeRelationInterpretation:
+    description: >-
+      Annotation-level semantics for a grounded pair of qualitative values. These values are not
+      OWL logical operators and must never be compiled as one_of or multiple is_a axioms.
+    permissible_values:
+      continuum:
+      taxon_level_alternatives:
+      temporal_transition:
+
+  NegationScope:
+    description: Logical target of an explicit negative phenotype assertion.
+    permissible_values:
+      quality:
+      absence:
+
+  DevelopmentalStageRelation:
+    description: Temporal relation used for PO developmental-stage class restrictions.
+    permissible_values:
+      present_during:
+
+  NormalizationStatus:
+    description: Provenance and confidence class of an assertion's ontology normalization.
+    permissible_values:
+      reviewed:
+      auto:
+      proposed:
+      retrieved:
+      context_override:
+      compositional:
+      nil:
+
   FrequencyModifier:
-    description: Frequency/degree hedges common in floras ("usually pubescent", "rarely glabrous").
+    description: Deprecated combined frequency, degree, and approximation vocabulary.
     permissible_values:
       always:
       usually:
@@ -112,3 +779,125 @@ enums:
       occasionally:
       rarely:
       never:
+      approximately:
+      nearly:
+      almost:
+      slightly:
+      very:
+
+  FrequencyQualifier:
+    description: Controlled frequency force; the exact source cue remains in modality_text.
+    permissible_values:
+      universal:
+      usually:
+      often:
+      sometimes:
+      occasionally:
+      rarely:
+      never:
+      unspecified:
+
+  EpistemicModality:
+    description: Controlled epistemic force of a flora assertion.
+    permissible_values:
+      asserted:
+      probable:
+      possible:
+      uncertain:
+      reported:
+
+  ValueQualifier:
+    description: >-
+      Controlled exactness or approximation of the asserted value. Approximation values are
+      non-entailing: "nearly orbicular" and "suborbicular" are not orbicular, so an approximated
+      operand never contributes its head value to a FAC union.
+    permissible_values:
+      exact:
+      approximately:
+      nearly:
+      almost:
+      sub:
+        description: >-
+          Latin sub-/semi- prefix on a value ("subglabrous", "subcordate", "suborbiculaire").
+          Used only when no reviewed PATO/FLOPO term exists for the prefixed form; the head value
+          is recorded as the operand value.
+
+  DegreeQualifier:
+    description: >-
+      Controlled degree qualifier, orthogonal to statement frequency. Every value except
+      completely is entailing for categorical values: X qualified by it is still an instance of
+      X, so the head value may be used in a FAC expression and the cue is kept as provenance.
+      The axis annotation groups values that describe the same dimension; the intensity values
+      and the width, density, extent, texture and depth values can be combined.
+    permissible_values:
+      unmodified:
+      slightly:
+        annotations:
+          axis: intensity
+      moderately:
+        annotations:
+          axis: intensity
+      very:
+        annotations:
+          axis: intensity
+      extremely:
+        annotations:
+          axis: intensity
+      completely:
+        annotations:
+          axis: intensity
+      narrowly:
+        description: Outline relatively long for its width ("narrowly elliptic", "étroitement").
+        annotations:
+          axis: width
+      broadly:
+        description: Outline relatively wide for its length ("broadly ovate", "largement").
+        annotations:
+          axis: width
+      densely:
+        description: High density of the covering or structures ("densely pubescent", "densément").
+        annotations:
+          axis: density
+      sparsely:
+        description: Low density ("sparsely hairy", "éparsement", "peu ramifié").
+        annotations:
+          axis: density
+      shortly:
+        description: Short extent of the qualified feature ("shortly acuminate", "brièvement").
+        annotations:
+          axis: extent
+      finely:
+        description: Fine texture or thin elements ("finely pubescent", "finement").
+        annotations:
+          axis: texture
+      deeply:
+        description: Great depth of incision or curvature ("deeply cordate", "profondément").
+        annotations:
+          axis: depth
+      shallowly:
+        description: Small depth of incision ("shallowly lobed", "peu profondément").
+        annotations:
+          axis: depth
+
+  BearerScopeMode:
+    description: Compilation of a positional or sub-part cue.
+    permissible_values:
+      substituted_bearer:
+        description: anatomical_entity is the more specific PO part (e.g. leaf lamina abaxial epidermis).
+      part_restriction:
+        description: The outer organ stays the bearer; the part is a part_restrictions filler.
+
+  SeasonRelation:
+    description: Temporal relation used in the OWL phenotype class expression.
+    permissible_values:
+      present_during:
+      happens_during:
+
+  Hemisphere:
+    description: Explicit spatial context for interpreting named seasons.
+    permissible_values:
+      northern:
+      southern:
+      tropical:
+      equatorial:
+      unspecified:

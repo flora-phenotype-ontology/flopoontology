@@ -13,6 +13,7 @@ reserved) and the current maximum numeric ID (so new IRIs continue the sequence)
 
 Signature scheme (matches the 2016 EQ design pattern; ``|`` separates fields):
   * ``EQ|<PO>|<QUALITY>``  — ``has_part some (E and has_quality some Q)``  (the "E Q" / "E T" class)
+  * ``EQR|<canonical JSON>`` — EQ plus one or more typed, nested ``has_part`` restrictions
   * ``PHENO|<PO>``         — ``has_part some ((part_of some E) and has_quality some quality)``
   * ``OTHER``              — class without the EQ equivalent-class pattern (manual / subclass-only)
 
@@ -25,12 +26,15 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
 import re
 from dataclasses import dataclass
 from pathlib import Path
 
 from rdflib import OWL, RDF, RDFS, Graph, URIRef
 from rdflib.collection import Collection
+
+from flopo2.owl.io import parse_ontology
 
 OBO = "http://purl.obolibrary.org/obo/"
 HAS_PART = URIRef(OBO + "BFO_0000051")
@@ -54,6 +58,69 @@ def _curie(uri: URIRef | None) -> str:
     if uri is None:
         return ""
     return str(uri).replace(OBO, "")
+
+
+def relational_signature(
+    bearer: str,
+    quality: str,
+    part_restrictions: tuple[tuple[str, str, tuple[str, ...]], ...]
+    | list[tuple[str, str, tuple[str, ...]]],
+) -> str:
+    """Return the canonical, collision-safe EQR registry signature."""
+
+    parts = sorted(
+        {
+            (
+                str(prop).replace(OBO, "").replace(":", "_"),
+                str(filler).replace(OBO, "").replace(":", "_"),
+                tuple(
+                    sorted(
+                        {
+                            str(value).replace(OBO, "").replace(":", "_")
+                            for value in qualities
+                        }
+                    )
+                ),
+            )
+            for prop, filler, qualities in part_restrictions
+        }
+    )
+    if not parts:
+        raise ValueError("EQR signature requires at least one part restriction")
+    payload = {
+        "bearer": str(bearer).replace(OBO, "").replace(":", "_"),
+        "quality": str(quality).replace(OBO, "").replace(":", "_"),
+        "parts": [
+            {"property": prop, "filler": filler, "qualities": list(qualities)}
+            for prop, filler, qualities in parts
+        ],
+    }
+    return "EQR|" + json.dumps(payload, sort_keys=True, separators=(",", ":"))
+
+
+def parse_relational_signature(
+    signature: str,
+) -> tuple[str, str, tuple[tuple[str, str, tuple[str, ...]], ...]]:
+    """Parse and validate an EQR signature into its normalized components."""
+
+    if not signature.startswith("EQR|"):
+        raise ValueError(f"not an EQR signature: {signature!r}")
+    try:
+        payload = json.loads(signature.split("|", 1)[1])
+        parts = tuple(
+            (
+                str(row["property"]),
+                str(row["filler"]),
+                tuple(str(value) for value in row["qualities"]),
+            )
+            for row in payload["parts"]
+        )
+        normalized = relational_signature(payload["bearer"], payload["quality"], parts)
+    except (KeyError, TypeError, json.JSONDecodeError) as exc:
+        raise ValueError(f"invalid EQR signature: {signature!r}") from exc
+    if normalized != signature:
+        raise ValueError(f"non-canonical EQR signature: {signature!r}")
+    return str(payload["bearer"]), str(payload["quality"]), parts
 
 
 def _restriction(g: Graph, node) -> tuple[URIRef | None, object] | None:
@@ -90,7 +157,8 @@ def _signature_of(g: Graph, cls: URIRef) -> str:
 
         named_entity: URIRef | None = None  # direct PO entity  → "E Q" / "E T"
         partof_entity: URIRef | None = None  # part_of some PO   → "E phenotype"
-        quality: URIRef | None = None
+        qualities: list[object] = []
+        relational_parts: list[tuple[str, str, tuple[str, ...]]] = []
         for m in members:
             if isinstance(m, URIRef):
                 named_entity = m
@@ -100,21 +168,63 @@ def _signature_of(g: Graph, cls: URIRef) -> str:
                 continue
             mprop, mfiller = r
             if mprop == HAS_QUALITY:
-                quality = mfiller if isinstance(mfiller, URIRef) else None
+                if mfiller is not None:
+                    qualities.append(mfiller)
             elif mprop == PART_OF and isinstance(mfiller, URIRef):
                 partof_entity = mfiller
+            elif mprop == HAS_PART and mfiller is not None:
+                part_members = _intersection_members(g, mfiller)
+                filler_class = next(
+                    (item for item in part_members if isinstance(item, URIRef)), None
+                )
+                part_qualities: list[str] = []
+                for part_member in part_members:
+                    part_restriction = _restriction(g, part_member)
+                    if not part_restriction:
+                        continue
+                    part_prop, part_filler = part_restriction
+                    if part_prop == HAS_QUALITY and isinstance(part_filler, URIRef):
+                        part_qualities.append(_curie(part_filler))
+                if filler_class is not None and part_qualities:
+                    relational_parts.append(
+                        (
+                            _curie(mprop),
+                            _curie(filler_class),
+                            tuple(sorted(set(part_qualities))),
+                        )
+                    )
 
-        if partof_entity is not None and quality == QUALITY_ROOT:
+        if partof_entity is not None and qualities == [QUALITY_ROOT]:
             return f"PHENO|{_curie(partof_entity)}"
-        if named_entity is not None and quality is not None:
-            return f"EQ|{_curie(named_entity)}|{_curie(quality)}"
+        if (
+            named_entity is not None
+            and len(qualities) == 1
+            and isinstance(qualities[0], URIRef)
+            and relational_parts
+        ):
+            return relational_signature(
+                _curie(named_entity), _curie(qualities[0]), relational_parts
+            )
+        if named_entity is not None and len(qualities) == 1:
+            quality = qualities[0]
+            if isinstance(quality, URIRef):
+                return f"EQ|{_curie(named_entity)}|{_curie(quality)}"
+            union_head = next(g.objects(quality, OWL.unionOf), None)
+            if union_head is not None:
+                values = sorted(_curie(value) for value in Collection(g, union_head) if isinstance(value, URIRef))
+                if values:
+                    return f"EQV|{_curie(named_entity)}|ONE_OF|{'&'.join(values)}"
+        if named_entity is not None and len(qualities) > 1 and all(
+            isinstance(quality, URIRef) for quality in qualities
+        ):
+            values = sorted(_curie(quality) for quality in qualities)
+            return f"EQV|{_curie(named_entity)}|ALL_OF|{'&'.join(values)}"
     return "OTHER"
 
 
 def build_registry(owl_path: Path) -> list[RegistryEntry]:
     """Parse a FLOPO OWL file and build the signature→IRI registry entries."""
-    g = Graph()
-    g.parse(owl_path.as_posix())
+    g = parse_ontology(owl_path)
     entries: list[RegistryEntry] = []
     for cls in g.subjects(RDF.type, OWL.Class):
         if not isinstance(cls, URIRef):

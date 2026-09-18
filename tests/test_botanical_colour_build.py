@@ -3,7 +3,7 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
-from rdflib import OWL, RDF, RDFS, Graph, URIRef
+from rdflib import OWL, RDF, RDFS, Graph, Literal, URIRef
 
 from tools.apply_pato_botanical_colour_terms import apply_terms
 from tools.build_botanical_colour_terms import MODULE, OBO, build_modules
@@ -211,15 +211,40 @@ def test_checked_in_pato_dependency_has_generics_but_no_draft_sensu_terms():
     )
 
 
-def test_actual_flopo_release_contains_local_senses_with_pato_parents():
+def test_actual_flopo_release_obsoletes_local_senses_with_backbone_replacements():
+    """The 2026-07-15 design gave each source-qualified sense a live PATO parent, but the
+    2026-09-18 ISCC-NBS colour backbone curator decision supersedes it: FLOPO keeps only
+    backbone colour classes, so every one of these 25 sensu classes is obsoleted, with its
+    chip/standard reference preserved as a dbxref on a ``botanical_colour_name`` synonym of its
+    replacement (config/flopo_colour_backbone_migration.tsv), not kept live under a PATO parent.
+    """
+
     graph = Graph().parse((ROOT / "ontology" / "flopo.owl").as_posix())
     _pato_obo, _flopo_ttl, rows = _build()
-    by_key = {row["proposal_key"]: row for row in rows}
     flopo_rows = [row for row in rows if row["ontology_id"].startswith("FLOPO:")]
+    assert len(flopo_rows) == 25
 
+    migration = {
+        row["flopo_id"]: row
+        for row in csv.DictReader(
+            (ROOT / "config" / "flopo_colour_backbone_migration.tsv").open(encoding="utf-8", newline=""),
+            delimiter="\t",
+        )
+        if row["class_kind"] == "source-qualified sensu colour"
+    }
+    assert {row["ontology_id"] for row in flopo_rows} == set(migration)
+
+    replaced_by = URIRef(OBO + "IAO_0100001")
+    consider = URIRef("http://www.geneontology.org/formats/oboInOwl#consider")
     for row in flopo_rows:
         cls = OBO[row["ontology_id"].replace(":", "_")]
-        parent_row = by_key[row["asserted_parent"]]
-        parent = OBO[parent_row["ontology_id"].replace(":", "_")]
+        migration_row = migration[row["ontology_id"]]
+        target = OBO[migration_row["target"].replace(":", "_")]
         assert (cls, RDF.type, OWL.Class) in graph
-        assert list(graph.objects(cls, RDFS.subClassOf)) == [parent]
+        assert (cls, OWL.deprecated, Literal(True)) in graph
+        # Obsolete classes carry no logical axioms (OBO Foundry rule): the old live PATO parent
+        # is gone entirely, not merely swapped for the backbone class.
+        assert list(graph.objects(cls, RDFS.subClassOf)) == []
+        assert list(graph.objects(cls, OWL.equivalentClass)) == []
+        replace_prop = replaced_by if migration_row["replacement_property"] == "IAO:0100001" else consider
+        assert (cls, replace_prop, target) in graph

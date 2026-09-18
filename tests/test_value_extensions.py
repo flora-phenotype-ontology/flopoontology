@@ -178,15 +178,44 @@ def test_all_real_or_values_are_exact_unions_and_pato_replacements_are_omitted()
             URIRef(OBO + operand) for operand in expected_operands
         }
 
+    # The 2026-09-18 ISCC-NBS colour backbone curator decision re-points every colour operand of
+    # these unions to its backbone class (config/colour_backbone_crosswalk.tsv gives each
+    # operand's canonical replacement). Two operands (FLOPO_0980085 "greenish", FLOPO_0980097
+    # "pinkish") are RELATED, not EXACT, so both re-point to the generic PATO:0000014 color and
+    # the union that had only those two operands (FLOPO_0980199) collapses: it is no longer a
+    # union at all, just a primitive ``SubClassOf PATO:0000014``, so it is asserted separately.
+    release_expected_unions = {
+        "FLOPO_0980187": {"FLOPO_0988009", "PATO_0104031", "FLOPO_0988004"},
+        "FLOPO_0980196": {"FLOPO_0988001", "FLOPO_0988004"},
+        "FLOPO_0980207": {"PATO_0001943", "PATO_0104064"},
+        "FLOPO_0980286": {"PATO_0104031", "FLOPO_0988009"},
+        "FLOPO_0980343": {"FLOPO_0988007", "PATO_0001943"},
+        "FLOPO_0980346": {"FLOPO_0988004", "FLOPO_0988015"},
+    }
+    assert set(release_expected_unions) == set(expected_unions) - {"FLOPO_0980199"}
+
     release = Graph()
     release.parse("ontology/flopo.owl")
-    for flopo_id, expected_operands in expected_unions.items():
+    for flopo_id, expected_operands in release_expected_unions.items():
         cls = URIRef(OBO + flopo_id)
-        expression = next(release.objects(cls, OWL.equivalentClass))
-        members = next(release.objects(expression, OWL.unionOf))
+        # A redefined class keeps its old declaration's other equivalentClass values only if the
+        # backbone module added a *replacement* rather than an in-place edit; pick the expression
+        # that is actually a union (a stray non-union equivalentClass, if any, is not this class's
+        # value definition).
+        unions = [
+            (expression, members)
+            for expression in release.objects(cls, OWL.equivalentClass)
+            for members in release.objects(expression, OWL.unionOf)
+        ]
+        assert len(unions) == 1, (flopo_id, unions)
+        _expression, members = unions[0]
         assert set(Collection(release, members)) == {
             URIRef(OBO + operand) for operand in expected_operands
         }
+
+    collapsed = URIRef(OBO + "FLOPO_0980199")
+    assert list(release.objects(collapsed, OWL.equivalentClass)) == []
+    assert list(release.objects(collapsed, RDFS.subClassOf)) == [URIRef(OBO + "PATO_0000014")]
 
     with open("config/flopo_value_pato_mappings.tsv", encoding="utf-8", newline="") as handle:
         mappings = list(csv.DictReader(handle, delimiter="\t"))

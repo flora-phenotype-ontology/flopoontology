@@ -17,7 +17,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import time
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from concurrent.futures import TimeoutError as FuturesTimeout
@@ -33,9 +32,21 @@ def _gold_assertions(seg: dict) -> list[Assertion]:
     for a in seg.get("assertions", []):
         out.append(Assertion(
             po_id=a["po_id"], pato_id=a["pato_id"], negated=bool(a.get("negated", False)),
+            negation_scope=a.get("negation_scope", "") or "",
             organ=seg.get("organ", ""), source_text=a.get("source_text", ""),
             value_low=a.get("value_low"), value_high=a.get("value_high"),
+            value_low_inclusive=a.get("value_low_inclusive", True),
+            value_high_inclusive=a.get("value_high_inclusive", True),
             unit=a.get("unit", "") or "", value_text=a.get("value_text", "") or "",
+            value_operator=a.get("value_operator", "atomic") or "atomic",
+            value_term_ids=tuple(a.get("value_terms", []) or a.get("value_term_ids", []) or []),
+            bearer_context_qualities=tuple(a.get("bearer_context_qualities", []) or []),
+            developmental_stage_contexts=tuple(
+                a.get("developmental_stage_contexts", []) or []
+            ),
+            developmental_stage_operator=(
+                a.get("developmental_stage_operator", "atomic") or "atomic"
+            ),
         ))
     return out
 
@@ -43,7 +54,11 @@ def _gold_assertions(seg: dict) -> list[Assertion]:
 def run_pilot(silver: Path, cfg: EngineConfig, limit: int | None, ancestors=None,
               client: OpenRouterClient | None = None, concurrency: int = 8,
               max_seconds: float = 3600.0) -> dict:
-    segs = [json.loads(l) for l in Path(silver).read_text(encoding="utf-8").splitlines() if l.strip()]
+    segs = [
+        json.loads(line)
+        for line in Path(silver).read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
     if limit:
         segs = segs[:limit]
     client = client or OpenRouterClient(max_connections=max(8, concurrency * 2))
@@ -79,7 +94,14 @@ def run_pilot(silver: Path, cfg: EngineConfig, limit: int | None, ancestors=None
                   f"segments (rest skipped)", flush=True)
     print()
     return {
-        "config": {"models": cfg.models, "grounding": cfg.grounding, "samples": cfg.samples},
+        "config": {
+            "models": cfg.models,
+            "grounding": cfg.grounding,
+            "samples": cfg.samples,
+            "use_terminology": cfg.use_terminology,
+            "terminology_mode": cfg.terminology_mode,
+            "terminology_registry": cfg.terminology_registry,
+        },
         "segments": len(segs),
         "overall": report.summary(),
         "by_language": {k: v.summary()["exact"] for k, v in sorted(by_lang.items())},
@@ -100,6 +122,13 @@ def main() -> None:
     ap.add_argument("--grounding", choices=["spires", "graphrag"], default="spires")
     ap.add_argument("--samples", type=int, default=1)
     ap.add_argument("--temperature", type=float, default=0.3)
+    ap.add_argument("--no-terminology", action="store_true")
+    ap.add_argument(
+        "--terminology-mode",
+        choices=["off", "ontology", "registry", "full"],
+        default="full",
+    )
+    ap.add_argument("--terminology-registry", default="config/botanical_terminology.tsv")
     ap.add_argument("--limit", type=int, default=20)
     ap.add_argument("--concurrency", type=int, default=8)
     ap.add_argument("--lenient", action="store_true",
@@ -107,7 +136,10 @@ def main() -> None:
     ap.add_argument("-o", "--out", type=Path)
     args = ap.parse_args()
     cfg = EngineConfig(models=args.models, grounding=args.grounding,
-                       samples=args.samples, temperature=args.temperature)
+                       samples=args.samples, temperature=args.temperature,
+                       use_terminology=not args.no_terminology,
+                       terminology_mode="off" if args.no_terminology else args.terminology_mode,
+                       terminology_registry=args.terminology_registry)
     ancestors = None
     if args.lenient:
         from flopo2.eval.hierarchy import build_ancestors
