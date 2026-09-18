@@ -39,18 +39,19 @@ def _without_generated_block(text: str) -> str:
     return pattern.sub("\n", text, count=1)
 
 
-def _remove_named_owl_class(text: str, class_iri: str) -> tuple[str, bool]:
-    """Remove one nested owl:Class element without using a fragile non-greedy regex."""
+def _remove_one_element(text: str, class_iri: str, tag: str) -> tuple[str, bool]:
+    """Remove one nested ``<tag rdf:about="class_iri">...</tag>`` element without using a
+    fragile non-greedy regex."""
 
-    opening = f'<owl:Class rdf:about="{class_iri}">'
+    opening = f'<{tag} rdf:about="{class_iri}">'
     start = text.find(opening)
     if start < 0:
         return text, False
     line_start = text.rfind("\n", 0, start) + 1
-    token = re.compile(r"<owl:Class\b|</owl:Class>")
+    token = re.compile(rf"<{tag}\b|</{tag}>")
     depth = 0
     for match in token.finditer(text, start):
-        if match.group(0).startswith("<owl:Class"):
+        if match.group(0).startswith(f"<{tag}"):
             depth += 1
         else:
             depth -= 1
@@ -59,7 +60,31 @@ def _remove_named_owl_class(text: str, class_iri: str) -> tuple[str, bool]:
                 if end < len(text) and text[end] == "\n":
                     end += 1
                 return text[:line_start] + text[end:], True
-    raise ValueError(f"unterminated owl:Class element for {class_iri}")
+    raise ValueError(f"unterminated {tag} element for {class_iri}")
+
+
+def _remove_named_owl_class(text: str, class_iri: str) -> tuple[str, bool]:
+    """Remove every RDF/XML element that declares ``class_iri`` as its subject.
+
+    The release's own pipeline-generated classes are serialized with the ``<owl:Class
+    rdf:about="...">`` typed-node shorthand, but every class previously embedded by one of
+    these extension-release tools was written by the shared ``_graph_fragment`` serializer
+    (``tools/update_flopo_release.py``), which always uses the generic ``<rdf:Description
+    rdf:about="...">`` form regardless of type. A release tool that needs to replace or
+    obsolete a class from an *earlier* extension (as the colour backbone does) must remove
+    that shape too, or the old declaration -- including its old logical axioms -- silently
+    survives alongside the new one. Removes every matching element (there is normally at
+    most one of each shape), not just the first.
+    """
+
+    removed_any = False
+    for tag in ("owl:Class", "rdf:Description"):
+        while True:
+            text, removed = _remove_one_element(text, class_iri, tag)
+            if not removed:
+                break
+            removed_any = True
+    return text, removed_any
 
 
 def _remove_legacy_process_quality_constraint(text: str) -> tuple[str, bool]:

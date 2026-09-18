@@ -31,6 +31,7 @@ PREDICATE_PREFIXES = {
     str(DCTERMS): "dcterms",
     str(OBO): "obo",
     str(OBO_IN_OWL): "oboInOwl",
+    "https://w3id.org/flopo/annotation/": "flopoann",
 }
 
 
@@ -48,24 +49,28 @@ def _without_generated_block(text: str) -> str:
     return pattern.sub("\n", text, count=1)
 
 
-def _extension_fragment(extension_path: Path) -> tuple[str, int]:
-    source = Graph()
-    source.parse(extension_path.as_posix())
+def _graph_fragment(
+    source: Graph, *, node_id_prefix: str = "FLOPOValue_"
+) -> tuple[str, int]:
+    """Serialize one small RDF graph as a deterministic RDF/XML body fragment."""
+
     local_classes = {
         cls
         for cls in source.subjects(RDF.type, OWL.Class)
         if isinstance(cls, URIRef) and str(cls).startswith(str(OBO) + "FLOPO_")
     }
+    canonical = to_canonical_graph(source)
 
-    fragment_graph = Graph()
-    for triple in source:
-        if triple[0] != VALUE_ONTOLOGY:
-            fragment_graph.add(triple)
-
-    canonical = to_canonical_graph(fragment_graph)
-
-    def node_key(node) -> tuple[str, str]:
-        return ("0" if isinstance(node, URIRef) else "1", str(node))
+    def node_key(node) -> tuple[str, str, str, str]:
+        # Break ties on the string value alone (e.g. a bilingual synonym spelled the same in two
+        # languages, such as "mauve" or "beige" in English and French) with the language tag and
+        # datatype, so sorting is fully deterministic instead of falling back to Python's stable
+        # sort over an input order that can vary between processes (str/set hash randomization).
+        if isinstance(node, URIRef):
+            return ("0", str(node), "", "")
+        if isinstance(node, Literal):
+            return ("1", str(node), node.language or "", str(node.datatype) if node.datatype else "")
+        return ("2", str(node), "", "")
 
     def predicate_qname(predicate: URIRef) -> str:
         value = str(predicate)
@@ -78,7 +83,7 @@ def _extension_fragment(extension_path: Path) -> tuple[str, int]:
         if isinstance(node, URIRef):
             return f"rdf:about={quoteattr(str(node))}"
         if isinstance(node, BNode):
-            return f"rdf:nodeID={quoteattr('FLOPOValue_' + str(node))}"
+            return f"rdf:nodeID={quoteattr(node_id_prefix + str(node))}"
         raise ValueError(f"unsupported RDF subject: {node!r}")
 
     def object_xml(predicate: URIRef, obj) -> str:
@@ -86,7 +91,7 @@ def _extension_fragment(extension_path: Path) -> tuple[str, int]:
         if isinstance(obj, URIRef):
             return f"    <{qname} rdf:resource={quoteattr(str(obj))}/>"
         if isinstance(obj, BNode):
-            return f"    <{qname} rdf:nodeID={quoteattr('FLOPOValue_' + str(obj))}/>"
+            return f"    <{qname} rdf:nodeID={quoteattr(node_id_prefix + str(obj))}/>"
         if isinstance(obj, Literal):
             attribute = ""
             if obj.language:
@@ -107,6 +112,16 @@ def _extension_fragment(extension_path: Path) -> tuple[str, int]:
         lines.extend(object_xml(predicate, obj) for predicate, obj in statements)
         lines.append("  </rdf:Description>")
     return "\n".join(lines), len(local_classes)
+
+
+def _extension_fragment(extension_path: Path) -> tuple[str, int]:
+    source = Graph()
+    source.parse(extension_path.as_posix())
+    fragment_graph = Graph()
+    for triple in source:
+        if triple[0] != VALUE_ONTOLOGY:
+            fragment_graph.add(triple)
+    return _graph_fragment(fragment_graph)
 
 
 def _update_release_metadata(text: str, release_date: str) -> str:

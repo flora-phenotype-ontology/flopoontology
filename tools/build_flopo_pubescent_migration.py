@@ -13,6 +13,7 @@ from rdflib.collection import Collection
 
 
 OBO = Namespace("http://purl.obolibrary.org/obo/")
+OBO_IN_OWL = Namespace("http://www.geneontology.org/formats/oboInOwl#")
 MODULE = URIRef(OBO + "flopo-pubescent-migration.owl")
 PATO = URIRef(OBO + "pato.owl")
 PO = URIRef(OBO + "po.owl")
@@ -22,9 +23,37 @@ IAO_DEFINITION = URIRef(OBO + "IAO_0000115")
 IAO_EDITOR_NOTE = URIRef(OBO + "IAO_0000116")
 TERM_REPLACED_BY = URIRef(OBO + "IAO_0100001")
 ANATOMICAL_ENTITY_PHENOTYPE = URIRef(OBO + "FLOPO_0980418")
+PUBESCENCE_PHENOTYPE = URIRef(OBO + "FLOPO_0980977")
+PLANT_ANATOMICAL_ENTITY = URIRef(OBO + "PO_0025131")
 BOTANICAL_PUBESCENCE = URIRef(OBO + "PATO_0001320")
 HUMAN_PUBERTY = URIRef(OBO + "PATO_0000455")
 CONTRIBUTOR = URIRef("https://orcid.org/0000-0001-8149-5890")
+
+
+def equivalent_class_uses_quality(
+    graph: Graph, cls: URIRef, quality: URIRef
+) -> bool:
+    """Return whether a named class definition contains the requested quality filler."""
+
+    frontier = [
+        expression
+        for expression in graph.objects(cls, OWL.equivalentClass)
+        if isinstance(expression, BNode)
+    ]
+    visited: set[BNode] = set()
+    while frontier:
+        node = frontier.pop()
+        if node in visited:
+            continue
+        visited.add(node)
+        if (node, OWL.someValuesFrom, quality) in graph:
+            return True
+        frontier.extend(
+            obj
+            for obj in graph.objects(node)
+            if isinstance(obj, BNode) and obj not in visited
+        )
+    return False
 
 
 def _rows(path: Path, key: str) -> tuple[list[dict[str, str]], dict[str, dict[str, str]]]:
@@ -112,10 +141,20 @@ def build_module(
     present_replacements = {new for new in new_ids if (new, None, None) in source}
     if present_replacements and present_replacements != new_ids:
         raise ValueError("only part of the approved pubescence migration is present")
+    existing_botanical_pubescence = {
+        cls
+        for cls in source.subjects(RDF.type, OWL.Class)
+        if isinstance(cls, URIRef)
+        and str(cls).startswith(str(OBO) + "FLOPO_")
+        and cls != PUBESCENCE_PHENOTYPE
+        and (cls, OWL.deprecated, Literal(True, datatype=XSD.boolean)) not in source
+        and equivalent_class_uses_quality(source, cls, BOTANICAL_PUBESCENCE)
+    }
 
     graph = Graph()
     graph.bind("dcterms", DCTERMS)
     graph.bind("obo", OBO)
+    graph.bind("oboInOwl", OBO_IN_OWL)
     graph.bind("owl", OWL)
     graph.bind("rdf", RDF)
     graph.bind("rdfs", RDFS)
@@ -133,6 +172,68 @@ def build_module(
             URIRef("https://creativecommons.org/publicdomain/zero/1.0/"),
         )
     )
+
+    # This is a phenotype grouping, not a second botanical quality.  Its equivalence
+    # axiom lets a reasoner place future PO x PATO:0001320 classes here, while the
+    # asserted parents below make the development ontology immediately navigable.
+    graph.add((PUBESCENCE_PHENOTYPE, RDF.type, OWL.Class))
+    graph.add((PUBESCENCE_PHENOTYPE, RDFS.label, Literal("pubescence phenotype", lang="en")))
+    graph.add(
+        (
+            PUBESCENCE_PHENOTYPE,
+            IAO_DEFINITION,
+            Literal(
+                "A plant anatomical entity phenotype in which a plant anatomical "
+                "entity is covered with short hairs or soft down.",
+                lang="en",
+            ),
+        )
+    )
+    graph.add((PUBESCENCE_PHENOTYPE, RDFS.subClassOf, ANATOMICAL_ENTITY_PHENOTYPE))
+    graph.add(
+        (
+            PUBESCENCE_PHENOTYPE,
+            OWL.equivalentClass,
+            _entity_quality(
+                graph,
+                PLANT_ANATOMICAL_ENTITY,
+                BOTANICAL_PUBESCENCE,
+                "pubescence_phenotype",
+            ),
+        )
+    )
+    graph.add(
+        (
+            PUBESCENCE_PHENOTYPE,
+            OBO_IN_OWL.hasExactSynonym,
+            Literal("hairiness phenotype", lang="en"),
+        )
+    )
+    graph.add(
+        (
+            PUBESCENCE_PHENOTYPE,
+            OBO_IN_OWL.hasExactSynonym,
+            Literal("pubescent phenotype", lang="en"),
+        )
+    )
+    graph.add((PUBESCENCE_PHENOTYPE, DCTERMS.contributor, CONTRIBUTOR))
+    graph.add(
+        (
+            PUBESCENCE_PHENOTYPE,
+            DCTERMS.created,
+            Literal(release_date, datatype=XSD.date),
+        )
+    )
+    for evidence_id in ("EVID:UPOV_TGP14", "EVID:AOS_DOWNY"):
+        if evidence_id not in evidence or not evidence[evidence_id]["url"]:
+            raise ValueError(f"missing pubescence-superclass evidence: {evidence_id}")
+        graph.add(
+            (
+                PUBESCENCE_PHENOTYPE,
+                DCTERMS.source,
+                URIRef(evidence[evidence_id]["url"]),
+            )
+        )
 
     for row in rows:
         old = URIRef(OBO + row["old_flopo_id"])
@@ -186,7 +287,7 @@ def build_module(
                 ),
             )
         )
-        graph.add((new, RDFS.subClassOf, ANATOMICAL_ENTITY_PHENOTYPE))
+        graph.add((new, RDFS.subClassOf, PUBESCENCE_PHENOTYPE))
         graph.add(
             (
                 new,
@@ -209,6 +310,9 @@ def build_module(
         )
         for url in evidence_urls:
             graph.add((new, DCTERMS.source, url))
+
+    for cls in existing_botanical_pubescence | new_ids:
+        graph.add((cls, RDFS.subClassOf, PUBESCENCE_PHENOTYPE))
 
     if (None, None, HUMAN_PUBERTY) in graph:
         raise ValueError("human-puberty PATO class leaked into the migration module")

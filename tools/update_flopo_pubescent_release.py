@@ -8,8 +8,13 @@ import re
 from datetime import date
 from pathlib import Path
 
-from rdflib import OWL, RDF, Graph, URIRef
+from rdflib import OWL, RDF, RDFS, Graph, URIRef
 
+from tools.build_flopo_pubescent_migration import (
+    BOTANICAL_PUBESCENCE,
+    PUBESCENCE_PHENOTYPE,
+    equivalent_class_uses_quality,
+)
 from tools.update_flopo_botanical_release import _remove_named_owl_class
 from tools.update_flopo_release import _extension_fragment, _update_release_metadata
 
@@ -33,7 +38,9 @@ def _without_generated_block(text: str) -> str:
     return pattern.sub("\n", text, count=1)
 
 
-def _module_fragment(module_path: Path) -> tuple[str, set[str], set[str]]:
+def _module_fragment(
+    module_path: Path,
+) -> tuple[str, set[str], set[str], set[str]]:
     graph = Graph().parse(module_path.as_posix())
     ontology_subjects = set(graph.subjects(RDF.type, OWL.Ontology))
     if ontology_subjects != {MODULE}:
@@ -48,9 +55,19 @@ def _module_fragment(module_path: Path) -> tuple[str, set[str], set[str]]:
         for cls in classes
         if (URIRef(cls), OWL.deprecated, None) in graph
     }
-    replacements = classes - obsolete
+    grouping_iri = str(PUBESCENCE_PHENOTYPE)
+    if grouping_iri not in classes:
+        raise ValueError("migration module lacks the pubescence phenotype superclass")
+    replacements = classes - obsolete - {grouping_iri}
     if len(obsolete) != 154 or len(replacements) != 154:
         raise ValueError("migration module must contain 154 obsolete/replacement pairs")
+    grouped = {
+        str(cls)
+        for cls in graph.subjects(RDFS.subClassOf, PUBESCENCE_PHENOTYPE)
+        if isinstance(cls, URIRef) and str(cls).startswith(OBO + "FLOPO_")
+    }
+    if not replacements <= grouped:
+        raise ValueError("every corrected pubescence replacement must use the superclass")
 
     fragment, _class_count = _extension_fragment(module_path)
     header_pattern = re.compile(
@@ -61,14 +78,14 @@ def _module_fragment(module_path: Path) -> tuple[str, set[str], set[str]]:
     fragment = header_pattern.sub("", fragment)
     if str(MODULE) in fragment:
         raise ValueError("migration ontology header leaked into release fragment")
-    return fragment.strip(), obsolete, replacements
+    return fragment.strip(), obsolete, replacements, grouped
 
 
 def update_release(release_path: Path, module_path: Path, release_date: str) -> int:
     original = release_path.read_text(encoding="utf-8")
     had_generated_block = BEGIN_MARKER in original
     text = _without_generated_block(original)
-    fragment, obsolete, replacements = _module_fragment(module_path)
+    fragment, obsolete, replacements, grouped = _module_fragment(module_path)
     for class_iri in sorted(obsolete | replacements):
         text, removed = _remove_named_owl_class(text, class_iri)
         if class_iri in obsolete and not removed and not had_generated_block:
@@ -94,6 +111,25 @@ def update_release(release_path: Path, module_path: Path, release_date: str) -> 
         cls = URIRef(class_iri)
         if (cls, OWL.equivalentClass, None) not in check:
             raise ValueError(f"replacement lacks EQ definition: {class_iri}")
+    if (PUBESCENCE_PHENOTYPE, RDF.type, OWL.Class) not in check:
+        raise ValueError("released FLOPO lacks the pubescence phenotype superclass")
+    for class_iri in grouped:
+        if (URIRef(class_iri), RDFS.subClassOf, PUBESCENCE_PHENOTYPE) not in check:
+            raise ValueError(f"pubescence class lacks its grouping parent: {class_iri}")
+    ungrouped = {
+        cls
+        for cls in check.subjects(RDF.type, OWL.Class)
+        if isinstance(cls, URIRef)
+        and str(cls).startswith(OBO + "FLOPO_")
+        and cls != PUBESCENCE_PHENOTYPE
+        and equivalent_class_uses_quality(check, cls, BOTANICAL_PUBESCENCE)
+        and (cls, RDFS.subClassOf, PUBESCENCE_PHENOTYPE) not in check
+    }
+    if ungrouped:
+        raise ValueError(
+            "released FLOPO has ungrouped botanical pubescence classes: "
+            + ", ".join(sorted(map(str, ungrouped)))
+        )
     if (None, None, URIRef(OBO + "PATO_0000455")) in check:
         raise ValueError("released FLOPO still uses human-puberty PATO:0000455")
     return len(obsolete)
