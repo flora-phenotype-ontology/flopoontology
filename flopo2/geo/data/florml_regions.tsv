@@ -1,0 +1,79 @@
+# Curated FlorML region/island/province table -> GeoNames feature (or Wikidata-only / local-note).
+# Built 2026-09-18 for the most frequent FlorML place mentions that place_aliases.tsv cannot resolve
+# (Malesian regions/islands, Malaysian/Indonesian/Philippine states and islands, Gabon and Central
+# African provinces). Keys are matched after flopo2.geo.gazetteer.normalize_name.
+# Columns:
+#   alias            the FlorML label form (normalised at lookup time)
+#   kind             feature_type used on the Place (must be in flopo2.geo.vocab.FEATURE_TYPES)
+#   geonames_id      GeoNames numeric id, seen in a fetched https://sws.geonames.org/<id>/about.rdf
+#                    (via https://www.geonames.org/search.html?q=... with User-Agent FLOPO-geo/0.1,
+#                    no personal identifier sent); blank when GeoNames has no matching feature
+#   geonames_feature_code  gn:featureCode from that about.rdf (e.g. T.ISL, A.ADM1), for reference
+#   wikidata_id      Wikidata QID, seen in a fetched wbsearchentities/EntityData response; blank
+#                    unless GeoNames has no id (Malesia, New Britain cross-checked via P1566)
+#   country_code     ISO 3166-1 alpha-2 the feature's own GeoNames record gives (gn:countryCode);
+#                    blank when GeoNames gives none or the feature spans several countries
+#   lat / lon        decimal degrees, from the same about.rdf/Wikidata P625 record
+#   note             caveats, esp. where the match is approximate or historical/floristic-only
+alias	kind	geonames_id	geonames_feature_code	wikidata_id	country_code	lat	lon	note
+malesia	region			Q1469840				biogeographic region (Malesia); no matching GeoNames feature; Wikidata-only
+borneo	island	1648148	T.ISL		ID	1	114	spans ID/MY/BN; GeoNames records ID as countryCode
+sumatra	island	1626198	T.ISL		ID	0	102	
+new guinea	island	2082514	T.ISL		ID	-5	140	spans ID/PG; GeoNames records ID as countryCode
+java	island	1642673	T.ISL		ID	-7.49167	110.00444	
+sulawesi	island	9062340	T.ISL		ID	-2.13154	120.28888	
+celebes	island	9062340	T.ISL		ID	-2.13154	120.28888	older name for Sulawesi
+moluccas	archipelago	1636629	T.ISLS		ID	-1.57634	127.71744	"GeoNames name ""Maluku Islands"""
+peninsular malaysia	region	1745185	L.RGN		MY	4	102	
+malay peninsula	peninsula	8354616	T.PEN			4.03962	102.12891	spans MY/TH/MM/SG; GeoNames gives no countryCode
+sarawak	admin1	1733038	A.ADM1		MY	2.5	113.5	
+sabah	admin1	1733039	A.ADM1		MY	5.5	117	
+lesser sunda islands	archipelago	1624114	T.ISLS		ID	-9	120	
+ogooue maritime	admin1	2396924	A.ADM1		GA	-1.58333	9.58333	
+luzon	island	1704846	T.ISL		PH	16	121	
+ogooue ivindo	admin1	2396926	A.ADM1		GA	0.66667	12.83333	
+estuaire	admin1	2400682	A.ADM1		GA	0.3	10.03333	
+cabinda	admin1	2243266	A.ADM1		AO	-4.93423	12.40532	GeoNames also has Cabinda as A.ADM2 (2243267) and as the city P.PPLA (2243271)
+nyanga	admin1	2397141	A.ADM1		GA	-3	11	
+ngounie	admin1	2397466	A.ADM1		GA	-1.63333	11.16667	"GeoNames name ""Ngouni"""
+mindanao	island	1699597	T.ISL		PH	7.66382	125.13051	
+woleu ntem	admin1	2396076	A.ADM1		GA	1.5	12	
+new britain	island	2089703	T.ISL		PG	-5.74307	150.77156	GeoNames id cross-checked via Wikidata Q59771 P1566
+palawan	island	1696180	T.ISL		PH	9.53153	118.46149	GeoNames also has Province of Palawan as A.ADM2 (1696177)
+flores	island	9062332	T.ISL		ID	-8.62354	121.12899	Flores, Lesser Sunda Islands (not Flores, Guatemala/Spain)
+fernando po	island	2309792	T.ISL		GQ	3.5	8.7	"GeoNames current name for Bioko; matches historical ""Fernando Po/Fernando-Po"""
+haut ogooue	admin1	2400454	A.ADM1		GA	-1.3	13.9	
+ogooue lolo	admin1	2396925	A.ADM1		GA	-0.83333	12.66667	
+moyen ogooue	admin1	2397842	A.ADM1		GA	-0.41667	10.58333	
+timor	island	1623843	T.ISL		ID	-8.83333	126	spans ID/TL; GeoNames records ID as countryCode
+bali	island	1650534	T.ISL		ID	-8.33333	115	
+samar	island	1690650	T.ISL		PH	11.93353	125.03403	
+new ireland	admin1	2089693	A.ADM1		PG	-3	151.5	
+halmahera	island	1643476	T.ISL		ID	0.6	127.85	"GeoNames name ""Pulau Halmahera"""
+queensland	admin1	2152274	A.ADM1		AU	-20	145	
+ambon	island	1651529	T.ISL		ID	-3.6175	128.1675	"GeoNames name ""Pulau Ambon""; the city is a separate feature (1651531)"
+seram	island	1627558	T.ISL		ID	-3.13334	129.5	
+ceram	island	1627558	T.ISL		ID	-3.13334	129.5	older spelling of Seram
+brazzaville	locality	2260535	P.PPLC		CG	-4.26613	15.28318	
+mindoro	island	1699590	T.ISL		PH	12.9304	121.0947	
+monts de cristal	park	11395467	L.PRK		GA	0.805	10.16	GeoNames has only Crystal Mountains National Park; the wider Monts de Cristal range is larger than the park
+leyte	island	1706802	T.ISL		PH	10.85957	124.87607	
+pahang	admin1	1733042	A.ADM1		MY	3.5	102.75	
+principe	island	2410877	T.ISL		ST	1.61735	7.39637	"GeoNames name ""Prince's Island"""
+mascareignes	archipelago	935495	T.ISLS		RE	-20	57	"GeoNames name ""Mascarene Islands"""
+sumbawa	island	1626187	T.ISL		ID	-8.75	118	"GeoNames name ""Pulau Sumbawa"""
+bismarck archipelago	archipelago	2099398	T.ISLS		PG	-5	150	
+hainan	island	1809055	T.ISL		CN	19.2	109.7	GeoNames also has the ADM1 province Hainan (1809054, 19.25/109.75)
+mayombe	mountain	2257509	T.MTS		AO	-4.5	12.5	"GeoNames name ""Mayumbe""; only the Angola/Cabinda-side extent is geocoded, the Mayombe forest/mountains also cross into Gabon, Congo-Brazzaville and DR Congo"
+yunnan	admin1	1785694	A.ADM1		CN	25	101.5	
+papua barat	admin1	1996549	A.ADM1		ID	-0.86531	134.06118	"GeoNames name ""West Papua"""
+ternate	island	1624039	T.ISL		ID	0.80562	127.34044	"GeoNames name ""Ternate Island""; the town is a separate feature (1624041)"
+lombok	island	7869837	T.ISL		ID	-8.67697	116.33286	
+negros	island	1697809	T.ISL		PH	10.09568	123.04179	"GeoNames name ""Island of Negros"""
+morotai	island	1634987	T.ISL		ID	2.32131	128.44267	
+aru islands	archipelago	1651192	T.ISLS		ID	-6.1921	134.55059	
+selangor	admin1	1733037	A.ADM1		MY	3.16667	101.5	
+kalimantan	island	1641903	T.ISLX		ID	-1	114	"GeoNames feature class ""section of island"" (Indonesian part of Borneo)"
+perak	admin1	1733041	A.ADM1		MY	5	101	
+oubangui	region							historical Oubangui(-Chari) region (roughly today's Central African Republic); no single matching GeoNames or Wikidata place, only the Ubangi river/river-region, so left local
+peninsular thailand	region							no matching GeoNames feature and no Wikidata place item found (only an unrelated journal article); left local
