@@ -2,6 +2,7 @@
 
 - Target repository: `pato-ontology/pato`
 - Status: opened 2026-09-18 as https://github.com/pato-ontology/pato/pull/618 (curator decision D2). The submitted text was revised from the draft below; see SUBMITTED.md.
+- Revision 2026-10-01 (review by matentzn): clasping re-homed under attachment quality (PATO:0001435) with relational_slim; biennial life span added as PATO:0104367 to complete the annual/biennial/perennial partition, bridged by the existing growth-form class FLOPO:0987000 (row GF-Q01), so the PR now carries 18 qualities.
 - Source: `scratchpad/qwen-concept-proposal-review-20260917/CURATOR_PACKET.md`; decisions recorded in `curation/botanical_concept_proposals.tsv` and `curation/curator_approvals.tsv`.
 
 ## Rows
@@ -25,6 +26,7 @@
 | 122 | `PATO-CAND:mealy_surface` | accept | mealy | PATO:0000150 | FLOPO:0985014 |
 | 164 | `PATO-CAND:plicate` | accept | plicate | PATO:0001910 | FLOPO:0985015 |
 | 222 | `PATO-CAND:floccose_cottony` | accept | floccose | PATO:0000454 | FLOPO:0985016 |
+| (GF-Q01) | `GF:biennial_life_span` | accept (schema extension A1) | biennial life span | PATO:0000050 | FLOPO:0987000 (ontology/flopo-growth-form-extension.ttl) |
 
 ## Body
 

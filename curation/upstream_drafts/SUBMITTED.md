@@ -4,7 +4,7 @@ Curator decision 2026-09-18 (Robert Hoehndorf): D2 "open them", and B2 withdraw 
 
 | title | repo | URL | date | status |
 |---|---|---|---|---|
-| Add 17 botanical morphology, indumentum and life span qualities (PATO:0104350-0104366; draft PR 1) | pato-ontology/pato | https://github.com/pato-ontology/pato/pull/618 | 2026-09-18 | open |
+| Add 18 botanical morphology, indumentum and life span qualities (PATO:0104350-0104367; draft PR 1; biennial life span PATO:0104367 added 2026-10-01 after review, bridge FLOPO:0987000) | pato-ontology/pato | https://github.com/pato-ontology/pato/pull/618 | 2026-09-18 | open, revised 2026-10-01 |
 | Fix malformed definition of drooping (PATO:0002165) | pato-ontology/pato | https://github.com/pato-ontology/pato/pull/619 | 2026-09-18 | open |
 | Fix sessile (sensu botany) definition and botanical synonym scopes (draft PR 2, without drooping) | pato-ontology/pato | https://github.com/pato-ontology/pato/pull/620 | 2026-09-18 | open |
 | herbaceous (PATO:0002352) conflates die-back with non-woodiness (draft issue 3) | pato-ontology/pato | https://github.com/pato-ontology/pato/issues/621 | 2026-09-18 | open |
