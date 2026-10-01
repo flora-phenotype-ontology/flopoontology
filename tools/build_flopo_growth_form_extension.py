@@ -299,13 +299,23 @@ def build_module(
                 scope, text = synonym.split(":", 1)
                 graph.add((cls, SYNONYM_PROPERTY[scope], Literal(text, lang="en")))
             if action == "new_local_quality":
-                note(
-                    cls,
-                    row,
-                    "Provisional FLOPO-local support quality parented directly beneath its "
-                    f"closest live PATO class; propose to PATO ({UPSTREAM_DRAFT}) and replace "
-                    "via IAO:0100001 once a PATO identifier is assigned.",
-                )
+                upstream = (row.get("upstream_submission") or "").strip()
+                if upstream:
+                    note(
+                        cls,
+                        row,
+                        "Provisional FLOPO-local support quality parented directly beneath its "
+                        f"closest live PATO class. Proposed upstream as {upstream}; replace via "
+                        "IAO:0100001 once the PATO identifier is released.",
+                    )
+                else:
+                    note(
+                        cls,
+                        row,
+                        "Provisional FLOPO-local support quality parented directly beneath its "
+                        f"closest live PATO class; propose to PATO ({UPSTREAM_DRAFT}) and replace "
+                        "via IAO:0100001 once a PATO identifier is assigned.",
+                    )
             else:
                 note(cls, row, "FLOPO-local whole-plant growth-form phenotype.")
         elif action == "logical_axiom":
