@@ -11,13 +11,12 @@ from __future__ import annotations
 
 import argparse
 import re
-from datetime import date
+from datetime import UTC, datetime
 from pathlib import Path
 from xml.sax.saxutils import escape, quoteattr
 
 from rdflib import DCTERMS, OWL, RDF, RDFS, BNode, Graph, Literal, Namespace, URIRef
 from rdflib.compare import to_canonical_graph
-
 
 OBO = Namespace("http://purl.obolibrary.org/obo/")
 OBO_IN_OWL = Namespace("http://www.geneontology.org/formats/oboInOwl#")
@@ -117,14 +116,16 @@ def _graph_fragment(
     return "\n".join(lines), len(local_classes)
 
 
-def _extension_fragment(extension_path: Path) -> tuple[str, int]:
+def _extension_fragment(
+    extension_path: Path, *, node_id_prefix: str = "FLOPOValue_"
+) -> tuple[str, int]:
     source = Graph()
     source.parse(extension_path.as_posix())
     fragment_graph = Graph()
     for triple in source:
         if triple[0] != VALUE_ONTOLOGY:
             fragment_graph.add(triple)
-    return _graph_fragment(fragment_graph)
+    return _graph_fragment(fragment_graph, node_id_prefix=node_id_prefix)
 
 
 def _update_release_metadata(text: str, release_date: str) -> str:
@@ -189,7 +190,7 @@ def main() -> None:
         type=Path,
         default=Path("ontology/flopo-value-extensions.ttl"),
     )
-    parser.add_argument("--date", default=date.today().isoformat())
+    parser.add_argument("--date", default=datetime.now(UTC).date().isoformat())
     args = parser.parse_args()
     count = update_release(args.release, args.extension, args.date)
     print(f"embedded {count} FLOPO value classes in {args.release}")

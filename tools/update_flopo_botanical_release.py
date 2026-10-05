@@ -5,13 +5,12 @@ from __future__ import annotations
 
 import argparse
 import re
-from datetime import date
+from datetime import UTC, datetime
 from pathlib import Path
 
 from rdflib import OWL, RDF, Graph, URIRef
 
 from tools.update_flopo_release import _extension_fragment, _update_release_metadata
-
 
 OBO = "http://purl.obolibrary.org/obo/"
 MODULE = URIRef(OBO + "flopo-botanical-extension.owl")
@@ -162,7 +161,9 @@ def _module_fragment(extension_path: Path) -> tuple[str, int, set[str]]:
         for cls in graph.subjects(RDF.type, OWL.Class)
         if isinstance(cls, URIRef) and str(cls).startswith(OBO + "FLOPO_")
     }
-    fragment, class_count = _extension_fragment(extension_path)
+    fragment, class_count = _extension_fragment(
+        extension_path, node_id_prefix="FLOPOBotanical_"
+    )
     # _extension_fragment currently knows the value-module ontology IRI. Remove this
     # module's header explicitly if it occurs in its generic RDF description output.
     header_pattern = re.compile(
@@ -209,7 +210,7 @@ def main() -> None:
         type=Path,
         default=Path("ontology/flopo-botanical-extension.ttl"),
     )
-    parser.add_argument("--date", default=date.today().isoformat())
+    parser.add_argument("--date", default=datetime.now(UTC).date().isoformat())
     args = parser.parse_args()
     count = update_release(args.release, args.extension, args.date)
     print(f"embedded_or_replaced {count} FLOPO botanical classes")

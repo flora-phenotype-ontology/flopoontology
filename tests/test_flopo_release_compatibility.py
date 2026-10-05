@@ -1,0 +1,139 @@
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import pytest
+from rdflib import OWL, RDF, RDFS, Graph, Literal, URIRef
+
+ROOT = Path(__file__).resolve().parents[1]
+RELEASE = ROOT / "ontology" / "flopo.owl"
+ARCHIVE = ROOT / "releases" / "2026-07-15"
+OBO = "http://purl.obolibrary.org/obo/"
+FLOPO_ROOT = URIRef(OBO + "FLOPO_0000000")
+REPLACED_BY = URIRef(OBO + "IAO_0100001")
+
+
+def _graph() -> Graph:
+    return Graph().parse(RELEASE.as_posix())
+
+
+def _flopo_classes(graph: Graph) -> set[str]:
+    return {
+        str(cls)
+        for cls in graph.subjects(RDF.type, OWL.Class)
+        if isinstance(cls, URIRef) and str(cls).startswith(OBO + "FLOPO_")
+    }
+
+
+def _deprecated(graph: Graph) -> set[URIRef]:
+    return {
+        cls
+        for cls, value in graph.subject_objects(OWL.deprecated)
+        if isinstance(cls, URIRef)
+        and str(cls).startswith(OBO + "FLOPO_")
+        and isinstance(value, Literal)
+        and str(value).casefold() == "true"
+    }
+
+
+def test_every_archived_public_identifier_is_preserved():
+    graph = _graph()
+    baseline = {
+        line.strip()
+        for line in (ARCHIVE / "flopo-class-iris.txt").read_text(
+            encoding="utf-8"
+        ).splitlines()
+        if line.strip()
+    }
+    current = _flopo_classes(graph)
+
+    assert len(baseline) == 24689
+    assert baseline <= current
+    assert not (baseline - current)
+
+
+def test_archive_manifest_records_the_exact_previous_public_release():
+    manifest = json.loads((ARCHIVE / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["source_commit"] == "f82bc9f6124c0f2cc22af2f19ac26d570d2a0f16"
+    assert manifest["version_info"] == "2026-07-15"
+    assert manifest["flopo_class_count"] == 24689
+    assert manifest["deprecated_class_count"] == 1161
+    assert (
+        manifest["artifacts"]["flopo.owl"]["sha256"]
+        == "a76bd4d1120ee9896ce396d4bb28558018c8dbedc77a4114223be7f9e3f24bc6"
+    )
+
+
+PUBLIC_ARCHIVES = {
+    # release: (source commit, class count, deprecated count)
+    "2026-07-31": ("f3e3029ce87edc43dfaf2c3a09a97958eda63c8f", 24689, 1166),
+    "2026-09-18": ("12f8214afac2ea36218bdbf58f0c433592b79e24", 24642, 1267),
+}
+
+
+@pytest.mark.parametrize("release", sorted(PUBLIC_ARCHIVES))
+def test_later_public_releases_are_preserved(release):
+    # 2026-09-18 was built on a branch without the 2026-07-31 release and lost 1,173 colour
+    # phenotypes; every identifier of every public release must survive into the current one.
+    archive = ROOT / "releases" / release
+    manifest = json.loads((archive / "manifest.json").read_text(encoding="utf-8"))
+    commit, classes, deprecated = PUBLIC_ARCHIVES[release]
+    assert manifest["source_commit"] == commit
+    assert manifest["version_info"] == release
+    assert manifest["flopo_class_count"] == classes
+    assert manifest["deprecated_class_count"] == deprecated
+    baseline = set((archive / "flopo-class-iris.txt").read_text(encoding="utf-8").splitlines())
+    assert len(baseline) == classes
+    graph = _graph()
+    assert baseline <= _flopo_classes(graph)
+    # A class obsolete in a public release stays obsolete.
+    current_deprecated = {str(cls) for cls in _deprecated(graph)}
+    assert len(current_deprecated) >= deprecated
+
+
+def test_flora_phenotype_has_exactly_the_two_approved_upper_children():
+    graph = _graph()
+    children = {
+        child
+        for child in graph.subjects(RDFS.subClassOf, FLOPO_ROOT)
+        if isinstance(child, URIRef) and str(child).startswith(OBO + "FLOPO_")
+    }
+    assert children == {
+        URIRef(OBO + "FLOPO_0980417"),
+        URIRef(OBO + "FLOPO_0980422"),
+    }
+
+
+def test_duplicate_upper_identifiers_are_annotation_only_obsolete_shells():
+    graph = _graph()
+    replacements = {
+        URIRef(OBO + "FLOPO_0980419"): URIRef(OBO + "FLOPO_0018579"),
+        URIRef(OBO + "FLOPO_0980420"): URIRef(OBO + "FLOPO_0017857"),
+    }
+    for duplicate, original in replacements.items():
+        assert duplicate in _deprecated(graph)
+        assert (duplicate, REPLACED_BY, original) in graph
+        assert not set(graph.objects(duplicate, RDFS.subClassOf))
+        assert not set(graph.objects(duplicate, OWL.equivalentClass))
+        assert (original, OWL.deprecated, None) not in graph
+
+
+def test_no_obsolete_flopo_class_retains_or_receives_logical_axioms():
+    graph = _graph()
+    deprecated = _deprecated(graph)
+    logical_predicates = {
+        RDFS.subClassOf,
+        OWL.equivalentClass,
+        OWL.disjointWith,
+        OWL.disjointUnionOf,
+    }
+    for cls in deprecated:
+        assert not any(
+            predicate in logical_predicates
+            for predicate, _obj in graph.predicate_objects(cls)
+        )
+        assert not any(
+            predicate in logical_predicates or predicate == RDF.first
+            for _subject, predicate in graph.subject_predicates(cls)
+        )
