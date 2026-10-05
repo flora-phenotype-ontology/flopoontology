@@ -50,7 +50,7 @@ def _fixture(tmp_path: Path):
 @prefix obo: <http://purl.obolibrary.org/obo/> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix flopoann: <https://w3id.org/flopo/annotation/> .
+@prefix flopoann: <http://phenomebrowser.net/flopo/annotation/> .
 
 <http://purl.obolibrary.org/obo/flopo-machine-reviewed-support.owl> a owl:Ontology .
 obo:FLOPO_0000001 a owl:Class ;

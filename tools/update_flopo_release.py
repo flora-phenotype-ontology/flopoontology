@@ -30,7 +30,7 @@ PREDICATE_PREFIXES = {
     str(DCTERMS): "dcterms",
     str(OBO): "obo",
     str(OBO_IN_OWL): "oboInOwl",
-    "https://w3id.org/flopo/annotation/": "flopoann",
+    "http://phenomebrowser.net/flopo/annotation/": "flopoann",
 }
 
 

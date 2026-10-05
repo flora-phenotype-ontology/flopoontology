@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS annotation_class (
   canonical_expression_signature TEXT NOT NULL,
   CHECK(
     phenotype_class_iri GLOB
-    'https://w3id.org/flopo/annotation-class/FAC_[0-9a-f]*'
+    'http://phenomebrowser.net/flopo/annotation-class/FAC_[0-9a-f]*'
   )
 );
 

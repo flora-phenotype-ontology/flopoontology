@@ -16,11 +16,11 @@ from typing import Any
 
 
 OBO = "http://purl.obolibrary.org/obo/"
-FLOPOANN = "https://w3id.org/flopo/annotation/"
+FLOPOANN = "http://phenomebrowser.net/flopo/annotation/"
 SIO = "http://semanticscience.org/resource/"
-GEOGRAPHIC_CONTEXT = "https://w3id.org/flopo/geographic-context/"
-ANNOTATION_CLASS_BASE = "https://w3id.org/flopo/annotation-class/"
-ANNOTATION_EXTENSION_ONTOLOGY = "https://w3id.org/flopo/annotation-extension"
+GEOGRAPHIC_CONTEXT = "http://phenomebrowser.net/flopo/geographic-context/"
+ANNOTATION_CLASS_BASE = "http://phenomebrowser.net/flopo/annotation-class/"
+ANNOTATION_EXTENSION_ONTOLOGY = "http://phenomebrowser.net/flopo/annotation-extension"
 SIGNATURE_VERSION = 1
 HAS_PART_IRI = OBO + "BFO_0000051"
 

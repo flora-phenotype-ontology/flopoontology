@@ -682,6 +682,12 @@ release gates.
     reverted to the merged-PATO snapshot of 8ef8f3a, and `flopo-inferred.owl` is reclassified.
   - The annotation extension imports BSPO from the published module document instead of the
     nonexistent `flopo/imports/` PURL route.
+  - Curator decision: FLOPO keeps its own identifier space. The data namespace moves from
+    `https://w3id.org/flopo/` (never registered) to `http://phenomebrowser.net/flopo/`. Annotation
+    classes, assertions, the annotation vocabulary and geography all move. Stage 26 renames
+    the corpus and recomputes 13 annotation-class links whose signature embedded a namespace
+    IRI.
+  - The `flopo-light.owl` PURL is requested in OBOFoundry/purl.obolibrary.org#1128.
 - Still open:
   - Upstream PATO/PO pull requests (left untouched by decision).
   - FP07 INFO for the FLOPO data property hasValue (left open by decision).

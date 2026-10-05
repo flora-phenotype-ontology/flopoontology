@@ -48,7 +48,7 @@ from flopo2.verify import gates
 from flopo2.verify.data_model import validate_jsonl
 
 EXTRACTOR = "claude_opus_transcription"
-ANNOTATION_EXTENSION_IRI = "https://w3id.org/flopo/annotation-extension"
+ANNOTATION_EXTENSION_IRI = "http://phenomebrowser.net/flopo/annotation-extension"
 PATO_PRESENT = "PATO_0000467"
 PATO_ABSENT = "PATO_0000462"
 WHOLE_PLANT = "PO_0000003"

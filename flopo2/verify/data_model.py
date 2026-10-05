@@ -1885,7 +1885,7 @@ def validate_sqlite(path: Path, expected: dict[str, Any] | None = None) -> dict[
                 """
                 SELECT COUNT(*) FROM annotation_class
                 WHERE phenotype_class_iri <>
-                  'https://w3id.org/flopo/annotation-class/FAC_' ||
+                  'http://phenomebrowser.net/flopo/annotation-class/FAC_' ||
                   substr(expression_sha256, 1, 32)
                 """
             ).fetchone()[0]

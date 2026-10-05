@@ -13,8 +13,8 @@ def test_catalog_resolves_annotation_extension_and_vocabulary():
     mappings = {
         row.attrib["name"]: row.attrib["uri"] for row in root.findall(".//c:uri", namespace)
     }
-    assert mappings["https://w3id.org/flopo/annotation"] == "flopo-annotation-model.ttl"
-    assert mappings["https://w3id.org/flopo/annotation-extension"] == (
+    assert mappings["http://phenomebrowser.net/flopo/annotation"] == "flopo-annotation-model.ttl"
+    assert mappings["http://phenomebrowser.net/flopo/annotation-extension"] == (
         "flopo-annotation-extension.ofn"
     )
 
@@ -256,7 +256,7 @@ def test_developmental_stage_context_is_fac_only_and_temporal(tmp_path):
     )
     graph = Graph().parse(extension)
     present_during = URIRef(
-        "https://w3id.org/flopo/annotation/present_during_developmental_stage"
+        "http://phenomebrowser.net/flopo/annotation/present_during_developmental_stage"
     )
     stage = URIRef("http://purl.obolibrary.org/obo/PO_0007016")
     assert stats["developmental_stage_classes"] == 1

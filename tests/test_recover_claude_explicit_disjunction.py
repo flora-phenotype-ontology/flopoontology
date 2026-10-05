@@ -164,7 +164,7 @@ def test_recover_record_delta_and_apply(gate_context, tmp_path):
     assert assertion["pato_id"] == "PATO_0000014"
     assert assertion["source_text"] == "Petals white or pink"
     assert assertion["phenotype_class_iri"].startswith(
-        "https://w3id.org/flopo/annotation-class/FAC_"
+        "http://phenomebrowser.net/flopo/annotation-class/FAC_"
     )
     statement_ids = {row["statement_id"] for row in delta["add_source_statements"]}
     assert assertion["source_statement_id"] in statement_ids

@@ -15,7 +15,7 @@ from tools.update_flopo_reviewed_release import BEGIN_MARKER, update_release
 
 OBO = "http://purl.obolibrary.org/obo/"
 CONTRIBUTOR = URIRef("https://orcid.org/0000-0001-8149-5890")
-ASSERTION = URIRef("https://w3id.org/flopo/flora-assertion/example")
+ASSERTION = URIRef("http://phenomebrowser.net/flopo/flora-assertion/example")
 
 
 def _write_registry(path: Path) -> None:
@@ -66,7 +66,7 @@ obo:FLOPO_0000003 a owl:Class ;
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix flopoann: <https://w3id.org/flopo/annotation/> .
+@prefix flopoann: <http://phenomebrowser.net/flopo/annotation/> .
 
 obo:flopo.owl a owl:Ontology .
 obo:FLOPO_0000000 a owl:Class ; rdfs:label "flora phenotype"@en .
@@ -86,7 +86,7 @@ obo:FLOPO_0000002 a owl:Class ;
     rdfs:label "leaf green"@en ;
     rdfs:subClassOf obo:FLOPO_0000001 ;
     obo:FLOPO_supporting_assertion_count 4 ;
-    flopoann:supported_by_assertion <https://w3id.org/flopo/flora-assertion/example> ;
+    flopoann:supported_by_assertion <http://phenomebrowser.net/flopo/flora-assertion/example> ;
     owl:equivalentClass [ a owl:Restriction ;
         owl:onProperty obo:BFO_0000051 ;
         owl:someValuesFrom [ owl:intersectionOf (
@@ -185,7 +185,7 @@ def test_reviewed_release_embedding_is_idempotent_and_keeps_evidence(tmp_path):
     assert update_release(release, module, "2026-07-17") == 2
     assert release.read_text(encoding="utf-8") == first
     assert first.count(BEGIN_MARKER) == 1
-    assert 'xmlns:flopoann="https://w3id.org/flopo/annotation/"' in first
+    assert 'xmlns:flopoann="http://phenomebrowser.net/flopo/annotation/"' in first
     graph = Graph().parse(release)
     eq = URIRef(OBO + "FLOPO_0000002")
     assert (eq, FLOPOANN.supported_by_assertion, ASSERTION) in graph

@@ -112,7 +112,7 @@ def test_full_audit_preserves_canonical_and_emits_only_five_safe_proposals(tmp_p
     assert all(row["assertion"]["pato_id"] == "PATO_0002338" for row in proposal_rows)
     assert all(
         row["assertion"]["phenotype_class_iri"].startswith(
-            "https://w3id.org/flopo/annotation-class/FAC_"
+            "http://phenomebrowser.net/flopo/annotation-class/FAC_"
         )
         for row in proposal_rows
     )

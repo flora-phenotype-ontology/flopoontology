@@ -1,7 +1,7 @@
 """Build the identified OWL class-expression extension used by FLOPO annotations.
 
 The extension is deliberately outside the OBO FLOPO term namespace.  It names every distinct
-OWL phenotype class expression with a stable ``https://w3id.org/flopo/annotation-class/FAC_*``
+OWL phenotype class expression with a stable ``http://phenomebrowser.net/flopo/annotation-class/FAC_*``
 IRI.  Flora assertions and observation data can consequently annotate with one IRI while this
 ontology retains the complete logical definition.
 """

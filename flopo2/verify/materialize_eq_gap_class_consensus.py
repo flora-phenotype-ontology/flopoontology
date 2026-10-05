@@ -215,7 +215,7 @@ def _module_text(
 ) -> str:
     lines = [
         "@prefix dcterms: <http://purl.org/dc/terms/> .",
-        "@prefix flopoann: <https://w3id.org/flopo/annotation/> .",
+        "@prefix flopoann: <http://phenomebrowser.net/flopo/annotation/> .",
         "@prefix obo: <http://purl.obolibrary.org/obo/> .",
         "@prefix owl: <http://www.w3.org/2002/07/owl#> .",
         "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .",

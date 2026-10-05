@@ -24,7 +24,7 @@ PREFIX dwciri: <http://rs.tdwg.org/dwc/iri/>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX flopogeo: <https://w3id.org/flopo/geo#>
+PREFIX flopogeo: <http://phenomebrowser.net/flopo/geo#>
 """
 
 COMPETENCY = {

@@ -216,7 +216,7 @@ def test_build_writes_correction_delta(tmp_path):
     added = line["add_assertions"][0]
     assert added["po_id"] == "PO_0000050"
     assert added["gate"]["status"] in {"accepted", "review"}
-    assert added["phenotype_class_iri"].startswith("https://w3id.org/flopo/annotation-class/FAC_")
+    assert added["phenotype_class_iri"].startswith("http://phenomebrowser.net/flopo/annotation-class/FAC_")
     assert line["add_source_statements"][0]["statement_id"] == added["source_statement_id"]
 
 

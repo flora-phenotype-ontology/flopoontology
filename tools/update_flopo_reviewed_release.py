@@ -16,7 +16,7 @@ from tools.update_flopo_release import _graph_fragment, _update_release_metadata
 
 
 OBO = "http://purl.obolibrary.org/obo/"
-FLOPOANN = "https://w3id.org/flopo/annotation/"
+FLOPOANN = "http://phenomebrowser.net/flopo/annotation/"
 BEGIN_MARKER = "  <!-- BEGIN GENERATED FLOPO REVIEWED COMBINATIONS -->"
 END_MARKER = "  <!-- END GENERATED FLOPO REVIEWED COMBINATIONS -->"
 

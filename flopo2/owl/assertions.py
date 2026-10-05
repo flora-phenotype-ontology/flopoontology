@@ -39,18 +39,18 @@ from flopo2.owl.io import serialize_ontology
 OBO = "http://purl.obolibrary.org/obo/"
 SIO = Namespace("http://semanticscience.org/resource/")
 PROV = Namespace("http://www.w3.org/ns/prov#")
-FLOPOANN = Namespace("https://w3id.org/flopo/annotation/")
-SOURCE = "https://w3id.org/flopo/source/"
-SOURCE_STATEMENT = "https://w3id.org/flopo/source-statement/"
-FORMAL_ASSERTION = "https://w3id.org/flopo/flora-assertion/"
+FLOPOANN = Namespace("http://phenomebrowser.net/flopo/annotation/")
+SOURCE = "http://phenomebrowser.net/flopo/source/"
+SOURCE_STATEMENT = "http://phenomebrowser.net/flopo/source-statement/"
+FORMAL_ASSERTION = "http://phenomebrowser.net/flopo/flora-assertion/"
 # Deprecated: source-specific expression identities have been replaced by stable FAC IRIs in
 # the annotation extension.  Retained as a public constant for downstream compatibility only.
-SOURCE_DESCRIPTION = "https://w3id.org/flopo/source-description/"
-SOURCE_TAXON = "https://w3id.org/flopo/source-taxon/"
-GEOGRAPHIC_CONTEXT = "https://w3id.org/flopo/geographic-context/"
+SOURCE_DESCRIPTION = "http://phenomebrowser.net/flopo/source-description/"
+SOURCE_TAXON = "http://phenomebrowser.net/flopo/source-taxon/"
+GEOGRAPHIC_CONTEXT = "http://phenomebrowser.net/flopo/geographic-context/"
 
 FLOPO_ONTOLOGY = URIRef(OBO + "flopo.owl")
-ANNOTATION_ONTOLOGY = URIRef("https://w3id.org/flopo/annotation")
+ANNOTATION_ONTOLOGY = URIRef("http://phenomebrowser.net/flopo/annotation")
 ANNOTATION_EXTENSION = URIRef(ANNOTATION_EXTENSION_ONTOLOGY)
 HAS_PART = URIRef(OBO + "BFO_0000051")
 HAS_QUALITY = URIRef(OBO + "RO_0000053")
@@ -1002,7 +1002,7 @@ def build_assertion_ontology(
 
     input_bytes = Path(gated_jsonl).read_bytes()
     module_digest = hashlib.sha256(input_bytes).hexdigest()[:20]
-    ontology_iri = URIRef(f"https://w3id.org/flopo/assertion-module/{module_digest}")
+    ontology_iri = URIRef(f"http://phenomebrowser.net/flopo/assertion-module/{module_digest}")
     graph = Graph()
     nodes = _Nodes()
     graph.bind("flopoann", FLOPOANN)

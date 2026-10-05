@@ -50,7 +50,7 @@ RDFXML_PREFIXES = (
     (str(DCTERMS), "dcterms"),
     (str(OBO), "obo"),
     ("http://www.geneontology.org/formats/oboInOwl#", "oboInOwl"),
-    ("https://w3id.org/flopo/annotation/", "flopoann"),
+    ("http://phenomebrowser.net/flopo/annotation/", "flopoann"),
     ("http://xmlns.com/foaf/0.1/", "foaf"),
 )
 

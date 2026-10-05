@@ -135,7 +135,7 @@ def test_exact_pato_colour_compound_is_atomic(resources):
     assert (assertion["po_id"], assertion["pato_id"]) == ("PO_0009010", "PATO_0001287")
     assert assertion["value_terms"] == []
     assert "qualitative_value_relation" not in assertion
-    assert assertion["phenotype_class_iri"].startswith("https://w3id.org/flopo/annotation-class/FAC_")
+    assert assertion["phenotype_class_iri"].startswith("http://phenomebrowser.net/flopo/annotation-class/FAC_")
 
 
 def test_colour_blend_without_ontology_class_is_left(resources):

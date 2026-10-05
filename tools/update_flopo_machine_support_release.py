@@ -29,7 +29,7 @@ from tools.update_flopo_release import _graph_fragment, _update_release_metadata
 
 
 OBO = "http://purl.obolibrary.org/obo/"
-FLOPOANN = "https://w3id.org/flopo/annotation/"
+FLOPOANN = "http://phenomebrowser.net/flopo/annotation/"
 MACHINE_CAMPAIGN = URIRef(FLOPOANN + "machine_review_campaign")
 MACHINE_ITEM = URIRef(FLOPOANN + "machine_review_item")
 MACHINE_SIGNATURE = URIRef(FLOPOANN + "machine_review_signature")

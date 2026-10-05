@@ -10,7 +10,7 @@ from flopo2.geo.models import OccurrenceAssertion, Place
 
 DDL = """
 -- A geo:Feature: GeoNames feature (resolved = 1, feature_iri = https://sws.geonames.org/<id>/)
--- or a FLOPO-minted local feature (https://w3id.org/flopo/geographic-context/<digest>).
+-- or a FLOPO-minted local feature (http://phenomebrowser.net/flopo/geographic-context/<digest>).
 CREATE TABLE IF NOT EXISTS geo_feature (
   feature_iri TEXT PRIMARY KEY,
   label TEXT NOT NULL,

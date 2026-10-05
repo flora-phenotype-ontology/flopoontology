@@ -170,12 +170,12 @@ def test_extracted_disjunction_passes_gate_and_is_an_ofn_object_union(tmp_path):
     assert stats["annotation_classes"] == 1
     rendered = output.read_text()
     assert "ObjectUnionOf(" in rendered
-    assert "Import(<https://w3id.org/flopo/annotation>)" in rendered
+    assert "Import(<http://phenomebrowser.net/flopo/annotation>)" in rendered
     assert "PATO_0000322" in rendered
     assert "PATO_0000320" in rendered
     graph = parse_ontology(output)
     ontology = URIRef(stats["ontology_iri"])
-    assert (ontology, OWL.imports, URIRef("https://w3id.org/flopo/annotation")) in graph
+    assert (ontology, OWL.imports, URIRef("http://phenomebrowser.net/flopo/annotation")) in graph
     assert list(graph.subjects(OWL.unionOf, None))
 
     source_output = tmp_path / "source-assertions.ofn"
@@ -183,7 +183,7 @@ def test_extracted_disjunction_passes_gate_and_is_an_ofn_object_union(tmp_path):
     source_rendered = source_output.read_text()
     assert source_stats["annotation_classes"] == 1
     assert "ObjectUnionOf(" not in source_rendered
-    assert "Import(<https://w3id.org/flopo/annotation-extension>)" in source_rendered
+    assert "Import(<http://phenomebrowser.net/flopo/annotation-extension>)" in source_rendered
 
 
 def _write_records(path: Path, records: list[dict] | None = None) -> Path:
@@ -535,7 +535,7 @@ def test_disjunction_stays_out_of_flopo_vocabulary_but_in_annotation_extension(t
     fac_classes = [
         cls
         for cls in extension_graph.subjects(RDF.type, OWL.Class)
-        if str(cls).startswith("https://w3id.org/flopo/annotation-class/FAC_")
+        if str(cls).startswith("http://phenomebrowser.net/flopo/annotation-class/FAC_")
     ]
     assert len(fac_classes) == 1
 
@@ -545,7 +545,7 @@ def test_disjunction_stays_out_of_flopo_vocabulary_but_in_annotation_extension(t
     assert not list(source_graph.subjects(OWL.unionOf, None))
     assert list(
         source_graph.triples(
-            (None, URIRef("https://w3id.org/flopo/annotation/phenotype_class"), fac_classes[0])
+            (None, URIRef("http://phenomebrowser.net/flopo/annotation/phenotype_class"), fac_classes[0])
         )
     )
 

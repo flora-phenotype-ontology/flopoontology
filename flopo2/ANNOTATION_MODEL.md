@@ -26,13 +26,14 @@ PO remains the preferred bearer vocabulary. If a flora requires an anatomical be
 PO, FLOPO may contain a local support class under the closest PO superclass. Such a class must have
 an evidence-backed definition and an asserted superclass, plus a `part_of` axiom whenever that
 parthood is universal. It uses a FLOPO ontology IRI; source statements, formal assertions, and
-observations continue to use their separate `w3id.org/flopo/...` data IRI spaces.
+observations continue to use their separate data IRI spaces under `http://phenomebrowser.net/flopo/` (FLOPO keeps its own
+identifier space; no w3id.org redirect is used).
 
 ### Identified annotation-class extension
 
-The separate ontology `https://w3id.org/flopo/annotation-extension` gives every distinct logical
+The separate ontology `http://phenomebrowser.net/flopo/annotation-extension` gives every distinct logical
 phenotype description a stable class IRI of the form
-`https://w3id.org/flopo/annotation-class/FAC_<digest>`. Each generated class is defined with
+`http://phenomebrowser.net/flopo/annotation-class/FAC_<digest>`. Each generated class is defined with
 `EquivalentClasses(FAC_<digest> <OWL class description>)`. These are annotation targets, not
 curated FLOPO vocabulary terms, so their IDs never use `FLOPO_`.
 

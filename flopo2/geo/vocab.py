@@ -36,12 +36,12 @@ WGS84 = "http://www.w3.org/2003/01/geo/wgs84_pos#"
 
 # FLOPO-minted resources.  Local (unresolved) features reuse the geographic-context base already
 # used by ``flopo2.owl.annotation_class`` so annotation classes and occurrences share place IRIs.
-GEOGRAPHIC_CONTEXT = "https://w3id.org/flopo/geographic-context/"
-FLOPO_GEOMETRY = "https://w3id.org/flopo/geometry/"
-FLOPO_OCCURRENCE = "https://w3id.org/flopo/occurrence/"
-FLOPO_STATEMENT = "https://w3id.org/flopo/source-statement/"
-FLOPO_TAXON_NAME = "https://w3id.org/flopo/taxon-name/"
-FLOPOGEO = "https://w3id.org/flopo/geo#"  # small local vocabulary for terms with no standard
+GEOGRAPHIC_CONTEXT = "http://phenomebrowser.net/flopo/geographic-context/"
+FLOPO_GEOMETRY = "http://phenomebrowser.net/flopo/geometry/"
+FLOPO_OCCURRENCE = "http://phenomebrowser.net/flopo/occurrence/"
+FLOPO_STATEMENT = "http://phenomebrowser.net/flopo/source-statement/"
+FLOPO_TAXON_NAME = "http://phenomebrowser.net/flopo/taxon-name/"
+FLOPOGEO = "http://phenomebrowser.net/flopo/geo#"  # small local vocabulary for terms with no standard
 
 WGS84_CRS = "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
 

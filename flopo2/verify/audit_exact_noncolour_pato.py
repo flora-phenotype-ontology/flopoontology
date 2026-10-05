@@ -834,7 +834,7 @@ def audit_exact_noncolour_pato(
             )
             class_iri = proposal["assertion"]["phenotype_class_iri"]
             invariants["all_annotation_ids_are_outside_flopo_namespace"] &= (
-                class_iri.startswith("https://w3id.org/flopo/annotation-class/FAC_")
+                class_iri.startswith("http://phenomebrowser.net/flopo/annotation-class/FAC_")
                 and "FLOPO_" not in class_iri
             )
 

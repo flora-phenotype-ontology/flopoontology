@@ -178,7 +178,7 @@ def test_publishes_adversarial_and_tiebreak_classes_with_machine_provenance(tmp_
     tie = URIRef(f"{OBO}FLOPO_0000003")
     reviewers = {
         str(value)
-        for value in graph.objects(tie, URIRef("https://w3id.org/flopo/annotation/machine_reviewer"))
+        for value in graph.objects(tie, URIRef("http://phenomebrowser.net/flopo/annotation/machine_reviewer"))
     }
     assert reviewers == {"reviewer_claude", "reviewer_kimi", "reviewer_qwen"}
     with registry.open(encoding="utf-8", newline="") as handle:
@@ -223,7 +223,7 @@ def test_publishes_curator_override_class_with_provenance(tmp_path):
     cls = URIRef(f"{OBO}FLOPO_0000004")
     assert (
         cls,
-        URIRef("https://w3id.org/flopo/annotation/curator_override"),
+        URIRef("http://phenomebrowser.net/flopo/annotation/curator_override"),
         Literal("curator 2026-09-18"),
     ) in graph
     note = str(next(graph.objects(cls, URIRef(f"{OBO}IAO_0000116"))))

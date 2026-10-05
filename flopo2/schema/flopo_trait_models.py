@@ -79,7 +79,7 @@ linkml_meta = LinkMLMeta({'default_prefix': 'flopo_trait',
                     '``annotators`` annotations make this directly usable as an '
                     'OntoGPT/SPIRES template (OAK grounds the named slots against '
                     'the listed ontologies).',
-     'id': 'https://w3id.org/flopo/flopo-trait',
+     'id': 'http://phenomebrowser.net/flopo/flopo-trait',
      'imports': ['linkml:types'],
      'license': 'https://creativecommons.org/publicdomain/zero/1.0/',
      'name': 'flopo-trait',
@@ -88,15 +88,15 @@ linkml_meta = LinkMLMeta({'default_prefix': 'flopo_trait',
                   'BSPO': {'prefix_prefix': 'BSPO',
                            'prefix_reference': 'http://purl.obolibrary.org/obo/BSPO_'},
                   'BTERM': {'prefix_prefix': 'BTERM',
-                            'prefix_reference': 'https://w3id.org/flopo/botanical-term/'},
+                            'prefix_reference': 'http://phenomebrowser.net/flopo/botanical-term/'},
                   'ENVO': {'prefix_prefix': 'ENVO',
                            'prefix_reference': 'http://purl.obolibrary.org/obo/ENVO_'},
                   'FLOPO': {'prefix_prefix': 'FLOPO',
                             'prefix_reference': 'http://purl.obolibrary.org/obo/FLOPO_'},
                   'FLOPOAC': {'prefix_prefix': 'FLOPOAC',
-                              'prefix_reference': 'https://w3id.org/flopo/annotation-class/'},
+                              'prefix_reference': 'http://phenomebrowser.net/flopo/annotation-class/'},
                   'FLOPOANN': {'prefix_prefix': 'FLOPOANN',
-                               'prefix_reference': 'https://w3id.org/flopo/annotation/'},
+                               'prefix_reference': 'http://phenomebrowser.net/flopo/annotation/'},
                   'PATO': {'prefix_prefix': 'PATO',
                            'prefix_reference': 'http://purl.obolibrary.org/obo/PATO_'},
                   'PO': {'prefix_prefix': 'PO',
@@ -112,7 +112,7 @@ linkml_meta = LinkMLMeta({'default_prefix': 'flopo_trait',
                   'UO': {'prefix_prefix': 'UO',
                          'prefix_reference': 'http://purl.obolibrary.org/obo/UO_'},
                   'flopo_trait': {'prefix_prefix': 'flopo_trait',
-                                  'prefix_reference': 'https://w3id.org/flopo/flopo-trait/'},
+                                  'prefix_reference': 'http://phenomebrowser.net/flopo/flopo-trait/'},
                   'linkml': {'prefix_prefix': 'linkml',
                              'prefix_reference': 'https://w3id.org/linkml/'}},
      'source_file': 'flopo2/schema/flopo_trait.yaml',
@@ -310,7 +310,7 @@ class TraitExtraction(ConfiguredBaseModel):
     """
     The set of trait assertions extracted from a single text segment (one organ block of one taxon). Carries the provenance needed to trace every assertion back to its source.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://w3id.org/flopo/flopo-trait', 'tree_root': True})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'http://phenomebrowser.net/flopo/flopo-trait', 'tree_root': True})
 
     annotation_extension_iri: Optional[str] = Field(default=None, description="""IRI of the annotation-extension ontology that defines the phenotype_class_iri targets used in this materialized record.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitExtraction']} })
     source_segment_index: Optional[int] = Field(default=None, description="""Zero-based document-order occurrence within one source file. This distinguishes repeated taxon/organ/text blocks whose local character offsets are otherwise identical.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitExtraction']} })
@@ -327,7 +327,7 @@ class SourceStatement(ConfiguredBaseModel):
     A verbatim flora statement retained as evidence. Its identifier includes document and segment identity as well as offsets and text, so identical wording in different treatments remains distinct evidence.
     """
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'class_uri': 'FLOPOANN:SourceStatement',
-         'from_schema': 'https://w3id.org/flopo/flopo-trait'})
+         'from_schema': 'http://phenomebrowser.net/flopo/flopo-trait'})
 
     statement_id: str = Field(default=..., description="""Stable source-scoped identifier assigned by the provenance normalizer.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SourceStatement']} })
     verbatim_text: str = Field(default=..., description="""Exact source text selected by start and end.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SourceStatement']} })
@@ -353,7 +353,7 @@ class UnresolvedTraitSpan(ConfiguredBaseModel):
     """
     A verbatim candidate trait span withheld from assertion promotion because its negation, composition, bearer, modifier, or ontology interpretation is unresolved.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://w3id.org/flopo/flopo-trait'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'http://phenomebrowser.net/flopo/flopo-trait'})
 
     start: int = Field(default=..., description="""Zero-based inclusive character offset in the source segment.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SourceStatement',
                        'UnresolvedTraitSpan',
@@ -383,7 +383,7 @@ class TraitAssertion(ConfiguredBaseModel):
     """
     One grounded entity-quality statement: an anatomical entity (PO) bears a quality (PATO), optionally with a quantitative phenotype value, bearer context quality, modality, season, negation, or structured qualitative value relation, justified by a retained source statement. FAC-representable flora data is normally a source-scoped universal or qualified TBox claim, not an observation or measurement event; qualitative relations remain at the assertion level and never become taxon TBox axioms.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://w3id.org/flopo/flopo-trait'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'http://phenomebrowser.net/flopo/flopo-trait'})
 
     phenotype_class_iri: Optional[str] = Field(default=None, description="""Authoritative semantic annotation target: the stable IRI of the equivalent OWL class expression in the FLOPO annotation extension. It is outside the FLOPO term namespace, is generated deterministically after extraction, and is required for FAC-representable materialized assertions. It is absent when qualitative_value_relation is present.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion'], 'slot_uri': 'FLOPOANN:phenotype_class'} })
     anatomical_entity: str = Field(default=..., description="""The plant anatomical structure the quality inheres in: normally a Plant Ontology class, or a reviewed FLOPO-local extension of the PO hierarchy when PO lacks the bearer.""", json_schema_extra = { "linkml_meta": {'annotations': {'annotators': {'tag': 'annotators', 'value': 'sqlite:obo:po'},
@@ -458,7 +458,7 @@ class PartRestriction(ConfiguredBaseModel):
     """
     A reviewed relational phenotype component in which the assertion bearer has a typed part that bears one or more qualities.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://w3id.org/flopo/flopo-trait'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'http://phenomebrowser.net/flopo/flopo-trait'})
 
     property: PartRestrictionProperty = Field(default=..., description="""Relation from the assertion bearer to the typed part. The initial relational grammar permits only BFO:0000051 has part.""", json_schema_extra = { "linkml_meta": {'domain_of': ['PartRestriction']} })
     filler_class: str = Field(default=..., description="""PO class, or reviewed FLOPO-local anatomical support class, identifying the part. A pinned BSPO positional class (for example BSPO:0000073 apical region, BSPO:0000074 basal region, BSPO:0000006 anatomical margin) is allowed when PO has no part class for that organ; the has-part nesting makes it a region of the enclosing bearer.""", json_schema_extra = { "linkml_meta": {'domain_of': ['PartRestriction']} })
@@ -473,7 +473,7 @@ class BearerScope(ConfiguredBaseModel):
     """
     Evidence that the asserted bearer is a positional part or surface of the organ named in the source. Annotation-level provenance; the logical bearer is anatomical_entity or a part_restrictions filler.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://w3id.org/flopo/flopo-trait'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'http://phenomebrowser.net/flopo/flopo-trait'})
 
     outer_bearer: str = Field(default=..., description="""PO or FLOPO class of the organ as named, e.g. PO:0020039 leaf lamina.""", json_schema_extra = { "linkml_meta": {'domain_of': ['BearerScope']} })
     scope_class: str = Field(default=..., description="""PO, pinned BSPO, or reviewed FLOPO class denoting the positional part used, e.g. PO:0000049 leaf lamina abaxial epidermis or BSPO:0000073 apical region.""", json_schema_extra = { "linkml_meta": {'domain_of': ['BearerScope']} })
@@ -487,7 +487,7 @@ class ValueOperand(ConfiguredBaseModel):
     """
     One source-ordered operand of a categorical value expression or one endpoint of a qualitative value relation, with its own verbatim evidence and qualifiers.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://w3id.org/flopo/flopo-trait'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'http://phenomebrowser.net/flopo/flopo-trait'})
 
     operand_index: int = Field(default=..., description="""Zero-based source order of the operand within its expression.""", json_schema_extra = { "linkml_meta": {'domain_of': ['ValueOperand']} })
     value: str = Field(default=..., description="""Grounded PATO or reviewed FLOPO value named by the operand head, e.g. PATO elliptic for \"narrowly elliptic\".""", json_schema_extra = { "linkml_meta": {'domain_of': ['ValueOperand']} })
@@ -519,7 +519,7 @@ class QualitativeValueRelation(ConfiguredBaseModel):
     """
     A fully grounded, source-anchored relation between two categorical phenotype values. The relation is kept at the flora-assertion level because a continuum includes unstated intermediate states, taxon-level alternatives describe variation across members, and a temporal transition places its endpoints at different times. None is equivalent to a conjunction or finite disjunction of the endpoint classes.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://w3id.org/flopo/flopo-trait'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'http://phenomebrowser.net/flopo/flopo-trait'})
 
     interpretation: QualitativeRelationInterpretation = Field(default=..., description="""Semantic reading of the source connector and its two endpoint values.""", json_schema_extra = { "linkml_meta": {'domain_of': ['QualitativeValueRelation']} })
     from_value: str = Field(default=..., description="""Grounded PATO or reviewed FLOPO value at the left/source-first endpoint. For a temporal transition this is the initial state; for other readings source order is retained without asserting temporal direction.""", json_schema_extra = { "linkml_meta": {'domain_of': ['QualitativeValueRelation']} })
@@ -541,7 +541,7 @@ class SeasonContext(ConfiguredBaseModel):
     """
     A source-retained seasonal qualification that is compiled into the OWL phenotype class description. Named seasons may use ENVO or FLOPO annotation vocabulary terms; calendar intervals use month bounds and remain geographically scoped.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://w3id.org/flopo/flopo-trait'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'http://phenomebrowser.net/flopo/flopo-trait'})
 
     season_term: Optional[str] = Field(default=None, description="""CURIE of a named season, for example ENVO:03000129 or FLOPOANN:wet_season.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SeasonContext']} })
     season_text: str = Field(default=..., description="""Exact seasonal phrase copied from the source statement.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SeasonContext']} })
@@ -569,7 +569,7 @@ class DevelopmentalStageContext(ConfiguredBaseModel):
     """
     A source-retained PO developmental or life-cycle stage that temporally scopes a phenotype class. It is distinct from a PATO age/maturity quality of the anatomical bearer and from a specimen-preparation state such as \"when dry\".
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://w3id.org/flopo/flopo-trait'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'http://phenomebrowser.net/flopo/flopo-trait'})
 
     stage_term: str = Field(default=..., description="""PO (or reviewed FLOPO-local PO extension) class for the developmental stage.""", json_schema_extra = { "linkml_meta": {'domain_of': ['DevelopmentalStageContext']} })
     stage_text: str = Field(default=..., description="""Exact developmental-stage phrase copied from the source statement.""", json_schema_extra = { "linkml_meta": {'domain_of': ['DevelopmentalStageContext']} })
@@ -593,7 +593,7 @@ class TermMention(ConfiguredBaseModel):
     """
     A source-text span matched to prior botanical terminology before extraction.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://w3id.org/flopo/flopo-trait'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'http://phenomebrowser.net/flopo/flopo-trait'})
 
     mention_id: str = Field(default=..., description="""Segment-local stable identifier used to link an assertion to this mention.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TermMention']} })
     start: int = Field(default=..., description="""Zero-based inclusive character offset of the mention in the source segment.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SourceStatement',
@@ -627,7 +627,7 @@ class TermCandidate(ConfiguredBaseModel):
     """
     A constrained ontology normalization candidate for a botanical source span.
     """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://w3id.org/flopo/flopo-trait'})
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'http://phenomebrowser.net/flopo/flopo-trait'})
 
     target_id: str = Field(default=..., description="""CURIE of the proposed PO, PATO, or FLOPO normalization target.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TermCandidate']} })
     label: str = Field(default=..., description="""Preferred label of the target at registry build time.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TermCandidate']} })

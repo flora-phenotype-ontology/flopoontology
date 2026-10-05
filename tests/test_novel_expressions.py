@@ -45,7 +45,7 @@ def test_full_expression_queue_keeps_logical_signatures_distinct_and_pending(tmp
                     "source_text": "leaves red or yellow",
                     "composition": {"status": "accept"},
                     "phenotype_class_iri": (
-                        "https://w3id.org/flopo/annotation-class/FAC_logical"
+                        "http://phenomebrowser.net/flopo/annotation-class/FAC_logical"
                     ),
                     "gate": {
                         "status": "accepted",
@@ -89,7 +89,7 @@ def test_full_expression_queue_keeps_logical_signatures_distinct_and_pending(tmp
                     "frequency_qualifier": "usually",
                     "composition": {"status": "accept"},
                     "phenotype_class_iri": (
-                        "https://w3id.org/flopo/annotation-class/FAC_logical"
+                        "http://phenomebrowser.net/flopo/annotation-class/FAC_logical"
                     ),
                     "gate": {
                         "status": "accepted",
@@ -166,19 +166,19 @@ def test_numeric_values_stay_fac_only_under_one_reusable_trait_candidate(tmp_pat
             "flora-A",
             3,
             "mm",
-            "https://w3id.org/flopo/annotation-class/FAC_three_mm",
+            "http://phenomebrowser.net/flopo/annotation-class/FAC_three_mm",
         ),
         (
             "flora-B",
             3.0,
             "UO:0000016",
-            "https://w3id.org/flopo/annotation-class/FAC_three_mm",
+            "http://phenomebrowser.net/flopo/annotation-class/FAC_three_mm",
         ),
         (
             "flora-C",
             4,
             "millimeter",
-            "https://w3id.org/flopo/annotation-class/FAC_four_mm",
+            "http://phenomebrowser.net/flopo/annotation-class/FAC_four_mm",
         ),
     ):
         records.append(

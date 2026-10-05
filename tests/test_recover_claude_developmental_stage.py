@@ -225,7 +225,7 @@ def test_surface_cue_substitutes_po_epidermis_with_bearer_scope() -> None:
     assert scope["mode"] == "substituted_bearer"
     assert text[scope["scope_start"] : scope["scope_end"]] == scope["scope_text"] == "dessus"
     assert "bearer_scope:E3" in assertion["mapping_provenance"]
-    assert assertion["phenotype_class_iri"].startswith("https://w3id.org/flopo/annotation-class/")
+    assert assertion["phenotype_class_iri"].startswith("http://phenomebrowser.net/flopo/annotation-class/")
 
 
 def test_region_cue_uses_po_region_class_when_po_places_it() -> None:

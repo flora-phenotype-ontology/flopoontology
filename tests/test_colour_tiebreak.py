@@ -27,7 +27,7 @@ from flopo2.verify.materialize_eq_gap_class_consensus import (
 from test_eq_gap_class_inventory import _write_fixture
 
 
-FLOPOANN = "https://w3id.org/flopo/annotation/"
+FLOPOANN = "http://phenomebrowser.net/flopo/annotation/"
 
 
 def _class_campaign(tmp_path: Path, *, kimi_accepts: bool = True) -> dict:

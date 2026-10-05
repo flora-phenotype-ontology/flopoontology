@@ -106,7 +106,7 @@ def test_clause_head_measurement_is_recovered(recoverer: Recoverer) -> None:
     assert assertion["raw_entity_text"] == "involucre"
     assert text[assertion["bearer_start"] : assertion["bearer_end"]] == "involucre"
     assert assertion["gate"]["status"] == "accepted"
-    assert assertion["phenotype_class_iri"].startswith("https://w3id.org/flopo/annotation-class/")
+    assert assertion["phenotype_class_iri"].startswith("http://phenomebrowser.net/flopo/annotation-class/")
     assert decisions[0]["rule"] == "clause_head"
 
 

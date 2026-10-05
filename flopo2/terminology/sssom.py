@@ -64,7 +64,7 @@ def write_sssom(entries: list[RegistryEntry], output: Path, include_auto: bool =
     output.parent.mkdir(parents=True, exist_ok=True)
     with output.open("w", encoding="utf-8", newline="") as handle:
         handle.write("# curie_map:\n")
-        handle.write("#   BTERM: https://w3id.org/flopo/botanical-term/\n")
+        handle.write("#   BTERM: http://phenomebrowser.net/flopo/botanical-term/\n")
         handle.write("#   PO: http://purl.obolibrary.org/obo/PO_\n")
         handle.write("#   PATO: http://purl.obolibrary.org/obo/PATO_\n")
         handle.write("#   FLOPO: http://purl.obolibrary.org/obo/FLOPO_\n")

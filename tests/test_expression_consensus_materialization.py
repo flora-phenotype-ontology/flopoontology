@@ -282,7 +282,7 @@ def test_exact_consensus_materializes_one_of_without_minting_class(tmp_path):
     assert assertion["value_terms"] == ["PATO_0000322", "PATO_0000318"]
     assert assertion["gate"]["flopo_status"] == "annotation_extension_only"
     assert assertion["phenotype_class_iri"].startswith(
-        "https://w3id.org/flopo/annotation-class/FAC_"
+        "http://phenomebrowser.net/flopo/annotation-class/FAC_"
     )
     assert "FLOPO_" not in assertion["phenotype_class_iri"]
     assert len(proposal["machine_review"]["reviewer_ids"]) == 2
@@ -388,5 +388,5 @@ def test_atomic_expression_candidate_uses_the_same_fail_closed_materializer():
     assert assertion["value_operator"] == "atomic"
     assert assertion["value_terms"] == []
     assert assertion["phenotype_class_iri"].startswith(
-        "https://w3id.org/flopo/annotation-class/FAC_"
+        "http://phenomebrowser.net/flopo/annotation-class/FAC_"
     )

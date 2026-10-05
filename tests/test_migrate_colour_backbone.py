@@ -115,7 +115,7 @@ def test_related_in_union_gets_per_operand_approximation_and_no_fac():
         value_terms=["PATO_0000323", "FLOPO_0980085"],
     )
     a["gate"] = _gate("EQV|PO_0009059|ONE_OF|FLOPO_0980085&PATO_0000323", "annotation_extension_only")
-    a["phenotype_class_iri"] = "https://w3id.org/flopo/annotation-class/FAC_old"
+    a["phenotype_class_iri"] = "http://phenomebrowser.net/flopo/annotation-class/FAC_old"
     a, m = _run(a, text)
     white, green = a["value_operands"]
     assert white["value"] == "PATO_0000323" and white["value_qualifier"] == "exact"

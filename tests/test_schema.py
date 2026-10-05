@@ -109,7 +109,7 @@ def test_source_segment_index_is_first_class_provenance():
 
 
 def test_materialized_annotation_uses_a_distinct_fac_class_iri():
-    class_iri = "https://w3id.org/flopo/annotation-class/FAC_0123456789abcdef0123456789abcdef"
+    class_iri = "http://phenomebrowser.net/flopo/annotation-class/FAC_0123456789abcdef0123456789abcdef"
     assertion = models.TraitAssertion(
         phenotype_class_iri=class_iri,
         anatomical_entity="PO_0025034",
@@ -117,7 +117,7 @@ def test_materialized_annotation_uses_a_distinct_fac_class_iri():
         source_text="leaves green",
     )
     extraction = models.TraitExtraction(
-        annotation_extension_iri="https://w3id.org/flopo/annotation-extension",
+        annotation_extension_iri="http://phenomebrowser.net/flopo/annotation-extension",
         assertions=[assertion],
     )
     assert extraction.assertions[0].phenotype_class_iri == class_iri

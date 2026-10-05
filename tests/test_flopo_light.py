@@ -190,11 +190,13 @@ def test_light_release_has_catalog_and_purl_routes():
         entry.attrib.get("name"): entry.attrib.get("uri")
         for entry in catalog.findall(".//{urn:oasis:names:tc:entity:xmlns:xml:catalog}uri")
     }
-    products = yaml.safe_load((ROOT / "flopo.yml").read_text(encoding="utf-8"))[
-        "products"
-    ]
+    entries = yaml.safe_load((ROOT / "flopo.yml").read_text(encoding="utf-8"))["entries"]
 
     assert catalog_entries[str(LIGHT_ONTOLOGY)] == "flopo-light.owl"
     # The light ontology IRI must be the OBO product path, or its PURL can never resolve.
     assert str(LIGHT_ONTOLOGY) == "http://purl.obolibrary.org/obo/flopo/flopo-light.owl"
-    assert any("flopo/flopo-light.owl" in product for product in products)
+    assert any(
+        entry.get("exact") == "/flopo-light.owl"
+        and entry["replacement"].endswith("/ontology/flopo-light.owl")
+        for entry in entries
+    )

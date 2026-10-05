@@ -253,7 +253,7 @@ def test_release_update_embeds_module_once_and_is_idempotent(tmp_path):
  xmlns:dcterms="http://purl.org/dc/terms/"
  xmlns:obo="http://purl.obolibrary.org/obo/"
  xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#"
- xmlns:flopoann="https://w3id.org/flopo/annotation/"
+ xmlns:flopoann="http://phenomebrowser.net/flopo/annotation/"
  xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
   <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/flopo.owl">
     <owl:versionIRI rdf:resource="http://purl.obolibrary.org/obo/flopo/releases/2026-08-04/flopo.owl"/>

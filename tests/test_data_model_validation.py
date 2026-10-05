@@ -519,7 +519,7 @@ def test_validator_requires_and_verifies_materialized_annotation_class_iri(tmp_p
     )["ok"]
 
     assertion["phenotype_class_iri"] = (
-        "https://w3id.org/flopo/annotation-class/FAC_00000000000000000000000000000000"
+        "http://phenomebrowser.net/flopo/annotation-class/FAC_00000000000000000000000000000000"
     )
     path.write_text(json.dumps(record) + "\n")
     mismatch = validate_jsonl(
