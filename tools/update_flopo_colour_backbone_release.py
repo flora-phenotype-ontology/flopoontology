@@ -23,10 +23,10 @@ import re
 from datetime import date
 from pathlib import Path
 
-from rdflib import OWL, RDF, Graph, URIRef
+from rdflib import OWL, RDF, BNode, Graph, URIRef
 
 from tools.update_flopo_botanical_release import _remove_named_owl_class
-from tools.update_flopo_release import _extension_fragment, _update_release_metadata
+from tools.update_flopo_release import _graph_fragment, _update_release_metadata
 
 
 OBO = "http://purl.obolibrary.org/obo/"
@@ -103,7 +103,23 @@ def module_fragment(module_path: Path, root: Path) -> tuple[str, set[str]]:
             f"colour backbone module class set does not match the registry/change list "
             f"(missing={missing}, extra={extra})"
         )
-    fragment, _count = _extension_fragment(module_path)
+    # The module skolemizes its anonymous class expressions and axiom-annotation nodes to IRIs
+    # under "<module>#" so that it builds quickly and stably (see the builder).  OWL tools read an
+    # IRI as a named entity, never as an anonymous restriction or reified axiom, so in the release
+    # they must be blank nodes again: otherwise every redefined EQ class would be equivalent to an
+    # empty named class and classify under owl:Thing only.  The skolem names give the blank nodes
+    # stable identifiers, so no canonicalization is needed.
+    def unskolem(node):
+        if isinstance(node, URIRef) and str(node).startswith(module_ns):
+            return BNode(str(node)[len(module_ns):])
+        return node
+
+    body = Graph()
+    for s, p, o in graph:
+        if s == MODULE:
+            continue
+        body.add((unskolem(s), p, unskolem(o)))
+    fragment, _count = _graph_fragment(body, node_id_prefix="FLOPOColour_", canonicalize=False)
     header_pattern = re.compile(
         rf"  <rdf:Description rdf:about={re.escape(chr(34) + str(MODULE) + chr(34))}>"
         rf".*?  </rdf:Description>\n?",
@@ -119,6 +135,23 @@ def module_fragment(module_path: Path, root: Path) -> tuple[str, set[str]]:
     return fragment.strip(), classes
 
 
+_DECLARED_CLASS = re.compile(
+    r'<rdf:Description rdf:about="(http://purl\.obolibrary\.org/obo/FLOPO_\d+)">'
+    r'(?:(?!</rdf:Description>).)*?'
+    r'<rdf:type rdf:resource="http://www\.w3\.org/2002/07/owl#Class"/>',
+    re.DOTALL,
+)
+
+
+def _embedded_classes(text: str) -> set[str]:
+    """FLOPO classes declared inside the currently embedded block (empty if none)."""
+
+    if BEGIN_MARKER not in text:
+        return set()
+    block = text[text.index(BEGIN_MARKER) : text.index(END_MARKER)]
+    return set(_DECLARED_CLASS.findall(block))
+
+
 def update_release(
     release_path: Path,
     module_path: Path,
@@ -128,8 +161,20 @@ def update_release(
     verify: bool = True,
 ) -> int:
     root = root or Path(__file__).resolve().parents[1]
-    text = _without_generated_block(release_path.read_text(encoding="utf-8"))
+    original = release_path.read_text(encoding="utf-8")
+    previously_embedded = _embedded_classes(original)
+    text = _without_generated_block(original)
     fragment, classes = module_fragment(module_path, root)
+    # Re-embedding replaces the block wholesale, and the classes the old block redefined were
+    # removed from the rest of the release when it was first embedded.  A module that no longer
+    # declares one of them would therefore delete that class from FLOPO (2026-09-18: 1,412 colour
+    # phenotypes lost this way), so refuse.
+    dropped = sorted(previously_embedded - classes)
+    if dropped:
+        raise ValueError(
+            f"the colour backbone module no longer declares {len(dropped)} classes that the "
+            f"embedded block declares (e.g. {dropped[:3]}); re-embedding would delete them"
+        )
     for class_iri in sorted(classes):
         text, _removed = _remove_named_owl_class(text, class_iri)
     text = _update_release_metadata(text, release_date)

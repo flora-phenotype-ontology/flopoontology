@@ -5,14 +5,15 @@ import re
 from pathlib import Path
 
 import pytest
-from rdflib import OWL, RDF, RDFS, Graph, Literal, URIRef
-from rdflib.compare import isomorphic
+from rdflib import OWL, RDF, RDFS, BNode, Graph, Literal, URIRef
+from rdflib.collection import Collection
 
 from tools.build_flopo_colour_backbone import (
     BLOCK_FIRST,
     BLOCK_LAST,
     OBO,
     PROPERTY_FIRST,
+    PATHS,
     WITHDRAWN_PATO,
     build,
 )
@@ -43,8 +44,44 @@ def _module() -> Graph:
 
 
 @pytest.fixture(scope="module")
-def build_report() -> dict:
-    return build(ROOT)
+def build_output(tmp_path_factory) -> tuple[dict, Path]:
+    # Build into a scratch tree: the build must never rewrite the committed module in a test run.
+    out = tmp_path_factory.mktemp("colour-backbone")
+    for key in ("module", "crosswalk", "changes", "base"):
+        (out / PATHS[key]).parent.mkdir(parents=True, exist_ok=True)
+    return build(ROOT, out_root=out), out
+
+
+@pytest.fixture(scope="module")
+def build_report(build_output) -> dict:
+    return build_output[0]
+
+
+def _expression_signature(graph: Graph) -> set[tuple[str, str, str]]:
+    """Triples about named subjects, with anonymous and skolemized expressions spelled out."""
+
+    def node(value):
+        if isinstance(value, URIRef) and "#expr_" in str(value):
+            return BNode(str(value))
+        return value
+
+    plain = Graph()
+    for s, p, o in graph:
+        plain.add((node(s), p, node(o)))
+
+    def canon(value) -> str:
+        if not isinstance(value, BNode):
+            return str(value)
+        parts = []
+        for p, o in plain.predicate_objects(value):
+            if p in (OWL.unionOf, OWL.intersectionOf):
+                members = sorted(canon(m) for m in Collection(plain, o))
+                parts.append(f"{p}({','.join(members)})")
+            else:
+                parts.append(f"{p}={canon(o)}")
+        return "[" + ";".join(sorted(parts)) + "]"
+
+    return {(str(s), str(p), canon(o)) for s, p, o in plain if not isinstance(s, BNode)}
 
 
 def test_registry_block_is_reserved_and_disjoint_from_every_other_allocation():
@@ -101,7 +138,16 @@ def test_build_reproduces_the_committed_module(build_report):
     # No EQ class silently merges with another after re-pointing (curator requirement: list, don't
     # merge, any signature collision caused by the backbone).
     assert build_report["new_signature_duplicates"] == {}
-    assert isomorphic(_module(), _module())  # the committed file parses to a stable graph
+    assert build_report["redefined_classes"] == 1412
+
+
+def test_rebuild_on_the_embedded_release_reproduces_the_committed_module(build_output):
+    # Regression: a rebuild on a release that already embeds the module once found nothing left to
+    # re-point and dropped the 1,412 redefined classes from the module (and so from FLOPO).
+    _, out = build_output
+    rebuilt = Graph().parse((out / PATHS["module"]).as_posix())
+    assert _expression_signature(rebuilt) == _expression_signature(_module())
+    assert (out / PATHS["changes"]).read_text(encoding="utf-8") == CHANGES.read_text(encoding="utf-8")
 
 
 def test_module_declares_only_flopo_classes_and_no_stray_blank_nodes():
@@ -241,3 +287,27 @@ def test_module_fragment_rejects_a_mismatched_class_set(tmp_path):
     )
     with pytest.raises(ValueError):
         module_fragment(bogus, ROOT)
+
+
+def test_release_update_refuses_to_drop_embedded_classes(tmp_path):
+    from tools.update_flopo_colour_backbone_release import END_MARKER
+
+    release = tmp_path / "flopo.owl"
+    release.write_text(
+        f"""<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#">
+  <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/flopo.owl"/>
+{BEGIN_MARKER}
+  <rdf:Description rdf:about="http://purl.obolibrary.org/obo/FLOPO_9999999">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
+{END_MARKER}
+</rdf:RDF>
+""",
+        encoding="utf-8",
+    )
+    before = release.read_text(encoding="utf-8")
+    with pytest.raises(ValueError, match="re-embedding would delete them"):
+        update_release(release, MODULE_PATH, "2026-10-05", root=ROOT, verify=False)
+    assert release.read_text(encoding="utf-8") == before

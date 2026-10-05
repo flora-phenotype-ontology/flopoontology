@@ -59,6 +59,12 @@ segment text or is already unresolved.
 ``admission:deterministic_audited_rule:<rule>:wilson_lb_<x>``) on the delta's assertions that
 match every field of ``match`` (``extractor``, ``gate_status``, ``interpretation``).
 
+``merge --resolutions <tsv>`` applies curator decisions to the logged conflicts (columns of
+``RESOLUTION_KEY_FIELDS`` plus ``decision``: ``winner``, ``both`` or ``unresolved``).  It fails on
+any conflict the file does not list and on any row that matches no conflict; the conflicts TSV then
+holds only the conflicts that still lack a decision (``unresolved`` rows).  Without the option
+every conflict is resolved for the winner and logged, as before.
+
 ``merge-held`` combines a module's ``--admit`` delta with its review-held delta: relations the
 admitted run retained (for example because of a clause-level disjunction) keep their held
 records and review status, so admission never loses a recovered span.
@@ -109,6 +115,28 @@ CONFLICT_FIELDS = (
     "loser_text",
     "contested_spans",
 )
+
+
+# Curator-approved conflict resolutions (``merge --resolutions``).  A row identifies one logged
+# conflict by these columns; ``decision`` is one of RESOLUTION_DECISIONS.
+RESOLUTION_KEY_FIELDS = (
+    "source",
+    "source_id",
+    "source_segment_index",
+    "organ",
+    "char_start",
+    "char_end",
+    "conflict",
+    "winner_delta",
+    "loser_delta",
+    "loser_span",
+)
+# ``winner``: keep the higher-precedence assertion and drop the loser (the default behaviour);
+# ``both``: keep the winner's state and also admit the loser's assertion (only for conflicts whose
+# loser is not contradicted, ``conflict_correction_restored`` and ``conflict_same_attribute``);
+# ``unresolved``: no decision, behave as ``winner`` and keep the row in the conflicts TSV.
+RESOLUTION_DECISIONS = ("winner", "both", "unresolved")
+BOTH_ALLOWED = ("conflict_correction_restored", "conflict_same_attribute")
 
 
 class DeltaError(ValueError):
@@ -347,14 +375,47 @@ def _conflict_row(
     return row
 
 
-def resolve_conflicts(specs: list[DeltaSpec]) -> list[dict[str, Any]]:
+def load_resolutions(path: Path) -> dict[tuple[str, ...], dict[str, str]]:
+    """Read a curator resolutions TSV into ``{key: row}``; fail on malformed or repeated rows."""
+
+    with Path(path).open(encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle, delimiter="\t"))
+    resolutions: dict[tuple[str, ...], dict[str, str]] = {}
+    for number, row in enumerate(rows, start=2):
+        missing = [name for name in (*RESOLUTION_KEY_FIELDS, "decision") if not (row.get(name) or "").strip()]
+        if missing:
+            raise DeltaError(f"{path}:{number}: resolution row lacks {missing}")
+        if row["decision"] not in RESOLUTION_DECISIONS:
+            raise DeltaError(f"{path}:{number}: unsupported decision {row['decision']!r}")
+        if row["decision"] == "both" and row["conflict"] not in BOTH_ALLOWED:
+            raise DeltaError(f"{path}:{number}: 'both' is not valid for {row['conflict']}")
+        key = tuple(row[name] for name in RESOLUTION_KEY_FIELDS)
+        if key in resolutions:
+            raise DeltaError(f"{path}:{number}: duplicate resolution for {key}")
+        resolutions[key] = row
+    return resolutions
+
+
+def _resolution_key(row: dict[str, Any]) -> tuple[str, ...]:
+    return tuple(str(row.get(name, "")) for name in RESOLUTION_KEY_FIELDS)
+
+
+def resolve_conflicts(
+    specs: list[DeltaSpec],
+    resolutions: dict[tuple[str, ...], dict[str, str]] | None = None,
+) -> list[dict[str, Any]]:
     """Prune lower-precedence assertions that clash with a higher-precedence delta.
 
     ``specs`` must be in precedence order.  Mutates the delta lines in place and returns one
-    conflict row per dropped assertion.
+    conflict row per conflict.  Without ``resolutions`` every conflict is resolved for the winner.
+    With ``resolutions`` (curator decisions, see :func:`load_resolutions`) a conflict listed with
+    decision ``both`` keeps its loser assertion, a ``winner`` decision is recorded as curated, and
+    any conflict that is not listed raises :class:`DeltaError` (fail closed).  Rows carry
+    ``curated_decision`` when a decision was applied.
     """
 
     conflicts: list[dict[str, Any]] = []
+    used: set[tuple[str, ...]] = set()
     touching: dict[tuple[Any, ...], list[DeltaSpec]] = defaultdict(list)
     for spec in specs:
         for key in spec.lines:
@@ -409,13 +470,30 @@ def resolve_conflicts(specs: list[DeltaSpec]) -> list[dict[str, Any]]:
                     survivors.append((assertion, own_spans))
                     continue
                 kind, winner, won, contested = verdict
-                conflicts.append(_conflict_row(key, kind, winner, won, spec, assertion, contested))
+                row = _conflict_row(key, kind, winner, won, spec, assertion, contested)
+                conflicts.append(row)
+                if resolutions is not None:
+                    decision = resolutions.get(_resolution_key(row))
+                    if decision is None:
+                        raise DeltaError(f"conflict without a curator resolution: {_resolution_key(row)}")
+                    used.add(_resolution_key(row))
+                    if decision["decision"] != "unresolved":
+                        row["curated_decision"] = decision["decision"]
+                        row["resolution"] = (
+                            f"curated:{decision['decision']};kept:{winner.name};"
+                            + ("also_kept" if decision["decision"] == "both" else "dropped")
+                            + f":{spec.name}"
+                        )
+                    if decision["decision"] == "both":
+                        survivors.append((assertion, own_spans))
             if len(survivors) != len(line.get("add_assertions", []) or []):
                 _prune_line(line, [assertion for assertion, _ in survivors], cleared)
             for assertion, own_spans in survivors:
                 kept.append((spec, assertion, own_spans))
             restored.extend((spec, span) for span in line.get("add_unresolved", []) or [])
             cleared.extend((spec, span) for span in line.get("remove_unresolved", []) or [])
+    if resolutions is not None and set(resolutions) - used:
+        raise DeltaError(f"resolutions match no conflict (stale file?): {sorted(set(resolutions) - used)[:3]}")
     return conflicts
 
 
@@ -560,8 +638,14 @@ def merge(
     specs: list[DeltaSpec],
     output: Path,
     conflicts_path: Path | None = None,
+    resolutions: dict[tuple[str, ...], dict[str, str]] | None = None,
 ) -> dict[str, Any]:
-    """Apply ``specs`` (already in precedence order) to ``base`` and write ``output``."""
+    """Apply ``specs`` (already in precedence order) to ``base`` and write ``output``.
+
+    ``resolutions`` (optional, from :func:`load_resolutions`) applies curator decisions to the
+    logged conflicts and makes any unlisted conflict an error; ``conflicts_path`` then receives only
+    the conflicts left without a decision.
+    """
 
     if Path(base).resolve() == Path(output).resolve():
         raise DeltaError("output must differ from the base stage")
@@ -569,9 +653,10 @@ def merge(
         if not spec.lines:
             read_delta(spec)
     stamped = {spec.name: stamp_admission(spec) for spec in specs}
-    conflicts = resolve_conflicts(specs)
+    conflicts = resolve_conflicts(specs, resolutions)
+    remaining = [row for row in conflicts if "curated_decision" not in row]
     if conflicts_path is not None:
-        write_conflicts(conflicts_path, conflicts)
+        write_conflicts(conflicts_path, remaining)
 
     pending: dict[tuple[Any, ...], list[DeltaSpec]] = defaultdict(list)
     for spec in specs:
@@ -659,7 +744,12 @@ def merge(
             reason: {"before": before[reason], "after": after[reason], "change": after[reason] - before[reason]}
             for reason in sorted(set(before) | set(after))
         },
-        "conflicts": {"total": len(conflicts), "by_kind": dict(sorted(conflict_counts.items()))},
+        "conflicts": {
+            "total": len(conflicts),
+            "by_kind": dict(sorted(conflict_counts.items())),
+            "curated": dict(sorted(Counter(r["curated_decision"] for r in conflicts if "curated_decision" in r).items())),
+            "remaining": len(remaining),
+        },
     }
 
 
@@ -743,6 +833,11 @@ def main() -> None:
     run.add_argument("-o", "--output", type=Path, required=True)
     run.add_argument("--conflicts", type=Path, required=True)
     run.add_argument("--report", type=Path)
+    run.add_argument(
+        "--resolutions",
+        type=Path,
+        help="curator conflict-resolution TSV; every logged conflict must then be listed",
+    )
     held = sub.add_parser("merge-held", help="union an --admit delta with its review-held delta")
     held.add_argument("--admitted", type=Path, required=True)
     held.add_argument("--held", type=Path, required=True)
@@ -750,7 +845,10 @@ def main() -> None:
     args = parser.parse_args()
     if args.command == "merge":
         base, specs = load_manifest(args.manifest)
-        report = merge(base, specs, args.output, args.conflicts)
+        resolutions = load_resolutions(args.resolutions) if args.resolutions else None
+        report = merge(base, specs, args.output, args.conflicts, resolutions)
+        if args.resolutions:
+            report["resolutions"] = str(args.resolutions)
         report["manifest"] = str(args.manifest)
         report["conflicts"]["tsv"] = str(args.conflicts)
     else:

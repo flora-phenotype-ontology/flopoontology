@@ -18,8 +18,16 @@ Subcommands:
     Read the configuration tables and the current ``ontology/flopo.owl`` and write
     ``ontology/flopo-colour-backbone.ttl``, the pipeline crosswalk
     ``config/colour_backbone_crosswalk.tsv`` and the change list
-    ``curation/flopo_colour_backbone_eq_changes.tsv``.  Re-running the build on a release
-    that already embeds the module reproduces the same module.
+    ``curation/flopo_colour_backbone_eq_changes.tsv``.
+
+    Embedding the module removes the original declarations of every class it redefines or
+    obsoletes, so a release that already embeds the module no longer says what those classes
+    looked like before the migration.  A build on a pre-backbone release therefore also writes
+    ``config/flopo_colour_backbone_base.ttl``, a snapshot of exactly those original
+    declarations.  A build on a release that already embeds the module strips the embedded
+    block and restores the snapshot first, so it sees the pre-backbone state and reproduces
+    the same module.  Without that (2026-09-18) the rebuild found nothing left to re-point and
+    the re-embedded module silently dropped 1,412 redefined classes.
 
 Re-pointing rules (source colour -> backbone):
 
@@ -201,8 +209,13 @@ PATHS = {
     "crosswalk": Path("config/colour_backbone_crosswalk.tsv"),
     "module": Path("ontology/flopo-colour-backbone.ttl"),
     "changes": Path("curation/flopo_colour_backbone_eq_changes.tsv"),
+    "base": Path("config/flopo_colour_backbone_base.ttl"),
     "release": Path("ontology/flopo.owl"),
 }
+
+# Markers of the embedded module in the release (see tools/update_flopo_colour_backbone_release.py).
+EMBED_BEGIN = "<!-- BEGIN GENERATED FLOPO COLOUR BACKBONE EXTENSION -->"
+EMBED_END = "<!-- END GENERATED FLOPO COLOUR BACKBONE EXTENSION -->"
 
 REGISTRY_FIELDS = (
     "proposal_key",
@@ -792,6 +805,9 @@ class _Rewriter:
                 return COLOR
             if len(members) == 1:
                 return members[0]
+            # Union order carries no meaning, and the order rdflib yields the members of a parsed
+            # list differs between the release and the base snapshot; sort so builds are byte-stable.
+            members.sort(key=str)
             # Skolemized, not a real BNode: see the ``_new_expr_node`` note above its definition.
             new = _new_expr_node()
             self.target.add((new, RDF.type, OWL.Class))
@@ -981,11 +997,84 @@ def _signature_duplicates(graph: Graph, classes: set[URIRef]) -> dict[str, list[
     return {sig: sorted(ids) for sig, ids in by_signature.items() if len(ids) > 1}
 
 
-def build(root: Path = ROOT, release_path: Path | None = None) -> dict:
+def _strip_embedded_block(text: str) -> tuple[str, bool]:
+    begin, end = text.count(EMBED_BEGIN), text.count(EMBED_END)
+    if begin != end or begin > 1:
+        raise ValueError("malformed generated colour-backbone markers in the release")
+    if not begin:
+        return text, False
+    start = text.index(EMBED_BEGIN)
+    stop = text.index(EMBED_END) + len(EMBED_END)
+    return text[:start] + text[stop:], True
+
+
+def _pre_backbone_release(release_path: Path, base_path: Path) -> tuple[Graph, bool]:
+    """The release as it was before the backbone was embedded, and whether it was embedded.
+
+    For an embedded release the generated block is removed and the committed snapshot of the
+    original declarations of the redefined and obsoleted classes is added back."""
+
+    text, embedded = _strip_embedded_block(release_path.read_text(encoding="utf-8"))
+    release = Graph().parse(data=text, format="xml", publicID=release_path.resolve().as_uri())
+    if not embedded:
+        return release, False
+    if not base_path.is_file():
+        raise ValueError(
+            f"{release_path} already embeds the colour backbone, and {base_path} (the snapshot of "
+            "the pre-backbone declarations) is missing; build from a pre-backbone release instead"
+        )
+    base = Graph().parse(base_path.as_posix())
+    subjects = {s for s in base.subjects() if isinstance(s, URIRef)}
+    present = {s for s in subjects if (s, RDF.type, OWL.Class) in release}
+    if present:
+        raise ValueError(
+            f"{len(present)} snapshot classes are still declared outside the backbone block "
+            f"(e.g. {sorted(map(str, present))[:3]}); re-embed the backbone module first"
+        )
+    for triple in base:
+        release.add(triple)
+    return release, True
+
+
+def _write_base_snapshot(release: Graph, classes: set[URIRef], path: Path) -> None:
+    """Write every triple about ``classes`` (with their anonymous class expressions)."""
+
+    snapshot = Graph()
+
+    def copy(node) -> None:
+        for predicate, obj in release.predicate_objects(node):
+            snapshot.add((node, predicate, obj))
+            if isinstance(obj, BNode) and (obj, None, None) not in snapshot:
+                copy(obj)
+
+    for cls in sorted(classes, key=str):
+        if (cls, RDF.type, OWL.Class) not in release:
+            raise ValueError(f"colour class to snapshot is not declared in the release: {curie(cls)}")
+        copy(cls)
+    for axiom in set(release.subjects(OWL.annotatedSource, None)):
+        if release.value(axiom, OWL.annotatedSource) in classes:
+            copy(axiom)
+    snapshot.bind("obo", OBO)
+    snapshot.bind("oboInOwl", OBO_IN_OWL)
+    snapshot.bind("owl", OWL)
+    snapshot.bind("rdfs", RDFS)
+    path.write_text(
+        "# Pre-backbone declarations of the FLOPO classes that tools/build_flopo_colour_backbone.py\n"
+        "# redefines or obsoletes, captured from the release before the module was embedded.\n"
+        "# The build restores them when it runs on a release that already embeds the module.\n"
+        + snapshot.serialize(format="turtle"),
+        encoding="utf-8",
+    )
+
+
+def build(root: Path = ROOT, release_path: Path | None = None, out_root: Path | None = None) -> dict:
+    """Build the module; outputs go under ``out_root`` (default ``root``), inputs come from ``root``."""
+
+    out_root = out_root or root
     _reset_axiom_node_counter()
     inputs = load_inputs(root)
     release_path = release_path or root / PATHS["release"]
-    release = Graph().parse(release_path.as_posix())
+    release, embedded = _pre_backbone_release(release_path, root / PATHS["base"])
     mappings = build_mappings(inputs)
     obsolete = {row["flopo_id"]: row for row in inputs.migration if row["action"] == "obsolete"}
     obsolete_iris = {iri(k) for k in obsolete}
@@ -1003,6 +1092,8 @@ def build(root: Path = ROOT, release_path: Path | None = None) -> dict:
             for obj in release.objects(cls, predicate):
                 if _logical_iris(release, obj) & changing:
                     affected.add(cls)
+    if not embedded:
+        _write_base_snapshot(release, affected | obsolete_iris, out_root / PATHS["base"])
     changes = []
     for cls in sorted(affected, key=str):
         changes.append(_transform_class(release, module, cls, mappings, labels))
@@ -1041,7 +1132,7 @@ def build(root: Path = ROOT, release_path: Path | None = None) -> dict:
     after = _signature_duplicates(merged, _live_flopo_classes(merged))
     new_duplicates = {sig: ids for sig, ids in after.items() if before.get(sig) != ids}
 
-    module_path = root / PATHS["module"]
+    module_path = out_root / PATHS["module"]
     module_text = _serialize_module(module)
     module_path.write_text(module_text, encoding="utf-8")
 
@@ -1078,10 +1169,10 @@ def build(root: Path = ROOT, release_path: Path | None = None) -> dict:
         "# canonical_id is the colour FLOPO uses in logical axioms for source_id; rows with "
         "eq_axiom=SubClassOf generalise the source and never define an EquivalentTo class.\n"
     )
-    (root / PATHS["crosswalk"]).write_text(
+    (out_root / PATHS["crosswalk"]).write_text(
         tsv_text(CROSSWALK_FIELDS, crosswalk_rows, header=header), encoding="utf-8"
     )
-    (root / PATHS["changes"]).write_text(tsv_text(CHANGE_FIELDS, changes), encoding="utf-8")
+    (out_root / PATHS["changes"]).write_text(tsv_text(CHANGE_FIELDS, changes), encoding="utf-8")
 
     change_counts = Counter(row["change"] for row in changes)
     return {

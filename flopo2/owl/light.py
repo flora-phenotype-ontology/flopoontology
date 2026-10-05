@@ -51,6 +51,7 @@ RDFXML_PREFIXES = (
     (str(OBO), "obo"),
     ("http://www.geneontology.org/formats/oboInOwl#", "oboInOwl"),
     ("https://w3id.org/flopo/annotation/", "flopoann"),
+    ("http://xmlns.com/foaf/0.1/", "foaf"),
 )
 
 
@@ -327,6 +328,17 @@ def build_light_ontology(
         )
     )
     light.add((LIGHT_ONTOLOGY, DCTERMS.source, FULL_ONTOLOGY))
+    # Attribution and pointers are the same for both artifacts; copy them from the full release.
+    for predicate in (
+        DCTERMS.creator,
+        DCTERMS.contributor,
+        DCTERMS.bibliographicCitation,
+        DCTERMS.references,
+        URIRef("http://xmlns.com/foaf/0.1/homepage"),
+        RDFS.seeAlso,
+    ):
+        for obj in source.objects(FULL_ONTOLOGY, predicate):
+            light.add((LIGHT_ONTOLOGY, predicate, obj))
     light.add((LIGHT_ONTOLOGY, IAO_ROOT_TERM, ROOT_CLASS))
 
     used_annotation_properties: set[URIRef] = set()

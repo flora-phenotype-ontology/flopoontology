@@ -135,11 +135,11 @@ ABNORMAL_PATO = {
 }
 # Quality branches that ``ontology/flopo.owl`` blocks with a general class axiom
 # ``BFO:0000051 some (owl:Thing and RO:0000053 some <quality>) SubClassOf owl:Nothing``: an EQ class
-# over them is unsatisfiable. Sex qualities in particular are recorded as taxon-level reproductive
-# statements, not as flora phenotypes. The ELK run of the release tool is the backstop for any
-# further blocked branch.
+# over them is unsatisfiable. The ELK run of the release tool is the backstop for any further
+# blocked branch. Phenotypic sex (PATO:0001894) is no longer blocked: the curator removed that axiom
+# on 2026-10-05, and the flower sex phenotypes are live classes of
+# ontology/flopo-sex-quality-extension.ttl, so a rebuild sees them as duplicates of live classes.
 BLOCKED_QUALITY_ROOTS = {
-    "PATO_0001894": "phenotypic sex",
     "PATO_0000370": "up",
     "PATO_0000365": "down",
 }

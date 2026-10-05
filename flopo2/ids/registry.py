@@ -142,6 +142,16 @@ def _intersection_members(g: Graph, node) -> list:
     return list(Collection(g, coll_head))
 
 
+def _is_named(node) -> bool:
+    """True for a named class; False for a blank node or a skolemized class expression.
+
+    Some extension modules (e.g. the colour backbone) skolemize anonymous class expressions to
+    IRIs such as ``<module>#expr_12`` so that they serialize stably; those are expressions, not
+    named entities, and must be read through like blank nodes."""
+
+    return isinstance(node, URIRef) and "#expr_" not in str(node) and "/.well-known/genid/" not in str(node)
+
+
 def _signature_of(g: Graph, cls: URIRef) -> str:
     """Compute the canonical EQ signature of a FLOPO class from its equivalentClass axiom."""
     for eq in g.objects(cls, OWL.equivalentClass):
@@ -160,7 +170,7 @@ def _signature_of(g: Graph, cls: URIRef) -> str:
         qualities: list[object] = []
         relational_parts: list[tuple[str, str, tuple[str, ...]]] = []
         for m in members:
-            if isinstance(m, URIRef):
+            if _is_named(m):
                 named_entity = m
                 continue
             r = _restriction(g, m)
@@ -170,12 +180,12 @@ def _signature_of(g: Graph, cls: URIRef) -> str:
             if mprop == HAS_QUALITY:
                 if mfiller is not None:
                     qualities.append(mfiller)
-            elif mprop == PART_OF and isinstance(mfiller, URIRef):
+            elif mprop == PART_OF and _is_named(mfiller):
                 partof_entity = mfiller
             elif mprop == HAS_PART and mfiller is not None:
                 part_members = _intersection_members(g, mfiller)
                 filler_class = next(
-                    (item for item in part_members if isinstance(item, URIRef)), None
+                    (item for item in part_members if _is_named(item)), None
                 )
                 part_qualities: list[str] = []
                 for part_member in part_members:
@@ -183,7 +193,7 @@ def _signature_of(g: Graph, cls: URIRef) -> str:
                     if not part_restriction:
                         continue
                     part_prop, part_filler = part_restriction
-                    if part_prop == HAS_QUALITY and isinstance(part_filler, URIRef):
+                    if part_prop == HAS_QUALITY and _is_named(part_filler):
                         part_qualities.append(_curie(part_filler))
                 if filler_class is not None and part_qualities:
                     relational_parts.append(
@@ -199,7 +209,7 @@ def _signature_of(g: Graph, cls: URIRef) -> str:
         if (
             named_entity is not None
             and len(qualities) == 1
-            and isinstance(qualities[0], URIRef)
+            and _is_named(qualities[0])
             and relational_parts
         ):
             return relational_signature(
@@ -207,15 +217,15 @@ def _signature_of(g: Graph, cls: URIRef) -> str:
             )
         if named_entity is not None and len(qualities) == 1:
             quality = qualities[0]
-            if isinstance(quality, URIRef):
+            if _is_named(quality):
                 return f"EQ|{_curie(named_entity)}|{_curie(quality)}"
             union_head = next(g.objects(quality, OWL.unionOf), None)
             if union_head is not None:
-                values = sorted(_curie(value) for value in Collection(g, union_head) if isinstance(value, URIRef))
+                values = sorted(_curie(value) for value in Collection(g, union_head) if _is_named(value))
                 if values:
                     return f"EQV|{_curie(named_entity)}|ONE_OF|{'&'.join(values)}"
         if named_entity is not None and len(qualities) > 1 and all(
-            isinstance(quality, URIRef) for quality in qualities
+            _is_named(quality) for quality in qualities
         ):
             values = sorted(_curie(quality) for quality in qualities)
             return f"EQV|{_curie(named_entity)}|ALL_OF|{'&'.join(values)}"

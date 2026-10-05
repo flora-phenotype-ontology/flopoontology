@@ -50,16 +50,19 @@ def _without_generated_block(text: str) -> str:
 
 
 def _graph_fragment(
-    source: Graph, *, node_id_prefix: str = "FLOPOValue_"
+    source: Graph, *, node_id_prefix: str = "FLOPOValue_", canonicalize: bool = True
 ) -> tuple[str, int]:
-    """Serialize one small RDF graph as a deterministic RDF/XML body fragment."""
+    """Serialize one small RDF graph as a deterministic RDF/XML body fragment.
+
+    Blank nodes are relabelled canonically unless the caller already gave them stable labels
+    (``canonicalize=False``), which large modules need because canonicalization does not scale."""
 
     local_classes = {
         cls
         for cls in source.subjects(RDF.type, OWL.Class)
         if isinstance(cls, URIRef) and str(cls).startswith(str(OBO) + "FLOPO_")
     }
-    canonical = to_canonical_graph(source)
+    canonical = to_canonical_graph(source) if canonicalize else source
 
     def node_key(node) -> tuple[str, str, str, str]:
         # Break ties on the string value alone (e.g. a bilingual synonym spelled the same in two

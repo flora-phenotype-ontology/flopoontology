@@ -12,6 +12,8 @@ from flopo2.verify.apply_deltas import (
     DeltaError,
     apply_line,
     load_manifest,
+    RESOLUTION_KEY_FIELDS,
+    load_resolutions,
     merge,
     merge_held,
 )
@@ -493,3 +495,101 @@ def test_update_assertions_cannot_change_fac_identity():
         {**target, "set": {"value_operands": approximated}}
     ]}, "x")
     assert out["assertions"][0]["phenotype_class_iri"] == assertion["phenotype_class_iri"]
+
+
+# ---------------------------------------------------------------------------------------------
+# Curator conflict resolutions (--resolutions)
+
+
+def _restored_conflict_manifest(tmp_path: Path) -> Path:
+    correction = _delta(
+        remove_assertions=[
+            {"source_statement_id": "st-old", "po_id": "PO_1", "pato_id": "PATO_OLD", "source_start": 36, "source_end": 44}
+        ],
+        add_unresolved=[_span(36, 44, "missing_or_unsupported_bearer")],
+    )
+    recovery = _delta(
+        [_assertion(36, 53, "st-pil", pato="PATO_PILOSITY")], [_statement(36, 53, "st-pil")], []
+    )
+    return _setup(
+        tmp_path,
+        [(_recovery("r", 160, 160), [recovery]), ({"name": "fix", "kind": "correction"}, [correction])],
+    )
+
+
+def _resolution_tsv(tmp_path: Path, conflicts: list[dict], decision: str, extra_rows=()) -> Path:
+    path = tmp_path / "resolutions.tsv"
+    rows = [{**{name: row[name] for name in RESOLUTION_KEY_FIELDS}, "decision": decision} for row in conflicts]
+    rows.extend(extra_rows)
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=[*RESOLUTION_KEY_FIELDS, "decision"], delimiter="\t")
+        writer.writeheader()
+        writer.writerows(rows)
+    return path
+
+
+def _run_resolved(tmp_path: Path, manifest: Path, resolutions: Path):
+    base, specs = load_manifest(manifest)
+    report = merge(base, specs, tmp_path / "out2.jsonl", tmp_path / "conflicts2.tsv", load_resolutions(resolutions))
+    with (tmp_path / "conflicts2.tsv").open(encoding="utf-8") as handle:
+        remaining = list(csv.DictReader(handle, delimiter="\t"))
+    record = json.loads((tmp_path / "out2.jsonl").read_text(encoding="utf-8"))
+    return report, remaining, record
+
+
+def test_resolution_both_keeps_the_loser_assertion_and_empties_the_tsv(tmp_path):
+    manifest = _restored_conflict_manifest(tmp_path)
+    _, conflicts, _ = _run(tmp_path, manifest)
+    resolutions = _resolution_tsv(tmp_path, conflicts, "both")
+    report, remaining, record = _run_resolved(tmp_path, manifest, resolutions)
+    assert remaining == []
+    assert report["conflicts"]["curated"] == {"both": 1}
+    assert [row["source_statement_id"] for row in record["assertions"]] == ["st-pil"]
+    # the loser clears nothing here, so the correction's restored span is untouched
+    assert any(s["start"] == 36 for s in record["unresolved_spans"])
+
+
+def test_resolution_winner_matches_the_default_outcome(tmp_path):
+    manifest = _restored_conflict_manifest(tmp_path)
+    _, conflicts, default_record = _run(tmp_path, manifest)
+    _, remaining, record = _run_resolved(tmp_path, manifest, _resolution_tsv(tmp_path, conflicts, "winner"))
+    assert remaining == [] and record == default_record
+
+
+def test_resolution_unresolved_stays_in_conflicts_tsv(tmp_path):
+    manifest = _restored_conflict_manifest(tmp_path)
+    _, conflicts, default_record = _run(tmp_path, manifest)
+    _, remaining, record = _run_resolved(tmp_path, manifest, _resolution_tsv(tmp_path, conflicts, "unresolved"))
+    assert [row["conflict"] for row in remaining] == ["conflict_correction_restored"]
+    assert record == default_record
+
+
+def test_resolutions_fail_closed_on_unlisted_conflict(tmp_path):
+    manifest = _restored_conflict_manifest(tmp_path)
+    resolutions = _resolution_tsv(tmp_path, [], "winner")
+    with pytest.raises(DeltaError, match="without a curator resolution"):
+        _run_resolved(tmp_path, manifest, resolutions)
+
+
+def test_resolutions_reject_stale_rows_and_invalid_decisions(tmp_path):
+    manifest = _restored_conflict_manifest(tmp_path)
+    _, conflicts, _ = _run(tmp_path, manifest)
+    stale = {**{k: conflicts[0][k] for k in RESOLUTION_KEY_FIELDS}, "char_end": "999999", "decision": "winner"}
+    resolutions = _resolution_tsv(tmp_path, conflicts, "winner", extra_rows=[stale])
+    with pytest.raises(DeltaError, match="match no conflict"):
+        _run_resolved(tmp_path, manifest, resolutions)
+    with pytest.raises(DeltaError, match="unsupported decision"):
+        load_resolutions(_resolution_tsv(tmp_path, conflicts, "loser"))
+
+
+def test_resolution_both_is_rejected_for_duplicates(tmp_path):
+    manifest = _setup(
+        tmp_path,
+        [
+            (_recovery("low", 173, 174), [_shape_delta("st-a")]),
+            ({"name": "tb", "kind": "tiebreak"}, [_shape_delta("st-b")]),
+        ],
+    )
+    _, conflicts, _ = _run(tmp_path, manifest)
+    with pytest.raises(DeltaError, match="not valid for duplicate"):
+        load_resolutions(_resolution_tsv(tmp_path, conflicts, "both"))

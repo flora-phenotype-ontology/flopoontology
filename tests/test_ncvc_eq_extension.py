@@ -97,12 +97,18 @@ def test_screen_excludes_homonyms_abnormal_senses_and_live_duplicates(spec):
     assert homonyms and all(row["decision"] == "exclude" for row in homonyms)
 
 
-def test_blocked_quality_branches_never_reach_the_release(spec):
+def test_sex_phenotypes_are_live_classes_of_the_sex_quality_module(spec):
+    # The phenotypic-sex class axiom was removed on 2026-10-05; the NCVC sex rows that it had
+    # blocked are now released by ontology/flopo-sex-quality-extension.ttl, not by this module.
     blocked = blocked_qualities()
-    assert {"PATO_0001340", "PATO_0000383", "PATO_0000384"} <= set(blocked)
-    sex_rows = [row for row in spec if row["pato_id"] in blocked]
+    assert not {"PATO_0001894", "PATO_0001340", "PATO_0000383", "PATO_0000384"} & set(blocked)
+    sex_rows = [
+        row for row in spec if row["pato_id"] in {"PATO_0001340", "PATO_0000383", "PATO_0000384"}
+    ]
     assert sex_rows and all(row["decision"] == "exclude" for row in sex_rows)
-    assert all("blocked quality branch" in row["reason"] for row in sex_rows)
+    sex_module = (ROOT / "ontology" / "flopo-sex-quality-extension.ttl").read_text(encoding="utf-8")
+    for row in sex_rows:
+        assert f'"{row["label"]}"' in sex_module, row["label"]
 
 
 def test_proposal_is_current_for_the_annotated_corpus(spec):
