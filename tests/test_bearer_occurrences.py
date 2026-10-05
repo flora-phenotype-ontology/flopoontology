@@ -40,7 +40,8 @@ synonym: "hair" EXACT []
         )
     pato_lexicon = tmp_path / "pato.tsv"
     pato_lexicon.write_text(
-        "id\tlabel\tsynonyms\tslim\nPATO_0000323\twhite\t\tcolour\n",
+        "id\tlabel\tsynonyms\tslim\nPATO_0000323\twhite\t\tcolour\n"
+        "PATO_0001320\tpubescent\t\tpilosity\n",
         encoding="utf-8",
     )
     reviewed = tmp_path / "reviewed.tsv"
@@ -66,14 +67,16 @@ def _record(text: str, source_id: str, index: int, span: dict) -> dict:
 
 def test_ledger_is_occurrence_level_lossless_and_reconciles_vocabulary(tmp_path):
     po_obo, po_lexicon, pato_lexicon, reviewed = _lexicons(tmp_path)
-    first_text = "Hair white."
-    first_start = first_text.index("white")
+    # Existing PO vocabulary (hair -> trichome) is accepted, but a pilosity quality is not
+    # attached to the trichome itself, so recovery keeps this span as a syntax hold.
+    first_text = "Hair pubescent."
+    first_start = first_text.index("pubescent")
     first_span = {
         "start": first_start,
-        "end": first_start + len("white"),
-        "surface_form": "white",
+        "end": first_start + len("pubescent"),
+        "surface_form": "pubescent",
         "reason": "missing_or_unsupported_bearer",
-        "candidate_pato_id": "PATO_0000323",
+        "candidate_pato_id": "PATO_0001320",
         "extractor": "test",
     }
     second_text = "No explicit bearer; white."
@@ -82,6 +85,8 @@ def test_ledger_is_occurrence_level_lossless_and_reconciles_vocabulary(tmp_path)
         **first_span,
         "start": second_start,
         "end": second_start + len("white"),
+        "surface_form": "white",
+        "candidate_pato_id": "PATO_0000323",
     }
     records = [
         _record(first_text, "doc", 1, first_span),
@@ -107,7 +112,7 @@ def test_ledger_is_occurrence_level_lossless_and_reconciles_vocabulary(tmp_path)
     assert summary["counts"].get("recovered_missing_spans", 0) == 0
     assert summary["counts"]["retained_missing_spans"] == 2
     assert len(rows) == 2
-    # Root's conservative recovery audit identifies the same PO bearer but retains the span.
+    # The recovery audit identifies the same PO bearer but holds the attachment.
     # The occurrence ledger records that vocabulary agreement without promoting the assertion.
     assert rows[0]["review"]["terminal_state"] == "pending_review"
     assert rows[0]["review"]["family"] == "accepted_existing_po"
@@ -214,3 +219,36 @@ def test_ledger_never_populates_a_curation_decision(tmp_path):
     row = json.loads(ledger.read_text(encoding="utf-8"))
     assert row["review"]["terminal_state"] == "pending_review"
     assert row["review"]["decision"] is None
+
+
+def test_ledger_marks_directly_attached_existing_po_bearer_as_recovered(tmp_path):
+    po_obo, po_lexicon, pato_lexicon, reviewed = _lexicons(tmp_path)
+    text = "Hair white."
+    start = text.index("white")
+    span = {
+        "start": start,
+        "end": start + len("white"),
+        "surface_form": "white",
+        "reason": "missing_or_unsupported_bearer",
+        "candidate_pato_id": "PATO_0000323",
+        "extractor": "test",
+    }
+    source = tmp_path / "input.jsonl"
+    source.write_text(json.dumps(_record(text, "doc", 1, span)) + "\n", encoding="utf-8")
+    ledger = tmp_path / "ledger.jsonl"
+
+    summary = build_occurrence_ledger(
+        source,
+        ledger,
+        tmp_path / "summary.json",
+        po_obo=po_obo,
+        po_lexicon=po_lexicon,
+        pato_lexicon=pato_lexicon,
+        reviewed_bearers=reviewed,
+    )
+
+    rows = [json.loads(line) for line in ledger.read_text(encoding="utf-8").splitlines()]
+    assert summary["counts"]["recovered_missing_spans"] == 1
+    assert rows[0]["review"]["terminal_state"] == "already_recovered"
+    assert rows[0]["review"]["family"] == "accepted_existing_po"
+    assert rows[0]["review"]["authoritative_po_id"] == "PO_0000282"

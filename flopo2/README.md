@@ -24,6 +24,7 @@ Full plan: `/home/leechuck/.claude/plans/lazy-marinating-boot.md`. Literature: `
 | `extract/baseline.py`, `extract/measurement.py`, `extract/context_recovery.py`, `extract/developmental_stage_recovery.py` | 5 | Conservative deterministic full-corpus rehearsal with audited botanical cues, explicit local bearers, exact assertion offsets, quantitative ranges, modality, seasons, scoped negation, same-bearer age/maturity qualities, and PO developmental stages. **Done.** |
 | `extract/compose.py` | 6 | Source-span, related-part, and optional dependency parse-tree composition cross-check; splits accepted/review queues. **Done.** |
 | `verify/gates.py` | 7 | Source-span + PO×PATO validity gates, FLOPO IRI reuse/new-class annotation, verifier/FloraTraiter hooks, accepted/review/blocked queues. **Done.** |
+| `verify/missing_bearers.py` | 7 | Separates accepted existing-PO bearer vocabulary from genuinely missing FLOPO concepts and assertion-level attachment/region review. **Done.** |
 | `verify/data_model.py`, `verify/merge_jsonl.py` | 7 | Strict LinkML/wire/ontology/provenance/quantitative-value/SQLite validation and identity-safe multi-flora merging. **Done.** |
 | `review/`, `verify/recover_qualitative_relations.py`, `verify/materialize_qualitative_consensus.py` | 7 | Immutable, hash-bound two-family machine review; exact qualitative-continuum candidates; conserved consensus-to-proposal admission with no simulated human approval. **Done.** |
 | `review/support_inventory.py`, `review/support_occurrence_inventory.py`, `verify/materialize_support_*`, `../tools/update_flopo_machine_support_release.py` | 7–8 | Authority-gated local anatomy classes; two model families plus an independent adversary; one-item-per-span attachment review; machine-only release provenance and stable ID publication. **Done.** |
@@ -199,6 +200,24 @@ two_of_three`, `flopo2/review/tiebreak.py`) admits a held item when a third inde
 reviewer and one campaign reviewer propose the identical signature and all deterministic gates
 pass; an existing adversarial block still holds it. Such classes carry all three
 `machine_reviewer` values and `machine_review_rule`, and are not human reviewed.
+
+Bearer vocabulary and assertion attachment are separate curation decisions. A live PO class is
+accepted as reusable vocabulary and is not sent back to FLOPO concept review merely because the
+source syntax is uncertain. The bearer-routing report therefore has three disjoint outputs:
+accepted existing PO, genuinely missing FLOPO-local concepts, and attachment/region review.
+`context_recovery` may promote an assertion only when the local grammar is independently safe;
+otherwise it records `accepted_existing_po` together with `container_attachment` or `syntax_hold`
+and preserves the unresolved source span.
+
+```bash
+uv run --frozen python -m flopo2.verify.missing_bearers extracted.jsonl \
+  -o bearer-routing.tsv \
+  --accepted-existing-output accepted-existing-po.tsv \
+  --concept-review-output concept-review.tsv \
+  --attachment-review-output attachment-review.tsv
+uv run --frozen python -m flopo2.extract.context_recovery extracted.jsonl \
+  -o context-recovered.jsonl --audit context-recovery-audit.tsv
+```
 
 `gate.status == accepted` means the assertion is safe for the layered OWL build. Reusable PO–PATO
 traits and manifestations go into FLOPO. Every distinct complete phenotype expression—including

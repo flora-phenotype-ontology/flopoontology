@@ -22,19 +22,19 @@ from flopo2.annotation.provenance import stable_statement_id
 from flopo2.extract.baseline import _clause_at
 from flopo2.extract.context_recovery import recover_record
 from flopo2.verify.missing_bearers import (
-    _classify as classify_bearer_candidate,
-)
-from flopo2.verify.missing_bearers import (
     _po_exact_forms,
     _po_forms,
+    classify_bearer_candidate,
     load_po_terms,
 )
 
 MISSING_REASON = "missing_or_unsupported_bearer"
 AUDITED_REASONS = {"developmental_stage_context", MISSING_REASON}
 ROUTE_FAMILIES = {
-    # ``existing_po_context_review`` is the root branch's conservative name for vocabulary
-    # reuse. It does not imply that assertion attachment has been accepted.
+    # ``reuse_existing_po`` accepts live PO vocabulary; ``existing_po_context_review`` is the
+    # earlier, more conservative name for the same routing and is kept for older reports.
+    # Neither implies that assertion attachment has been accepted.
+    "reuse_existing_po": "accepted_existing_po",
     "existing_po_context_review": "accepted_existing_po",
     "attachment_or_region_review": "attachment_review",
     "flopo_extension_candidate": "concept_review",
