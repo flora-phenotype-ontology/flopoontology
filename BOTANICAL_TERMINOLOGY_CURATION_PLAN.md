@@ -677,12 +677,13 @@ release gates.
 - Quality: 21 classes built on the obsolete PATO:0000069 are obsoleted without replacement,
   and their pairs blocked. 911 orphaned blank-node descriptions are pruned. Ontology header
   metadata (creators, citation, homepage) is added.
+- Follow-up the same day:
+  - The local edits to the pinned `ont/quality.obo` (withdrawn colour requests, rose colour) are
+    reverted to the merged-PATO snapshot of 8ef8f3a, and `flopo-inferred.owl` is reclassified.
+  - The annotation extension imports BSPO from the published module document instead of the
+    nonexistent `flopo/imports/` PURL route.
 - Still open:
   - Upstream PATO/PO pull requests (left untouched by decision).
-  - Reverting the local edits to the pinned `ont/quality.obo` (withdrawn colour terms;
-    not shipped).
-  - The `flopo/imports/` PURL route, so the BSPO import of the annotation extension resolves
-    without the catalog.
-  - FP07 INFO for the FLOPO data property hasValue.
+  - FP07 INFO for the FLOPO data property hasValue (left open by decision).
   - 21 label pairs "pedicel X" between the 2016 classes on PO:0009052 (now "inflorescence
     flower pedicel") and the 2026 classes on PO:0030112.

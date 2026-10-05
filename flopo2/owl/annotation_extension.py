@@ -38,7 +38,12 @@ from flopo2.owl.io import serialize_ontology
 
 LICENSE = URIRef("https://creativecommons.org/publicdomain/zero/1.0/")
 # Pinned BSPO module for positional part-restriction fillers (E3; catalog-v001.xml).
-BSPO_IMPORT = URIRef("http://purl.obolibrary.org/obo/flopo/imports/bspo_import.owl")
+# The flopo/imports/ PURL route does not exist, so import the published module document, as the
+# main ontology does for its GO import; catalog-v001.xml maps it to the local copy.
+BSPO_IMPORT = URIRef(
+    "https://raw.githubusercontent.com/flora-phenotype-ontology/flopoontology/master/"
+    "ontology/imports/bspo_import.owl"
+)
 EXPRESSION_DIGEST = FLOPOANN.expression_digest
 CANONICAL_SIGNATURE = FLOPOANN.canonical_expression_signature
 SUPPORT_COUNT = FLOPOANN.supporting_assertion_count

@@ -184,31 +184,26 @@ def test_flopo_release_embedding_is_idempotent(tmp_path):
     ) == 25
 
 
-def test_checked_in_pato_dependency_has_generics_but_no_draft_sensu_terms():
+def test_checked_in_pato_dependency_has_no_withdrawn_colour_requests():
+    # PATO PR 617 (nine vernacular colour terms, rose/cream changes) was withdrawn on 2026-09-18 in
+    # favour of the ISCC-NBS backbone, and the local edit of the pinned PATO was reverted on
+    # 2026-10-05: none of its draft identifiers may remain, and rose colour is PATO's own term.
+    from tools.build_flopo_colour_backbone import WITHDRAWN_PATO
+
     pato = (ROOT / "ont" / "quality.obo").read_text(encoding="utf-8")
+    for number in range(104312, 104346):
+        assert f"id: PATO:{number:07d}\n" not in pato
+    assert all(f"id: {pato_id}\n" not in pato for pato_id in WITHDRAWN_PATO)
     _pato_obo, _flopo_ttl, rows = _build()
-    generic_ids = {
+    existing = {
         row["ontology_id"]
         for row in rows
-        if row["ontology_id"].startswith("PATO:")
+        if row["ontology_id"].startswith("PATO:") and row["ontology_id"] not in WITHDRAWN_PATO
     }
-
-    for pato_id in generic_ids:
+    for pato_id in existing:
         assert pato.count(f"id: {pato_id}\n") == 1
-    draft_range = {f"PATO:{number:07d}" for number in range(104312, 104346)}
-    for stale_id in draft_range - generic_ids:
-        assert f"id: {stale_id}\n" not in pato
-    managed_blocks = [
-        block
-        for block in pato.split("\n\n")
-        if any(f"id: {pato_id}\n" in block for pato_id in generic_ids)
-    ]
-    assert len(managed_blocks) == 11
-    assert not any(
-        line.startswith("name: ") and " sensu " in line
-        for block in managed_blocks
-        for line in block.splitlines()
-    )
+    rose = pato.split("id: PATO:0001425\n", 1)[1].split("\n\n", 1)[0]
+    assert "operational sense" not in rose
 
 
 def test_actual_flopo_release_obsoletes_local_senses_with_backbone_replacements():

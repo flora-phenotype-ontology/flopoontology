@@ -246,15 +246,19 @@ def test_bspo_module_is_pinned_and_cataloged():
     for term in ("BSPO_0000073", "BSPO_0000074", "BSPO_0000006", "BSPO_0000001", "BSPO_0000002"):
         assert f"obo/{term}\"" in text
     assert "bspo/releases/2023-05-27/bspo.owl" in text
-    for catalog, uri in (
-        (ROOT / "ontology" / "catalog-v001.xml", "imports/bspo_import.owl"),
-        (ROOT / "catalog-v001.xml", "ontology/imports/bspo_import.owl"),
-    ):
-        entries = {
-            node.get("name"): node.get("uri") for node in ET.parse(catalog).getroot().iter()
-            if node.get("name")
-        }
-        assert entries[str(BSPO_IMPORT)] == uri
+    # The import is the published module document (the flopo/imports/ PURL route does not exist);
+    # the tracked catalog maps it, and the module's own PURL, to the local copy. The repository-root
+    # catalog is a local Protege convenience and is not tracked.
+    assert str(BSPO_IMPORT).startswith("https://raw.githubusercontent.com/")
+    catalog = ROOT / "ontology" / "catalog-v001.xml"
+    entries = {
+        node.get("name"): node.get("uri") for node in ET.parse(catalog).getroot().iter()
+        if node.get("name")
+    }
+    assert entries[str(BSPO_IMPORT)] == "imports/bspo_import.owl"
+    assert entries["http://purl.obolibrary.org/obo/flopo/imports/bspo_import.owl"] == (
+        "imports/bspo_import.owl"
+    )
 
 
 def test_database_stores_bearer_scope(tmp_path):
