@@ -25,7 +25,7 @@ from rdflib.namespace import XSD
 OBO = Namespace("http://purl.obolibrary.org/obo/")
 FLOPO_PREFIX = str(OBO) + "FLOPO_"
 FULL_ONTOLOGY = URIRef(OBO + "flopo.owl")
-LIGHT_ONTOLOGY = URIRef(OBO + "flopo-light.owl")
+LIGHT_ONTOLOGY = URIRef(OBO + "flopo/flopo-light.owl")  # OBO product IRI: /obo/flopo/flopo-light.owl
 ROOT_CLASS = URIRef(OBO + "FLOPO_0000000")
 ANATOMICAL_ENTITY_PHENOTYPE = URIRef(OBO + "FLOPO_0980418")
 HAS_PART = URIRef(OBO + "BFO_0000051")

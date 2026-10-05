@@ -195,4 +195,6 @@ def test_light_release_has_catalog_and_purl_routes():
     ]
 
     assert catalog_entries[str(LIGHT_ONTOLOGY)] == "flopo-light.owl"
-    assert any("flopo-light.owl" in product for product in products)
+    # The light ontology IRI must be the OBO product path, or its PURL can never resolve.
+    assert str(LIGHT_ONTOLOGY) == "http://purl.obolibrary.org/obo/flopo/flopo-light.owl"
+    assert any("flopo/flopo-light.owl" in product for product in products)

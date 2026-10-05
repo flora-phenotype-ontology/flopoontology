@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import subprocess
 from collections import Counter
 from pathlib import Path
 
@@ -10,6 +11,24 @@ import pytest
 INPUT_DIR = Path(
     "scratchpad/flopo-semantic-v2-20260718/unresolved-recovery/logical/exact-pato-compounds"
 )
+# The promotions were made on 2026-07-18 against the pinned PATO of that time, which still carried
+# the locally applied colour requests of the later withdrawn PATO PR 617 (e.g. PATO:0104336 olive
+# colour). Audit them against that snapshot, not against today's reverted copy.
+PROMOTION_PATO_COMMIT = "2c839e8"
+
+
+def _promotion_pato(tmp_path: Path) -> Path:
+    path = tmp_path / "quality-2026-07-18.obo"
+    try:
+        snapshot = subprocess.run(
+            ["git", "show", f"{PROMOTION_PATO_COMMIT}:ont/quality.obo"],
+            check=True,
+            capture_output=True,
+        ).stdout
+    except (OSError, subprocess.CalledProcessError):
+        pytest.skip("the 2026-07-18 PATO snapshot needs the git history")
+    path.write_bytes(snapshot)
+    return path
 
 
 def test_resolved_finding_inventory_is_bounded_and_complete():
@@ -63,6 +82,7 @@ def test_exhaustive_audit_reconciles_every_promotion_without_mutating_inputs(tmp
         output_tsv,
         report_json,
         markdown_report=markdown,
+        pato_obo=_promotion_pato(tmp_path),
     )
 
     assert report["result"] == "pass"

@@ -1,18 +1,25 @@
 # PURL configuration for http://purl.obolibrary.org/obo/flopo
+# Mirrors OBOFoundry/purl.obolibrary.org config/flopo.yml (live as of 2026-10-05) plus the
+# flopo-light.owl product, which still has to be submitted there.
 
 idspace: FLOPO
 base_url: /obo/flopo
 
 products:
-- flopo.owl: http://www.berkeleybop.org/ontologies/flopo.owl
-- flopo-light.owl: https://raw.githubusercontent.com/flora-phenotype-ontology/flopoontology/master/ontology/flopo-light.owl
+- flopo.owl: https://github.com/flora-phenotype-ontology/flopoontology/raw/master/ontology/flopo.owl
+- flopo/flopo-light.owl: https://github.com/flora-phenotype-ontology/flopoontology/raw/master/ontology/flopo-light.owl
 
 term_browser: custom
 
 entries:
-- regex: ^/obo/FLOPO_(\d+)$
-  replacement: http://aber-owl.net/ontology/FLOPO#!http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FFLOPO_$1
-  status: see other
+- prefix: /releases/
+  replacement: https://github.com/flora-phenotype-ontology/flopoontology/releases/download/v
   tests:
-  - from: /FLOPO_0000000
-    to: http://aber-owl.net/ontology/FLOPO#!http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FFLOPO_0000000
+  - from: /releases/2026-07-15/flopo.owl
+    to: https://github.com/flora-phenotype-ontology/flopoontology/releases/download/v2026-07-15/flopo.owl
+  - from: /releases/2026-07-31/flopo.owl
+    to: https://github.com/flora-phenotype-ontology/flopoontology/releases/download/v2026-07-31/flopo.owl
+  - from: /releases/2026-10-05/flopo.owl
+    to: https://github.com/flora-phenotype-ontology/flopoontology/releases/download/v2026-10-05/flopo.owl
+  - from: /releases/2026-10-05/flopo-light.owl
+    to: https://github.com/flora-phenotype-ontology/flopoontology/releases/download/v2026-10-05/flopo-light.owl

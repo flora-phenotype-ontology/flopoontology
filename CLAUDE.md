@@ -74,7 +74,9 @@ the flow matters because intermediate files are passed between stages by filenam
   reasoning materialized), `flopo-obo.owl`, `flopo-orig.owl`.
 - Root-level `flopo-classified.owl`, `flopo-unclassified.owl`, `plantphenotype.owl` are
   generated artifacts (pipeline output), not hand-edited sources.
-- `catalog-v001.xml` maps ontology IRIs to local files for offline OWL loading (Protégé/OWLAPI).
+- `ontology/catalog-v001.xml` maps ontology and import IRIs (including the GO and BSPO import
+  documents) to local files for offline OWL loading (Protégé/OWLAPI). A repository-root
+  `catalog-v001.xml` is a git-ignored local convenience.
 - Two IRI namespaces are in play: pipeline-generated classes use
   `http://phenomebrowser.net/plant-phenotype.owl#`; released FLOPO terms use the OBO PURL
   `http://purl.obolibrary.org/obo/FLOPO_<n>` (`flopo.yml` is the PURL config; terms resolve
@@ -88,6 +90,6 @@ data annotated with FLOPO, plus its own normalization scripts (`NormalizeSpecies
 
 ## Notes
 
-- `.groovy~` files are editor backups — ignore them; edit the `.groovy` files.
+- `*~` editor backups are git-ignored and untracked; edit the `.groovy` files.
 - Many data/model files are large binaries (multi-MB `.owl`, `.obo`, `.bin`, `fdac.backup`).
   Avoid reading them whole; grep or stream instead.
