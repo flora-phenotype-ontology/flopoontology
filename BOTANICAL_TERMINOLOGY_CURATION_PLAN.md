@@ -640,3 +640,49 @@ release gates.
   for growth-form/life-span classes, sexual system, or position terms; alternatives held rather than
   converted; counts unrepresentable; no taxon-occurrence slot in the trait schema) are listed in
   `scratchpad/OPEN_ITEMS_20260918.md`.
+
+### 2026-10-05
+
+- Release audit: the published 2026-09-18 `flopo.owl` lacked 1,173 IRIs from the 2026-07-31
+  release, and 239 more colour phenotypes had lost their logical definitions. A second colour
+  backbone build ran on the already-embedded release, found nothing to re-point, and its
+  re-embedded module dropped all 1,412 redefined classes. The module was rebuilt from the
+  pre-embed backup. The builder now restores a committed snapshot of the pre-backbone
+  declarations (`config/flopo_colour_backbone_base.ttl`). The release tool refuses to drop an
+  embedded class. The tests build into a scratch directory instead of rewriting the committed
+  module.
+- The backbone module's skolemized `#expr_`/`#axiom_` IRIs are written to the release as blank
+  nodes. As named IRIs, OWL tools read every re-pointed class as equivalent to an empty named
+  class, which left them under owl:Thing. The ID registry now reads such nodes as anonymous,
+  so the "EQ signatures degraded to OTHER" item is resolved.
+- The 2026-09-18 release had also been built on a branch without master's 2026-07-31 release.
+  f3e3029 (upper-level rebuild, duplicate top-level shells FLOPO:0980419/0980420 obsolete) and
+  8788701 (release freeze) are ported. The master-only code of 2be345e and c4b7fea
+  (reviewed-ID reservations, accepting existing PO bearers) is merged.
+  `tools/update_flopo_top_level_parents.py` moves 46 classes that later builders had put
+  directly under the root.
+- Curator decisions (`curation/curator_approvals.tsv`, 2026-10-05):
+  - `valid_combinations.tsv` carries every allowed colour pair over to its backbone reading
+    (+1,293 rows) and adds the 225 live EQ pairs it lacked.
+  - The phenotypic-sex general class axiom is removed (PATO:0001995 allows organismal
+    qualities on parts of organisms). FLOPO:0000220/0000221/0000256/0001632 are reinstated
+    and FLOPO:0990000-0990001 added.
+  - The 36 stage-23 merge conflicts are resolved by machine review, giving stage 24.
+  - Implicit apex/base shorthand counts.
+  - No retroactive adversarial colour review is needed.
+- Corpus: stage 25 (`flopo2.verify.migrate_colour_backbone`) moves 246 assertions off the
+  obsolete FLOPO colour classes and withdrawn PATO requests. "-ish" words become the
+  backbone colour with an `approximately` qualifier. Stage 25 validates with 0 errors and
+  gives 25,385 annotation classes.
+- Quality: 21 classes built on the obsolete PATO:0000069 are obsoleted without replacement,
+  and their pairs blocked. 911 orphaned blank-node descriptions are pruned. Ontology header
+  metadata (creators, citation, homepage) is added.
+- Still open:
+  - Upstream PATO/PO pull requests (left untouched by decision).
+  - Reverting the local edits to the pinned `ont/quality.obo` (withdrawn colour terms;
+    not shipped).
+  - The `flopo/imports/` PURL route, so the BSPO import of the annotation extension resolves
+    without the catalog.
+  - FP07 INFO for the FLOPO data property hasValue.
+  - 21 label pairs "pedicel X" between the 2016 classes on PO:0009052 (now "inflorescence
+    flower pedicel") and the 2026 classes on PO:0030112.

@@ -35,11 +35,13 @@ from flopo2.owl.build import (
     SUPPORTED_BY_ASSERTION,
 )
 from flopo2.owl.io import parse_ontology
+from flopo2.owl.top_level import load_po_parents, phenotype_parent_for_po
 
 
 OBO = "http://purl.obolibrary.org/obo/"
 MODULE = URIRef(OBO + "flopo-reviewed-combinations.owl")
 FLOPO_ONTOLOGY = URIRef(OBO + "flopo.owl")
+FLOPO_ROOT = URIRef(OBO + "FLOPO_0000000")
 CONTRIBUTOR = URIRef("https://orcid.org/0000-0001-8149-5890")
 LICENSE = URIRef("https://creativecommons.org/publicdomain/zero/1.0/")
 FLOPO_RE = re.compile(r"^http://purl\.obolibrary\.org/obo/FLOPO_(\d+)$")
@@ -137,6 +139,7 @@ def build_reviewed_extension(
     output_path: Path,
     release_date: str,
     *,
+    po_path: Path = Path("ont/plant_ontology.obo"),
     reservations_path: Path | None = None,
     expected_approved: int | None = None,
     expected_new_eq: int | None = None,
@@ -188,6 +191,7 @@ def build_reviewed_extension(
             f"expected {expected_new_pheno} new phenotype parents, found {len(new_pheno)}"
         )
     _validate_contiguous_allocation(baseline, new_entries)
+    po_parents = load_po_parents(po_path)
 
     candidate = parse_ontology(candidate_path)
     module = Graph()
@@ -232,9 +236,27 @@ def build_reviewed_extension(
         module.add((MODULE, DCTERMS.contributor, URIRef(reviewer)))
 
     source_value = Literal(approvals_path.as_posix())
+    promoted_pheno_parents: dict[str, str] = {}
     for entry in new_entries:
         cls = URIRef(entry.iri)
         _copy_bnode_closure(candidate, module, cls)
+        if entry.signature.startswith("PHENO|"):
+            # New 'E phenotype' parents go into the upper level, never directly under the root.
+            bearer = entry.signature.split("|", 1)[1]
+            expected_parent = URIRef(OBO + phenotype_parent_for_po(bearer, po_parents))
+            named_parents = {
+                parent
+                for parent in module.objects(cls, RDFS.subClassOf)
+                if isinstance(parent, URIRef)
+            }
+            if named_parents != {FLOPO_ROOT}:
+                raise ValueError(
+                    f"new phenotype parent {entry.iri} must have exactly the candidate "
+                    f"root parent before reclassification; found {sorted(map(str, named_parents))!r}"
+                )
+            module.remove((cls, RDFS.subClassOf, FLOPO_ROOT))
+            module.add((cls, RDFS.subClassOf, expected_parent))
+            promoted_pheno_parents[entry.iri] = str(expected_parent)
         for reviewer in sorted(reviewers):
             module.add((cls, DCTERMS.contributor, URIRef(reviewer)))
         module.add((cls, DCTERMS.created, Literal(release_date, datatype=XSD.date)))
@@ -291,6 +313,7 @@ def build_reviewed_extension(
         "total_new": len(new_entries),
         "first_flopo_num": new_numbers[0] if new_numbers else None,
         "last_flopo_num": new_numbers[-1] if new_numbers else None,
+        "new_pheno_parents": promoted_pheno_parents,
         "output": str(output_path),
         "reservations": str(reservations_path) if reservations_path is not None else None,
         "baseline_signatures": len(baseline_by_signature),

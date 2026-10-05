@@ -666,6 +666,18 @@ def _declare_vocabulary(graph: Graph) -> None:
     graph.add(
         (
             SYNONYM_TYPE,
+            IAO_DEF,
+            Literal(
+                "A synonym type for a vernacular or botanical colour word used in flora "
+                "descriptions, recorded on the ISCC-NBS colour class whose colour range the "
+                "word denotes with the scope given by the synonym property.",
+                lang="en",
+            ),
+        )
+    )
+    graph.add(
+        (
+            SYNONYM_TYPE,
             RDFS.comment,
             Literal(
                 "Synonym type for a flora colour word attached to an ISCC-NBS backbone class. "
