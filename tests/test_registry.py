@@ -9,7 +9,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from flopo2.ids.registry import IdAllocator, build_registry, summarize
+import pytest
+
+from flopo2.ids.registry import IdAllocator, RegistryEntry, build_registry, summarize
 
 FIXTURE = """<?xml version="1.0"?>
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -119,3 +121,32 @@ def test_allocator_mints_after_max(tmp_path):
     assert new == "http://purl.obolibrary.org/obo/FLOPO_0007600"
     # Same new signature is stable within a run.
     assert alloc.iri_for("EQ|PO_9999999|PATO_9999999") == new
+
+
+def test_allocator_reuses_reviewed_reservation_and_mints_after_it(tmp_path):
+    reservation = RegistryEntry(
+        iri="http://purl.obolibrary.org/obo/FLOPO_0980611",
+        flopo_num=980611,
+        label="leaf blue",
+        signature="EQ|PO_0025034|PATO_0000318",
+        deprecated=False,
+    )
+    alloc = IdAllocator(_entries(tmp_path), [reservation])
+
+    assert alloc.iri_for(reservation.signature) == reservation.iri
+    assert alloc.reused_reservations == {reservation.signature: reservation.iri}
+    assert alloc.iri_for("EQ|PO_9999999|PATO_9999999").endswith(
+        "FLOPO_0980612"
+    )
+
+
+def test_allocator_rejects_conflicting_reviewed_reservation(tmp_path):
+    collision = RegistryEntry(
+        iri="http://purl.obolibrary.org/obo/FLOPO_0007599",
+        flopo_num=7599,
+        label="conflicting class",
+        signature="EQ|PO_9999999|PATO_9999999",
+        deprecated=False,
+    )
+    with pytest.raises(ValueError, match="collides with the release registry"):
+        IdAllocator(_entries(tmp_path), [collision])

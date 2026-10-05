@@ -36,6 +36,12 @@ Full plan: `/home/leechuck/.claude/plans/lazy-marinating-boot.md`. Literature: `
 
 In `../config/`:
 - `flopo_id_registry.tsv` — 24,664 FLOPO classes with canonical EQ signature + deprecation flag. **The identifier-stability contract.**
+- `flopo_reviewed_id_reservations.tsv` (optional; absent while nothing is reserved) — reviewed but
+  not-yet-released signature-to-IRI reservations written by `owl.reviewed_extension
+  --reservations-output`. `owl.build` consumes it when present so another build cannot reuse
+  a reviewed ID before the release registry is regenerated; once the IDs are in
+  `flopo_id_registry.tsv` the file is redundant (the 2026-07-17 reservations
+  `FLOPO_0980611`–`FLOPO_0980976` are all released).
 - `valid_combinations.tsv` — 22,865 allowed + 7 blocked PO×PATO combinations (2016 seed).
 - `deprecated_to_reground.tsv` — 967 deprecated classes whose defining axiom was stripped; combos recovered by label-grounding in Phase 8.
 - `taxon_cache.sqlite`, `taxon_table_sample.tsv` — Phase 2 resolution cache + a 60-taxon sample.
@@ -102,9 +108,13 @@ python -m flopo2.owl.build gold/gated_assertions.jsonl \
 # Promote only explicitly reviewed, newly allocated EQ classes and their reusable
 # phenotype parents. The source module keeps curator and assertion-level provenance;
 # the release updater is idempotent and the registry reserves the resulting IDs.
+# The tracked approval table keeps aggregate evidence counts but leaves verbatim
+# flora-example fields empty until the source corpora's redistribution terms are clear.
 python -m flopo2.owl.reviewed_extension ontology/flopo-v2-candidate.ofn \
-  --approvals curation/approved_po_pato.tsv \
-  --output ontology/flopo-reviewed-combinations.ttl --date 2026-07-17
+  --approvals curation/gabon-annotation-v4-po-pato-approvals.tsv \
+  --output ontology/flopo-reviewed-combinations.ttl \
+  --reservations-output config/flopo_reviewed_id_reservations.tsv \
+  --date 2026-07-17
 python tools/update_flopo_reviewed_release.py --date 2026-07-17
 python -m flopo2.ids.registry ontology/flopo.owl -o config/flopo_id_registry.tsv
 # Re-gate and rebuild after promotion: every approved assertion must now report

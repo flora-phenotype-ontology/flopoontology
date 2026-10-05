@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 from rdflib import DCTERMS, OWL, RDF, BNode, Graph, URIRef
 
+from flopo2.ids.registry import load_registry
 from flopo2.owl.assertions import FLOPOANN
 from flopo2.owl.build import FLOPO_SUPPORT_COUNT
 from flopo2.owl.reviewed_extension import MODULE, build_reviewed_extension
@@ -113,6 +114,7 @@ def _inputs(tmp_path: Path, *, include_unapproved: bool = False) -> tuple[Path, 
 def test_reviewed_module_copies_only_new_approved_classes_and_axiom_closure(tmp_path):
     candidate, registry, approvals = _inputs(tmp_path)
     output = tmp_path / "reviewed.ttl"
+    reservations = tmp_path / "reservations.tsv"
 
     stats = build_reviewed_extension(
         candidate,
@@ -120,6 +122,7 @@ def test_reviewed_module_copies_only_new_approved_classes_and_axiom_closure(tmp_
         approvals,
         output,
         "2026-07-17",
+        reservations_path=reservations,
         expected_approved=1,
         expected_new_eq=1,
         expected_new_pheno=1,
@@ -141,6 +144,9 @@ def test_reviewed_module_copies_only_new_approved_classes_and_axiom_closure(tmp_
     assert isinstance(expression, BNode)
     assert (expression, RDF.type, OWL.Restriction) in graph
     assert (MODULE, RDF.type, OWL.Ontology) in graph
+    reserved = load_registry(reservations)
+    assert {entry.iri for entry in reserved} == {str(pheno), str(eq)}
+    assert stats["reservations"] == str(reservations)
 
 
 def test_reviewed_module_rejects_any_unapproved_new_eq_class(tmp_path):

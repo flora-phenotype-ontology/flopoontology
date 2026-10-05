@@ -123,6 +123,60 @@ def test_build_ontology_groups_botanical_pubescence(tmp_path):
     assert (pubescent_leaf, RDFS.subClassOf, PUBESCENCE_PHENOTYPE) in graph
 
 
+def test_build_ontology_reuses_reviewed_id_reservations(tmp_path):
+    registry = tmp_path / "registry.tsv"
+    registry.write_text(
+        "flopo_iri\tflopo_num\tlabel\tsignature\tdeprecated\n"
+        "http://purl.obolibrary.org/obo/FLOPO_0000010\t10\troot\tOTHER\t0\n"
+    )
+    reservations = tmp_path / "reservations.tsv"
+    reservations.write_text(
+        "flopo_iri\tflopo_num\tlabel\tsignature\tdeprecated\n"
+        "http://purl.obolibrary.org/obo/FLOPO_0000011\t11\tleaf phenotype\tPHENO|PO_leaf\t0\n"
+        "http://purl.obolibrary.org/obo/FLOPO_0000012\t12\tleaf blue\tEQ|PO_leaf|PATO_blue\t0\n"
+    )
+    po = tmp_path / "po.tsv"
+    po.write_text("id\tlabel\tsynonyms\tnamespace\nPO_leaf\tleaf\t\tplant_anatomy\n")
+    pato = tmp_path / "pato.tsv"
+    pato.write_text("id\tlabel\tsynonyms\tslim\nPATO_blue\tblue\t\t\n")
+    gated = tmp_path / "gated.jsonl"
+    gated.write_text(
+        json.dumps(
+            {
+                "text": "leaves blue",
+                "assertions": [
+                    {
+                        "po_id": "PO_leaf",
+                        "pato_id": "PATO_blue",
+                        "source_text": "leaves blue",
+                        "gate": {"status": "accepted"},
+                    }
+                ],
+            }
+        )
+        + "\n"
+    )
+    output = tmp_path / "flopo.ttl"
+
+    stats = build_ontology(
+        gated,
+        output,
+        registry,
+        po,
+        pato,
+        reservations_tsv=reservations,
+    )
+    graph = Graph().parse(output)
+
+    assert stats["minted"] == 0
+    assert stats["reused_reviewed_reservations"] == 2
+    assert (
+        URIRef("http://purl.obolibrary.org/obo/FLOPO_0000012"),
+        RDF.type,
+        OWL.Class,
+    ) in graph
+
+
 def test_builder_uses_a_reviewed_flopo_local_anatomy_bearer(tmp_path):
     from flopo2.owl.build import build_ontology
 

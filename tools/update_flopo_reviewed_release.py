@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import argparse
 import re
-from datetime import date
+from datetime import UTC, datetime
 from pathlib import Path
 
 from rdflib import DCTERMS, OWL, RDF, RDFS, Graph, URIRef
@@ -119,7 +119,7 @@ def main() -> None:
         type=Path,
         default=Path("ontology/flopo-reviewed-combinations.ttl"),
     )
-    parser.add_argument("--date", default=date.today().isoformat())
+    parser.add_argument("--date", default=datetime.now(UTC).date().isoformat())
     args = parser.parse_args()
     count = update_release(args.release, args.module, args.date)
     print(f"embedded_or_replaced {count} curator-approved FLOPO classes")
