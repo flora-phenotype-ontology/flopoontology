@@ -41,6 +41,7 @@ PART_OF = URIRef(OBO + "BFO_0000050")
 HAS_QUALITY = URIRef(OBO + "RO_0000053")
 QUALITY_ROOT = URIRef(OBO + "PATO_0000001")
 ROOT_CLASS = URIRef(OBO + "FLOPO_0000000")
+DEFAULT_RESERVATIONS = Path("config/flopo_reviewed_id_reservations.tsv")
 ANATOMICAL_ENTITY_PHENOTYPE = URIRef(OBO + "FLOPO_0980418")
 PUBESCENCE_PHENOTYPE = URIRef(OBO + "FLOPO_0980977")
 BOTANICAL_PUBESCENCE_ID = "PATO_0001320"
@@ -355,9 +356,11 @@ def build_ontology(
     output_format: str = "turtle",
     combinations_tsv: Path = Path("config/valid_combinations.tsv"),
     obsolete_unsupported_existing: bool = False,
+    reservations_tsv: Path | None = None,
 ) -> dict:
     entries = load_registry(registry_tsv)
-    allocator = IdAllocator(entries)
+    reservations = load_registry(reservations_tsv) if reservations_tsv is not None else []
+    allocator = IdAllocator(entries, reservations)
     candidates = load_candidates(gated_jsonl, po_lex, pato_lex, registry_tsv)
     pato_labels = _load_labels(pato_lex)
 
@@ -548,6 +551,7 @@ def build_ontology(
         "classes_eq": len(eq_iris),
         "classes_pheno": len(pheno_iris),
         "reused_existing_eq": reused,
+        "reused_reviewed_reservations": len(allocator.reused_reservations),
         "minted": len(allocator.minted),
         "minted_iris": allocator.minted,
         "obsoleted_existing": obsoleted,
@@ -560,6 +564,15 @@ def main() -> None:
     ap.add_argument("input", type=Path, help="Phase 7 gated JSONL")
     ap.add_argument("-o", "--out", type=Path, default=Path("ontology/flopo-v2-candidate.ofn"))
     ap.add_argument("--registry", type=Path, default=Path("config/flopo_id_registry.tsv"))
+    ap.add_argument(
+        "--reservations",
+        type=Path,
+        default=None,
+        help=(
+            "Reviewed but not-yet-released signature-to-IRI reservations "
+            f"(default: {DEFAULT_RESERVATIONS} when that file exists)"
+        ),
+    )
     ap.add_argument("--po-lex", type=Path, default=Path("config/po_lexicon.tsv"))
     ap.add_argument("--pato-lex", type=Path, default=Path("config/pato_lexicon.tsv"))
     ap.add_argument("--version", default="candidate")
@@ -577,15 +590,18 @@ def main() -> None:
     )
     args = ap.parse_args()
     stats = build_ontology(
-        args.input,
-        args.out,
-        args.registry,
-        args.po_lex,
-        args.pato_lex,
-        args.version,
-        args.format or ("ofn" if args.out.suffix.lower() == ".ofn" else "turtle"),
-        args.combinations,
-        args.obsolete_unsupported_existing,
+        gated_jsonl=args.input,
+        out_owl=args.out,
+        registry_tsv=args.registry,
+        po_lex=args.po_lex,
+        pato_lex=args.pato_lex,
+        version=args.version,
+        output_format=args.format
+        or ("ofn" if args.out.suffix.lower() == ".ofn" else "turtle"),
+        combinations_tsv=args.combinations,
+        obsolete_unsupported_existing=args.obsolete_unsupported_existing,
+        reservations_tsv=args.reservations
+        or (DEFAULT_RESERVATIONS if DEFAULT_RESERVATIONS.is_file() else None),
     )
     print(json.dumps(stats, indent=2, ensure_ascii=False))
 

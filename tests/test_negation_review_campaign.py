@@ -431,7 +431,13 @@ def test_two_family_consensus_admits_and_materializes(tmp_path, reviewers, promp
     for proposal in proposals:
         assertion = proposal["assertion"]
         assert assertion["negated"] is True
-        assert assertion["negation_scope"] == "quality"
+        # "Stem without hairs." is an admissible bearer absence now that the reviewed bearer
+        # vocabulary maps hairs to the existing PO trichome class; every other admit is a
+        # bearer-present quality negation.
+        if assertion["negation_scope"] == "absence":
+            assert assertion["po_id"] == "PO_0000282"
+        else:
+            assert assertion["negation_scope"] == "quality"
         assert assertion["extractor"] == "llm_consensus_negation_v1"
         # The cleared range is exactly the reviewed quality span, once.
         cleared = proposal["apply"]["clear_unresolved_spans"]

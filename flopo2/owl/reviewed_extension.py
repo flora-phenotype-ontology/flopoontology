@@ -19,7 +19,12 @@ from pathlib import Path
 from rdflib import DCTERMS, OWL, RDF, RDFS, BNode, Graph, Literal, URIRef
 from rdflib.namespace import XSD
 
-from flopo2.ids.registry import RegistryEntry, build_registry, load_registry
+from flopo2.ids.registry import (
+    RegistryEntry,
+    build_registry,
+    load_registry,
+    write_registry_tsv,
+)
 from flopo2.owl.assertions import FLOPOANN
 from flopo2.owl.build import (
     ANNOTATION_PROPERTIES,
@@ -132,6 +137,7 @@ def build_reviewed_extension(
     output_path: Path,
     release_date: str,
     *,
+    reservations_path: Path | None = None,
     expected_approved: int | None = None,
     expected_new_eq: int | None = None,
     expected_new_pheno: int | None = None,
@@ -270,6 +276,8 @@ def build_reviewed_extension(
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     module.serialize(output_path.as_posix(), format="turtle")
+    if reservations_path is not None:
+        write_registry_tsv(new_entries, reservations_path)
 
     existing_approved = sum(
         candidate_by_signature[signature].iri in baseline_iris for signature in approved_eq
@@ -284,6 +292,7 @@ def build_reviewed_extension(
         "first_flopo_num": new_numbers[0] if new_numbers else None,
         "last_flopo_num": new_numbers[-1] if new_numbers else None,
         "output": str(output_path),
+        "reservations": str(reservations_path) if reservations_path is not None else None,
         "baseline_signatures": len(baseline_by_signature),
     }
 
@@ -304,6 +313,12 @@ def main() -> None:
         type=Path,
         default=Path("ontology/flopo-reviewed-combinations.ttl"),
     )
+    parser.add_argument(
+        "--reservations-output",
+        type=Path,
+        default=Path("config/flopo_reviewed_id_reservations.tsv"),
+        help="Reserve reviewed IDs until they enter the released registry",
+    )
     parser.add_argument("--date", required=True)
     parser.add_argument("--expected-approved", type=int)
     parser.add_argument("--expected-new-eq", type=int)
@@ -315,6 +330,7 @@ def main() -> None:
         args.approvals,
         args.output,
         args.date,
+        reservations_path=args.reservations_output,
         expected_approved=args.expected_approved,
         expected_new_eq=args.expected_new_eq,
         expected_new_pheno=args.expected_new_pheno,

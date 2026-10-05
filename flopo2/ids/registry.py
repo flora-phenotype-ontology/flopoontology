@@ -289,22 +289,77 @@ class IdAllocator:
     """Assigns FLOPO IRIs: reuse the existing IRI for a known signature, else mint the next id.
 
     This is the enforcement point for the identifier-stability directive. Construct it from the
-    registry, then call :meth:`iri_for` during the OWL build. Newly minted ids are tracked so the
-    same new signature gets a stable id within a single build run.
+    released registry and, when present, the reviewed pre-release reservations; then call
+    :meth:`iri_for` during the OWL build. Newly minted ids are tracked so the same new signature
+    gets a stable id within a single build run. Reserved numbers are never minted for a different
+    signature.
     """
 
-    def __init__(self, entries: list[RegistryEntry]):
+    def __init__(
+        self,
+        entries: list[RegistryEntry],
+        reservations: list[RegistryEntry] | None = None,
+    ):
         # Only EQ/PHENO signatures key reusable IRIs; OTHER (manual/subclass-only) classes are kept
         # reserved by number but are not signature-addressable.
         self._by_sig: dict[str, str] = {
             e.signature: e.iri for e in entries if e.signature != "OTHER"
         }
         self._reserved_nums: set[int] = {e.flopo_num for e in entries}
+        by_num = {e.flopo_num: e for e in entries}
+        by_iri = {e.iri: e for e in entries}
+        self._reservation_by_sig: dict[str, str] = {}
+
+        def same_identity(left: RegistryEntry, right: RegistryEntry) -> bool:
+            return (
+                left.iri == right.iri
+                and left.flopo_num == right.flopo_num
+                and left.signature == right.signature
+            )
+
+        for reservation in reservations or []:
+            numeric_collision = by_num.get(reservation.flopo_num)
+            iri_collision = by_iri.get(reservation.iri)
+            if numeric_collision is not None and not same_identity(
+                numeric_collision, reservation
+            ):
+                raise ValueError(
+                    "reserved FLOPO number collides with the release registry: "
+                    f"{reservation.flopo_num}"
+                )
+            if iri_collision is not None and not same_identity(
+                iri_collision, reservation
+            ):
+                raise ValueError(
+                    "reserved FLOPO IRI collides with the release registry: "
+                    f"{reservation.iri}"
+                )
+            if reservation.signature == "OTHER":
+                raise ValueError(
+                    f"reviewed reservation lacks a reusable signature: {reservation.iri}"
+                )
+            existing_iri = self._by_sig.get(reservation.signature)
+            if existing_iri is not None and existing_iri != reservation.iri:
+                raise ValueError(
+                    "reviewed signature collides with an existing FLOPO IRI: "
+                    f"{reservation.signature}"
+                )
+            self._reserved_nums.add(reservation.flopo_num)
+            self._by_sig[reservation.signature] = reservation.iri
+            # A reservation that has since entered the release registry is harmless and no
+            # longer needs to be reported separately.
+            if iri_collision is None:
+                self._reservation_by_sig[reservation.signature] = reservation.iri
+            by_num[reservation.flopo_num] = reservation
+            by_iri[reservation.iri] = reservation
         self._next = max(self._reserved_nums, default=0) + 1
         self.minted: dict[str, str] = {}
+        self.reused_reservations: dict[str, str] = {}
 
     def iri_for(self, signature: str) -> str:
         """Return the stable FLOPO IRI for a signature, reusing or minting as needed."""
+        if signature in self._reservation_by_sig:
+            self.reused_reservations[signature] = self._reservation_by_sig[signature]
         if signature in self._by_sig:
             return self._by_sig[signature]
         if signature in self.minted:

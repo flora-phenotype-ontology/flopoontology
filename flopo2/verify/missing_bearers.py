@@ -1,9 +1,10 @@
-"""Group unresolved anatomical bearers for PO reuse or FLOPO-local extension review.
+"""Route unresolved anatomical bearers to PO reuse, attachment work, or concept review.
 
-The grouping is deliberately evidence-first.  Existing PO candidates retain their published
-definition, superclass, and parthood axioms.  A genuinely missing bearer is only labelled a local
-extension *candidate*; it is never ready to mint until a curator supplies and approves all three
-semantic fields.
+The grouping is deliberately evidence-first.  A live PO candidate is accepted as existing
+vocabulary and removed from ontology-concept review, while grammatical attachment remains a
+separate assertion-level question.  A genuinely missing bearer is only labelled a local extension
+*candidate*; it is never ready to mint until a curator supplies and approves all three semantic
+fields.
 """
 
 from __future__ import annotations
@@ -541,7 +542,11 @@ def _contextual_po_id(key: str, context: str) -> tuple[str, str]:
     if key == "adaxial_surface" and leaf:
         return "PO_0000050", "Interprets a leaf-lamina upper surface as its adaxial epidermis."
     if key == "trichome":
-        return "PO_0000282", "PO treats 'hair' as NARROW under trichome; sense review is mandatory."
+        return (
+            "PO_0000282",
+            "PO treats 'hair' as NARROW under trichome; vocabulary reuse is reviewed, while "
+            "assertion attachment remains separate.",
+        )
     if key == "hilum":
         return "PO_0020063", "Existing seed hilum class."
     if key == "keel" and _context_contains(context, r"\b(?:corolla|petals?|p[ée]tales?)\b"):
@@ -549,19 +554,26 @@ def _contextual_po_id(key: str, context: str) -> tuple[str, str]:
     return "", ""
 
 
-def _classify(
+def classify_bearer_candidate(
     organ: str,
     clause: str,
     local_position: int,
     po_forms: dict[tuple[str, ...], set[str]],
 ) -> tuple[str, str, str, str, str]:
+    """Route a missing bearer to accepted PO reuse or a genuine review queue.
+
+    Finding a live PO class settles the vocabulary question.  It does not by itself prove that
+    the nearby quality is grammatically attached to that bearer; attachment remains a separate,
+    assertion-level decision in :mod:`flopo2.extract.context_recovery`.
+    """
+
     hint_hit = _nearest_hint(clause, local_position)
     context = f"{organ} {clause}"
     if hint_hit:
         hint, surface = hint_hit
         po_id, note = _contextual_po_id(hint.key, context)
         if po_id:
-            disposition = "existing_po_context_review"
+            disposition = "reuse_existing_po"
         elif hint.key in {"throat", "indumentum"}:
             disposition = "flopo_extension_candidate"
         else:
@@ -574,7 +586,7 @@ def _classify(
         return (
             f"heading:{normalized_organ}",
             organ,
-            "existing_po_context_review",
+            "reuse_existing_po",
             po_id,
             "The heading qualifier is retained in evidence; grouping uses the broader existing PO bearer.",
         )
@@ -603,7 +615,7 @@ def _classify(
         return (
             f"heading:{normalized_organ}",
             organ or "source heading bearer",
-            "existing_po_context_review",
+            "reuse_existing_po",
             po_id,
             "Candidate derived from the source organ heading; verify pronoun and nested-part attachment.",
         )
@@ -613,7 +625,7 @@ def _classify(
         return (
             f"lexical:{po_id}",
             surface,
-            "existing_po_context_review",
+            "reuse_existing_po",
             po_id,
             "Unique nearby PO label or synonym; verify that it is the grammatical bearer and that synonym scope is appropriate.",
         )
@@ -641,7 +653,23 @@ def group_missing_bearers(
     po_obo: Path = Path("ont/plant_ontology.obo"),
     po_lexicon: Path = Path("config/po_lexicon.tsv"),
     concept_proposals: Path = Path("curation/botanical_concept_proposals.tsv"),
+    accepted_existing_output: Path | None = None,
+    concept_review_output: Path | None = None,
+    attachment_review_output: Path | None = None,
 ) -> dict[str, int | str]:
+    output_paths = [
+        Path(path).resolve()
+        for path in (
+            output_tsv,
+            accepted_existing_output,
+            concept_review_output,
+            attachment_review_output,
+        )
+        if path is not None
+    ]
+    if len(output_paths) != len(set(output_paths)):
+        raise ValueError("bearer routing outputs must be distinct")
+
     po_terms = load_po_terms(po_obo)
     po_forms = _po_forms(po_lexicon)
     local_proposals = load_local_proposals(concept_proposals)
@@ -660,7 +688,7 @@ def group_missing_bearers(
                 evidence += 1
                 position = int(unresolved.get("start", 0) or 0)
                 clause, clause_start = _clause_at(text, position)
-                key, label, disposition, po_id, note = _classify(
+                key, label, disposition, po_id, note = classify_bearer_candidate(
                     str(record.get("organ", "") or ""),
                     clause,
                     position - clause_start,
@@ -703,89 +731,144 @@ def group_missing_bearers(
 
     ordered = sorted(
         groups.values(),
-        key=lambda row: (-int(row["evidence_count"]), str(row["group_key"]), str(row["candidate_po_id"])),
+        key=lambda row: (
+            -int(row["evidence_count"]),
+            str(row["group_key"]),
+            str(row["candidate_po_id"]),
+        ),
     )
-    output_tsv.parent.mkdir(parents=True, exist_ok=True)
-    with Path(output_tsv).open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=FIELDNAMES, delimiter="\t")
-        writer.writeheader()
-        for rank, row in enumerate(ordered, 1):
-            po_id = str(row["candidate_po_id"])
-            term = po_terms.get(po_id)
-            proposal_id = LOCAL_PROPOSAL_BY_GROUP.get(str(row["group_key"]), "")
-            proposal = local_proposals.get(proposal_id)
-            # A proposal may supply complete candidate semantics, but it never reserves a FLOPO
-            # IRI or authorizes ingestion.  Scope/sense review remains an independent gate.
-            candidate_definition = proposal.definition if proposal else ""
-            candidate_parents = proposal.parents if proposal else ()
-            candidate_part_of = proposal.part_of if proposal else ()
-            semantics_complete = bool(
-                (term and term.definition and term.parents)
-                or (proposal and candidate_definition and candidate_parents)
+    materialized: list[dict[str, object]] = []
+    for rank, row in enumerate(ordered, 1):
+        po_id = str(row["candidate_po_id"])
+        term = po_terms.get(po_id)
+        if row["disposition"] == "reuse_existing_po" and term is None:
+            raise ValueError(
+                f"accepted existing-PO bearer {row['group_key']!r} references "
+                f"missing or obsolete class {po_id!r}"
             )
-            if term:
-                review_status = "pending_existing_po_mapping"
-            elif proposal and proposal.recommendation == "accept_proposal":
-                review_status = "ready_for_scope_and_curator_review"
-            elif proposal:
-                review_status = "needs_definition_superclass_and_parthood_review"
-            else:
-                review_status = "needs_definition_superclass_and_parthood_review"
-            notes = str(row["notes"])
-            if proposal:
-                notes = (
-                    f"{notes} Linked evidence proposal {proposal.proposal_id} is not an approval. "
-                    f"{proposal.caveat}"
-                ).strip()
-            writer.writerow(
-                {
-                    "rank": rank,
-                    "group_key": row["group_key"],
-                    "bearer_label": row["bearer_label"],
-                    "disposition": row["disposition"],
-                    "candidate_po_id": po_id,
-                    "candidate_po_label": term.label if term else "",
-                    "evidence_count": row["evidence_count"],
-                    "source_count": len(row["sources"]),
-                    "source_collections": "|".join(sorted(row["sources"])),
-                    "document_count": len(row["documents"]),
-                    "taxon_count": len({value for value in row["taxa"] if value}),
-                    "organ_headings": "|".join(value for value, _count in row["organs"].most_common(20)),
-                    "quality_pato_ids": "|".join(value for value, _count in row["qualities"].most_common() if value),
-                    "curation_proposal_id": proposal.proposal_id if proposal else "",
-                    "definition_source_ids": (
-                        "|".join(proposal.definition_sources) if proposal else ""
-                    ),
-                    "candidate_flopo_iri": "",
-                    "definition": term.definition if term else candidate_definition,
-                    "superclass_ids": (
-                        "|".join(term.parents) if term else "|".join(candidate_parents)
-                    ),
-                    "part_of_ids": (
-                        "|".join(term.part_of) if term else "|".join(candidate_part_of)
-                    ),
-                    "semantics_complete": str(semantics_complete).lower(),
-                    "review_status": review_status,
-                    "examples": " || ".join(row["examples"]),
-                    "notes": notes,
-                }
-            )
+        proposal_id = LOCAL_PROPOSAL_BY_GROUP.get(str(row["group_key"]), "")
+        proposal = local_proposals.get(proposal_id)
+        # A proposal may supply complete candidate semantics, but it never reserves a FLOPO
+        # IRI or authorizes ingestion.  Scope/sense review remains an independent gate.
+        candidate_definition = proposal.definition if proposal else ""
+        candidate_parents = proposal.parents if proposal else ()
+        candidate_part_of = proposal.part_of if proposal else ()
+        semantics_complete = bool(
+            (term and term.definition and term.parents)
+            or (proposal and candidate_definition and candidate_parents)
+        )
+        if term:
+            review_status = "accepted_existing_po"
+        elif proposal and proposal.recommendation == "accept_proposal":
+            review_status = "ready_for_scope_and_curator_review"
+        else:
+            review_status = "needs_definition_superclass_and_parthood_review"
+        notes = str(row["notes"])
+        if proposal:
+            notes = (
+                f"{notes} Linked evidence proposal {proposal.proposal_id} is not an approval. "
+                f"{proposal.caveat}"
+            ).strip()
+        materialized.append(
+            {
+                "rank": rank,
+                "group_key": row["group_key"],
+                "bearer_label": row["bearer_label"],
+                "disposition": row["disposition"],
+                "candidate_po_id": po_id,
+                "candidate_po_label": term.label if term else "",
+                "evidence_count": row["evidence_count"],
+                "source_count": len(row["sources"]),
+                "source_collections": "|".join(sorted(row["sources"])),
+                "document_count": len(row["documents"]),
+                "taxon_count": len({value for value in row["taxa"] if value}),
+                "organ_headings": "|".join(
+                    value for value, _count in row["organs"].most_common(20)
+                ),
+                "quality_pato_ids": "|".join(
+                    value for value, _count in row["qualities"].most_common() if value
+                ),
+                "curation_proposal_id": proposal.proposal_id if proposal else "",
+                "definition_source_ids": (
+                    "|".join(proposal.definition_sources) if proposal else ""
+                ),
+                "candidate_flopo_iri": "",
+                "definition": term.definition if term else candidate_definition,
+                "superclass_ids": ("|".join(term.parents) if term else "|".join(candidate_parents)),
+                "part_of_ids": ("|".join(term.part_of) if term else "|".join(candidate_part_of)),
+                "semantics_complete": str(semantics_complete).lower(),
+                "review_status": review_status,
+                "examples": " || ".join(row["examples"]),
+                "notes": notes,
+            }
+        )
 
-    return {
+    def write_rows(path: Path, rows: list[dict[str, object]]) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("w", encoding="utf-8", newline="") as handle:
+            writer = csv.DictWriter(handle, fieldnames=FIELDNAMES, delimiter="\t")
+            writer.writeheader()
+            writer.writerows(rows)
+
+    accepted_existing = [row for row in materialized if row["disposition"] == "reuse_existing_po"]
+    concept_review = [
+        row for row in materialized if row["disposition"] == "flopo_extension_candidate"
+    ]
+    attachment_review = [
+        row for row in materialized if row["disposition"] == "attachment_or_region_review"
+    ]
+    write_rows(Path(output_tsv), materialized)
+    if accepted_existing_output is not None:
+        write_rows(Path(accepted_existing_output), accepted_existing)
+    if concept_review_output is not None:
+        write_rows(Path(concept_review_output), concept_review)
+    if attachment_review_output is not None:
+        write_rows(Path(attachment_review_output), attachment_review)
+
+    result: dict[str, int | str] = {
         "evidence": evidence,
         "groups": len(ordered),
-        "existing_po_groups": sum(bool(row["candidate_po_id"]) for row in ordered),
-        "extension_candidate_groups": sum(
-            row["disposition"] == "flopo_extension_candidate" for row in ordered
+        "accepted_existing_po_groups": len(accepted_existing),
+        "accepted_existing_po_evidence": sum(
+            int(row["evidence_count"]) for row in accepted_existing
         ),
+        "concept_review_groups": len(concept_review),
+        "concept_review_evidence": sum(int(row["evidence_count"]) for row in concept_review),
+        "attachment_review_groups": len(attachment_review),
+        "attachment_review_evidence": sum(int(row["evidence_count"]) for row in attachment_review),
+        # Compatibility aliases for callers that only consumed the aggregate counts.
+        "existing_po_groups": len(accepted_existing),
+        "extension_candidate_groups": len(concept_review),
         "output": str(output_tsv),
     }
+    if accepted_existing_output is not None:
+        result["accepted_existing_output"] = str(accepted_existing_output)
+    if concept_review_output is not None:
+        result["concept_review_output"] = str(concept_review_output)
+    if attachment_review_output is not None:
+        result["attachment_review_output"] = str(attachment_review_output)
+    return result
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("input", type=Path)
     parser.add_argument("-o", "--output", type=Path, required=True)
+    parser.add_argument(
+        "--accepted-existing-output",
+        type=Path,
+        help="Accepted existing-PO groups, excluded from ontology-concept review",
+    )
+    parser.add_argument(
+        "--concept-review-output",
+        type=Path,
+        help="Only genuinely missing FLOPO-local bearer candidates",
+    )
+    parser.add_argument(
+        "--attachment-review-output",
+        type=Path,
+        help="Only syntax, attachment, and region uncertainties",
+    )
     parser.add_argument("--po-obo", type=Path, default=Path("ont/plant_ontology.obo"))
     parser.add_argument("--po-lexicon", type=Path, default=Path("config/po_lexicon.tsv"))
     parser.add_argument(
@@ -802,6 +885,9 @@ def main() -> None:
                 po_obo=args.po_obo,
                 po_lexicon=args.po_lexicon,
                 concept_proposals=args.concept_proposals,
+                accepted_existing_output=args.accepted_existing_output,
+                concept_review_output=args.concept_review_output,
+                attachment_review_output=args.attachment_review_output,
             ),
             indent=2,
             sort_keys=True,
