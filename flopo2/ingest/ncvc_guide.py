@@ -91,7 +91,8 @@ def taxon_from_record(rec: dict) -> Taxon:
 
 
 def _source_id(rec: dict) -> str:
-    return f"{SOURCE}:page-{int(rec['pdf_page']):03d}"
+    # Another guide transcribed in this record format (Collenette) carries its own identifiers.
+    return rec.get("source_id") or f"{SOURCE}:page-{int(rec['pdf_page']):03d}"
 
 
 def iter_segments_from_records(records: Iterable[dict]) -> Iterator[TextSegment]:
@@ -109,7 +110,7 @@ def iter_segments_from_records(records: Iterable[dict]) -> Iterator[TextSegment]
             if not text:
                 continue
             yield TextSegment(
-                source=SOURCE,
+                source=rec.get("source") or SOURCE,
                 source_id=source_id,
                 taxon=taxon,
                 organ=organ,

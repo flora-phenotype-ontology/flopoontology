@@ -111,6 +111,15 @@ def test_sex_phenotypes_are_live_classes_of_the_sex_quality_module(spec):
         assert f'"{row["label"]}"' in sex_module, row["label"]
 
 
+def _canonical_colour(signature: str) -> str:
+    from flopo2.verify.migrate_colour_backbone import load_rules
+
+    rules = load_rules(live_equivalents=True)
+    kind, bearer, quality = signature.split("|")
+    rule = rules.get(quality)
+    return f"{kind}|{bearer}|{rule.new}" if rule else signature
+
+
 def test_proposal_is_current_for_the_annotated_corpus(spec):
     """The frozen spec's 292 accepted rows have since been released for real (their FLOPO ids are
     live), so ``propose()`` -- which only considers still-*unlinked* EQ signatures -- correctly
@@ -154,7 +163,19 @@ def test_proposal_is_current_for_the_annotated_corpus(spec):
 
     still_open = set(normalized) - accepted
     assert still_open, "the frozen spec must still record at least one undecided candidate"
-    assert set(fresh) == still_open
+    # Later releases move undecided rows on in two ways. The colour backbone renames a colour
+    # quality to its backbone class (the annotation step writes colours on the backbone), and a
+    # row that a later module released (2026-10-05: the flower sex classes; 'trichome white' for
+    # the obsolete 'silvery') is linked and no longer proposed.
+    live_signatures = {
+        row["signature"] for row in live_by_id.values() if row["deprecated"] in {"0", "", "false", "False"}
+    }
+    canonical = {signature: _canonical_colour(signature) for signature in still_open}
+    # Released = now a live class AND no longer proposed (unlinked negated rows of a live signature
+    # are still proposed, as "duplicate of live" exclusions).
+    still_open = {s for s in still_open if not (canonical[s] in live_signatures and canonical[s] not in fresh)}
+    assert still_open, "the frozen spec must still record at least one undecided candidate"
+    assert set(fresh) == {canonical[s] for s in still_open}
     # Fields derived from a live label (parent, *_label, label, definition, reason) can
     # legitimately drift for an "exclude" row too: e.g. FLOPO_0980092 "silvery" is one of the 78
     # colour value classes the 2026-09-18 backbone migration obsoleted, so its live label is now
@@ -162,6 +183,8 @@ def test_proposal_is_current_for_the_annotated_corpus(spec):
     # for internal consistency) rather than the frozen copy, and compare everything else exactly.
     label_derived = {"po_label", "pato_label", "label", "definition", "parent", "reason"}
     for signature in still_open:
+        if canonical[signature] != signature:
+            continue  # quality renamed by the colour backbone: the PATO fields differ by design
         fresh_row = fresh[signature]
         expected_row = {k: v for k, v in normalized[signature].items() if k not in label_derived}
         actual_row = {k: v for k, v in fresh_row.items() if k not in label_derived}

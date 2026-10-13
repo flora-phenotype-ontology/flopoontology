@@ -69,6 +69,9 @@ UPPER_BOUND_EVIDENCE = re.compile(
     r"(?<!\w)(?:up\s+to|at\s+most|no\s+more\s+than|"
     r"not\s+(?:more\s+than|exceeding|over|longer\s+than|surpassing)|"
     r"maximum|max\.?)(?!\w)|"
+    # Field-guide idiom "stems to 1 m long" / "a shrub to 2 m": a bare "to" before a number with
+    # no number before it is an upper bound ("5 to 10 mm" is a range and keeps both bounds).
+    r"(?<=[A-Za-z,;(]\s)to\s+(?=\d)|^to\s+(?=\d)|"
     r"jusqu['’]?\s*[aà]|pas\s+plus\s+de|au\s+plus|"
     r"(?:ne|n['’])\s*[^,;:.]{0,36}\b" + _FR_BOUND_VERB + r"[^,;:.]{0,20}\bpas\b|"
     r"(?:ne|n['’])\s*" + _FR_BOUND_VERB + r"\s+pas",

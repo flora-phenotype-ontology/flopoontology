@@ -31,6 +31,7 @@ Example::
 from __future__ import annotations
 
 import argparse
+import copy
 import csv
 import json
 import re
@@ -43,6 +44,7 @@ from typing import Any
 
 from flopo2.annotation.provenance import FREQUENCY_ALIASES, stable_statement_id
 from flopo2.ingest import ncvc_guide
+from flopo2.ingest.colour_words import COLOUR_ATTRIBUTE, colour_value
 from flopo2.owl.annotation_class import ensure_annotation_class_iri
 from flopo2.verify import gates
 from flopo2.verify.data_model import validate_jsonl
@@ -120,6 +122,46 @@ def load_normalization_rules(path: Path = DEFAULT_NORMALIZATION) -> list[Normali
     return rules
 
 
+def enable_atlas_options(res: "Resources") -> None:
+    from flopo2.ingest.colour_words import load_colour_words
+    from flopo2.saudi.vocab import parse_obo
+
+    from flopo2.ingest.llm_relations import load as load_llm_relations
+
+    res.colour_words = load_colour_words()
+    res.relations = True
+    res.llm_relations = load_llm_relations()
+    from flopo2.ingest.llm_relations import CHAIN_CACHE
+
+    res.llm_relation_chains = load_llm_relations(CHAIN_CACHE)
+    res.pato_terms = parse_obo(Path("ont/quality.obo"))
+
+
+def merge_rules(
+    base: list[NormalizationRule],
+    extra_tables: Iterable[Path],
+    override_tables: Iterable[Path] = (),
+) -> list[NormalizationRule]:
+    """Combine rule tables: ``override_tables`` first, then ``base``, then ``extra_tables``.
+
+    A non-hold rule of a later table supersedes a base *hold* on the same word: a hold records
+    that no ontology term existed when the base table was reviewed. Rules of ``override_tables``
+    (reviewed corrections, e.g. 'petiolate' as the leaf quality FLOPO:0991023 rather than
+    'petiole present') replace any base rule for the same word.
+    """
+
+    overrides = [rule for path in override_tables for rule in load_normalization_rules(path)]
+    extra = [rule for path in extra_tables for rule in load_normalization_rules(path)]
+    overridden = {(r.match_field, r.match_key) for r in overrides if r.kind != "hold"}
+    grounded = overridden | {(r.match_field, r.match_key) for r in extra if r.kind != "hold"}
+    kept = [
+        r for r in base
+        if (r.match_field, r.match_key) not in overridden
+        and not (r.kind == "hold" and (r.match_field, r.match_key) in grounded)
+    ]
+    return [*overrides, *kept, *extra]
+
+
 @dataclass(frozen=True)
 class HoldRule:
     rule_id: str
@@ -181,6 +223,13 @@ class Resources:
     flopo_labels: dict[str, str]
     rules: list[NormalizationRule]
     holds: list[HoldRule]
+    # Atlas options (off for the reviewed default run): colour phrases read on the ISCC-NBS
+    # backbone (flopo2.ingest.colour_words), and alternatives/continua as qualitative relations.
+    colour_words: dict | None = None
+    relations: bool = False
+    pato_terms: dict | None = None
+    llm_relations: dict | None = None  # (source_id, row) -> flopo2.ingest.llm_relations answer
+    llm_relation_chains: dict | None = None  # same key -> answer splitting 3+ values
 
     def rule_for(self, field_name: str, key: str, bearer_texts: Iterable[str]):
         bearer_texts = list(bearer_texts)
@@ -472,6 +521,7 @@ class Grounding:
     provenance: list[str] = field(default_factory=list)
     normalization_status: str = "auto"
     rule_ids: list[str] = field(default_factory=list)
+    approximate: str = ""  # cue word of a RELATED ("-ish") colour reading
 
 
 def ground_bearer(res: Resources, phenotype: dict) -> tuple[str, str, str]:
@@ -504,6 +554,22 @@ def ground_phenotype(res: Resources, phenotype: dict) -> Grounding:
         phenotype.get("po_label", ""),
         res.po_labels.get(po_id, ""),
     ]
+
+    if res.colour_words is not None and phenotype.get("value_low") is None and phenotype.get("value_high") is None:
+        for text in (phenotype.get("quality_en"), phenotype.get("pato_label")):
+            colour = colour_value(str(text or ""), res.colour_words)
+            if colour is None:
+                continue
+            value, scope, reading = colour
+            if not po_id:
+                return Grounding("unresolved", pato_id=COLOUR_ATTRIBUTE, reason="missing_or_unsupported_bearer",
+                                 provenance=provenance)
+            provenance.append(f"quality: colour {text!r} -> {value} ({scope}; {reading}; flopo2.ingest.colour_words)")
+            return Grounding(
+                "assertion", po_id=po_id, pato_id=COLOUR_ATTRIBUTE, value_terms=[value],
+                provenance=provenance, normalization_status="proposed",
+                approximate=str(text) if scope == "RELATED" else "",
+            )
 
     pato_id = ""
     pato_label = ncvc_guide._normalize(phenotype.get("pato_label")).lower()
@@ -557,7 +623,7 @@ def ground_phenotype(res: Resources, phenotype: dict) -> Grounding:
             pato_id = rule.pato_id
             if rule.kind == "entity_presence":
                 po_id = rule.po_id
-            elif rule.kind == "flopo_value":
+            elif rule.kind == "flopo_value" and po_id:
                 return Grounding(
                     "assertion",
                     po_id=po_id,
@@ -653,7 +719,7 @@ def _page_provenance(rec: dict) -> str:
     printed = rec.get("printed_pages") or []
     printed_text = "-".join(str(p) for p in printed)
     return (
-        f"source: {ncvc_guide.SOURCE} pdf_page={int(rec['pdf_page'])}"
+        f"source: {rec.get('source') or ncvc_guide.SOURCE} pdf_page={int(rec['pdf_page'])}"
         + (f" printed_pages={printed_text}" if printed_text else "")
         + f" phenotype_row={{row}}; transcription {EXTRACTOR}"
     )
@@ -748,6 +814,271 @@ def _modality(text: str, start: int, end: int, frequency: str) -> tuple[str, int
     return text[cue_start : cue_start + len(word)], cue_start, cue_start + len(word)
 
 
+# ---------------------------------------------------------------------------------------------
+# Qualitative value relations (atlas option): "ovate to oblong", "red tending to orange-yellow"
+# ---------------------------------------------------------------------------------------------
+
+_RELATION_CONNECTORS = [
+    (re.compile(r"\s+(?:becoming|turning|fading\s+to|ageing\s+to|aging\s+to|changing\s+to|then)\s+", re.I), "temporal_transition"),
+    (re.compile(r"\s+(?:tending\s+to(?:wards)?|grading\s+(?:in)?to|passing\s+into)\s+", re.I), "continuum"),
+    (re.compile(r"\s+to\s+|\s+[-–—]\s+", re.I), "continuum"),
+    (re.compile(r"\s+or\s+|\s*/\s*", re.I), "taxon_level_alternatives"),
+]
+
+
+def _attribute_ancestors(res: "Resources", value: str) -> list[str]:
+    """Attribute-slim ancestors of a PATO value, nearest first."""
+
+    if value in res.attribute_ids:
+        return [value]
+    terms = res.pato_terms or {}
+    out, frontier, seen = [], [value.replace("_", ":", 1)], set()
+    while frontier:
+        current = frontier.pop(0)
+        local = current.replace(":", "_", 1)
+        if local in res.attribute_ids and local not in out:
+            out.append(local)
+        seen.add(current)
+        term = terms.get(current)
+        frontier += [p for p in (term.is_a if term else []) if p not in seen]
+    return out
+
+
+def ground_value(res: "Resources", word: str, bearer_texts: list[str]) -> tuple[str, list[str]] | None:
+    """Ground one quality word to ``(value id, attribute ids nearest first)``."""
+
+    if res.colour_words is not None:
+        colour = colour_value(word, res.colour_words)
+        if colour is not None:
+            return colour[0], [COLOUR_ATTRIBUTE]
+    key = normalize_key(word)
+    rule = res.rule_for("quality", key, bearer_texts)
+    if rule is not None and rule.kind == "pato" and rule.pato_id:
+        return rule.pato_id, _attribute_ancestors(res, rule.pato_id)
+    if rule is not None and rule.kind == "flopo_value" and rule.value_term:
+        return rule.value_term, [rule.pato_id]
+    ids = res.pato_lexicon.get(key, [])
+    if len(ids) == 1:
+        return ids[0], _attribute_ancestors(res, ids[0])
+    return None
+
+
+def build_relation(
+    res: "Resources", phenotype: dict, text: str, start: int, end: int, po_id: str
+) -> dict | None:
+    """A qualitative value relation between the row's quality and its one alternative."""
+
+    alternatives = [a for a in (phenotype.get("qualifiers") or {}).get("alternatives") or [] if str(a).strip()]
+    if len(alternatives) != 1 or not po_id:
+        return None
+    bearer_texts = [phenotype.get("entity_en", ""), phenotype.get("po_label", "")]
+    window_start, window_end = max(0, start - 60), min(len(text), end + 60)
+    window = text[window_start:window_end]
+    first_words = [w for w in (phenotype.get("pato_label"), str(phenotype.get("quality_en") or "").split(" to ")[0].split(" or ")[0]) if w]
+    for first in first_words:
+        for match in re.finditer(re.escape(first.strip()), window, re.I):
+            from_start, from_end = window_start + match.start(), window_start + match.end()
+            rest = text[from_end:window_end]
+            for pattern, interpretation in _RELATION_CONNECTORS:
+                connector = pattern.match(rest)
+                if not connector:
+                    continue
+                to_start = from_end + connector.end()
+                alt = re.search(re.escape(str(alternatives[0]).strip()), text[to_start:window_end], re.I)
+                if not alt or text[to_start : to_start + alt.start()].count(",") or alt.start() > 30:
+                    continue
+                to_end = to_start + alt.end()
+                left = ground_value(res, text[from_start:from_end], bearer_texts)
+                right = ground_value(res, alternatives[0], bearer_texts)
+                if not left or not right or left[0] == right[0]:
+                    return None
+                common = [a for a in left[1] if a in right[1]]
+                if not common:
+                    return None
+                return {
+                    "pato_id": common[0],
+                    "relation": {
+                        "interpretation": interpretation,
+                        "from_value": left[0],
+                        "to_value": right[0],
+                        "from_text": text[from_start:from_end],
+                        "from_start": from_start,
+                        "from_end": from_end,
+                        "connector_text": text[from_end:to_start],
+                        "connector_start": from_end,
+                        "connector_end": to_start,
+                        "to_text": text[to_start:to_end],
+                        "to_start": to_start,
+                        "to_end": to_end,
+                    },
+                }
+    return None
+
+
+_PREVIOUS_WORD = re.compile(r"([A-Za-z][A-Za-z-]*)\s+$")
+
+
+def refine_endpoints(res: "Resources", attribute: str, relation: dict, text: str, bearer_texts: list[str]) -> dict:
+    """Keep endpoint modifiers in the relation: "narrowly ovate", "pale yellow", "greenish red".
+
+    The from-endpoint takes in up to two preceding words of its clause when they are degree cues
+    or when the longer phrase still grounds under the relation's attribute; the to-endpoint keeps
+    its own leading words.  Each endpoint phrase is then re-grounded as a whole (a more specific
+    colour such as "pale yellow" replaces "yellow"), and a leading degree cue becomes the
+    endpoint's E2 operand (``from_operand``/``to_operand``) with its degree qualifier.
+    """
+
+    from flopo2.annotation.operands import DEGREE_CUES, make_operand, parse_qualifier_cue
+
+    rel = dict(relation)
+    clause_start = max(text.rfind(c, 0, rel["from_start"]) for c in ",;.:(") + 1
+    start = rel["from_start"]
+    for _ in range(2):
+        match = _PREVIOUS_WORD.search(text, clause_start, start)
+        if match is None or match.end() != start:
+            break
+        word = match.group(1).lower()
+        grounded = ground_value(res, text[match.start() : rel["from_end"]], bearer_texts)
+        if word in DEGREE_CUES or (grounded and attribute in grounded[1]):
+            start = match.start()
+            continue
+        break
+    rel["from_start"], rel["from_text"] = start, text[start : rel["from_end"]]
+
+    for side, index in (("from", 0), ("to", 1)):
+        start, end = rel[f"{side}_start"], rel[f"{side}_end"]
+        words = list(re.finditer(r"[A-Za-z][A-Za-z-]*", text[start:end]))
+        cue_end = start
+        for word in words:
+            if word.group(0).lower() not in DEGREE_CUES:
+                break
+            cue_end = start + word.end()
+        core = text[cue_end:end].strip()
+        other = rel["to_value" if side == "from" else "from_value"]
+        grounded = ground_value(res, core, bearer_texts) if core else None
+        if grounded and attribute in grounded[1] and grounded[0] != other:
+            rel[f"{side}_value"] = grounded[0]
+        if cue_end > start:
+            parsed = parse_qualifier_cue(text[start:cue_end])
+            rel[f"{side}_operand"] = make_operand(
+                index, rel[f"{side}_value"], text, start, end,
+                qualifier_start=start, qualifier_end=cue_end,
+                degree_qualifier=parsed["degree_qualifier"],
+            )
+    return rel
+
+
+def relations_from_chain(
+    res: "Resources", answer: dict, text: str, start: int, end: int, po_id: str, bearer_texts: list[str]
+) -> list[dict]:
+    """Consecutive pairwise relations of a verified list of 3+ values ("white, pink or purple")."""
+
+    from flopo2.annotation.qualitative import INTERPRETATIONS
+
+    values = [v for v in answer.get("values") or [] if isinstance(v, dict)]
+    connectors = [c for c in answer.get("connectors") or [] if isinstance(c, dict)]
+    if not po_id or len(values) < 2 or len(connectors) != len(values) - 1:
+        return []
+    parts = []
+    for index, value in enumerate(values):
+        parts.append("(%s)" % re.escape(str(value.get("text") or "").strip()))
+        if index < len(connectors):
+            parts.append(r"(\s*%s\s*)" % re.escape(str(connectors[index].get("text") or "").strip()))
+    match = re.compile("".join(parts), re.IGNORECASE).search(text, max(0, start - 80), min(len(text), end + 80))
+    if match is None:
+        return []
+    grounded = []
+    for value in values:
+        hit = ground_value(res, str(value.get("term") or ""), bearer_texts) or ground_value(
+            res, str(value.get("text") or ""), bearer_texts
+        )
+        if hit is None:
+            return []
+        grounded.append(hit)
+    common = [a for a in grounded[0][1] if all(a in g[1] for g in grounded[1:])]
+    if not common:
+        return []
+    out = []
+    for index, connector in enumerate(connectors):
+        interpretation = str(connector.get("interpretation") or "")
+        left, right = grounded[index][0], grounded[index + 1][0]
+        if interpretation not in INTERPRETATIONS or left == right:
+            continue
+        g_from, g_conn, g_to = 2 * index + 1, 2 * index + 2, 2 * index + 3
+        out.append({
+            "pato_id": common[0],
+            "relation": {
+                "interpretation": interpretation,
+                "from_value": left, "to_value": right,
+                "from_text": match.group(g_from), "from_start": match.start(g_from), "from_end": match.end(g_from),
+                "connector_text": match.group(g_conn), "connector_start": match.start(g_conn), "connector_end": match.end(g_conn),
+                "to_text": match.group(g_to), "to_start": match.start(g_to), "to_end": match.end(g_to),
+            },
+            "llm": answer.get("model", "llm"),
+            "chain": f"pair {index + 1} of {len(connectors)} in a list of {len(values)} values",
+        })
+    return out
+
+
+def relation_from_llm(
+    res: "Resources", answer: dict, text: str, start: int, end: int, po_id: str, bearer_texts: list[str]
+) -> dict | None:
+    """Verify an LLM-located relation: verbatim consecutive spans near the row, grounded terms."""
+
+    from flopo2.annotation.qualitative import INTERPRETATIONS
+
+    interpretation = str(answer.get("interpretation") or "")
+    parts = [str(answer.get(k) or "").strip() for k in ("from_text", "connector_text", "to_text")]
+    if interpretation not in INTERPRETATIONS or not all(parts) or not po_id:
+        return None
+    pattern = re.compile(
+        r"(%s)(\s*%s\s*)(%s)" % tuple(re.escape(p) for p in parts), re.IGNORECASE
+    )
+    window_start, window_end = max(0, start - 80), min(len(text), end + 80)
+    match = pattern.search(text, window_start, window_end)
+    if match is None:
+        return None
+    left = ground_value(res, str(answer.get("from_term") or parts[0]), bearer_texts) or ground_value(res, parts[0], bearer_texts)
+    right = ground_value(res, str(answer.get("to_term") or parts[2]), bearer_texts) or ground_value(res, parts[2], bearer_texts)
+    if not left or not right or left[0] == right[0]:
+        return None
+    common = [a for a in left[1] if a in right[1]]
+    if not common:
+        return None
+    return {
+        "pato_id": common[0],
+        "relation": {
+            "interpretation": interpretation,
+            "from_value": left[0],
+            "to_value": right[0],
+            "from_text": match.group(1),
+            "from_start": match.start(1),
+            "from_end": match.end(1),
+            "connector_text": match.group(2),
+            "connector_start": match.start(2),
+            "connector_end": match.end(2),
+            "to_text": match.group(3),
+            "to_start": match.start(3),
+            "to_end": match.end(3),
+        },
+        "llm": answer.get("model", "llm"),
+    }
+
+
+def _mark_approximate(assertion: dict, word: str, text: str) -> None:
+    """RELATED colour word: assertion-level 'approximately' with the word as its exact cue."""
+
+    start = assertion.get("source_start") or 0
+    end = assertion.get("source_end") or len(text)
+    position = text.lower().find(word.lower(), max(0, start - 40), end + 40)
+    if position < 0 or assertion.get("modality_start") is not None:
+        return  # no locatable cue: keep the generalisation without an unsupported qualifier
+    assertion["value_qualifier"] = "approximately"
+    assertion["modality_text"] = text[position : position + len(word)]
+    assertion["modality_start"] = position
+    assertion["modality_end"] = position + len(word)
+
+
 def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposition]]:
     """Return the corpus segment rows (Arabic/English description and habitat) for one species."""
 
@@ -835,6 +1166,32 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
         if not reason and negated and not gates.NEGATION_EVIDENCE.search(span_text):
             reason = "negation_cue_not_in_source_span"
 
+        relation = None
+        extra_relations: list[dict] = []
+        if res.relations and not has_value and not str(phenotype.get("unit") or "").strip() \
+                and reason in {"taxon_level_alternatives_or_continuum", "explicit_disjunction"}:
+            relation = build_relation(res, phenotype, text, start, end, grounding.po_id)
+            answer = (res.llm_relations or {}).get((ncvc_guide._source_id(rec), index))
+            bearer_texts = [phenotype.get("entity_en", ""), phenotype.get("po_label", "")]
+            if relation is None and answer is not None:
+                relation = relation_from_llm(res, answer, text, start, end, grounding.po_id, bearer_texts)
+            chain = (res.llm_relation_chains or {}).get((ncvc_guide._source_id(rec), index))
+            if relation is None and chain is not None:
+                chained = relations_from_chain(res, chain, text, start, end, grounding.po_id, bearer_texts)
+                if chained:
+                    relation, extra_relations = chained[0], chained[1:]
+                    for extra in extra_relations:
+                        extra["relation"] = refine_endpoints(res, extra["pato_id"], extra["relation"], text, bearer_texts)
+            if relation is not None:
+                relation["relation"] = refine_endpoints(
+                    res, relation["pato_id"], relation["relation"], text, bearer_texts
+                )
+            if relation is not None:
+                reason = ""
+                rel = relation["relation"]
+                start, end = min(start, rel["from_start"]), max(end, rel["to_end"])
+                span_text = text[start:end]
+
         if reason:
             candidate = grounding.pato_id if grounding.pato_id in res.pato_catalog else ""
             unresolved = {
@@ -878,8 +1235,22 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
         )
         if has_value:
             assertion.update({"value_low": low, "value_high": high, "unit": unit})
+        if relation is not None:
+            assertion.update({"pato_id": relation["pato_id"], "value_terms": [],
+                              "qualitative_value_relation": relation["relation"]})
+            if relation.get("llm"):
+                grounding.provenance.append(f"relation: endpoints located by {relation['llm']} (flopo2.ingest.llm_relations), verified verbatim and grounded")
+            if relation.get("chain"):
+                grounding.provenance.append(f"relation: {relation['chain']}")
+            grounding.provenance.append(
+                f"relation: {relation['relation']['interpretation']} "
+                f"{relation['relation']['from_value']} -> {relation['relation']['to_value']} "
+                f"(connector {relation['relation']['connector_text'].strip()!r})"
+            )
         if negated:
-            assertion.update({"negated": True, "negation_scope": "quality"})
+            # "no petals" / "leafless": the part is absent; "no scent": the part lacks the quality.
+            scope = "absence" if grounding.pato_id == PATO_PRESENT and not grounding.value_terms else "quality"
+            assertion.update({"negated": True, "negation_scope": scope})
         bearer = _bearer_mention(text, start, end, phenotype)
         if bearer is not None:
             assertion.update(
@@ -899,6 +1270,8 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                     "frequency_qualifier": FREQUENCY_ALIASES.get(cue[0].lower(), "unspecified"),
                 }
             )
+        if grounding.approximate:
+            _mark_approximate(assertion, grounding.approximate, text)
         provenance = [page_prov.format(row=index), f"anchor: {method}", *grounding.provenance]
         if ar_statement is not None:
             provenance.append(
@@ -918,6 +1291,9 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
         assertion["mapping_provenance"] = provenance
         entity_label = _label(res, grounding.po_id)
         quality_label = _label(res, (grounding.value_terms or [grounding.pato_id])[0])
+        if relation is not None:
+            rel = relation["relation"]
+            quality_label = f"{_label(res, rel['from_value'])} {rel['connector_text'].strip()} {_label(res, rel['to_value'])}"
         comp_reasons = [f"ncvc_hold:{hold.reason_code}"] if hold else []
         if method == "quality_word_partial":
             comp_reasons.append("anchor_partial_quality_word")
@@ -945,6 +1321,23 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
         )
         pending.append((assertion, disposition))
         dispositions.append(disposition)
+        for extra in extra_relations:
+            # Further pairs of a 3+ value list: same statement, one relation each.
+            rel = extra["relation"]
+            other = copy.deepcopy(assertion)
+            other.update({"pato_id": extra["pato_id"], "qualitative_value_relation": rel,
+                          "source_start": min(start, rel["from_start"]), "source_end": max(end, rel["to_end"])})
+            other["source_text"] = text[other["source_start"] : other["source_end"]]
+            other["mapping_provenance"] = [
+                *[p for p in assertion["mapping_provenance"] if not p.startswith("relation:")],
+                f"relation: endpoints located by {extra['llm']} (flopo2.ingest.llm_relations), verified verbatim and grounded",
+                f"relation: {extra['chain']}",
+                f"relation: {rel['interpretation']} {rel['from_value']} -> {rel['to_value']} (connector {rel['connector_text'].strip()!r})",
+            ]
+            other["composition"] = {**assertion["composition"], "clause": other["source_text"],
+                                    "quality_label": f"{_label(res, rel['from_value'])} {rel['connector_text'].strip()} {_label(res, rel['to_value'])}"}
+            en["assertions"].append(other)
+            pending.append((other, disposition))
 
     if en is not None and en["assertions"]:
         gated = gates.gate_segment(
@@ -970,7 +1363,8 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                 "frequency_qualifier", "unspecified"
             ) != "unspecified" and not assertion.get("modality_text"):
                 assertion["frequency_qualifier"] = "unspecified"
-            ensure_annotation_class_iri(assertion)
+            if not assertion.get("qualitative_value_relation"):
+                ensure_annotation_class_iri(assertion)
             disposition.assertion = assertion
             if not hold_code:
                 disposition.status = gate["status"]
@@ -1312,11 +1706,21 @@ def page_coverage(raw: Path, first: int = 15, last: int = 317) -> dict[str, Any]
     }
 
 
+def colour_backbone_migrator():
+    from flopo2.verify.gates import load_signature_registry
+    from flopo2.verify.migrate_colour_backbone import REGISTRY, Migrator, load_rules
+
+    return Migrator(load_rules(live_equivalents=True), load_signature_registry(REGISTRY))
+
+
 def run(
     corpus_dir: Path,
     out_dir: Path | None = None,
     res: Resources | None = None,
     catalog_paths: dict[str, Path] | None = None,
+    extra_rules: Iterable[Path] = (),
+    override_rules: Iterable[Path] = (),
+    atlas: bool = False,
 ) -> dict[str, Any]:
     """Build every derived artifact, validate the corpus JSONL, and write ``REPORT.md``.
 
@@ -1326,8 +1730,17 @@ def run(
     raw = corpus_dir / "raw"
     out_dir = out_dir or corpus_dir / "derived"
     out_dir.mkdir(parents=True, exist_ok=True)
-    res = res or load_resources()
+    if res is None:
+        res = load_resources()
+        # Optional extra rule tables (the Saudi Flora atlas adds the Collenette and LLM-proposed
+        # rules); they apply after this guide's reviewed rules.
+        res.rules = merge_rules(res.rules, extra_rules, override_rules)
+        if atlas:
+            enable_atlas_options(res)
     records = list(ncvc_guide.iter_records(raw))
+    # FLOPO's EQ classes use the ISCC-NBS colour backbone: write colour values on it, so the
+    # gate's FLOPO lookup and every downstream signature match the live registry.
+    colour_migrator = colour_backbone_migrator()
     gazetteer = _read_optional_tsv(corpus_dir / "gazetteer.tsv")
     taxa_extra = _read_optional_tsv(corpus_dir / "taxa.tsv")
     res.holds = [*res.holds, *holds_from_taxa(taxa_extra, res.holds)]
@@ -1358,6 +1771,7 @@ def run(
                     )
             all_dispositions.extend(dispositions)
             for seg in segments:
+                colour_migrator.migrate_record(seg)
                 counts["segments"] += 1
                 counts[f"segments_{seg['language']}"] += 1
                 counts["source_statements"] += len(seg["source_statements"])
@@ -1666,8 +2080,15 @@ def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("corpus_dir", type=Path, help="local-corpora/saudi-ncvc-guide")
     ap.add_argument("-o", "--out-dir", type=Path, default=None)
+    ap.add_argument("--extra-rules", type=Path, nargs="*", default=[],
+                    help="rule tables applied after the reviewed NCVC rules")
+    ap.add_argument("--override-rules", type=Path, nargs="*", default=[],
+                    help="reviewed rule tables that replace NCVC rules for the same word")
+    ap.add_argument("--atlas", action="store_true",
+                    help="colour phrases on the ISCC-NBS backbone; alternatives as qualitative relations")
     args = ap.parse_args(argv)
-    summary = run(args.corpus_dir, args.out_dir)
+    summary = run(args.corpus_dir, args.out_dir, extra_rules=args.extra_rules,
+                  override_rules=args.override_rules, atlas=args.atlas)
     json.dump(summary, sys.stdout, indent=2, ensure_ascii=False)
     sys.stdout.write("\n")
 

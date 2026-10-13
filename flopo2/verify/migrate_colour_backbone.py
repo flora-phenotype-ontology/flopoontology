@@ -70,12 +70,27 @@ def _norm(value: object) -> str:
     return str(value or "").strip().replace(":", "_")
 
 
-def load_rules(crosswalk: Path = CROSSWALK, migration: Path = MIGRATION) -> dict[str, Rule]:
+def load_rules(
+    crosswalk: Path = CROSSWALK, migration: Path = MIGRATION, *, live_equivalents: bool = False
+) -> dict[str, Rule]:
+    """Load the superseded-colour rules.
+
+    With ``live_equivalents`` a live PATO colour whose backbone class is ``EquivalentTo`` it (PATO
+    white = ISCC-NBS white) is also rewritten to that class, because FLOPO's EQ classes and their
+    registry signatures use the backbone class; the rewrite is a logical no-op.
+    """
+
     rules: dict[str, Rule] = {}
     with Path(crosswalk).open(encoding="utf-8", newline="") as handle:
         rows = csv.DictReader((ln for ln in handle if not ln.startswith("#")), delimiter="\t")
         for row in rows:
-            if row["source_status"] not in SUPERSEDED_STATUSES:
+            live_equivalent = (
+                live_equivalents
+                and row["source_status"] == "pato_live"
+                and row["eq_axiom"] == "EquivalentTo"
+                and _norm(row["canonical_id"]) not in {"", _norm(row["source_id"])}
+            )
+            if row["source_status"] not in SUPERSEDED_STATUSES and not live_equivalent:
                 continue
             old = _norm(row["source_id"])
             scope = row["word_scope"]
@@ -538,11 +553,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--crosswalk", type=Path, default=CROSSWALK)
     parser.add_argument("--migration", type=Path, default=MIGRATION)
     parser.add_argument("--registry", type=Path, default=REGISTRY)
+    parser.add_argument(
+        "--live-equivalents",
+        action="store_true",
+        help="also rewrite live PATO colours to their EquivalentTo backbone class",
+    )
     args = parser.parse_args(argv)
     report = migrate_file(
         args.input,
         args.output,
-        rules=load_rules(args.crosswalk, args.migration),
+        rules=load_rules(args.crosswalk, args.migration, live_equivalents=args.live_equivalents),
         registry=args.registry,
     )
     if args.report:
