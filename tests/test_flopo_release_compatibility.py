@@ -69,6 +69,8 @@ PUBLIC_ARCHIVES = {
     # release: (source commit, class count, deprecated count)
     "2026-07-31": ("f3e3029ce87edc43dfaf2c3a09a97958eda63c8f", 24689, 1166),
     "2026-09-18": ("12f8214afac2ea36218bdbf58f0c433592b79e24", 24642, 1267),
+    "2026-10-05": ("b25541b99e4d32e70cabed240143ea8785902167", 25817, 1286),
+    "2026-10-13": ("3ab6467012cdc256cda142f9a8df9a81f99ff942", 25844, 1286),
 }
 
 
