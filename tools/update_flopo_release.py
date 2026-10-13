@@ -129,6 +129,13 @@ def _extension_fragment(
 
 
 def _update_release_metadata(text: str, release_date: str) -> str:
+    # A module update invalidates the materialized classification; the final passes regenerate it
+    # (tools/update_flopo_inferred_parents.py).
+    for marker in ("FLOPO INFERRED SUPERCLASSES", "FLOPO BEARER PHENOTYPE PARENTS"):
+        text = re.sub(
+            rf"\n?  <!-- BEGIN GENERATED {marker} -->.*?  <!-- END GENERATED {marker} -->\n?",
+            "\n", text, count=1, flags=re.DOTALL,
+        )
     version_iri_pattern = re.compile(
         r'(owl:versionIRI rdf:resource="http://purl\.obolibrary\.org/obo/'
         r'flopo/releases/)\d{4}-\d{2}-\d{2}(/flopo\.owl"/>)'

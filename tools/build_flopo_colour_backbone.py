@@ -1027,6 +1027,10 @@ def _pre_backbone_release(release_path: Path, base_path: Path) -> tuple[Graph, b
     original declarations of the redefined and obsoleted classes is added back."""
 
     text, embedded = _strip_embedded_block(release_path.read_text(encoding="utf-8"))
+    # The materialized classification is derived from the modules, not a source of them.
+    from tools.update_flopo_inferred_parents import _without_block as _without_inferred
+
+    text = _without_inferred(text)
     release = Graph().parse(data=text, format="xml", publicID=release_path.resolve().as_uri())
     if not embedded:
         return release, False
