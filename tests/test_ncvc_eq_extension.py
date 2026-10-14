@@ -90,7 +90,9 @@ def test_screen_excludes_homonyms_abnormal_senses_and_live_duplicates(spec):
             # has since been released for real, under the same reserved block): that is fine as
             # long as the live class is the one this proposal itself describes, not a collision
             # with something unrelated.
-            assert live[row["signature"]][1] == row["label"], row["signature"]
+            # The flora corrections module relabelled PATO:0001891 classes off flat organs "ovoid".
+            ovoid = row["label"].removesuffix(" ovate") + " ovoid"
+            assert live[row["signature"]][1] in {row["label"], ovoid}, row["signature"]
     assert excluded, "the screen must keep a reasoned exclusion list"
     assert all(reason.strip() for reason in excluded.values())
     homonyms = [row for row in spec if row["pato_id"] in HOMONYM_PATO]
@@ -118,6 +120,17 @@ def _canonical_colour(signature: str) -> str:
     kind, bearer, quality = signature.split("|")
     rule = rules.get(quality)
     return f"{kind}|{bearer}|{rule.new}" if rule else signature
+
+
+def _canonical_shape(signature: str) -> str:
+    """"ovate" on a flat organ was re-pointed to the plane ovate FLOPO:0991024 on 2026-10-14."""
+
+    from tools.build_flopo_flora_corrections import FLAT_BEARERS
+
+    kind, bearer, quality = signature.split("|")
+    if quality == "PATO_0001891" and bearer in FLAT_BEARERS:
+        return f"{kind}|{bearer}|FLOPO_0991024"
+    return signature
 
 
 def test_proposal_is_current_for_the_annotated_corpus(spec):
@@ -175,7 +188,12 @@ def test_proposal_is_current_for_the_annotated_corpus(spec):
     # are still proposed, as "duplicate of live" exclusions).
     still_open = {s for s in still_open if not (canonical[s] in live_signatures and canonical[s] not in fresh)}
     assert still_open, "the frozen spec must still record at least one undecided candidate"
-    assert set(fresh) == {canonical[s] for s in still_open}
+    # The frozen default run still writes "ovate" on a flat organ as PATO:0001891; since
+    # 2026-10-14 the live class of that phenotype uses the plane ovate, so the run no longer links
+    # to it and re-proposes the signature (as a duplicate of the live class).
+    repointed = {s for s in fresh if _canonical_shape(s) != s and _canonical_shape(s) in live_signatures}
+    assert set(fresh) - repointed == {canonical[s] for s in still_open}
+    assert all(fresh[s]["decision"] == "exclude" for s in repointed)
     # Fields derived from a live label (parent, *_label, label, definition, reason) can
     # legitimately drift for an "exclude" row too: e.g. FLOPO_0980092 "silvery" is one of the 78
     # colour value classes the 2026-09-18 backbone migration obsoleted, so its live label is now
@@ -206,7 +224,9 @@ def test_identifiers_are_unique_inside_the_reserved_block_and_collide_with_nothi
     # number must denote the same class this file allocated it to, not an unrelated collision.
     for number in set(numbers) & released:
         flopo_id = f"FLOPO_{number:07d}"
-        assert live_labels.get(flopo_id) == labels_by_number[number], flopo_id
+        label = labels_by_number[number]
+        # The flora corrections module relabelled PATO:0001891 classes off flat organs "ovoid".
+        assert live_labels.get(flopo_id) in {label, label.removesuffix(" ovate") + " ovoid"}, flopo_id
 
 
 def test_registry_covers_exactly_the_accepted_rows_and_their_bearer_parents(spec):

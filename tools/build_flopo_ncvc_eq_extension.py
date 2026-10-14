@@ -40,6 +40,7 @@ from pathlib import Path
 from rdflib import DCTERMS, OWL, RDF, RDFS, XSD, BNode, Graph, Literal, URIRef
 from rdflib.collection import Collection
 
+from tools.build_flopo_flora_corrections import FLAT_BEARERS
 from flopo2.owl.build import _definition
 from tools.build_flopo_growth_form_extension import live_obo_ids, serialize
 
@@ -244,6 +245,13 @@ def registry_index(path: Path) -> tuple[dict[str, tuple[str, str]], dict[str, st
         previous = live.get(row["signature"])
         if previous is None or number > previous[0]:
             live[row["signature"]] = (number, row["flopo_iri"], row["label"])
+    # The flora corrections module re-pointed "ovate" on flat organs from the solid egg shape
+    # PATO:0001891 to the plane ovate FLOPO:0991024; the class still stands for the signature the
+    # annotated corpus was written with.
+    for signature, entry in list(live.items()):
+        kind, bearer, quality = signature.split("|") if signature.count("|") == 2 else ("", "", "")
+        if kind == "EQ" and quality == "FLOPO_0991024" and bearer in FLAT_BEARERS:
+            live.setdefault(f"EQ|{bearer}|PATO_0001891", entry)
     return {sig: (iri, label) for sig, (_n, iri, label) in live.items()}, labels, numbers
 
 
@@ -409,7 +417,7 @@ def _allocate(
 # (never mint a fresh id there) rather than allocate new ones. A number appearing only because
 # one of these modules edited an already-allocated class (e.g. re-pointing its colour filler) is
 # not a competing allocation and must not be flagged as one.
-_REPOINTING_MODULES = frozenset({"flopo-colour-backbone.ttl"})
+_REPOINTING_MODULES = frozenset({"flopo-colour-backbone.ttl", "flopo-flora-corrections.ttl"})
 
 
 def other_block_numbers(config_dir: Path = Path("config"), ontology_dir: Path = Path("ontology")) -> set[int]:

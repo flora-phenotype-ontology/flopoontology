@@ -57,7 +57,10 @@ def test_values_are_embedded_live_in_the_release(spec):
 
 
 def test_labels_and_synonyms_are_unique_and_not_pato_names(spec, pato):
-    names = {t.name.lower() for t in pato.values()}
+    # PATO:0001891 (solid egg shape) is labelled "ovate" until pato-ontology/pato#627 relabels it
+    # "ovoid"; FLOPO:0991024 is the plane ovate requested there.
+    names = {t.name.lower() for t in pato.values()} - {"ovate"}
+    assert pato["PATO:0001891"].name == "ovate"
     seen = set()
     for row in spec:
         for word in [row["label"], *filter(None, row["exact_synonyms"].split("|"))]:

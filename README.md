@@ -58,6 +58,28 @@ release (`releases/<date>/`) to survive. After publishing, freeze the release wi
 `tools/freeze_flopo_release.py`. The colour backbone builder may be re-run on an embedded
 release: it restores the pre-backbone declarations from `config/flopo_colour_backbone_base.ttl`.
 
+### 2026-10-14
+
+- Plane and solid egg shapes are separated. PATO:0001891 is a solid (3-D) egg shape but was
+  labelled "ovate", the botanical word for the plane outline of a leaf or petal;
+  [pato-ontology/pato#627](https://github.com/pato-ontology/pato/pull/627) relabels it "ovoid"
+  and adds plane ovate and solid obovoid. Until it is merged FLOPO uses the temporary classes
+  FLOPO:0991024 (ovate, beneath PATO 2-D shape) and FLOPO:0991025 (obovoid). The 150 FLOPO
+  classes built on PATO:0001891 keep their IRIs: 30 on flat organs (leaf, leaflet, petal, sepal,
+  bract, glume, …) now use FLOPO:0991024, and the other 120 keep PATO:0001891 and are relabelled
+  "… ovoid" (`tools/build_flopo_flora_corrections.py`).
+- The 129 "increased length" and "decreased length" classes have the exact synonyms "… long"
+  and "… short".
+- Disjointness axioms (`config/flopo_disjoint_values.tsv`): a single whole plant cannot be both
+  herbaceous and frutescent, arborescent or ligneous, both suffrutescent or frutescent and
+  arborescent, have two of annual, biennial and perennial life span, or be both evergreen and
+  deciduous. They are stated as `DisjointClasses(E and has_quality some A, E and has_quality
+  some B)`, so they constrain individual plants; a taxon described as "herb" by one flora and
+  "shrub" by another is a conflict for review, not an inconsistency. Hairiness is not declared
+  disjoint, because a glabrescent organ is hairy and later glabrous.
+
+When #627 is merged, the temporary classes are replaced by PATO:0104368 and PATO:0104369.
+
 ### 2026-10-13
 
 - `flopo.owl` asserts the classified hierarchy: entity–quality classes sit beneath their bearer's
@@ -122,6 +144,14 @@ python -m tools.update_flopo_flora_value_release    # embed in flopo.owl, then t
 ```
 
 The spec is `config/flopo_flora_value_terms.tsv`.
+
+The flora corrections module (plane ovate, length synonyms, disjoint values; see 2026-10-14) is
+built from the release itself, after the value terms are embedded:
+
+```bash
+python -m tools.build_flopo_flora_corrections            # -> ontology/flopo-flora-corrections.ttl
+python -m tools.update_flopo_flora_corrections_release   # embed, then the final passes above
+```
 
 ### How statements are represented
 
