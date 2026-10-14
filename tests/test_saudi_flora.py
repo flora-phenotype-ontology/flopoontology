@@ -152,7 +152,7 @@ def test_alternatives_become_qualitative_relations():
     assertions = [a for s in segments for a in s["assertions"]]
     relations = {a["qualitative_value_relation"]["to_value"]: a for a in assertions if a.get("qualitative_value_relation")}
     shape = relations["PATO_0000946"]["qualitative_value_relation"]
-    assert (shape["from_value"], shape["interpretation"], shape["to_text"]) == ("PATO_0001891", "continuum", "strap-shaped oblong")
+    assert (shape["from_value"], shape["interpretation"], shape["to_text"]) == ("FLOPO_0991024", "continuum", "strap-shaped oblong")  # plane ovate
     colour = relations["PATO_0104054"]
     assert colour["pato_id"] == "PATO_0000014" and colour["qualitative_value_relation"]["from_value"] == "FLOPO_0988001"
     assert all(not a.get("phenotype_class_iri") for a in relations.values())
@@ -182,7 +182,7 @@ def test_endpoint_modifiers_are_kept():
     ])
     segments, _ = annotate_record(rec, _atlas_resources())
     rels = [a["qualitative_value_relation"] for s in segments for a in s["assertions"] if a.get("qualitative_value_relation")]
-    shape = next(r for r in rels if r["from_value"] == "PATO_0001891")
+    shape = next(r for r in rels if r["from_value"] == "FLOPO_0991024")  # plane ovate
     assert shape["from_text"] == "narrowly ovate" and shape["from_operand"]["degree_qualifier"] == "narrowly"
     assert shape["to_text"] == "broadly elliptic" and shape["to_operand"]["degree_qualifier"] == "broadly"
     colour = next(r for r in rels if r["to_value"] == "PATO_0104311")  # purplish red
@@ -202,3 +202,106 @@ def test_lists_of_three_values_become_a_chain_of_relations():
     assert all(c["pato_id"] == "PATO_0000014" for c in chain)
     wrong = {**answer, "values": [*answer["values"][:2], {"text": "violet", "term": "violet"}]}
     assert relations_from_chain(res, wrong, text, 8, 29, "PO_0009046", ["flower"]) == []  # not verbatim
+
+
+def test_short_phrase_is_not_anchored_inside_a_later_statement():
+    from flopo2.ingest.ncvc_annotate import annotate_record
+
+    # Ecbolium gymnostachyum: the transcription lists "terminal" before "long" ("long terminal
+    # spikes"); "long" must not take the one of "10.5 mm long".
+    text = ("the flowers are 5–8 cm long, in long terminal spikes; the seeds are 2, 7.5–10.5 mm long "
+            "and 6–8 [mm] wide.")
+    rec = _record(text, [
+        _row("inflorescence", "terminal", "terminal"),
+        _row("inflorescence", "long", "long"),
+        {**_row("seed", "length", "7.5–10.5 mm long"), "value_low": 7.5, "value_high": 10.5, "unit": "mm"},
+    ])
+    segments, _ = annotate_record(rec, _atlas_resources())
+    long = next(a for s in segments for a in s["assertions"] if a["source_text"] == "long")
+    assert text[long["source_start"] - 3 : long["source_start"]] == "in "
+
+
+def test_context_sentence_does_not_split_at_a_decimal_point():
+    from flopo2.saudi.build import _sentence
+
+    text = "Leaves ovate; the seeds are 2, 7.5–10.5 mm long and 6–8 mm wide, broadly ovoid. Flowers red."
+    start = text.index("6–8")
+    assert _sentence(text, start, start + 3) == "the seeds are 2, 7.5–10.5 mm long and 6–8 mm wide, broadly ovoid."
+
+
+@pytest.mark.parametrize(
+    "quality, text, word",
+    [("PATO:0000573", "in long terminal spikes", "long"), ("PATO:0000587", "tiny white flowers", "tiny"),
+     ("PATO:0000574", "short-petioled", "short"), ("PATO:0000599", "leaves narrow", "narrow"),
+     ("PATO:0000122", "2 cm long", "")],
+)
+def test_comparative_qualities_are_labelled_with_the_source_word(quality, text, word):
+    from flopo2.saudi.build import descriptive_word
+
+    assert descriptive_word(quality, text) == word
+
+
+def test_privative_words_are_negations():
+    from flopo2.ingest.ncvc_annotate import annotate_record
+
+    text = "A leafless herb; spineless stems; unscented flowers; petals absent."
+    rec = _record(text, [
+        _row("whole plant", "leafless", "leafless"),
+        _row("stem", "spineless", "spineless stems"),
+        _row("flower", "unscented", "unscented flowers"),
+        _row("petal", "absent", "petals absent", "absent"),
+    ])
+    segments, _ = annotate_record(rec, _atlas_resources())
+    got = {(a["po_id"], a["pato_id"], a.get("negation_scope")) for s in segments for a in s["assertions"] if a["negated"]}
+    assert ("PO_0025034", "PATO_0000467", "absence") in got  # leaf: not has_part some leaf
+    assert ("PO_0009047", "PATO_0001365", "quality") in got  # stem not spiny
+    assert ("PO_0009046", "PATO_0001331", "quality") in got  # flower not odorous
+    assert ("PO_0009032", "PATO_0000467", "absence") in got  # "absent" read as absence, like "no petals"
+
+
+@pytest.mark.parametrize(
+    "text, rows, expected",
+    [
+        ("An erect grazed woody herb 60 cm high.", [("erect", "An erect grazed woody herb"), ("woody", "An erect grazed woody herb"),
+                                                     ("herb", "An erect grazed woody herb")], ["erect", "woody herb", "merged"]),
+        ("A herbaceous shrub 1 m tall.", [("herbaceous", "herbaceous"), ("shrub", "herbaceous shrub")], ["woody herb", "merged"]),
+        ("A shrubby tree 5 m tall.", [("shrub", "A shrubby tree"), ("tree", "A shrubby tree")], ["tree", "merged"]),
+        ("A shrub; herb layer absent.", [("shrub", "A shrub")], ["shrub"]),
+    ],
+)
+def test_compound_habit_words_are_one_habit(text, rows, expected):
+    from flopo2.ingest.ncvc_annotate import merge_compound_habits
+
+    rec = _record(text, [_row("whole plant", q, src) for q, src in rows])
+    merge_compound_habits(rec)
+    assert [("merged" if p.get("merged_into") else p["quality_en"]) for p in rec["phenotypes"]] == expected
+    if "woody herb" in expected:
+        row = next(p for p in rec["phenotypes"] if p["quality_en"] == "woody herb")
+        assert ground_phenotype(_atlas_resources(), row).value_terms == ["FLOPO_0987003"]  # suffrutescent
+
+
+def test_exclusive_values_table_uses_known_terms():
+    import csv
+
+    from flopo2.saudi.build import EXCLUSIVE
+    from flopo2.saudi.vocab import Vocabulary, curie
+
+    vocab = Vocabulary()
+    with EXCLUSIVE.open(encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle, delimiter="\t"))
+    assert rows
+    for row in rows:
+        for value in (row["value_a"], row["value_b"]):
+            assert vocab.label(value) != curie(value), value
+
+
+def test_compound_habit_with_ocr_digit_and_transcribed_compound():
+    from flopo2.ingest.ncvc_annotate import merge_compound_habits
+
+    rec = _record("A woody herb5 tall.", [_row("whole plant", "herb", "woody herb5"), _row("whole plant", "woody", "woody herb5")])
+    merge_compound_habits(rec)
+    assert [p.get("merged_into") or p["quality_en"] for p in rec["phenotypes"]] == ["woody herb", "woody herb"]
+    rec = _record("A woody-based perennial herbaceous subshrub 75 cm tall.",
+                  [_row("whole plant", "herbaceous subshrub", "herbaceous shrub")])
+    merge_compound_habits(rec)
+    assert rec["phenotypes"][0]["quality_en"] == "woody herb"

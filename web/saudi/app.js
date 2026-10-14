@@ -198,7 +198,7 @@ async function taxa(key) {
 
 async function taxonPage(t) {
   const T = iriLiteral(t);
-  const [g, info, names, records, merged, places, growth, pending, notes] = await Promise.all([
+  const [g, info, names, records, merged, places, growth, pending, notes, conflicts] = await Promise.all([
     groups(),
     sparql(`SELECT (SAMPLE(?l) AS ?label) (SAMPLE(?a) AS ?auth) (SAMPLE(?f) AS ?family) (SAMPLE(?o) AS ?order) (SAMPLE(?w) AS ?wfo)
       (GROUP_CONCAT(DISTINCT ?ar; separator="، ") AS ?arabic) (SAMPLE(?emin) AS ?emin) (SAMPLE(?emax) AS ?emax) (SAMPLE(?nr) AS ?range) WHERE {
@@ -234,6 +234,8 @@ async function taxonPage(t) {
     sparql(`SELECT ?text ?reason ?context ?src WHERE { ?p a fb:PendingStatement ; fb:taxon ${T} ; fb:text ?text ; fb:reason ?reason ;
       fb:source/rdfs:label ?src . OPTIONAL { ?p fb:context ?context } }`),
     sparql(`SELECT ?kind ?text ?src WHERE { VALUES ?kind { fb:abundance fb:habitat } ${T} ?kind ?node . ?node rdfs:label ?text ; fb:source/rdfs:label ?src }`),
+    sparql(`SELECT ?c (SAMPLE(?k) AS ?kind) (SAMPLE(?note) AS ?note) (SAMPLE(?bs) AS ?between) (GROUP_CONCAT(STR(?m); separator=" ") AS ?members) WHERE {
+      ?c a fb:Conflict ; fb:taxon ${T} ; fb:kind ?k ; rdfs:comment ?note ; fb:betweenSources ?bs ; fb:member ?m } GROUP BY ?c`),
   ]);
   const pane = document.getElementById("tpane");
   if (!pane) return;
@@ -271,9 +273,20 @@ async function taxonPage(t) {
     return r.negated === "true" ? `<span class="muted">not</span> ${base}` : base;
   };
   const owlLink = (iri) => iri ? ` <a href="#/query?describe=${encodeURIComponent(iri)}" title="OWL definition of the annotation class">OWL class</a>` : "";
+  // Contradictions: record -> notes of the conflicts it takes part in
+  const byIriAll = new Map(records.map((r) => [r.r, r]));
+  const conflictOf = new Map();
+  const conflictItems = conflicts.map((c) => {
+    const members = c.members.split(" ").map((x) => byIriAll.get(x)).filter(Boolean);
+    members.forEach((m) => (conflictOf.get(m.r) || conflictOf.set(m.r, []).get(m.r)).push(c.note));
+    const where = c.between === "true" ? "the sources disagree" : "within one source";
+    return `<li>${members.map((m) => `<b>${esc(m.label)}</b> <span class="chip ${sourceClass(m.source)}">${esc(m.source)}</span>`).join(" <span class=\"muted\">versus</span> ")}
+      <br><span class="muted">${esc(c.kind)}, ${where}: ${esc(c.note)}</span></li>`;
+  }).join("");
   const recordRow = (r, sub = false) => {
     const id = `d${rowId++}`;
-    const status = r.status === "accepted" ? "" : `<span class="chip review" title="${STATUS_TIP}">${esc(r.status)}</span>`;
+    const clash = conflictOf.has(r.r) ? ` <span class="chip conflict" title="${esc(conflictOf.get(r.r).join("; "))}">conflict</span>` : "";
+    const status = (r.status === "accepted" ? "" : `<span class="chip review" title="${STATUS_TIP}">${esc(r.status)}</span>`) + clash;
     return `<tr class="rec${sub ? " sub" : ""}" data-detail="${id}" tabindex="0"><td class="q">${sub ? "<span class=\"muted\">↳</span> " : ""}${esc(r.label)}${r.qualifier ? ` <span class="muted">(${esc(r.qualifier)})</span>` : ""}</td>
       <td>${valueCell(r)}</td>
       <td><span class="chip ${sourceClass(r.source)}">${esc(r.source)}</span> ${status}</td></tr>
@@ -323,6 +336,8 @@ async function taxonPage(t) {
     <div class="taxon-grid">
       <div>
         <h2>Traits</h2>
+        ${conflicts.length ? `<div class="conflicts"><h3>${n(conflicts.length)} contradictory statement${conflicts.length > 1 ? "s" : ""}</h3>
+          <p class="muted">These statements cannot both be true of one plant. A taxon covers many plants, so the sources may describe different plants or one may be wrong.</p><ul>${conflictItems}</ul></div>` : ""}
         ${records.length ? `<p class="muted">${n(records.length)} annotations. Select one to see the sentence it was read from.</p><table class="traits">${traitRows}</table>` : `<p class="muted">No trait annotations yet.</p>`}
         ${pending.length ? `<details class="pending"><summary>${n(pending.length)} statements not yet annotated</summary><ul>${pending.map((p) => `<li>${highlight(p.context, p.text)} <span class="muted">— ${esc(p.reason.replace(/_/g, " "))}</span></li>`).join("")}</ul></details>` : ""}
       </div>
@@ -504,6 +519,13 @@ SELECT ?taxon ?property ?phenotypeClass WHERE {
   ?taxon rdfs:subClassOf ?restriction .
   ?restriction a owl:Restriction ; owl:onProperty ?property ; owl:someValuesFrom ?phenotypeClass .
 } LIMIT 50`,
+  "Contradictory statements, by kind": `PREFIX fb: <${FB}>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?taxon ?kind ?note (GROUP_CONCAT(?label; separator=" | ") AS ?statements) WHERE {
+  ?c a fb:Conflict ; fb:taxon ?t ; fb:kind ?kind ; rdfs:comment ?note ; fb:member ?r .
+  ?r rdfs:label ?label . ?t rdfs:label ?taxon .
+} GROUP BY ?c ?taxon ?kind ?note ORDER BY ?kind ?taxon`,
   "Statements not yet annotated, by reason": `PREFIX fb: <${FB}>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 

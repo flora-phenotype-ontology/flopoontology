@@ -29,7 +29,8 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from urllib.parse import quote
 
-from rdflib import OWL, RDF, RDFS, XSD, Graph, Literal, Namespace, URIRef
+from rdflib import OWL, RDF, RDFS, XSD, BNode, Graph, Literal, Namespace, URIRef
+from rdflib.collection import Collection
 from rdflib.namespace import DCTERMS, SKOS
 
 from flopo2.owl.annotation_class import annotation_class_iri
@@ -52,6 +53,7 @@ GRAPH = BASE + "saudi-flora/graph/"
 REGION = BASE + "geo/region/"
 GEO = Namespace("http://www.opengis.net/ont/geosparql#")
 OUT = Path("local-corpora/saudi-flora")
+EXCLUSIVE = Path(__file__).with_name("exclusive_values.tsv")  # mutually exclusive values, reviewed
 
 REGIONS = {
     "SA-01": "Riyadh", "SA-02": "Makkah", "SA-03": "Al Madinah", "SA-04": "Eastern Province",
@@ -130,6 +132,8 @@ class Builder:
         self.summary: dict[str, dict] = {}
         # (taxon, bearer, attribute) -> numeric records of every source, for merged ranges
         self.numeric: dict[tuple[str, str, str], list[dict]] = {}
+        # taxon -> qualitative records, for contradiction detection (conflicts_graph)
+        self.facts: dict[str, list[dict]] = defaultdict(list)
 
     # ------------------------------------------------------------------ taxa
     def resolve_names(self, names: list[str]) -> None:
@@ -263,9 +267,19 @@ class Builder:
         if statement:
             g.add((formal, FB.context, Literal(_sentence(text, statement["start"], statement["end"]))))
         g.add((formal, RDFS.label, Literal(self._label(a, bearer, quality))))
+        if not relation and a.get("value_low") is None and a.get("value_high") is None:
+            self.facts[str(taxon)].append({
+                "record": formal, "source": source, "bearer": curie(bearer), "quality": curie(quality),
+                "negated": bool(a.get("negated")), "absence": a.get("negation_scope") == "absence",
+                "frequency": a.get("frequency_qualifier") not in (None, "", "unspecified", "always"),
+            })
+        elif a.get("value_low") is not None or a.get("value_high") is not None:
+            self.facts[str(taxon)].append({"record": formal, "source": source, "bearer": curie(bearer),
+                                           "quality": "", "negated": False, "absence": False, "frequency": False})
 
     def _label(self, a: dict, bearer: str, quality: str) -> str:
         organ = self.vocab.label(bearer)
+        text = a.get("source_text", "")
         if a.get("value_low") is not None or a.get("value_high") is not None:
             low, high = a.get("value_low"), a.get("value_high")
             fmt = lambda v: f"{float(v):g}"  # noqa: E731
@@ -286,7 +300,7 @@ class Builder:
         if a.get("negated") and a.get("negation_scope") == "absence":
             return f"{organ} absent"
         prefix = "not " if a.get("negated") else ""
-        return f"{organ} {prefix}{self.vocab.label(quality)}"
+        return f"{organ} {prefix}{descriptive_word(curie(quality), text) or self.vocab.label(quality)}"
 
     # ------------------------------------------------------------------ places
     def ncvc_places(self, cfg: dict, g: Graph) -> int:
@@ -411,6 +425,99 @@ class Builder:
                 count += 1
         return count
 
+
+    # ------------------------------------------------------------------ contradictions
+    def conflicts_graph(self) -> tuple[Graph, Counter]:
+        """Pairs of records of one taxon that cannot both hold of one plant.
+
+        Three kinds: values declared mutually exclusive in ``exclusive_values.tsv`` (a herb is
+        not a shrub), a statement and its negation (flower odorous / flower not odorous), and an
+        absent part that other records describe (leafless / leaves 2 cm long). Records that state
+        alternatives themselves (a qualitative relation "shrub or small tree") or carry a frequency
+        qualifier ("sometimes spiny") are not compared.  A taxon is a class of plants, so two
+        sources may each be right about different plants: a conflict is flagged for review, it is
+        not an inconsistency.  For each exclusive pair the graph also carries the OWL axiom
+        DisjointClasses(E and has_quality some A, E and has_quality some B): one plant part
+        cannot have both values.
+        """
+
+        g, counts = Graph(), Counter()
+        pairs: list[tuple[str, str, str, str, str]] = []
+        with EXCLUSIVE.open(encoding="utf-8", newline="") as handle:
+            for row in csv.DictReader(handle, delimiter="\t"):
+                pairs.append((curie(row["value_a"]), curie(row["value_b"]), row["bearer"], row["group"], row["note"]))
+
+        def ancestors(q: str) -> set[str]:
+            return set(self.vocab._ancestors(self.vocab.pato, q, part_of=False)) | {q}
+
+        has_quality = URIRef(iri("RO_0000053"))
+        for a_id, b_id, bearer, group, note in pairs:
+            if bearer == "*":
+                continue
+            axiom = BNode()
+            members = []
+            for value in (a_id, b_id):
+                cls = BNode()
+                restriction = BNode()
+                g.add((restriction, RDF.type, OWL.Restriction))
+                g.add((restriction, OWL.onProperty, has_quality))
+                g.add((restriction, OWL.someValuesFrom, URIRef(iri(value))))
+                g.add((cls, RDF.type, OWL.Class))
+                intersection = BNode()
+                Collection(g, intersection, [URIRef(iri(bearer)), restriction])
+                g.add((cls, OWL.intersectionOf, intersection))
+                members.append(cls)
+            g.add((axiom, RDF.type, OWL.AllDisjointClasses))
+            member_list = BNode()
+            Collection(g, member_list, members)
+            g.add((axiom, OWL.members, member_list))
+            g.add((axiom, RDFS.comment, Literal(note)))
+
+        for taxon, facts in sorted(self.facts.items()):
+            label = self.taxa.get(taxon, {}).get("label", "")
+            if len(label.replace("Unidentified entry:", "").split()) < 2:
+                continue  # "Euphorbia sp." entries pool several species
+            qualitative = [f for f in facts if f["quality"] and not f["frequency"]]
+            found: set[tuple] = set()
+
+            def add(kind: str, first: dict, second: dict, note: str) -> None:
+                key = (kind, *sorted((str(first["record"]), str(second["record"]))))
+                if key in found or first["record"] == second["record"]:
+                    return
+                found.add(key)
+                node = URIRef(BASE + "saudi-flora/conflict/" + _digest(*key))
+                g.add((node, RDF.type, FB.Conflict))
+                g.add((node, FB.taxon, URIRef(taxon)))
+                g.add((node, FB.kind, Literal(kind)))
+                g.add((node, RDFS.comment, Literal(note)))
+                g.add((node, FB.member, first["record"]))
+                g.add((node, FB.member, second["record"]))
+                g.add((node, FB.betweenSources, Literal(first["source"] != second["source"])))
+                counts[kind] += 1
+
+            positive = [f for f in qualitative if not f["negated"]]
+            for i, x in enumerate(positive):
+                for y in positive[i + 1:]:
+                    if x["bearer"] != y["bearer"]:
+                        continue
+                    ax, ay = ancestors(x["quality"]), ancestors(y["quality"])
+                    for a_id, b_id, bearer, group, note in pairs:
+                        if bearer not in ("*", x["bearer"].replace(":", "_")):
+                            continue
+                        if (a_id in ax and b_id in ay) or (b_id in ax and a_id in ay):
+                            add("exclusive values", x, y, f"{group}: {note}")
+                            break
+            for neg in (f for f in qualitative if f["negated"]):
+                if neg["absence"]:
+                    for other in facts:
+                        if other["bearer"] == neg["bearer"] and not other["negated"]:
+                            add("absent part described", neg, other,
+                                f"the part {self.vocab.label(neg['bearer'])} is stated absent, yet described")
+                    continue
+                for other in positive:
+                    if other["bearer"] == neg["bearer"] and neg["quality"] in ancestors(other["quality"]):
+                        add("negation", neg, other, "a statement and its negation")
+        return g, counts
 
     # ------------------------------------------------------------------ merged numeric ranges
     def merged_graph(self) -> Graph:
@@ -612,7 +719,10 @@ class Builder:
             self.summary[key] = dict(counts)
         merged = self.merged_graph()
         self.summary["merged_ranges"] = len(set(merged.subjects(RDF.type, FB.MergedTrait)))
-        for name, graph in (("merged", merged), ("taxa", self.taxa_graph()), ("vocab", self.vocab_graph())):
+        conflicts, conflict_counts = self.conflicts_graph()
+        self.summary["conflicts"] = dict(conflict_counts)
+        for name, graph in (("merged", merged), ("conflicts", conflicts), ("taxa", self.taxa_graph()),
+                            ("vocab", self.vocab_graph())):
             path = rdf / f"{name}.nt"
             graph.serialize(path, format="nt", encoding="utf-8")
             files[name] = path
@@ -645,10 +755,49 @@ def _disposition_counts(path: Path) -> Counter:
     return counts
 
 
+# A flora's "long", "small", "narrow" names a PATO comparative quality ("increased length", "decreased
+# size"): the PATO class is kept, but a record is labelled with the descriptive word of the source
+# (the first of these that the source text uses, else the first).  The same applies to PATO classes
+# whose label is not the botanical word: PATO:0001891 is the solid egg shape that pato-ontology/pato#627
+# relabels "ovoid", a botanical ellipsoid is prolate, and botanical pubescence is "pubescent hair".
+DESCRIPTIVE_WORDS = {
+    "PATO:0000573": ("long", "elongated", "elongate"),
+    "PATO:0000574": ("short",),
+    "PATO:0000586": ("large", "big", "huge", "great"),
+    "PATO:0000587": ("small", "tiny", "minute", "little", "dwarf"),
+    "PATO:0000600": ("wide", "broad"),
+    "PATO:0000599": ("narrow",),
+    "PATO:0000570": ("tall", "high"),
+    "PATO:0000569": ("low", "short", "dwarf"),
+    "PATO:0000591": ("thick", "stout", "thickened"),
+    "PATO:0000592": ("thin", "slender"),
+    "PATO:0001714": ("wide", "broad"),
+    "PATO:0001715": ("narrow",),
+    "PATO:0000470": ("many", "numerous", "abundant"),
+    "PATO:0001997": ("few", "sparse"),
+    "PATO:0000374": ("distant", "far apart"),
+    "PATO:0000375": ("close", "crowded"),
+    "PATO:0001891": ("ovoid", "egg-shaped"),
+    "PATO:0001866": ("ellipsoid", "ellipsoidal", "prolate"),
+    "PATO:0000947": ("elliptic", "elliptical", "oval"),
+    "PATO:0001320": ("pubescent", "downy"),
+}
+
+
+def descriptive_word(quality: str, text: str) -> str:
+    words = DESCRIPTIVE_WORDS.get(quality)
+    if not words:
+        return ""
+    return next((w for w in words if re.search(rf"(?<!\w){re.escape(w)}(?![^\W-])", text, re.I)), words[0])
+
+
+_CLAUSE_END = re.compile(r";|\.(?!\d)")  # a decimal point ("10.5 mm") ends no clause
+
+
 def _sentence(text: str, start: int, end: int) -> str:
-    left = max(text.rfind(".", 0, start), text.rfind(";", 0, start)) + 1
-    right_candidates = [i for i in (text.find(".", end), text.find(";", end)) if i != -1]
-    right = min(right_candidates) + 1 if right_candidates else len(text)
+    breaks = [m.start() for m in _CLAUSE_END.finditer(text)]
+    left = max([b for b in breaks if b < start], default=-1) + 1
+    right = min([b for b in breaks if b >= end], default=len(text) - 1) + 1
     return text[left:right].strip()
 
 

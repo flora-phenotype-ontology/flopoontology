@@ -29,9 +29,9 @@ C026	quality	tiny		pato		PATO_0000587			decreased size	size word without a measu
 C027	quality	dwarf		pato		PATO_0000587			decreased size	size word without a measurement (same reading as NCVC small -> decreased size)	claude_reviewed
 C028	quality	minute		pato		PATO_0000587			decreased size	size word without a measurement (same reading as NCVC small -> decreased size)	claude_reviewed
 C029	quality	very small		pato		PATO_0000587			decreased size	size word without a measurement (same reading as NCVC small -> decreased size)	claude_reviewed
-C030	quality	downy		pato		PATO_0000455			pubescent	downy = covered with short soft hairs = pubescent	claude_reviewed
-C031	quality	finely downy		pato		PATO_0000455			pubescent	downy = covered with short soft hairs = pubescent	claude_reviewed
-C032	quality	softly downy		pato		PATO_0000455			pubescent	downy = covered with short soft hairs = pubescent	claude_reviewed
+C030	quality	downy		pato		PATO_0001320			pubescent	downy = covered with short soft hairs = botanical pubescence (PATO:0001320, not the puberty quality PATO:0000455)	claude_reviewed
+C031	quality	finely downy		pato		PATO_0001320			pubescent	downy = covered with short soft hairs = botanical pubescence (PATO:0001320, not the puberty quality PATO:0000455)	claude_reviewed
+C032	quality	softly downy		pato		PATO_0001320			pubescent	downy = covered with short soft hairs = botanical pubescence (PATO:0001320, not the puberty quality PATO:0000455)	claude_reviewed
 C033	quality	soft-hairy		pato		PATO_0000454			hairy	hair type, colour or density words are kept in the source span; hairy is entailed	claude_reviewed
 C034	quality	white-hairy		pato		PATO_0000454			hairy	hair type, colour or density words are kept in the source span; hairy is entailed	claude_reviewed
 C035	quality	brown-hairy		pato		PATO_0000454			hairy	hair type, colour or density words are kept in the source span; hairy is entailed	claude_reviewed
@@ -107,3 +107,24 @@ C105	quality	latex		entity_presence	FLOPO_0980431	PATO_0000467			plant latex pre
 C106	quality	white latex		entity_presence	FLOPO_0980431	PATO_0000467			plant latex present	milky juice/sap = latex (FLOPO:0980431 plant latex)	claude_reviewed
 C107	quality	bulb	whole plant|plant|stem|shoot	entity_presence	PO_0025356	PATO_0000467			bulb present	'a rounded bulb' = the plant has a bulb (PO:0025356)	claude_reviewed
 C108	quality	bulbous base	whole plant|plant|stem|shoot	entity_presence	PO_0025356	PATO_0000467			bulb present	'a rounded bulb' = the plant has a bulb (PO:0025356)	claude_reviewed
+C109	quality	leafless	whole plant|plant|stem|shoot|twig|branch|herb|shrub|bush|tree|twiner|reed|parasite|spike	entity_absence	PO_0025034	PATO_0000467			leaf absent	'leafless' = the plant has no leaves: the complement of has_part some leaf	claude_reviewed
+C110	quality	stemless	whole plant|plant|palm|herb	entity_absence	PO_0009047	PATO_0000467			stem absent	'stemless' (acaulescent) = no aerial stem: the complement of has_part some stem	claude_reviewed
+C111	quality	spineless		negated_value		PATO_0001365			not spiny	privative of spiny (rules C050-C052 map prickly/thorny to PATO spiny)	claude_reviewed
+C112	quality	non-spiny		negated_value		PATO_0001365			not spiny	privative of spiny	claude_reviewed
+C113	quality	thornless		negated_value		PATO_0001365			not spiny	privative of spiny	claude_reviewed
+C114	quality	unscented		negated_value		PATO_0001331			not odorous	privative of scented (rule C001): the complement of has_quality some odorous	claude_reviewed
+C115	quality	scentless		negated_value		PATO_0001331			not odorous	privative of scented (rule C001)	claude_reviewed
+C116	quality	non-stinging		negated_value		PATO_0001727	FLOPO_0980427		not stinging	privative of stinging (FLOPO:0980427)	claude_reviewed
+C117	quality	wingless		negated_value		PATO_0000052	FLOPO_0985004		not winged	privative of winged (FLOPO:0985004)	claude_reviewed
+C118	quality	unwinged		negated_value		PATO_0000052	FLOPO_0985004		not winged	privative of winged (FLOPO:0985004)	claude_reviewed
+C119	quality	woody herb		flopo_value		PATO_0000051	FLOPO_0987003		suffrutescent habit	a woody herb is a herb with a woody base, i.e. a subshrub (FLOPO:0987003), not herbaceous and ligneous at once	claude_reviewed
+C120	quality	woody perennial herb		flopo_value		PATO_0000051	FLOPO_0987003		suffrutescent habit	a woody herb is a herb with a woody base, i.e. a subshrub (FLOPO:0987003)	claude_reviewed
+C121	quality	pubescent		pato		PATO_0001320			pubescent	botanical pubescence PATO:0001320; the lexicon label 'pubescent' is the puberty quality PATO:0000455	claude_reviewed
+C122	quality	ovoid		pato		PATO_0001891			ovoid	solid egg shape PATO:0001891 (relabelled ovoid in pato-ontology/pato#627)	claude_reviewed
+C123	quality	broadly ovoid		pato		PATO_0001891			ovoid	solid egg shape PATO:0001891	claude_reviewed
+C124	quality	broadly ovate		flopo_value		PATO_0002006	FLOPO_0991024		ovate	plane egg-shaped outline, FLOPO:0991024 (temporary for PATO:0104368, pato-ontology/pato#627)	claude_reviewed
+C125	quality	narrowly ovate		flopo_value		PATO_0002006	FLOPO_0991024		ovate	plane egg-shaped outline, FLOPO:0991024 (temporary for PATO:0104368, pato-ontology/pato#627)	claude_reviewed
+C126	quality	oval		pato		PATO_0000947			elliptic	oval = broadly elliptic plane outline (Stearn, Botanical Latin); not the solid egg shape PATO:0001891	claude_reviewed
+C127	quality	broadly oval		pato		PATO_0000947			elliptic	oval = broadly elliptic plane outline (Stearn, Botanical Latin)	claude_reviewed
+C128	quality	ellipsoid		pato		PATO_0001866			prolate	ellipsoid (solid, UPOV TGP/14) = prolate spheroid PATO:0001866; PATO elliptic is the plane shape (pato-ontology/pato#627)	claude_reviewed
+C129	quality	ellipsoidal		pato		PATO_0001866			prolate	ellipsoid (solid, UPOV TGP/14) = prolate spheroid PATO:0001866 (pato-ontology/pato#627)	claude_reviewed

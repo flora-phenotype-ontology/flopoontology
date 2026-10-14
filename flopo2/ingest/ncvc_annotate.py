@@ -103,7 +103,10 @@ class NormalizationRule:
         return any(pattern.search(text or "") for text in bearer_texts)
 
 
-RULE_KINDS = {"bearer", "pato", "flopo_value", "entity_presence", "flopo_phenotype_class", "hold"}
+RULE_KINDS = {
+    "bearer", "pato", "flopo_value", "entity_presence", "entity_absence", "negated_value",
+    "flopo_phenotype_class", "hold",
+}
 
 
 def load_normalization_rules(path: Path = DEFAULT_NORMALIZATION) -> list[NormalizationRule]:
@@ -122,6 +125,16 @@ def load_normalization_rules(path: Path = DEFAULT_NORMALIZATION) -> list[Normali
     return rules
 
 
+# Words whose PATO lexicon match is wrong in botany: PATO:0001891 "ovate" is the solid egg shape
+# (pato-ontology/pato#627), "oval" is broadly elliptic, "ellipsoid" is a synonym of the plane
+# elliptic, and "pubescent" is the puberty quality PATO:0000455.
+PATO_PUBERTY, PATO_BOTANICAL_PUBESCENCE = "PATO_0000455", "PATO_0001320"
+PATO_LABEL_TRAPS = {
+    "ovate", "broadly ovate", "narrowly ovate", "ovoid", "broadly ovoid", "oval", "broadly oval",
+    "ellipsoid", "ellipsoidal", "pubescent", "downy", "finely downy", "softly downy",
+}
+
+
 def enable_atlas_options(res: "Resources") -> None:
     from flopo2.ingest.colour_words import load_colour_words
     from flopo2.saudi.vocab import parse_obo
@@ -135,6 +148,53 @@ def enable_atlas_options(res: "Resources") -> None:
 
     res.llm_relation_chains = load_llm_relations(CHAIN_CACHE)
     res.pato_terms = parse_obo(Path("ont/quality.obo"))
+    res.absence_as_negation = True
+    res.compound_habits = True
+    res.rules_over_pato_label = True
+
+
+# Compound habit words name one habit.  The transcriptions split "herbaceous shrub" into a herb row
+# and a shrub row, two readings that exclude each other (flopo2/saudi/exclusive_values.tsv).
+_SUBSHRUB = re.compile(
+    r"\b(?:woody(?:[- ]based)?|shrubby)\s+(?:[\w-]+\s+){0,2}?herb(?![a-z])"
+    r"|\bherbaceous\s+(?:[\w-]+\s+){0,2}?(?:sub)?shrub(?:let)?\b",
+    re.IGNORECASE,
+)
+_SHRUBBY_TREE = re.compile(r"\bshrubby\s+(?:[\w-]+\s+){0,2}?tree\b", re.IGNORECASE)
+_HABIT_WORDS = {"herb", "herbaceous", "shrub", "shrubby", "woody", "tree", "subshrub", "shrublet",
+                "bush", "frutescent", "arborescent", "ligneous", "woody-based", "woody herb"}
+_WHOLE_PLANT_WORDS = {"whole plant", "plant", "herb", "shrub", "tree", ""}
+
+
+def merge_compound_habits(rec: dict) -> None:
+    """Read "herbaceous shrub", "shrubby herb", "woody herb" as one habit, a subshrub
+    (suffrutescent, rule C119), and "shrubby tree" as a tree.
+
+    The whole-plant habit rows whose evidence lies in such a phrase are replaced: the first
+    becomes the phrase, the others are marked merged (row indices are kept: LLM caches use them).
+    A part-specific row ("stem base woody" from "woody-based") stays: it is true and more specific.
+    """
+
+    text = rec.get("description_en", "")
+    for pattern, target in ((_SUBSHRUB, "woody herb"), (_SHRUBBY_TREE, "tree")):
+        for match in pattern.finditer(text):
+            phrase = match.group(0).lower()
+            first = True
+            for phenotype in rec.get("phenotypes") or []:
+                entity = str(phenotype.get("entity_en") or "").strip().lower()
+                quality = str(phenotype.get("quality_en") or "").strip().lower()
+                evidence = ncvc_guide._normalize(phenotype.get("source_en", "")).lower()
+                words = set(re.findall(r"[a-z-]+", quality))
+                if (entity not in _WHOLE_PLANT_WORDS or not words & _HABIT_WORDS or phenotype.get("merged_into")
+                        or phenotype.get("value_low") is not None or not evidence
+                        or not (evidence in phrase or phrase in evidence or quality == phrase)):
+                    continue
+                if first:
+                    phenotype.update({"quality_en": target, "pato_label": "", "source_en": match.group(0),
+                                      "compound_habit": phrase})
+                    first = False
+                else:
+                    phenotype["merged_into"] = target
 
 
 def merge_rules(
@@ -227,6 +287,11 @@ class Resources:
     # backbone (flopo2.ingest.colour_words), and alternatives/continua as qualitative relations.
     colour_words: dict | None = None
     relations: bool = False
+    absence_as_negation: bool = False
+    compound_habits: bool = False
+    # For PATO_LABEL_TRAPS the reviewed rule wins over the transcriber's PATO label, which takes
+    # PATO names at face value ("ovate" is PATO's solid egg shape, "pubescent" its puberty quality).
+    rules_over_pato_label: bool = False
     pato_terms: dict | None = None
     llm_relations: dict | None = None  # (source_id, row) -> flopo2.ingest.llm_relations answer
     llm_relation_chains: dict | None = None  # same key -> answer splitting 3+ values
@@ -327,9 +392,41 @@ def _find_all(text: str, phrase: str, *, casefold: bool) -> list[int]:
     return [m.start() for m in re.finditer(left + re.escape(phrase) + right, text, flags)]
 
 
-def _pick(starts: list[int], cursor: int, used: frozenset[int] = frozenset()) -> int | None:
-    """First occurrence at/after the cursor, else a unique one; spans already used lose ties."""
+def _clause_bounds(text: str, position: int) -> tuple[int, int]:
+    """The clause (between ``;`` or sentence-final ``.``, not decimal points) holding a position."""
 
+    breaks = [m.start() for m in _CLAUSE_BREAK.finditer(text)]
+    left = max([b + 1 for b in breaks if b < position], default=0)
+    right = min([b for b in breaks if b >= position], default=len(text))
+    return left, right
+
+
+def _pick(
+    starts: list[int],
+    cursor: int,
+    used: frozenset[int] = frozenset(),
+    covered: tuple[tuple[int, int], ...] = (),
+    text: str = "",
+) -> int | None:
+    """First occurrence at/after the cursor, else a unique one; spans already used lose ties.
+
+    With ``covered`` (spans of measurement statements) and ``text``, an occurrence lying inside
+    a measurement loses to a free one in the cursor's clause, even one before the
+    cursor: transcriptions do not always list statements in printed order ("long terminal
+    spikes" listed as terminal, then long, must not take the "long" of a later "10.5 mm long").
+    """
+
+    if covered and text:
+        free = [s for s in starts if s not in used and not any(a <= s < b for a, b in covered)]
+        inside = [s for s in starts if s not in free]
+        if free and inside:
+            left, right = _clause_bounds(text, cursor)
+            same = [s for s in free if left <= s < right]
+            after = [s for s in free if s >= cursor]
+            if same:
+                return min(same, key=lambda s: (s < cursor, abs(s - cursor)))
+            if after:
+                return after[0]
     fresh = [s for s in starts if s not in used]
     for pool in (fresh, starts):
         after = [s for s in pool if s >= cursor]
@@ -377,6 +474,7 @@ _STOPWORDS = {
     "as",
 }
 _WINDOW_BREAK = re.compile(r"[.;]\s")
+_CLAUSE_BREAK = re.compile(r";|\.(?!\d)")
 
 
 def _tokens(text: str) -> list[tuple[str, int, int]]:
@@ -402,7 +500,11 @@ def _token_equal(want: str, have: str) -> bool:
 
 
 def _token_window(
-    text: str, phrase: str, cursor: int, used: frozenset[int] = frozenset()
+    text: str,
+    phrase: str,
+    cursor: int,
+    used: frozenset[int] = frozenset(),
+    covered: tuple[tuple[int, int], ...] = (),
 ) -> tuple[int, int] | None:
     """Smallest in-order window of the phrase's content tokens within one clause."""
 
@@ -426,7 +528,7 @@ def _token_window(
         if k == len(wanted):
             hits.append((start, end))
     starts = [s for s, _e in hits]
-    chosen = _pick(starts, cursor, used)
+    chosen = _pick(starts, cursor, used, covered, text)
     if chosen is None:
         return None
     return next(h for h in hits if h[0] == chosen)
@@ -438,6 +540,7 @@ def locate_span(
     fallback_words: Iterable[tuple[str, str]],
     cursor: int = 0,
     used: frozenset[int] = frozenset(),
+    covered: tuple[tuple[int, int], ...] = (),
 ) -> tuple[int, int, str] | None:
     """Return ``(start, end, method)`` for a transcribed phrase inside the segment text.
 
@@ -449,17 +552,17 @@ def locate_span(
 
     for variant in _phrase_variants(source_phrase):
         for casefold, method in ((False, "source_en_exact"), (True, "source_en_casefold")):
-            start = _pick(_find_all(text, variant, casefold=casefold), cursor, used)
+            start = _pick(_find_all(text, variant, casefold=casefold), cursor, used, covered, text)
             if start is not None:
                 return start, start + len(variant), method
-    window = _token_window(text, source_phrase, cursor, used)
+    window = _token_window(text, source_phrase, cursor, used, covered)
     if window is not None:
         return window[0], window[1], "source_en_token_window"
     for word, method in fallback_words:
         word = ncvc_guide._normalize(word)
         if len(word) < 3:
             continue
-        start = _pick(_find_all(text, word, casefold=True), cursor, used)
+        start = _pick(_find_all(text, word, casefold=True), cursor, used, covered, text)
         if start is not None:
             return start, start + len(word), method
     return None
@@ -522,6 +625,7 @@ class Grounding:
     normalization_status: str = "auto"
     rule_ids: list[str] = field(default_factory=list)
     approximate: str = ""  # cue word of a RELATED ("-ish") colour reading
+    negate: bool = False  # the rule itself states an absence ("leafless", "spineless")
 
 
 def ground_bearer(res: Resources, phenotype: dict) -> tuple[str, str, str]:
@@ -572,11 +676,20 @@ def ground_phenotype(res: Resources, phenotype: dict) -> Grounding:
             )
 
     pato_id = ""
+    negate = False
     pato_label = ncvc_guide._normalize(phenotype.get("pato_label")).lower()
     ids = res.pato_lexicon.get(pato_label, []) if pato_label else []
+    quality_key = normalize_key(phenotype.get("quality_en"))
+    if res.rules_over_pato_label and quality_key in PATO_LABEL_TRAPS and res.rule_for(
+        "quality", quality_key, bearer_texts
+    ):
+        ids = []
     if len(ids) == 1:
         pato_id = ids[0]
         provenance.append(f"quality: exact PATO lexicon label/synonym {pato_label!r} -> {pato_id}")
+        if res.rules_over_pato_label and pato_id == PATO_PUBERTY:
+            pato_id = PATO_BOTANICAL_PUBESCENCE
+            provenance.append(f"quality: plant pubescence, not puberty -> {pato_id}")
     elif len(ids) > 1:
         return Grounding("unresolved", reason="pato_label_collision", po_id=po_id)
 
@@ -621,8 +734,18 @@ def ground_phenotype(res: Resources, phenotype: dict) -> Grounding:
             status = "proposed"
             provenance.append(rule_prov)
             pato_id = rule.pato_id
-            if rule.kind == "entity_presence":
+            if rule.kind in ("entity_presence", "entity_absence"):
                 po_id = rule.po_id
+                if rule.kind == "entity_absence":
+                    pato_id, negate = PATO_PRESENT, True
+            elif rule.kind == "negated_value":
+                # "unscented", "spineless": the privative word negates a quality
+                negate = True
+                if rule.value_term and po_id:
+                    return Grounding(
+                        "assertion", po_id=po_id, pato_id=rule.pato_id, value_terms=[rule.value_term],
+                        provenance=provenance, normalization_status=status, rule_ids=rule_ids, negate=True,
+                    )
             elif rule.kind == "flopo_value" and po_id:
                 return Grounding(
                     "assertion",
@@ -650,6 +773,7 @@ def ground_phenotype(res: Resources, phenotype: dict) -> Grounding:
         provenance=provenance,
         normalization_status=status,
         rule_ids=rule_ids,
+        negate=negate,
     )
 
 
@@ -1082,6 +1206,9 @@ def _mark_approximate(assertion: dict, word: str, text: str) -> None:
 def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposition]]:
     """Return the corpus segment rows (Arabic/English description and habitat) for one species."""
 
+    if res.compound_habits:
+        rec = copy.deepcopy(rec)
+        merge_compound_habits(rec)
     segments = [seg.to_row() for seg in ncvc_guide.iter_segments_from_records([rec])]
     for seg in segments:
         seg.update(
@@ -1100,10 +1227,28 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
     dispositions: list[Disposition] = []
     en_cursor = ar_cursor = 0
     used_starts: set[int] = set()
+    used_spans: list[tuple[int, int]] = []
     pending: list[tuple[dict, Disposition]] = []
+
+    # Spans of measurements ("7.5–10.5 mm long"): the words in them belong to the measurement, so
+    # a bare quality word ("long" of "long terminal spikes") is not anchored inside one.  Those
+    # whose phrase occurs exactly once are known before the loop (statements are not always
+    # listed in printed order).
+    unique_spans: dict[int, tuple[int, int]] = {}
+    if en is not None:
+        for index, phenotype in enumerate(rec.get("phenotypes") or []):
+            if phenotype.get("value_low") is None and phenotype.get("value_high") is None:
+                continue
+            phrase = ncvc_guide._normalize(phenotype.get("source_en", ""))
+            hits = _find_all(en["text"], phrase, casefold=False) if phrase else []
+            if len(hits) == 1:
+                unique_spans[index] = (hits[0], hits[0] + len(phrase))
 
     for index, phenotype in enumerate(rec.get("phenotypes") or []):
         row = {"pdf_page": page, "row": index, **phenotype}
+        if phenotype.get("merged_into"):
+            dispositions.append(Disposition(row, "merged", f"merged_into:{phenotype['merged_into']}"))
+            continue
         grounding = ground_phenotype(res, phenotype)
         hold = _hold_for(res, page, phenotype)
         qualifiers = phenotype.get("qualifiers") or {}
@@ -1117,7 +1262,12 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
         # A measurement must be anchored on its printed numbers, never on a bare quality word.
         fallback = [] if has_value else _fallback_words(phenotype)
         located = locate_span(
-            text, phenotype.get("source_en", ""), fallback, en_cursor, frozenset(used_starts)
+            text,
+            phenotype.get("source_en", ""),
+            fallback,
+            en_cursor,
+            frozenset(used_starts),
+            tuple(used_spans) + tuple(v for k, v in unique_spans.items() if k != index),
         )
         ar_statement, ar_cursor_next = _arabic_statement(
             ar, phenotype.get("source_ar", ""), ar_cursor
@@ -1137,6 +1287,8 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
         start, end, method = located
         en_cursor = start
         used_starts.add(start)
+        if has_value:
+            used_spans.append((start, end))
         span_text = text[start:end]
 
         reason = grounding.reason if grounding.kind == "unresolved" else ""
@@ -1160,7 +1312,16 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                 )
                 reason = problem
         negated = bool(qualifiers.get("negated"))
-        if not reason and negated and grounding.pato_id == PATO_ABSENT:
+        if not reason and grounding.negate:
+            negated = True
+            grounding.provenance.append("negation: the reviewed rule states the absence of the part")
+        elif not reason and res.absence_as_negation and grounding.pato_id == PATO_ABSENT:
+            # Atlas: one representation of absence, the OWL complement of "has part some E",
+            # whether the source says "petals absent", "no petals" or "without petals".
+            negated = not negated
+            grounding.pato_id = PATO_PRESENT
+            grounding.provenance.append("negation: 'absent' expressed as the complement of presence")
+        elif not reason and negated and grounding.pato_id == PATO_ABSENT:
             negated = False
             grounding.provenance.append("negation: PATO absent already expresses the negation")
         if not reason and negated and not gates.NEGATION_EVIDENCE.search(span_text):
