@@ -31,6 +31,9 @@ lexicons, and the gates run on the result.
 | leaves ovate | `leaf and has_quality some ovate` |
 | leaves 2–3 cm long | `has_quality some (length and has_magnitude some decimal[>=2, <=3] and has_value_unit some cm)` |
 | containing 2–3 seeds; corolla has 5 petals | count: E = the counted part, Q = PATO amount, unit UO count unit (`normalize_counts`) |
+| 3 seeds per fruit | count of `(seed and part_of some fruit)` |
+| 11–15 pairs of leaflets per pinna | count of `(object aggregate and has_member exactly 2 leaflet and part_of some pinna)` |
+| flowers in groups of 4–6 | count of `(object aggregate and has_member some flower)` |
 | annual or perennial; white, pink or purple | disjunction: `has_quality some (annual or perennial)`, `value_operator: one_of` (`alternatives_as_union`) |
 | ovate to subglobose; red tending to orange | continuum: a qualitative value relation between the two values (reified; no OWL class, because an intermediate value is neither endpoint) |
 | white becoming pink | temporal transition: qualitative value relation |
@@ -56,7 +59,18 @@ has its own degree cue ("pale yellow or white" stays a relation).
    patterns apply.
 3. **Counts** (`normalize_counts`): numbered parts with a non-length unit become PATO amount with
    the UO count unit; the counted part comes from the quality ("number of petals"), the unit
-   ("seeds") or the entity. Counts of pairs are left alone.
+   ("seeds") or the entity. Nothing about the count is dropped (user's design, 2026-10-15):
+   - the structure the parts belong to ("per fruit", "in each locule", or the row's entity when
+     it is not the counted part) is a `part_of` restriction on the bearer (`bearer_container`):
+     "3 seeds per fruit" is `has_part some ((seed and part_of some fruit) and has_quality some
+     (amount and has_magnitude some decimal[3, 3] and has_value_unit some 'count unit'))`;
+   - pairs are collections (`bearer_collection_size`): "11–15 pairs of leaflets per pinna" is the
+     amount 11–15 of `(object aggregate and has_member exactly 2 leaflet and part_of some pinna)`;
+   - groups ("flowers in groups of 4–6", "clusters of 2 to 16", "whorls of 1–4") are collections
+     of any size (`bearer_collection`): the amount 4–6 of `(object aggregate and has_member some
+     flower)`;
+   - a count per position ("1–3 fruits per leaf axil") is not parthood and stays pending as
+     `count_per_position`.
 4. **Shared attribute of two values** (`ground_value`): a relation or union needs both values
    under one PATO attribute. FLOPO value terms inherit the attribute ancestors of their PATO
    parent ("ovate" beneath 2-D shape and "cordate" share shape). "Morphology" is too general and

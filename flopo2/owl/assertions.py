@@ -54,6 +54,9 @@ ANNOTATION_ONTOLOGY = URIRef("http://phenomebrowser.net/flopo/annotation")
 ANNOTATION_EXTENSION = URIRef(ANNOTATION_EXTENSION_ONTOLOGY)
 HAS_PART = URIRef(OBO + "BFO_0000051")
 HAS_QUALITY = URIRef(OBO + "RO_0000053")
+PART_OF = URIRef(OBO + "BFO_0000050")
+HAS_MEMBER = URIRef(OBO + "RO_0002351")
+OBJECT_AGGREGATE = URIRef(OBO + "BFO_0000027")
 HAPPENS_DURING = URIRef(OBO + "RO_0002092")
 HAS_PHENOTYPE = SIO.SIO_001279
 SIO_STATEMENT = SIO.SIO_001183
@@ -573,6 +576,34 @@ def _developmental_stage_restrictions(
     ]
 
 
+def _bearer_classes(graph: Graph, nodes: _Nodes, assertion: dict, po: URIRef) -> list:
+    """The bearer: E; a collection of exactly n E ("pairs of leaflets": object aggregate and
+    has_member exactly 2 leaflet); either one part_of some container ("seeds per fruit")."""
+
+    size = assertion.get("bearer_collection_size")
+    if size:
+        restriction = nodes.new("memberCardinality")
+        graph.add((restriction, RDF.type, OWL.Restriction))
+        graph.add((restriction, OWL.onProperty, HAS_MEMBER))
+        graph.add((restriction, OWL.qualifiedCardinality, Literal(int(size), datatype=XSD.nonNegativeInteger)))
+        graph.add((restriction, OWL.onClass, po))
+        graph.add((OBJECT_AGGREGATE, RDF.type, OWL.Class))
+        classes = [OBJECT_AGGREGATE, restriction]
+    elif assertion.get("bearer_collection"):
+        # "flowers in groups of 4-6": a collection of flowers; its amount is the number of members.
+        graph.add((OBJECT_AGGREGATE, RDF.type, OWL.Class))
+        classes = [OBJECT_AGGREGATE, _some(graph, nodes, HAS_MEMBER, po)]
+    else:
+        classes = [po]
+    container = _curie_iri(assertion.get("bearer_container"))
+    if assertion.get("bearer_container") and container is None:
+        raise ValueError(f"invalid bearer container: {assertion.get('bearer_container')!r}")
+    if container is not None:
+        graph.add((container, RDF.type, OWL.Class))
+        classes.append(_some(graph, nodes, PART_OF, container))
+    return classes
+
+
 def _phenotype_expression(
     graph: Graph,
     nodes: _Nodes,
@@ -585,6 +616,7 @@ def _phenotype_expression(
             f"invalid PO or FLOPO-local bearer identifier: {assertion.get('po_id')!r}"
         )
     graph.add((po, RDF.type, OWL.Class))
+    bearer_classes = _bearer_classes(graph, nodes, assertion, po)
     quality, numeric, disjunctive = _quality_restrictions(graph, nodes, assertion, attribute_ids)
     bearer_context = _bearer_context_quality_restrictions(graph, nodes, assertion)
     nested_parts = _part_restrictions(graph, nodes, assertion)
@@ -597,12 +629,12 @@ def _phenotype_expression(
     if negated and negation_scope == "quality":
         negated_quality = _complement(graph, nodes, _intersection(graph, nodes, quality))
         bearer = _intersection(
-            graph, nodes, [po, negated_quality, *bearer_context, *nested_parts]
+            graph, nodes, [*bearer_classes, negated_quality, *bearer_context, *nested_parts]
         )
         eq = _some(graph, nodes, HAS_PART, bearer)
     else:
         bearer = _intersection(
-            graph, nodes, [po, *quality, *bearer_context, *nested_parts]
+            graph, nodes, [*bearer_classes, *quality, *bearer_context, *nested_parts]
         )
         positive_eq = _some(graph, nodes, HAS_PART, bearer)
         if negated and negation_scope == "absence":
@@ -948,6 +980,8 @@ def _declare_vocabulary(graph: Graph) -> None:
     for prop in (
         HAS_PART,
         HAS_QUALITY,
+        PART_OF,
+        HAS_MEMBER,
         HAS_PHENOTYPE,
         HAPPENS_DURING,
         FLOPOANN.present_during,

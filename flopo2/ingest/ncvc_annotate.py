@@ -235,6 +235,7 @@ def apply_rereads(rec: dict, answers: dict) -> None:
                     "entity_en": part, "quality_en": "amount", "value_low": low, "value_high": high, "unit": "count",
                     "source_en": evidence or phenotype.get("source_en", ""), "qualifiers": dict(phenotype.get("qualifiers") or {}),
                     "po_label": part, "pato_label": "amount", "reread_from": index, "count_of": part,
+                    "count_container": count_container(part, phenotype.get("entity_en", ""), evidence),
                 })
             continue
         if rows and all(r["kind"] in KIND_REASONS for r in rows):
@@ -291,10 +292,11 @@ def split_inline_alternatives(rec: dict) -> None:
                           "qualifiers": {**qualifiers, "alternatives": parts[1:]}})
 
 
-_COUNT_QUALITY = re.compile(r"\b(?:count|number|amount|single|solitary)\b", re.IGNORECASE)
+_COUNT_QUALITY = re.compile(r"\b(?:count|number|amount|single|solitary|per)\b", re.IGNORECASE)
 _COUNTED_IN_QUALITY = re.compile(
     r"^(?:has\s+)?(?:number|count|amount)\s+of\s+([a-z][a-z -]*?)(?:\s+(?:per|in|on)\b.*)?$"
-    r"|^([a-z][a-z -]*?)\s+(?:number|count)$",
+    r"|^([a-z][a-z -]*?)\s+(?:number|count)$"
+    r"|^([a-z][a-z-]*?)\s+(?:per|in each)\s+[a-z].*$",
     re.IGNORECASE,
 )
 _NOT_PARTS = {"count", "number", "amount", "", "pair", "pairs", "count unit"}
@@ -308,8 +310,22 @@ _COUNT_PHRASE = re.compile(
 )
 
 
+_CONTAINER = re.compile(
+    r"\b(?:per|in each|each|on each)\s+(?!with\b|of\b|and\b|or\b)([a-z][a-z-]*(?:\s+(?!and\b|or\b|with\b|of\b|containing\b)[a-z][a-z-]*)?)",
+    re.IGNORECASE,
+)
+# "flowers in groups of 4-6", "clusters of 2 to 16", "whorls of 1-4": the count is the size of a
+# collection of the parts, not a count per structure.
+_GROUP_WORDS = re.compile(r"\b(?:groups?|clusters?|whorls?|fascicles?|bundles?|heads? of)\b", re.IGNORECASE)
+_PAIRED_PART = re.compile(r"\bpairs?\s+of\s+([a-z][a-z-]*)|\b([a-z][a-z-]*)\s+pairs?\b", re.IGNORECASE)
+_POSITIONS = re.compile(r"\b(?:axil|node|apex|base|tip|side|margin)$", re.IGNORECASE)
+_IRREGULAR_SINGULAR = {"pinnae": "pinna", "leaves": "leaf", "calyces": "calyx", "ovules": "ovule"}
+
+
 def _singular(noun: str) -> str:
     noun = noun.strip().lower()
+    if noun in _IRREGULAR_SINGULAR:
+        return _IRREGULAR_SINGULAR[noun]
     if noun.endswith("ies"):
         return noun[:-3] + "y"
     if noun.endswith(("ches", "shes", "xes")):
@@ -317,45 +333,94 @@ def _singular(noun: str) -> str:
     return noun[:-1] if noun.endswith("s") and not noun.endswith("ss") else noun
 
 
-def normalize_counts(rec: dict) -> None:
-    """Read numbered parts as count measurements: E = the counted part, Q = PATO amount, unit the
-    UO count unit ("containing 2-3 seeds": seed amount 2-3; "corolla has 5 petals": petal amount 5).
+def count_container(counted: str, entity: str, *texts: str) -> str:
+    """The structure the counted parts belong to: "per fruit" / "in each locule" in the quality or
+    source, else the row's entity when it is not the counted part ("inflorescence" for flowers)."""
 
-    The counted part is the part named in the quality ("number of petals"), else in the unit
-    ("seeds"), else the row's entity.  The container ("per fruit") is kept in ``count_container``;
-    counts of pairs are left alone (a pair count is not a count of the parts)."""
+    for text in texts:
+        match = _CONTAINER.search(_PAREN_RE.sub("", text or ""))
+        if match:
+            words = match.group(1).split()
+            container = " ".join([*words[:-1], _singular(words[-1])])
+            if container not in {counted, "count", "number"}:
+                return container
+    entity = _PAREN_RE.sub("", entity or "").strip()
+    return entity if entity and _singular(entity) != counted and not entity.lower().endswith(counted) else ""
+
+
+def normalize_counts(rec: dict) -> None:
+    """Read numbered parts as count measurements of PATO amount in the UO count unit.
+
+    The bearer is the counted part, named in the quality ("number of petals"), else the unit
+    ("seeds"), else the row's entity; the structure it belongs to is ``count_container`` ("3 seeds
+    per fruit": seed and part_of some fruit).  Pairs are counted as collections of two
+    (``count_collection_size``: "11-15 pairs of leaflets per pinna" is the amount of
+    (object aggregate and has_member exactly 2 leaflet and part_of some pinna))."""
 
     for phenotype in rec.get("phenotypes") or []:
         if phenotype.get("merged_into") or (phenotype.get("value_low") is None and phenotype.get("value_high") is None):
             continue
         unit = ncvc_guide._normalize(phenotype.get("unit")).lower()
         quality = _PAREN_RE.sub("", ncvc_guide._normalize(phenotype.get("quality_en"))).lower()
-        if unit in LENGTH_UNITS or "pair" in quality or "pair" in unit:
-            continue
-        if not (unit in _NOT_PARTS and _COUNT_QUALITY.search(quality)) and not (unit and unit not in _NOT_PARTS):
-            continue
-        match = _COUNTED_IN_QUALITY.match(quality)
-        counted = (match.group(1) or match.group(2)) if match else ""
-        if not counted or counted in _NOT_PARTS:
-            counted = unit if unit not in _NOT_PARTS else ""
+        source = ncvc_guide._normalize(phenotype.get("source_en"))
         entity = ncvc_guide._normalize(phenotype.get("entity_en"))
+        if unit in LENGTH_UNITS:
+            continue
+        pairs = "pair" in str(phenotype.get("quality_en") or "").lower() or "pair" in unit
+        if not pairs and not (unit in _NOT_PARTS and _COUNT_QUALITY.search(quality)) and not (unit and unit not in _NOT_PARTS):
+            continue
+        if pairs:
+            counted = ""
+            for text in (quality, source):
+                match = _PAIRED_PART.search(text)
+                word = (match.group(1) or match.group(2)) if match else ""
+                if word and _singular(word) not in {"number", "count", "amount", "of", "in", "two", "the", "leaflet-"}:
+                    counted = word
+                    break
+        else:
+            match = _COUNTED_IN_QUALITY.match(quality)
+            counted = (match.group(1) or match.group(2) or match.group(3)) if match else ""
+            if not counted or counted in _NOT_PARTS:
+                counted = unit if unit not in _NOT_PARTS else ""
         counted = _singular(counted) if counted else entity
         if entity.lower().endswith(counted):
             counted = entity  # "fruit locule" counts locules: keep the more specific part
+        group = not pairs and bool(_GROUP_WORDS.search(f"{quality} {source}"))
+        if group and counted in {"flowers per group", "flower group", "flower cluster", "cluster", "group"}:
+            counted = "flower"
+        container = count_container(counted, entity, quality, source)
+        if group and (not container or _GROUP_WORDS.search(container)):
+            container = ""  # the group is the bearer, not a structure the parts belong to
         phenotype.update({
-            "count_of": counted, "count_container": entity if _singular(entity) != counted else "",
+            "count_of": counted, "count_container": container,
+            "count_collection_size": 2 if pairs else None, "count_collection": group,
             "count_quality": phenotype.get("quality_en"), "entity_en": counted, "po_label": counted,
             "quality_en": "amount", "pato_label": "amount", "unit": "count",
         })
 
 
-def count_from_text(text: str) -> tuple[float, float, str] | None:
-    """(low, high, counted part) of "four petals", "3-5 seeds", "a single seed"; else None."""
+# "two-seeded", "four-petalled", "one-flowered": a count of the part named by the stem.  "-lobed"
+# and "-parted" are not here: "three-lobed" is the quality trilobed.
+_COUNT_COMPOUND = re.compile(
+    r"\b(one|two|three|four|five|six|seven|eight|nine|ten|\d+)-(seeded|petall?ed|sepall?ed|flowered|leaved|valved|ovuled)\b",
+    re.IGNORECASE,
+)
+_COMPOUND_PART = {"seeded": "seed", "petalled": "petal", "petaled": "petal", "sepalled": "sepal", "sepaled": "sepal",
+                  "flowered": "flower", "leaved": "leaf", "valved": "fruit valve", "ovuled": "ovule"}
 
+
+def count_from_text(text: str) -> tuple[float, float, str] | None:
+    """(low, high, counted part) of "four petals", "3-5 seeds", "a single seed", "two-seeded";
+    else None."""
+
+    value = lambda w: float(w) if w.isdigit() else float(_NUMBER_WORDS[w.lower()])  # noqa: E731
+    compound = _COUNT_COMPOUND.search(text or "")
+    if compound:
+        number = value(compound.group(1))
+        return number, number, _COMPOUND_PART[compound.group(2).lower()]
     match = _COUNT_PHRASE.search(text or "")
     if not match:
         return None
-    value = lambda w: float(w) if w.isdigit() else float(_NUMBER_WORDS[w.lower()])  # noqa: E731
     low = value(match.group(1))
     high = value(match.group(2)) if match.group(2) else low
     return low, high, _singular(match.group(3))
@@ -1509,6 +1574,23 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
         reason = grounding.reason if grounding.kind == "unresolved" else ""
         if reason in {"no_ontology_term_for_quality", "missing_or_unsupported_bearer"} and phenotype.get("reread_reason"):
             reason = phenotype["reread_reason"]
+        container_po = ""
+        if not reason and phenotype.get("count_container") and _POSITIONS.search(phenotype["count_container"]):
+            # "1-3 fruits per leaf axil": the fruits are in the axil, not part of it.
+            reason = "count_per_position"
+        if not reason and phenotype.get("count_container"):
+            container = phenotype["count_container"]
+            container_po, container_prov, _ = ground_bearer(res, {"entity_en": container, "po_label": container})
+            if container_po:
+                grounding.provenance.append(f"count: {phenotype.get('count_of')} part_of some {container}; {container_prov}")
+            else:
+                reason = "count_container_not_grounded"
+        if not reason and phenotype.get("count_collection") and not phenotype.get("count_collection_size"):
+            grounding.provenance.append(f"count: the number of {phenotype.get('count_of')} in each group (a collection)")
+        if not reason and phenotype.get("count_collection_size"):
+            grounding.provenance.append(
+                f"count: pairs, a collection of exactly {phenotype['count_collection_size']} {phenotype.get('count_of')}"
+            )
         alternatives = [a for a in qualifiers.get("alternatives") or [] if str(a).strip()]
         low = high = None
         unit = ncvc_guide._normalize(phenotype.get("unit"))
@@ -1633,6 +1715,12 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
         )
         if has_value:
             assertion.update({"value_low": low, "value_high": high, "unit": unit})
+        if container_po:
+            assertion["bearer_container"] = container_po
+        if phenotype.get("count_collection_size"):
+            assertion["bearer_collection_size"] = int(phenotype["count_collection_size"])
+        elif phenotype.get("count_collection"):
+            assertion["bearer_collection"] = True
         if union is not None:
             assertion.update({"pato_id": union["pato_id"], "value_terms": union["values"], "value_operator": "one_of"})
         if relation is not None:

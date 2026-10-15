@@ -237,6 +237,12 @@ class Builder:
                     g.add((formal, prop, Literal(operand["degree_qualifier"])))
             self.used_terms.update({curie(relation["from_value"]), curie(relation["to_value"])})
         self.used_terms.update({curie(bearer), curie(quality), curie(a.get("pato_id") or quality)})
+        self.used_terms.update(curie(v) for v in values)  # every value of a union
+        if a.get("bearer_container"):
+            g.add((formal, FB.container, URIRef(iri(a["bearer_container"]))))
+            self.used_terms.add(curie(a["bearer_container"]))
+        if a.get("bearer_collection_size"):
+            g.add((formal, FB.collectionSize, Literal(int(a["bearer_collection_size"]))))
         if gate.get("flopo_iri"):
             g.add((formal, FB.flopoClass, URIRef(gate["flopo_iri"])))
             self.used_terms.add(curie(gate["flopo_iri"]))
@@ -257,7 +263,10 @@ class Builder:
                 self.used_terms.add(curie(uo))
             g.add((formal, FB.unitSymbol, Literal(a["unit"])))
             if uo and (a.get("value_low") is not None or a.get("value_high") is not None):
-                self.numeric.setdefault((str(taxon), bearer, a["pato_id"]), []).append(
+                # Counts per container or of pairs are other traits than counts of the bare part.
+                context = "|".join(str(a.get(k) or "") for k in ("bearer_container", "bearer_collection_size"))
+                key_bearer = bearer if context == "|" else f"{bearer}|{context}"
+                self.numeric.setdefault((str(taxon), key_bearer, a["pato_id"]), []).append(
                     {"record": formal, "source": source, "low": a.get("value_low"),
                      "high": a.get("value_high"), "uo": uo}
                 )
@@ -296,7 +305,10 @@ class Builder:
             else:
                 value = fmt(low)
             if unit_uo(a.get("unit", "")) == "UO_0000189":
-                return f"{organ} count {value}"
+                what = (f"{organ} pair" if a.get("bearer_collection_size") == 2
+                        else f"{organ} group size" if a.get("bearer_collection") else organ)
+                where = f" per {self.vocab.label(a['bearer_container'])}" if a.get("bearer_container") else ""
+                return f"{what} {value}{where}" if a.get("bearer_collection") and not a.get("bearer_collection_size") else f"{what} count {value}{where}"
             unit = UNIT_LABELS.get(unit_uo(a.get("unit", "")), a.get("unit", ""))
             return f"{organ} {self.vocab.label(a['pato_id'])} {value} {unit}".strip()
         relation = a.get("qualitative_value_relation")
@@ -542,9 +554,11 @@ class Builder:
         g = Graph()
         nodes = _Nodes()
         attributes = _load_attributes(Path("config/pato_lexicon.tsv"))
-        for (taxon_iri, bearer, attribute), members in sorted(self.numeric.items()):
+        for (taxon_iri, key_bearer, attribute), members in sorted(self.numeric.items()):
             if len(members) < 2:
                 continue
+            bearer, _, context = key_bearer.partition("|")
+            container, _, size = context.partition("|")
             units = Counter(m["uo"] for m in members)
             uo = units.most_common(1)[0][0]
             factor = {m["uo"]: UNIT_FACTOR[m["uo"]] / UNIT_FACTOR[uo] for m in members}
@@ -559,6 +573,10 @@ class Builder:
                 "value_low": low, "value_high": high, "value_low_inclusive": True,
                 "value_high_inclusive": True, "unit": UNIT_LABELS[uo], "negated": False,
             }
+            if container:
+                assertion["bearer_container"] = container
+            if size:
+                assertion["bearer_collection_size"] = int(size)
             fac = URIRef(annotation_class_iri(assertion))
             expression, _numeric, _seasonal, _disjunctive = _phenotype_expression(g, nodes, assertion, attributes)
             g.add((fac, RDF.type, OWL.Class))
@@ -566,7 +584,7 @@ class Builder:
             taxon = URIRef(taxon_iri)
             g.add((taxon, RDF.type, OWL.Class))
             g.add((taxon, RDFS.subClassOf, _some(g, nodes, HAS_PHENOTYPE, fac)))
-            node = URIRef(BASE + "saudi-flora/merged/" + _digest(taxon_iri, bearer, attribute))
+            node = URIRef(BASE + "saudi-flora/merged/" + _digest(taxon_iri, key_bearer, attribute))
             g.add((node, RDF.type, FB.MergedTrait))
             g.add((node, FB.taxon, taxon))
             g.add((node, FB.bearer, URIRef(iri(bearer))))

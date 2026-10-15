@@ -24,12 +24,12 @@ def test_counts_name_the_counted_part():
     normalize_counts(rec)
     seen = [(p["entity_en"], p["quality_en"], p["unit"], p.get("count_container", "")) for p in rec["phenotypes"]]
     assert seen[:4] == [
-        ("seed", "amount", "count", ""),
+        ("seed", "amount", "count", "fruit"),
         ("flower", "amount", "count", "inflorescence"),
         ("seed", "amount", "count", "fruit"),
         ("fruit locule", "amount", "count", ""),
     ]
-    assert seen[4][1:3] == ("amount", "pairs")  # pairs are not counts of the parts
+    assert seen[4][1:3] == ("amount", "count") and rec["phenotypes"][4]["count_collection_size"] == 2
     assert seen[5][1:3] == ("length", "cm")
 
 
@@ -65,3 +65,53 @@ def test_only_or_alternatives_become_unions():
     assert alternatives_as_union(_relation("continuum", " to ", "A", "B"), []) is None
     assert alternatives_as_union(_relation("taxon_level_alternatives", " or ", "A", "B"),
                                  [_relation("taxon_level_alternatives", " or ", "B", "C", "PATO_0000014")]) is None
+
+
+def test_count_containers_and_pairs():
+    rec = {"phenotypes": [
+        _row("seed", "count per fruit", 1, 1),
+        _row("leaflet", "amount", 11, 15, "pairs"),
+        _row("leaf", "amount of pinna pairs", 1, 2, "pairs"),
+        _row("fruit", "number per leaf axil", 1, 3, "fruits"),
+    ]}
+    rec["phenotypes"][1]["source_en"] = "11-15 pairs of leaflets per pinna"
+    normalize_counts(rec)
+    got = [(p["entity_en"], p["count_container"], p["count_collection_size"]) for p in rec["phenotypes"]]
+    assert got == [("seed", "fruit", None), ("leaflet", "pinna", 2), ("pinna", "leaf", 2), ("fruit", "leaf axil", None)]
+
+
+def test_container_and_collection_in_owl_and_signature():
+    from rdflib import Graph, URIRef
+    from flopo2.owl import assertions as owl
+    from flopo2.owl.annotation_class import annotation_class_iri
+    from flopo2.verify.gates import assertion_signature
+
+    base = {"po_id": "PO_0020049", "pato_id": "PATO_0000070", "value_terms": [], "value_low": 11,
+            "value_high": 15, "unit": "count"}
+    pairs = {**base, "bearer_collection_size": 2, "bearer_container": "PO_0020050"}
+    graph = Graph()
+    owl._phenotype_expression(graph, owl._Nodes(), pairs, {"PATO_0000070"})
+    assert (None, owl.OWL.onClass, URIRef(owl.OBO + "PO_0020049")) in graph
+    assert (None, owl.OWL.someValuesFrom, URIRef(owl.OBO + "PO_0020050")) in graph
+    assert len({annotation_class_iri(base), annotation_class_iri(pairs),
+                annotation_class_iri({**base, "bearer_container": "PO_0020050"})}) == 3
+    assert assertion_signature(pairs) == "EQC|PO_0020049|2|PATO_0000070"
+
+
+def test_groups_are_collections():
+    rec = {"phenotypes": [_row("flower", "number", 4, 6), _row("seed", "number", 2, 2, "seeds")]}
+    rec["phenotypes"][0]["source_en"] = "flowers in groups of 4–6"
+    rec["phenotypes"][1].update(entity_en="fruit (seed cone)", source_en="containing two seeds")
+    normalize_counts(rec)
+    group, seeds = rec["phenotypes"]
+    assert (group["count_of"], group["count_container"], group["count_collection"]) == ("flower", "", True)
+    assert (seeds["count_of"], seeds["count_container"], seeds["count_collection"]) == ("seed", "fruit", False)
+
+    from rdflib import Graph, URIRef
+    from flopo2.owl import assertions as owl
+    graph = Graph()
+    owl._phenotype_expression(graph, owl._Nodes(), {"po_id": "PO_0009046", "pato_id": "PATO_0000070", "value_terms": [],
+                                                     "value_low": 4, "value_high": 6, "unit": "count", "bearer_collection": True},
+                              {"PATO_0000070"})
+    assert (None, owl.OWL.onProperty, owl.HAS_MEMBER) in graph
+    assert (None, owl.OWL.someValuesFrom, URIRef(owl.OBO + "PO_0009046")) in graph

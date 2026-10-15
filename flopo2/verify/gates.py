@@ -166,6 +166,11 @@ def load_signature_registry(path: Path = Path("config/flopo_id_registry.tsv")) -
 def assertion_signature(assertion: dict) -> str:
     po_id = assertion.get("po_id", "")
     pato_id = assertion.get("pato_id", "")
+    if assertion.get("bearer_collection_size") or assertion.get("bearer_collection"):
+        # A collection of parts ("pairs of leaflets", "flowers in groups") is not the part: no
+        # 'leaflet amount' class.
+        size = int(assertion.get("bearer_collection_size") or 0) or "n"
+        return f"EQC|{po_id}|{size}|{pato_id}"
     if assertion.get("qualitative_value_relation"):
         relation = qualitative_relation_semantics(assertion)
         return "|".join(
@@ -764,6 +769,7 @@ def check_assertion(
         pair_hit = (
             registry.get(key)
             if registry and not value_terms and not part_restrictions
+            and not assertion.get("bearer_collection_size") and not assertion.get("bearer_collection")
             else None
         )
         if signature_hit or pair_hit:

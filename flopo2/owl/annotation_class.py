@@ -406,6 +406,17 @@ def annotation_class_signature(assertion: dict[str, Any]) -> dict[str, Any]:
     # the empty case preserves every pre-context FAC identity byte-for-byte.
     if bearer_context_qualities:
         signature["bearer_context_qualities"] = bearer_context_qualities
+    # Additive like the context qualities: a bearer that is part of a container ("seeds per
+    # fruit") or a collection of n bearers ("pairs of leaflets").
+    if assertion.get("bearer_container"):
+        signature["bearer_container"] = canonical_iri(assertion["bearer_container"])
+    if assertion.get("bearer_collection") and not assertion.get("bearer_collection_size"):
+        signature["bearer_collection"] = True
+    if assertion.get("bearer_collection_size"):
+        size = int(assertion["bearer_collection_size"])
+        if size < 2:
+            raise ValueError(f"a collection bearer needs at least two members: {size}")
+        signature["bearer_collection_size"] = size
     part_restrictions = canonical_part_restrictions(assertion)
     if part_restrictions:
         signature["part_restrictions"] = part_restrictions

@@ -245,6 +245,23 @@ classes:
         multivalued: true
         inlined_as_list: true
         range: ValueOperand
+      bearer_container:
+        description: >-
+          The bearer is part of a structure of this PO or FLOPO class: the phenotype is about the
+          bearer parts of that structure ("3 seeds per fruit": seed and part_of some fruit).
+          Part of the FAC signature when present.
+      bearer_collection:
+        description: >-
+          The bearer is a collection of anatomical_entity parts (object aggregate and has_member
+          some E): "flowers in groups of 4-6" is the amount 4-6 of such a collection of flowers.
+          Part of the FAC signature when present.
+        range: boolean
+      bearer_collection_size:
+        description: >-
+          The bearer is a collection with exactly this many members of the anatomical_entity
+          class (2 for "pairs of leaflets"): object aggregate and has_member exactly n E. Part of
+          the FAC signature when present.
+        range: integer
       bearer_scope:
         description: >-
           Provenance of a positional or sub-part restriction of the named organ, such as
