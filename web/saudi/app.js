@@ -107,7 +107,7 @@ async function overview() {
         ?r a fb:TraitRecord ; fb:organGroup ?og ; fb:traitGroup ?tg ; fb:taxon ?t } GROUP BY ?og ?tg`)
     ),
   ]);
-  const keys = Object.keys(s).filter((k) => k !== "taxa");
+  const keys = Object.keys(s).filter((k) => s[k] && s[k].phenotype_rows !== undefined);
   const records = keys.reduce((a, k) => a + (s[k].assertions || 0), 0);
   const rows = keys.reduce((a, k) => a + (s[k].phenotype_rows || 0), 0);
   const formal = keys.reduce((a, k) => a + (s[k].rows_formalized || 0), 0);
@@ -593,7 +593,7 @@ async function coverage() {
     sources(),
     sparql(`SELECT ?src ?reason (COUNT(*) AS ?n) WHERE { ?p a fb:PendingStatement ; fb:reason ?reason ; fb:source/rdfs:label ?src } GROUP BY ?src ?reason ORDER BY DESC(?n)`),
   ]);
-  const keys = Object.keys(s).filter((k) => k !== "taxa");
+  const keys = Object.keys(s).filter((k) => s[k] && s[k].phenotype_rows !== undefined);
   const blocks = keys
     .map((k) => {
       const meta = src.find((x) => x.s.endsWith("/" + k)) || { label: k };
@@ -607,13 +607,67 @@ async function coverage() {
           <dt>Kept as text, not yet annotated</dt><dd class="num">${n(sk.pending)}</dd>
         </dl>
         <h3>Why statements are not yet annotated</h3>
-        <table class="results"><tbody>${mine
-          .map((r) => `<tr><td style="width:45%">${esc(r.reason.replace(/_/g, " ").replace(/^no ontology term:/, "no ontology term: "))}</td><td class="num" style="width:10%">${n(r.n)}</td><td><div class="bar"><i class="part" style="width:${(100 * r.n) / max}%"></i></div></td></tr>`)
-          .join("")}</tbody></table>`;
+        <p class="muted">Open a reason to list its phrases, most frequent first; open a phrase to see the sentences it comes from.</p>
+        <div class="reasons">${mine
+          .map((r) => `<details class="reason" data-src="${esc(meta.label)}" data-reason="${esc(r.reason)}"><summary><span class="reason-name">${esc(reasonLabel(r.reason))}</span><span class="num">${n(r.n)}</span><span class="bar"><i class="part" style="width:${(100 * r.n) / max}%"></i></span></summary><div class="reason-body"></div></details>`)
+          .join("")}</div>`;
     })
     .join("");
   setView(`<h1>Coverage</h1><p>Each guide was transcribed into trait statements, one per plant part and quality. A statement becomes an annotation when its part and quality match ontology terms and it passes FLOPO's checks. The rest are kept with the reason, so they can be added later.</p>
     <p class="muted">Taxa: ${n(s.taxa.taxa)} in total, ${n(s.taxa.with_wfo)} matched to World Flora Online, ${n(s.taxa.families)} families${keys.length > 1 ? `, ${n(s.taxa.in_all_sources)} described in every source` : ""}.</p>${blocks}`);
+  view.querySelectorAll("details.reason").forEach((d) => d.addEventListener("toggle", () => { if (d.open) pendingPhrases(d); }));
+}
+
+const reasonLabel = (reason) => reason.replace(/_/g, " ").replace(/^no ontology term:/, "no ontology term: ");
+
+/* The pending statements of one source and reason, grouped by phrase (case-folded). */
+async function pendingPhrases(d) {
+  const body = d.querySelector(".reason-body");
+  if (body.dataset.loaded) return;
+  body.dataset.loaded = "1";
+  body.innerHTML = `<p class="muted">Loading…</p>`;
+  try {
+    const rows = await sparql(`SELECT ?text ?context ?taxon ?name WHERE {
+      ?p a fb:PendingStatement ; fb:reason ${JSON.stringify(d.dataset.reason)} ; fb:source/rdfs:label ${JSON.stringify(d.dataset.src)} ;
+         fb:text ?text ; fb:taxon ?taxon . OPTIONAL { ?p fb:context ?context } OPTIONAL { ?taxon rdfs:label ?name } }`);
+    const groups = new Map();
+    for (const r of rows) {
+      const key = r.text.trim().toLowerCase();
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(r);
+    }
+    const phrases = [...groups.entries()].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
+    body.innerHTML = `<div class="phrase-tools"><input type="search" placeholder="Filter phrases" aria-label="Filter phrases">
+      <span class="muted">${n(phrases.length)} distinct phrases</span>
+      <a href="#" class="csv">Download as CSV</a></div>
+      <ul class="phrases">${phrases
+        .map(([key, occ]) => `<li data-key="${esc(key)}"><details><summary><span>${esc(occ[0].text)}</span>${occ.length > 1 ? ` <span class="num muted">× ${n(occ.length)}</span>` : ""}</summary><ul>${occ
+          .map((o) => `<li><a href="${taxonHref(o.taxon)}"><i>${esc(o.name || taxonKey(o.taxon))}</i></a>: ${highlight(o.context, o.text)}</li>`)
+          .join("")}</ul></details></li>`)
+        .join("")}</ul>`;
+    const items = body.querySelectorAll("ul.phrases > li");
+    const count = body.querySelector(".phrase-tools .muted");
+    body.querySelector("input").addEventListener("input", (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      let shown = 0;
+      items.forEach((li) => { const on = !q || li.dataset.key.includes(q); li.hidden = !on; shown += on; });
+      count.textContent = q ? `${n(shown)} of ${n(phrases.length)} phrases` : `${n(phrases.length)} distinct phrases`;
+    });
+    body.querySelector("a.csv").addEventListener("click", (e) => {
+      e.preventDefault();
+      const cell = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+      const lines = [["phrase", "count", "taxon", "sentence"].join(",")];
+      for (const [, occ] of phrases) for (const o of occ) lines.push([o.text, occ.length, o.name || taxonKey(o.taxon), o.context].map(cell).join(","));
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([lines.join("\n")], { type: "text/csv" }));
+      a.download = `${d.dataset.src}-${d.dataset.reason}.csv`.replace(/[^\w.-]+/g, "_");
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+  } catch (err) {
+    delete body.dataset.loaded;
+    body.innerHTML = `<p class="error">${esc(err.message)}</p>`;
+  }
 }
 
 /* ---------------------------------------------------------------- router */
