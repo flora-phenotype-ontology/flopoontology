@@ -225,6 +225,20 @@ _SUPPORTED_LENGTH_UNITS = frozenset(_UNIT_NORMALIZATION) | {
 }
 
 
+# A count is a measurement of PATO amount in the UO count unit: "containing 2-3 seeds" is
+# seed and has_quality some (amount and has_magnitude some decimal[2, 3] and has_value_unit some
+# 'count unit').
+COUNT_QUALITY = "PATO_0000070"
+COUNT_UNITS = {"count", "count unit", "uo:0000189", "uo_0000189"}
+
+
+def is_supported_count(unit: object, pato_id: object) -> bool:
+    """Return whether ``unit`` is the count unit of a count (PATO amount) measurement."""
+
+    return (isinstance(unit, str) and unit.strip().lower() in COUNT_UNITS
+            and str(pato_id or "").replace(":", "_") == COUNT_QUALITY)
+
+
 def is_supported_length_unit(unit: object) -> bool:
     """Return whether ``unit`` is a recognized linear-measurement unit token."""
 

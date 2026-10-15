@@ -125,6 +125,11 @@ in this order:
    deterministic guardrails and a second, independent verification call. Every rule is marked
    `llm_proposed`.
 
+Before the LLM term rules, `flopo2.ingest.llm_reread` has Qwen re-read the rows whose part or
+quality did not match. It separates part and quality, uses the glossed standard term, and gives
+counts, processes and relations to other parts their own reasons. The steps and fixes to reuse
+for a new flora are in `docs/flora-annotation-playbook.md`.
+
 A later table's rule that grounds a word replaces an NCVC "hold" for that word
 (`ncvc_annotate.merge_rules`). The default NCVC corpus in `derived/` keeps to the reviewed NCVC
 table; the atlas reads its own NCVC run in `local-corpora/saudi-flora/ncvc-derived/`.
@@ -133,7 +138,7 @@ table; the atlas reads its own NCVC run in `local-corpora/saudi-flora/ncvc-deriv
 
 Quality words of the Saudi floras that PATO lacks are FLOPO-local value classes, each directly
 beneath its closest PATO class, like the provisional PATO candidates of FLOPO:0985xxx. Examples
-are axillary, solitary, capitate, caespitose (tufted), semi-prostrate, creeping, mat-forming,
+are axillary, solitary, capitate, caespitose (tufted), creeping, mat-forming,
 leafy, twiggy, subsessile, bipinnate, unisexual, exfoliating, fissured, and the odours
 sweet-scented, spicy-scented, sour-smelling, musty-smelling and foetid. Each class is a
 candidate for submission to PATO.
@@ -159,13 +164,17 @@ python -m tools.update_flopo_flora_corrections_release   # embed, then the final
   compound of two hues becomes the intermediate category: orange-red is 'reddish orange',
   orange-yellow is 'orange yellow', grey-green is 'grayish green'. Other compounds become their
   head colour.
-- Alternatives and continua become qualitative value relations ("ovate to oblong", "red tending
-  to orange-yellow", "white or pink"). They are matched deterministically first.
+- Alternatives ("annual or perennial", "white, pink or purple") are one value, the union
+  `has_quality some (annual or perennial)`. Continua and changes in time ("ovate to oblong", "red
+  tending to orange-yellow", "white becoming pink") are qualitative value relations, because an
+  intermediate value is neither endpoint. Both are matched deterministically first.
   `flopo2.ingest.llm_relations` (Qwen) locates the endpoints of the rest, and the spans are
   re-verified verbatim before use.
 - Every annotation class carries its OWL definition in the assertion modules:
   - negation is `ObjectComplementOf` (the part lacks the quality; for "present", the part is absent);
   - measurements are `has_magnitude some xsd:decimal[>= a, <= b]` with a UO unit (`has_value_unit`).
+- Counts ("containing 2–3 seeds") are measurements of PATO amount on the counted part, in the UO
+  count unit.
 - Numeric values of one taxon, part and attribute from several statements or sources are merged
   into one range (graph `merged`, `fb:MergedTrait` with its member records). The merged range has
   an OWL class, and each source value entails the axiom `taxon SubClassOf has_phenotype some`

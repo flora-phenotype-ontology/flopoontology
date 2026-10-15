@@ -111,6 +111,7 @@ def run(raw_path: Path, out_dir: Path) -> dict:
                         "po_id": d.row.get("po_id", ""),
                         "pato_id": d.row.get("pato_id", ""),
                         "value_terms": d.row.get("value_terms", ""),
+                        "reread_from": d.row.get("reread_from", ""),
                     }
                 )
             for seg in segments:

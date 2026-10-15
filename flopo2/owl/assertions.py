@@ -85,6 +85,8 @@ UNIT_IRIS = {
     "nm": "UO_0000018",
     "nanometer": "UO_0000018",
     "nanometre": "UO_0000018",
+    "count": "UO_0000189",
+    "count unit": "UO_0000189",
 }
 
 SEASON_TERMS = {

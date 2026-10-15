@@ -607,7 +607,7 @@ async function coverage() {
           <dt>Kept as text, not yet annotated</dt><dd class="num">${n(sk.pending)}</dd>
         </dl>
         <h3>Why statements are not yet annotated</h3>
-        <p class="muted">Open a reason to list its phrases, most frequent first; open a phrase to see the sentences it comes from.</p>
+        <p class="muted">Open a reason to list the transcribed qualities, most frequent first; open one to see the plant part and the sentences it comes from.</p>
         <div class="reasons">${mine
           .map((r) => `<details class="reason" data-src="${esc(meta.label)}" data-reason="${esc(r.reason)}"><summary><span class="reason-name">${esc(reasonLabel(r.reason))}</span><span class="num">${n(r.n)}</span><span class="bar"><i class="part" style="width:${(100 * r.n) / max}%"></i></span></summary><div class="reason-body"></div></details>`)
           .join("")}</div>`;
@@ -627,22 +627,26 @@ async function pendingPhrases(d) {
   body.dataset.loaded = "1";
   body.innerHTML = `<p class="muted">Loading…</p>`;
   try {
-    const rows = await sparql(`SELECT ?text ?context ?taxon ?name WHERE {
+    const rows = await sparql(`SELECT ?text ?context ?taxon ?name ?part ?quality WHERE {
       ?p a fb:PendingStatement ; fb:reason ${JSON.stringify(d.dataset.reason)} ; fb:source/rdfs:label ${JSON.stringify(d.dataset.src)} ;
-         fb:text ?text ; fb:taxon ?taxon . OPTIONAL { ?p fb:context ?context } OPTIONAL { ?taxon rdfs:label ?name } }`);
+         fb:text ?text ; fb:taxon ?taxon . OPTIONAL { ?p fb:context ?context } OPTIONAL { ?taxon rdfs:label ?name }
+         OPTIONAL { ?p fb:entityText ?part } OPTIONAL { ?p fb:qualityText ?quality } }`);
+    // Group by the transcribed quality (with its part), which is what a term would be made for;
+    // the anchored span can be a fallback word such as the part name.
     const groups = new Map();
     for (const r of rows) {
-      const key = r.text.trim().toLowerCase();
+      r.label = r.quality ? `${r.quality}` : r.text;
+      const key = (r.quality || r.text).trim().toLowerCase();
       if (!groups.has(key)) groups.set(key, []);
       groups.get(key).push(r);
     }
     const phrases = [...groups.entries()].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
-    body.innerHTML = `<div class="phrase-tools"><input type="search" placeholder="Filter phrases" aria-label="Filter phrases">
-      <span class="muted">${n(phrases.length)} distinct phrases</span>
+    body.innerHTML = `<div class="phrase-tools"><input type="search" placeholder="Filter qualities" aria-label="Filter qualities">
+      <span class="muted">${n(phrases.length)} distinct qualities</span>
       <a href="#" class="csv">Download as CSV</a></div>
       <ul class="phrases">${phrases
-        .map(([key, occ]) => `<li data-key="${esc(key)}"><details><summary><span>${esc(occ[0].text)}</span>${occ.length > 1 ? ` <span class="num muted">× ${n(occ.length)}</span>` : ""}</summary><ul>${occ
-          .map((o) => `<li><a href="${taxonHref(o.taxon)}"><i>${esc(o.name || taxonKey(o.taxon))}</i></a>: ${highlight(o.context, o.text)}</li>`)
+        .map(([key, occ]) => `<li data-key="${esc(key)}"><details><summary><span>${esc(occ[0].label)}</span>${occ.length > 1 ? ` <span class="num muted">× ${n(occ.length)}</span>` : ""}</summary><ul>${occ
+          .map((o) => `<li><a href="${taxonHref(o.taxon)}"><i>${esc(o.name || taxonKey(o.taxon))}</i></a>${o.part ? ` <span class="muted">(${esc(o.part)})</span>` : ""}: ${highlight(o.context, o.text)}</li>`)
           .join("")}</ul></details></li>`)
         .join("")}</ul>`;
     const items = body.querySelectorAll("ul.phrases > li");
@@ -651,13 +655,13 @@ async function pendingPhrases(d) {
       const q = e.target.value.trim().toLowerCase();
       let shown = 0;
       items.forEach((li) => { const on = !q || li.dataset.key.includes(q); li.hidden = !on; shown += on; });
-      count.textContent = q ? `${n(shown)} of ${n(phrases.length)} phrases` : `${n(phrases.length)} distinct phrases`;
+      count.textContent = q ? `${n(shown)} of ${n(phrases.length)} qualities` : `${n(phrases.length)} distinct qualities`;
     });
     body.querySelector("a.csv").addEventListener("click", (e) => {
       e.preventDefault();
       const cell = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
-      const lines = [["phrase", "count", "taxon", "sentence"].join(",")];
-      for (const [, occ] of phrases) for (const o of occ) lines.push([o.text, occ.length, o.name || taxonKey(o.taxon), o.context].map(cell).join(","));
+      const lines = [["quality", "count", "part", "span", "taxon", "sentence"].join(",")];
+      for (const [, occ] of phrases) for (const o of occ) lines.push([o.label, occ.length, o.part, o.text, o.name || taxonKey(o.taxon), o.context].map(cell).join(","));
       const a = document.createElement("a");
       a.href = URL.createObjectURL(new Blob([lines.join("\n")], { type: "text/csv" }));
       a.download = `${d.dataset.src}-${d.dataset.reason}.csv`.replace(/[^\w.-]+/g, "_");

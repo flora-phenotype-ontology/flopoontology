@@ -16,8 +16,13 @@ $PY -m flopo2.ingest.collenette_llm --workers "${WORKERS:-12}"
 $PY -m flopo2.ingest.collenette_annotate > /dev/null
 $PY -m flopo2.ingest.ncvc_annotate $NCVC > /dev/null
 $PY -m flopo2.ingest.ncvc_annotate $NCVC -o $ATLAS_NCVC --extra-rules $EXTRA --override-rules $OVERRIDE --atlas > /dev/null
+# Qwen re-reads the unmatched rows (part/quality split, glossed terms, counts, processes)
+$PY -m flopo2.ingest.llm_reread $ATLAS_NCVC/ncvc-saudi-annotated.jsonl $ATLAS_NCVC/ncvc-saudi-phenotype-dispositions.tsv \
+    $COLL/derived/collenette-saudi-annotated.jsonl $COLL/derived/collenette-saudi-dispositions.tsv
+$PY -m flopo2.ingest.collenette_annotate > /dev/null
+$PY -m flopo2.ingest.ncvc_annotate $NCVC -o $ATLAS_NCVC --extra-rules $EXTRA --override-rules $OVERRIDE --atlas > /dev/null
 $PY -m flopo2.ingest.llm_term_rules $COLL/derived/collenette-saudi-dispositions.tsv \
-    $NCVC/derived/ncvc-saudi-phenotype-dispositions.tsv
+    $ATLAS_NCVC/ncvc-saudi-phenotype-dispositions.tsv
 # Qwen locates the endpoints of alternatives/continua that the deterministic matcher missed
 $PY -m flopo2.ingest.llm_relations $ATLAS_NCVC/ncvc-saudi-annotated.jsonl $ATLAS_NCVC/ncvc-saudi-phenotype-dispositions.tsv \
     $COLL/derived/collenette-saudi-annotated.jsonl $COLL/derived/collenette-saudi-dispositions.tsv

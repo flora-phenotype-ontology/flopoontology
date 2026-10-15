@@ -92,9 +92,9 @@ GROWTH_LABELS = {
 MONTHS = "January February March April May June July August September October November December".split()
 
 
-UNIT_LABELS = {"UO_0000008": "m", "UO_0000015": "cm", "UO_0000016": "mm", "UO_0000017": "µm"}
-UNIT_FACTOR = {"UO_0000008": 1.0, "UO_0000015": 0.01, "UO_0000016": 0.001, "UO_0000017": 1e-6}
-UO_NAMES = {"UO_0000008": "meter", "UO_0000015": "centimeter", "UO_0000016": "millimeter", "UO_0000017": "micrometer"}
+UNIT_LABELS = {"UO_0000008": "m", "UO_0000015": "cm", "UO_0000016": "mm", "UO_0000017": "µm", "UO_0000189": "count"}
+UNIT_FACTOR = {"UO_0000008": 1.0, "UO_0000015": 0.01, "UO_0000016": 0.001, "UO_0000017": 1e-6, "UO_0000189": 1.0}
+UO_NAMES = {"UO_0000008": "meter", "UO_0000015": "centimeter", "UO_0000016": "millimeter", "UO_0000017": "micrometer", "UO_0000189": "count unit"}
 
 
 def unit_uo(unit: str) -> str:
@@ -200,6 +200,9 @@ class Builder:
                 graph.add((node, FB.text, Literal(span.get("surface_form", ""))))
                 graph.add((node, FB.reason, Literal(span.get("reason", ""))))
                 graph.add((node, FB.context, Literal(_sentence(text, span["start"], span["end"]))))
+                for field, prop in (("transcribed_entity", FB.entityText), ("transcribed_quality", FB.qualityText)):
+                    if span.get(field):
+                        graph.add((node, prop, Literal(span[field])))
                 if span.get("candidate_pato_id"):
                     graph.add((node, FB.quality, URIRef(iri(span["candidate_pato_id"]))))
                     self.used_terms.add(curie(span["candidate_pato_id"]))
@@ -267,7 +270,8 @@ class Builder:
         if statement:
             g.add((formal, FB.context, Literal(_sentence(text, statement["start"], statement["end"]))))
         g.add((formal, RDFS.label, Literal(self._label(a, bearer, quality))))
-        if not relation and a.get("value_low") is None and a.get("value_high") is None:
+        # A union ("shrub or tree") states alternatives itself: it is not compared for conflicts.
+        if not relation and a.get("value_operator") != "one_of" and a.get("value_low") is None and a.get("value_high") is None:
             self.facts[str(taxon)].append({
                 "record": formal, "source": source, "bearer": curie(bearer), "quality": curie(quality),
                 "negated": bool(a.get("negated")), "absence": a.get("negation_scope") == "absence",
@@ -291,12 +295,18 @@ class Builder:
                 value = f"at least {fmt(low)}"
             else:
                 value = fmt(low)
+            if unit_uo(a.get("unit", "")) == "UO_0000189":
+                return f"{organ} count {value}"
             unit = UNIT_LABELS.get(unit_uo(a.get("unit", "")), a.get("unit", ""))
             return f"{organ} {self.vocab.label(a['pato_id'])} {value} {unit}".strip()
         relation = a.get("qualitative_value_relation")
         if relation:
             return (f"{organ} {self.vocab.label(relation['from_value'])} "
                     f"{relation['connector_text'].strip()} {self.vocab.label(relation['to_value'])}")
+        if a.get("value_operator") == "one_of" and len(a.get("value_terms") or []) > 1:
+            prefix = "not " if a.get("negated") else ""
+            return f"{organ} {prefix}" + " or ".join(
+                descriptive_word(curie(v), text) or self.vocab.label(v) for v in a["value_terms"])
         if a.get("negated") and a.get("negation_scope") == "absence":
             return f"{organ} absent"
         prefix = "not " if a.get("negated") else ""

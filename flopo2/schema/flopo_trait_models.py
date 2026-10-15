@@ -376,6 +376,8 @@ class UnresolvedTraitSpan(ConfiguredBaseModel):
     partial_promotion: Optional[bool] = Field(default=None, description="""True when part of this source span was promoted to one or more assertions while the retained residual still needs normalization or ontology curation.""", json_schema_extra = { "linkml_meta": {'domain_of': ['UnresolvedTraitSpan']} })
     pending_bearer: Optional[str] = Field(default=None, description="""Bearer phrase still awaiting PO or reviewed FLOPO-local anatomy grounding.""", json_schema_extra = { "linkml_meta": {'domain_of': ['UnresolvedTraitSpan']} })
     promoted_po_ids: Optional[list[str]] = Field(default=None, description="""PO identifiers already promoted from a partially resolved source span.""", json_schema_extra = { "linkml_meta": {'domain_of': ['UnresolvedTraitSpan']} })
+    transcribed_entity: Optional[str] = Field(default=None, description="""Plant part as transcribed for this span, before grounding.""", json_schema_extra = { "linkml_meta": {'domain_of': ['UnresolvedTraitSpan']} })
+    transcribed_quality: Optional[str] = Field(default=None, description="""Quality as transcribed for this span, before grounding.""", json_schema_extra = { "linkml_meta": {'domain_of': ['UnresolvedTraitSpan']} })
     extractor: str = Field(default=..., description="""Extraction implementation that produced this unresolved record.""", json_schema_extra = { "linkml_meta": {'domain_of': ['UnresolvedTraitSpan', 'TraitAssertion']} })
 
 

@@ -34,7 +34,7 @@ from flopo2.annotation.qualitative import (
     validate_qualitative_value_relation,
 )
 from flopo2.extract.compose import _clause_around
-from flopo2.extract.measurement import is_supported_length_unit
+from flopo2.extract.measurement import is_supported_count, is_supported_length_unit
 from flopo2.ids.registry import load_registry, relational_signature
 from flopo2.owl.annotation_class import canonical_part_restrictions
 from flopo2.verify.audit_other_attribute_unions import PatoAttributeGraph
@@ -552,7 +552,7 @@ def check_assertion(
     if bounds and not unit:
         reasons.append("measurement_missing_unit")
         score -= 0.5
-    elif bounds and not is_supported_length_unit(unit):
+    elif bounds and not is_supported_length_unit(unit) and not is_supported_count(unit, assertion.get("pato_id")):
         reasons.append("unsupported_measurement_unit")
         score -= 0.5
     elif unit and not bounds:

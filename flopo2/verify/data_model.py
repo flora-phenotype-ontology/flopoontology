@@ -40,7 +40,7 @@ from flopo2.annotation.positional import (
 )
 from flopo2.annotation.qualitative import validate_qualitative_value_relation
 from flopo2.extract.compose import _clause_around
-from flopo2.extract.measurement import is_supported_length_unit
+from flopo2.extract.measurement import is_supported_count, is_supported_length_unit
 from flopo2.owl.annotation_class import ANNOTATION_CLASS_BASE, annotation_class_iri
 from flopo2.schema.flopo_trait_models import (
     SourceStatement,
@@ -1279,7 +1279,7 @@ def _validate_assertion(
             repr(bounds),
             assertion_number,
         )
-    elif bounds and not is_supported_length_unit(parsed.unit):
+    elif bounds and not is_supported_length_unit(parsed.unit) and not is_supported_count(parsed.unit, parsed.quality):
         _add(
             issues,
             line_number,

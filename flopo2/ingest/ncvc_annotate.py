@@ -69,6 +69,9 @@ _UNSUPPORTED_UPPER_RE = re.compile(
 _FREQUENCY_WORDS = {"usually", "often", "sometimes", "rarely", "mostly", "occasionally"}
 
 
+from flopo2.extract.measurement import is_supported_count  # noqa: E402
+
+
 def normalize_key(text: str | None) -> str:
     """Lower-case a transcribed quality/entity phrase, dropping parentheticals and habit suffixes."""
 
@@ -151,6 +154,9 @@ def enable_atlas_options(res: "Resources") -> None:
     res.absence_as_negation = True
     res.compound_habits = True
     res.rules_over_pato_label = True
+    from flopo2.ingest.llm_reread import load as load_rereads
+
+    res.rereads = load_rereads()
 
 
 # Compound habit words name one habit.  The transcriptions split "herbaceous shrub" into a herb row
@@ -195,6 +201,189 @@ def merge_compound_habits(rec: dict) -> None:
                     first = False
                 else:
                     phenotype["merged_into"] = target
+
+
+def apply_rereads(rec: dict, answers: dict) -> None:
+    """Replace unmatched rows by the model's corrected rows (flopo2.ingest.llm_reread).
+
+    A corrected row is kept only if it differs from every other row of the record; its evidence
+    must be verbatim in the description, else the original evidence is used.  The original row is
+    marked merged (row indices are kept: LLM caches use them) and the new rows are appended with
+    ``reread_from``.  An answer of only counts, relations, processes or non-traits keeps the
+    original row and records the precise reason in ``reread_reason``.
+    """
+
+    from flopo2.ingest.llm_reread import KIND_REASONS, matches
+
+    source_id = ncvc_guide._source_id(rec)
+    text = ncvc_guide._normalize(rec.get("description_en", "")).lower()
+    phenotypes = rec.get("phenotypes") or []
+    keys = [(normalize_key(p.get("entity_en")), normalize_key(p.get("quality_en"))) for p in phenotypes]
+    for index in range(len(phenotypes)):
+        phenotype = phenotypes[index]
+        answer = answers.get((source_id, index))
+        if not answer or phenotype.get("merged_into") or not matches(answer, phenotype):
+            continue
+        rows = answer.get("rows") or []
+        counts = [count_from_text(r["evidence"] or r["quality"]) for r in rows if r["kind"] == "count"]
+        counts = [c for c in counts if c is not None]
+        if counts and all(r["kind"] == "count" for r in rows):
+            phenotype["merged_into"] = "llm re-read"
+            for low, high, part in counts:
+                evidence = next((r["evidence"] for r in rows if r["evidence"] and ncvc_guide._normalize(r["evidence"]).lower() in text), "")
+                phenotypes.append({
+                    "entity_en": part, "quality_en": "amount", "value_low": low, "value_high": high, "unit": "count",
+                    "source_en": evidence or phenotype.get("source_en", ""), "qualifiers": dict(phenotype.get("qualifiers") or {}),
+                    "po_label": part, "pato_label": "amount", "reread_from": index, "count_of": part,
+                })
+            continue
+        if rows and all(r["kind"] in KIND_REASONS for r in rows):
+            phenotype["reread_reason"] = KIND_REASONS[rows[0]["kind"]]
+            continue
+        new, covered = [], False
+        for r in rows:
+            if r["kind"] in KIND_REASONS:
+                continue
+            entity, quality = r["part"], r["quality"]
+            if r["kind"] == "structure":
+                entity, quality = (quality if quality.lower() != "present" else entity), "present"
+            key = (normalize_key(entity), normalize_key(quality))
+            if not all(key):
+                continue
+            if key == keys[index]:
+                continue  # the model kept the row as it is
+            if key in keys:
+                covered = True
+                continue
+            evidence = r["evidence"] if ncvc_guide._normalize(r["evidence"]).lower() in text else ""
+            qualifiers = dict(phenotype.get("qualifiers") or {})
+            qualifiers["alternatives"] = r["alternatives"] if r["kind"] == "alternatives" else []
+            keys.append(key)
+            new.append({
+                "entity_en": entity, "quality_en": quality, "value_low": None, "value_high": None,
+                "unit": "", "source_en": evidence or phenotype.get("source_en", ""),
+                "qualifiers": qualifiers, "po_label": entity, "pato_label": quality,
+                "reread_from": index,
+            })
+        if new or covered:
+            phenotype["merged_into"] = "llm re-read"
+            phenotypes.extend(new)
+
+
+_INLINE_ALTERNATIVES = re.compile(r"\s*,\s*(?:or\s+)?|\s+or\s+|\s+to\s+", re.IGNORECASE)
+
+
+def split_inline_alternatives(rec: dict) -> None:
+    """Read a transcribed quality "shrub or small tree" / "ovate to subglobose" as the quality
+    "shrub" with the alternative "small tree", the shape the relation and union patterns take.
+    Only short values (up to three words each) are split; measurements are left alone."""
+
+    for phenotype in rec.get("phenotypes") or []:
+        qualifiers = phenotype.get("qualifiers") or {}
+        if (phenotype.get("merged_into") or phenotype.get("value_low") is not None
+                or phenotype.get("value_high") is not None or qualifiers.get("alternatives")):
+            continue
+        quality = _PAREN_RE.sub("", str(phenotype.get("quality_en") or "")).strip()
+        parts = [p.strip(" ,;") for p in _INLINE_ALTERNATIVES.split(quality)]
+        if len(parts) < 2 or not all(parts) or any(len(p.split()) > 3 for p in parts):
+            continue
+        phenotype.update({"quality_en": parts[0], "pato_label": parts[0], "inline_alternatives": quality,
+                          "qualifiers": {**qualifiers, "alternatives": parts[1:]}})
+
+
+_COUNT_QUALITY = re.compile(r"\b(?:count|number|amount|single|solitary)\b", re.IGNORECASE)
+_COUNTED_IN_QUALITY = re.compile(
+    r"^(?:has\s+)?(?:number|count|amount)\s+of\s+([a-z][a-z -]*?)(?:\s+(?:per|in|on)\b.*)?$"
+    r"|^([a-z][a-z -]*?)\s+(?:number|count)$",
+    re.IGNORECASE,
+)
+_NOT_PARTS = {"count", "number", "amount", "", "pair", "pairs", "count unit"}
+_NUMBER_WORDS = {"a": 1, "an": 1, "one": 1, "single": 1, "a single": 1, "two": 2, "three": 3, "four": 4, "five": 5,
+                 "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10, "twelve": 12}
+_COUNT_PHRASE = re.compile(
+    r"\b(\d+|a single|single|one|two|three|four|five|six|seven|eight|nine|ten|twelve)"
+    r"(?:\s*(?:-|–|to)\s*(\d+|two|three|four|five|six|seven|eight|nine|ten|twelve))?"
+    r"\s+([a-z][a-z-]*?)s?\b",
+    re.IGNORECASE,
+)
+
+
+def _singular(noun: str) -> str:
+    noun = noun.strip().lower()
+    if noun.endswith("ies"):
+        return noun[:-3] + "y"
+    if noun.endswith(("ches", "shes", "xes")):
+        return noun[:-2]
+    return noun[:-1] if noun.endswith("s") and not noun.endswith("ss") else noun
+
+
+def normalize_counts(rec: dict) -> None:
+    """Read numbered parts as count measurements: E = the counted part, Q = PATO amount, unit the
+    UO count unit ("containing 2-3 seeds": seed amount 2-3; "corolla has 5 petals": petal amount 5).
+
+    The counted part is the part named in the quality ("number of petals"), else in the unit
+    ("seeds"), else the row's entity.  The container ("per fruit") is kept in ``count_container``;
+    counts of pairs are left alone (a pair count is not a count of the parts)."""
+
+    for phenotype in rec.get("phenotypes") or []:
+        if phenotype.get("merged_into") or (phenotype.get("value_low") is None and phenotype.get("value_high") is None):
+            continue
+        unit = ncvc_guide._normalize(phenotype.get("unit")).lower()
+        quality = _PAREN_RE.sub("", ncvc_guide._normalize(phenotype.get("quality_en"))).lower()
+        if unit in LENGTH_UNITS or "pair" in quality or "pair" in unit:
+            continue
+        if not (unit in _NOT_PARTS and _COUNT_QUALITY.search(quality)) and not (unit and unit not in _NOT_PARTS):
+            continue
+        match = _COUNTED_IN_QUALITY.match(quality)
+        counted = (match.group(1) or match.group(2)) if match else ""
+        if not counted or counted in _NOT_PARTS:
+            counted = unit if unit not in _NOT_PARTS else ""
+        entity = ncvc_guide._normalize(phenotype.get("entity_en"))
+        counted = _singular(counted) if counted else entity
+        if entity.lower().endswith(counted):
+            counted = entity  # "fruit locule" counts locules: keep the more specific part
+        phenotype.update({
+            "count_of": counted, "count_container": entity if _singular(entity) != counted else "",
+            "count_quality": phenotype.get("quality_en"), "entity_en": counted, "po_label": counted,
+            "quality_en": "amount", "pato_label": "amount", "unit": "count",
+        })
+
+
+def count_from_text(text: str) -> tuple[float, float, str] | None:
+    """(low, high, counted part) of "four petals", "3-5 seeds", "a single seed"; else None."""
+
+    match = _COUNT_PHRASE.search(text or "")
+    if not match:
+        return None
+    value = lambda w: float(w) if w.isdigit() else float(_NUMBER_WORDS[w.lower()])  # noqa: E731
+    low = value(match.group(1))
+    high = value(match.group(2)) if match.group(2) else low
+    return low, high, _singular(match.group(3))
+
+
+_OR_CONNECTOR = re.compile(r"^\s*(?:,\s*)?(?:or|/|either)\b|^\s*/\s*$|^\s*,\s*$", re.IGNORECASE)
+
+
+def alternatives_as_union(relation: dict, extras: list[dict]) -> dict | None:
+    """"X or Y" (and "X, Y or Z") as one value, has_quality some (X or Y): an OWL union that
+    entails exactly what the source states.  Continua and transitions stay relations: an
+    intermediate value is neither endpoint, and a change in time is not a disjunction."""
+
+    relations = [relation, *extras]
+    if any(r["relation"]["interpretation"] != "taxon_level_alternatives" for r in relations):
+        return None
+    if any(r["pato_id"] != relation["pato_id"] for r in relations):
+        return None
+    if not all(_OR_CONNECTOR.search(r["relation"]["connector_text"]) for r in relations):
+        return None  # "pink and white" is both colours, not either
+    if any(r["relation"].get(f"{side}_operand") for r in relations for side in ("from", "to")):
+        return None  # a degree cue on one value ("pale yellow or white") stays a relation
+    values = list(dict.fromkeys(v for r in relations for v in (r["relation"]["from_value"], r["relation"]["to_value"])))
+    if len(values) < 2:
+        return None
+    return {"pato_id": relation["pato_id"], "values": values,
+            "start": min(r["relation"]["from_start"] for r in relations),
+            "end": max(r["relation"]["to_end"] for r in relations)}
 
 
 def merge_rules(
@@ -295,6 +484,7 @@ class Resources:
     pato_terms: dict | None = None
     llm_relations: dict | None = None  # (source_id, row) -> flopo2.ingest.llm_relations answer
     llm_relation_chains: dict | None = None  # same key -> answer splitting 3+ values
+    rereads: dict | None = None  # same key -> flopo2.ingest.llm_reread answer
 
     def rule_for(self, field_name: str, key: str, bearer_texts: Iterable[str]):
         bearer_texts = list(bearer_texts)
@@ -951,10 +1141,11 @@ _RELATION_CONNECTORS = [
 
 
 def _attribute_ancestors(res: "Resources", value: str) -> list[str]:
-    """Attribute-slim ancestors of a PATO value, nearest first."""
+    """Attribute-slim ancestors of a PATO value (itself first if it is one), nearest first.
 
-    if value in res.attribute_ids:
-        return [value]
+    An attribute's own ancestors are included: a FLOPO value beneath 2-D shape and a PATO value
+    beneath shape share the attribute shape."""
+
     terms = res.pato_terms or {}
     out, frontier, seen = [], [value.replace("_", ":", 1)], set()
     while frontier:
@@ -968,8 +1159,26 @@ def _attribute_ancestors(res: "Resources", value: str) -> list[str]:
     return out
 
 
+# Attributes too general to relate two values: "spiny or hairy" share only morphology.
+_TOO_GENERAL_ATTRIBUTES = {"PATO_0000001", "PATO_0000051", "PATO_0001241"}
+# PATO has no habit attribute: the growth forms (herbaceous, ligneous, arborescent, frutescent,
+# suffrutescent) are related under morphology, as the FLOPO growth-form terms are placed.
+_MORPHOLOGY = "PATO_0000051"
+_HABIT_VALUES = {"PATO_0002352", "PATO_0002348", "FLOPO_0987001", "FLOPO_0987002", "FLOPO_0987003"}
+
+
 def ground_value(res: "Resources", word: str, bearer_texts: list[str]) -> tuple[str, list[str]] | None:
     """Ground one quality word to ``(value id, attribute ids nearest first)``."""
+
+    grounded = _ground_value(res, word, bearer_texts)
+    if grounded is None:
+        return None
+    if grounded[0] in _HABIT_VALUES:
+        return grounded[0], [_MORPHOLOGY]
+    return grounded[0], [a for a in grounded[1] if a not in _TOO_GENERAL_ATTRIBUTES]
+
+
+def _ground_value(res: "Resources", word: str, bearer_texts: list[str]) -> tuple[str, list[str]] | None:
 
     if res.colour_words is not None:
         colour = colour_value(word, res.colour_words)
@@ -980,7 +1189,7 @@ def ground_value(res: "Resources", word: str, bearer_texts: list[str]) -> tuple[
     if rule is not None and rule.kind == "pato" and rule.pato_id:
         return rule.pato_id, _attribute_ancestors(res, rule.pato_id)
     if rule is not None and rule.kind == "flopo_value" and rule.value_term:
-        return rule.value_term, [rule.pato_id]
+        return rule.value_term, _attribute_ancestors(res, rule.pato_id) or [rule.pato_id]
     ids = res.pato_lexicon.get(key, [])
     if len(ids) == 1:
         return ids[0], _attribute_ancestors(res, ids[0])
@@ -1206,9 +1415,15 @@ def _mark_approximate(assertion: dict, word: str, text: str) -> None:
 def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposition]]:
     """Return the corpus segment rows (Arabic/English description and habitat) for one species."""
 
-    if res.compound_habits:
+    if res.compound_habits or res.rereads:
         rec = copy.deepcopy(rec)
+    if res.compound_habits:
         merge_compound_habits(rec)
+    if res.rereads:
+        apply_rereads(rec, res.rereads)
+    if res.relations:
+        split_inline_alternatives(rec)
+        normalize_counts(rec)
     segments = [seg.to_row() for seg in ncvc_guide.iter_segments_from_records([rec])]
     for seg in segments:
         seg.update(
@@ -1292,9 +1507,22 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
         span_text = text[start:end]
 
         reason = grounding.reason if grounding.kind == "unresolved" else ""
+        if reason in {"no_ontology_term_for_quality", "missing_or_unsupported_bearer"} and phenotype.get("reread_reason"):
+            reason = phenotype["reread_reason"]
         alternatives = [a for a in qualifiers.get("alternatives") or [] if str(a).strip()]
         low = high = None
         unit = ncvc_guide._normalize(phenotype.get("unit"))
+        if not reason and alternatives and res.relations:
+            # Alternatives the transcriber listed although none of them is in the source sentence
+            # ("white flowers" with alternative "pink" from another entry): the row states one value.
+            left = max(text.rfind(c, 0, start) for c in ".;") + 1
+            right = min([i for i in (text.find(c, end) for c in ".;") if i >= 0] or [len(text)])
+            sentence = text[left:right].lower()
+            if not any(str(a).strip().lower() in sentence for a in alternatives):
+                grounding.provenance.append(
+                    "alternatives: " + ", ".join(map(str, alternatives)) + " not in the source sentence; the row states one value"
+                )
+                alternatives = []
         if not reason and alternatives:
             reason = "taxon_level_alternatives_or_continuum"
         if not reason and _OR_RE.search(span_text):
@@ -1302,7 +1530,7 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
         if not reason and str(qualifiers.get("stage") or "").strip():
             reason = "developmental_stage_context"
         if not reason and has_value:
-            if unit not in LENGTH_UNITS:
+            if unit not in LENGTH_UNITS and not is_supported_count(unit, grounding.pato_id):
                 reason = "count_or_non_length_measurement" if unit else "measurement_missing_unit"
             elif grounding.pato_id not in res.attribute_ids:
                 reason = "numeric_quality_not_pato_attribute"
@@ -1327,7 +1555,7 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
         if not reason and negated and not gates.NEGATION_EVIDENCE.search(span_text):
             reason = "negation_cue_not_in_source_span"
 
-        relation = None
+        relation = union = None
         extra_relations: list[dict] = []
         if res.relations and not has_value and not str(phenotype.get("unit") or "").strip() \
                 and reason in {"taxon_level_alternatives_or_continuum", "explicit_disjunction"}:
@@ -1351,6 +1579,13 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                 reason = ""
                 rel = relation["relation"]
                 start, end = min(start, rel["from_start"]), max(end, rel["to_end"])
+                union = alternatives_as_union(relation, extra_relations)
+                if union is not None:
+                    start, end = min(start, union["start"]), max(end, union["end"])
+                    grounding.provenance.append(
+                        "disjunction: " + " or ".join(union["values"]) + " -> has_quality some (union of the values)"
+                    )
+                    relation, extra_relations = None, []
                 span_text = text[start:end]
 
         if reason:
@@ -1362,6 +1597,8 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                 "reason": reason,
                 "candidate_pato_id": candidate,
                 "extractor": EXTRACTOR,
+                "transcribed_entity": ncvc_guide._normalize(phenotype.get("entity_en")),
+                "transcribed_quality": ncvc_guide._normalize(phenotype.get("quality_en")),
             }
             if reason == "missing_or_unsupported_bearer":
                 unresolved["pending_bearer"] = ncvc_guide._normalize(
@@ -1396,6 +1633,8 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
         )
         if has_value:
             assertion.update({"value_low": low, "value_high": high, "unit": unit})
+        if union is not None:
+            assertion.update({"pato_id": union["pato_id"], "value_terms": union["values"], "value_operator": "one_of"})
         if relation is not None:
             assertion.update({"pato_id": relation["pato_id"], "value_terms": [],
                               "qualitative_value_relation": relation["relation"]})
@@ -1736,6 +1975,7 @@ DISPOSITION_FIELDS = [
     "rules",
     "anchor_method",
     "source_en",
+    "reread_from",
 ]
 
 

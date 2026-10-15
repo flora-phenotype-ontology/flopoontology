@@ -47,6 +47,8 @@ _UNIT_IRIS = {
     "nm": OBO + "UO_0000018",
     "nanometer": OBO + "UO_0000018",
     "nanometre": OBO + "UO_0000018",
+    "count": OBO + "UO_0000189",
+    "count unit": OBO + "UO_0000189",
 }
 
 _SEASON_IRIS = {

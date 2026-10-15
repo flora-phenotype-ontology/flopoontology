@@ -26,6 +26,8 @@
 --     * Slot: negation_residual_detail Description: Human-readable audit detail explaining the negation residual disposition.
 --     * Slot: partial_promotion Description: True when part of this source span was promoted to one or more assertions while the retained residual still needs normalization or ontology curation.
 --     * Slot: pending_bearer Description: Bearer phrase still awaiting PO or reviewed FLOPO-local anatomy grounding.
+--     * Slot: transcribed_entity Description: Plant part as transcribed for this span, before grounding.
+--     * Slot: transcribed_quality Description: Quality as transcribed for this span, before grounding.
 --     * Slot: extractor Description: Extraction implementation that produced this unresolved record.
 --     * Slot: TraitExtraction_id Description: Autocreated FK slot
 -- # Class: TraitAssertion Description: One grounded entity-quality statement: an anatomical entity (PO) bears a quality (PATO), optionally with a quantitative phenotype value, bearer context quality, modality, season, negation, or structured qualitative value relation, justified by a retained source statement. FAC-representable flora data is normally a source-scoped universal or qualified TBox claim, not an observation or measurement event; qualitative relations remain at the assertion level and never become taxon TBox axioms.
@@ -331,6 +333,8 @@ CREATE TABLE "UnresolvedTraitSpan" (
 	negation_residual_detail TEXT,
 	partial_promotion BOOLEAN,
 	pending_bearer TEXT,
+	transcribed_entity TEXT,
+	transcribed_quality TEXT,
 	extractor TEXT NOT NULL,
 	"TraitExtraction_id" INTEGER,
 	PRIMARY KEY (id),
