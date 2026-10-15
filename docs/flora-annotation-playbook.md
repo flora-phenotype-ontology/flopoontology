@@ -35,6 +35,7 @@ lexicons, and the gates run on the result.
 | 11–15 pairs of leaflets per pinna | count of `(object aggregate and has_member exactly 2 leaflet and part_of some pinna)` |
 | flowers in groups of 4–6 | count of `(object aggregate and has_member some flower)` |
 | annual or perennial; white, pink or purple | disjunction: `has_quality some (annual or perennial)`, `value_operator: one_of` (`alternatives_as_union`) |
+| linear-lanceolate; ovate to elongate-linear | compound shapes: "X-Y" is between X and Y, a continuum; "elongate" in a compound repeats the other word and is dropped (`chain_from_phrase`) |
 | ovate to subglobose; red tending to orange | continuum: a qualitative value relation between the two values (reified; no OWL class, because an intermediate value is neither endpoint) |
 | white becoming pink | temporal transition: qualitative value relation |
 | petals absent; no scent | `ObjectComplementOf` (absence of the part, or lack of the quality) |
@@ -55,8 +56,16 @@ has its own degree cue ("pale yellow or white" stays a relation).
      "attached in the leaf axil" → `relation_to_another_part`; grazing, uses →
      `not_a_plant_trait`. These keep a precise reason instead of "no ontology term".
 2. **Split inline alternatives** (`split_inline_alternatives`): a quality written as "shrub or
-   small tree" / "ovate to subglobose" becomes quality + alternatives, so the union and relation
-   patterns apply.
+   small tree" / "ovate to subglobose" / "red tending to purple" becomes quality + alternatives,
+   so the union and relation patterns apply. A comma list without "or"/"to" ("thin, leathery")
+   states every value: it becomes one row per value, not alternatives.
+   Lists and compounds are then read deterministically (`chain_from_phrase`) before the LLM
+   relation cache: values are grounded one by one, a hyphenated compound ("linear-lanceolate")
+   is a continuum between its words, and a chain "linear-lanceolate to oblong-ovate" is the
+   continuum linear - lanceolate - oblong - ovate (an approximation: the source range runs
+   between two intermediates).
+   A measurement written as the quality ("2-5 cm long", "60 cm tall") becomes the attribute
+   with its value (`measurements_from_quality`).
 3. **Counts** (`normalize_counts`): numbered parts with a non-length unit become PATO amount with
    the UO count unit; the counted part comes from the quality ("number of petals"), the unit
    ("seeds") or the entity. Nothing about the count is dropped (user's design, 2026-10-15):
@@ -80,7 +89,13 @@ has its own degree cue ("pale yellow or white" stays a relation).
    for a phrase that states one value ("white flowers"); the row is then annotated as that value.
 6. **Standard botanical words missing from PATO's synonyms** get reviewed rules
    (`collenette_normalization.tsv`): globose = spherical, elongate = elongated, three-lobed =
-   trilobed, semi-globose / hemispherical = hemispheroid, subglobose → spheroid (broader).
+   trilobed, semi-globose / hemispherical = hemispheroid, subglobose → spheroid (broader),
+   ciliate = ciliated, sturdy / strong (stems, roots) = robust, round fruits or heads =
+   spherical, round stems = terete, rudimentary = vestigial. Words naming a structure become
+   its presence: rhizomatous (rhizome), arillate (aril), scale-like leaves (scale leaf).
+   Words PATO lacks become FLOPO flora value terms (fibrous, fibrous-rooted, beaked, horned,
+   zigzag, umbelliform, pectinate = comb-like, virgate = broom-like, palm-like, claw-shaped,
+   subterranean, aerial, androgynous, medium-sized, ...; FLOPO:0991026-0991045).
 7. **PATO label traps** (`PATO_LABEL_TRAPS`, `rules_over_pato_label`): the transcriber's PATO label
    is taken at face value, so reviewed rules win for words PATO names misleadingly:
    - "ovate" is the plane shape (FLOPO:0991024 until pato#627), "ovoid" PATO:0001891;

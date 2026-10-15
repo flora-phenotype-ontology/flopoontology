@@ -143,6 +143,11 @@ leafy, twiggy, subsessile, bipinnate, unisexual, exfoliating, fissured, and the 
 sweet-scented, spicy-scented, sour-smelling, musty-smelling and foetid. Each class is a
 candidate for submission to PATO.
 
+FLOPO:0991026–0991045 (2026-10-15, not yet reviewed) add fibrous, fibrous-rooted, beaked,
+horned, zigzag, umbelliform, medium-sized, pectinate (comb-like), indeterminate, subterranean,
+aerial, androgynous, virgate (broom-like), palm-like, claw-shaped, pea-sized, cherry-like,
+straggly, submerged and floating.
+
 ```bash
 python -m tools.build_flopo_flora_value_extension   # spec -> module, rules, (bearer, attribute) pairs
 python -m tools.update_flopo_flora_value_release    # embed in flopo.owl, then the final passes above
@@ -167,7 +172,8 @@ python -m tools.update_flopo_flora_corrections_release   # embed, then the final
 - Alternatives ("annual or perennial", "white, pink or purple") are one value, the union
   `has_quality some (annual or perennial)`. Continua and changes in time ("ovate to oblong", "red
   tending to orange-yellow", "white becoming pink") are qualitative value relations, because an
-  intermediate value is neither endpoint. Both are matched deterministically first.
+  intermediate value is neither endpoint. A botanical compound ("linear-lanceolate") is a
+  continuum between its two words. Both are matched deterministically first.
   `flopo2.ingest.llm_relations` (Qwen) locates the endpoints of the rest, and the spans are
   re-verified verbatim before use.
 - Every annotation class carries its OWL definition in the assertion modules:

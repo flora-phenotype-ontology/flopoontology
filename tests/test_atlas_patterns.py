@@ -115,3 +115,37 @@ def test_groups_are_collections():
                               {"PATO_0000070"})
     assert (None, owl.OWL.onProperty, owl.HAS_MEMBER) in graph
     assert (None, owl.OWL.someValuesFrom, URIRef(owl.OBO + "PO_0009046")) in graph
+
+
+def test_comma_lists_are_conjunctions_and_tending_to_is_a_connector():
+    rec = {"phenotypes": [_row("exocarp", "thin, leathery"), _row("fruit", "red tending to purple")]}
+    split_inline_alternatives(rec)
+    got = [(p["quality_en"], p["qualifiers"].get("alternatives")) for p in rec["phenotypes"]]
+    assert got == [("thin", None), ("red", ["purple"]), ("leathery", None)]
+
+
+def test_measurement_in_quality():
+    from flopo2.ingest.ncvc_annotate import measurements_from_quality
+
+    rec = {"phenotypes": [_row("spine", "2-5 cm long"), _row("stem", "60 cm tall"), _row("leaf", "linear")]}
+    measurements_from_quality(rec)
+    got = [(p["quality_en"], p["value_low"], p["value_high"], p["unit"]) for p in rec["phenotypes"]]
+    assert got == [("length", 2.0, 5.0, "cm"), ("height", 60.0, 60.0, "cm"), ("linear", None, None, "")]
+
+
+def test_compound_shapes_are_read_as_continua():
+    from pathlib import Path
+
+    from flopo2.ingest import ncvc_annotate as na
+
+    res = na.load_resources()
+    res.rules = na.merge_rules(res.rules, [], [Path("flopo2/ingest/flora_value_term_rules.tsv"),
+                                               Path("flopo2/ingest/collenette_normalization.tsv")])
+    chain = na.chain_from_phrase(res, "ovate to elongate-linear", ["leaf"])
+    assert [v["term"] for v in chain["values"]] == ["ovate", "linear"]
+    chain = na.chain_from_phrase(res, "pods linear-lanceolate to oblong-ovate in shape", ["fruit"])
+    assert [v["term"] for v in chain["values"]] == ["linear", "lanceolate", "oblong", "ovate"]
+    assert {c["interpretation"] for c in chain["connectors"]} == {"continuum"}
+    chain = na.chain_from_phrase(res, "linear, ovate or lanceolate", ["leaf"])
+    assert {c["interpretation"] for c in chain["connectors"]} == {"taxon_level_alternatives"}
+    assert na.chain_from_phrase(res, "divided into linear-lanceolate [segments]", ["leaf"])["values"][1]["term"] == "lanceolate"

@@ -104,13 +104,14 @@ def build_graph(rows: list[dict[str, str]], pato: dict) -> Graph:
             graph.add((cls, OIO.hasExactSynonym, Literal(synonym, datatype=XSD.string)))
         for synonym in filter(None, row["related_synonyms"].split("|")):
             graph.add((cls, OIO.hasRelatedSynonym, Literal(synonym, datatype=XSD.string)))
+        date = row.get("added") or DECISION_DATE
         note = (
             f"FLOPO-local value class beneath PATO {row['parent']} ({pato[row['parent']].name}), "
-            f"added {DECISION_DATE} for quality words of the Saudi Flora corpora that PATO lacks "
+            f"added {date} for quality words of the Saudi Flora corpora that PATO lacks "
             f"(evidence: {row['source_words']}). Candidate for submission to PATO."
         )
         graph.add((cls, EDITOR_NOTE, Literal(note, lang="en")))
-        graph.add((cls, DCTERMS.date, Literal(DECISION_DATE, datatype=XSD.date)))
+        graph.add((cls, DCTERMS.date, Literal(date, datatype=XSD.date)))
     return graph
 
 
@@ -141,7 +142,7 @@ def rule_rows(rows: list[dict[str, str]], pato: dict, attributes: set[str]) -> l
                     "value_term": _local(row["flopo_id"]),
                     "target_label": row["label"],
                     "evidence": f"{row['flopo_id']} {row['label']} ({_word_kind(row, word)}); "
-                    f"FLOPO flora value module {DECISION_DATE}",
+                    f"FLOPO flora value module {row.get('added') or DECISION_DATE}",
                     "review_status": "claude_reviewed",
                 }
             )
@@ -166,7 +167,7 @@ def combination_rows(rows: list[dict[str, str]], pato: dict, attributes: set[str
                     "po_id": _local(bearer),
                     "pato_id": attribute,
                     "status": "allowed",
-                    "source": f"flora_value_terms_{DECISION_DATE}",
+                    "source": f"flora_value_terms_{row.get('added') or DECISION_DATE}",
                     "example_label": f"{row['label']} ({row['flopo_id']})",
                 }
             )

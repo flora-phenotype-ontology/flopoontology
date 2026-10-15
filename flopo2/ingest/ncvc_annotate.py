@@ -271,7 +271,12 @@ def apply_rereads(rec: dict, answers: dict) -> None:
             phenotypes.extend(new)
 
 
-_INLINE_ALTERNATIVES = re.compile(r"\s*,\s*(?:or\s+)?|\s+or\s+|\s+to\s+", re.IGNORECASE)
+_INLINE_ALTERNATIVES = re.compile(
+    r"\s*,\s*(?:or\s+)?|\s+or\s+"
+    r"|\s+(?:tending|grading|passing|changing|fading)\s+(?:in)?to\s+|\s+to\s+",
+    re.IGNORECASE,
+)
+_DISJUNCTIVE = re.compile(r"\s(?:or|to)\s", re.IGNORECASE)
 
 
 def split_inline_alternatives(rec: dict) -> None:
@@ -287,6 +292,13 @@ def split_inline_alternatives(rec: dict) -> None:
         quality = _PAREN_RE.sub("", str(phenotype.get("quality_en") or "")).strip()
         parts = [p.strip(" ,;") for p in _INLINE_ALTERNATIVES.split(quality)]
         if len(parts) < 2 or not all(parts) or any(len(p.split()) > 3 for p in parts):
+            continue
+        if not _DISJUNCTIVE.search(quality):
+            # "thin, leathery": a comma list without "or"/"to" states every value.
+            phenotype.update({"quality_en": parts[0], "pato_label": parts[0], "inline_conjunction": quality})
+            rec["phenotypes"].extend(
+                {**copy.deepcopy(phenotype), "quality_en": part, "pato_label": part} for part in parts[1:]
+            )
             continue
         phenotype.update({"quality_en": parts[0], "pato_label": parts[0], "inline_alternatives": quality,
                           "qualifiers": {**qualifiers, "alternatives": parts[1:]}})
@@ -346,6 +358,31 @@ def count_container(counted: str, entity: str, *texts: str) -> str:
                 return container
     entity = _PAREN_RE.sub("", entity or "").strip()
     return entity if entity and _singular(entity) != counted and not entity.lower().endswith(counted) else ""
+
+
+_QUALITY_MEASUREMENT = re.compile(
+    r"^(?:about\s+|up\s+to\s+|c\.\s*)?(\d+(?:\.\d+)?)\s*(?:(?:-|–|to)\s*(\d+(?:\.\d+)?)\s*)?(mm|cm|dm|m)\s+"
+    r"(long|tall|high|wide|broad|across|in diameter|thick)$",
+    re.IGNORECASE,
+)
+_MEASURED_ATTRIBUTE = {"long": "length", "tall": "height", "high": "height", "wide": "width", "broad": "width",
+                       "across": "diameter", "in diameter": "diameter", "thick": "thickness"}
+
+
+def measurements_from_quality(rec: dict) -> None:
+    """A measurement transcribed as the quality ("2-5 cm long") becomes the attribute with its value."""
+
+    for phenotype in rec.get("phenotypes") or []:
+        if phenotype.get("merged_into") or phenotype.get("value_low") is not None or phenotype.get("value_high") is not None:
+            continue
+        match = _QUALITY_MEASUREMENT.match(str(phenotype.get("quality_en") or "").strip())
+        if match is None:
+            continue
+        low, high, unit, word = match.groups()
+        attribute = _MEASURED_ATTRIBUTE[word.lower()]
+        phenotype.update({"quality_en": attribute, "pato_label": attribute, "value_low": float(low),
+                          "value_high": float(high or low), "unit": unit.lower(),
+                          "measurement_in_quality": match.group(0)})
 
 
 def normalize_counts(rec: dict) -> None:
@@ -1366,6 +1403,87 @@ def refine_endpoints(res: "Resources", attribute: str, relation: dict, text: str
     return rel
 
 
+_CHAIN_CONNECTORS = re.compile(
+    r"(\s+(?:tending\s+to(?:wards)?|grading\s+(?:in)?to|passing\s+into)\s+|\s*,?\s+or\s+|\s+to\s+|\s*,\s*|\s*/\s*)",
+    re.IGNORECASE,
+)
+_SHAPE_TAIL = re.compile(r"\s+in\s+(?:shape|outline|form|section)\b", re.IGNORECASE)
+# "linear-elongate", "elongate-linear": elongate repeats what the other shape word says.
+_REDUNDANT_IN_COMPOUND = {"elongate", "elongated"}
+
+
+def _compound_values(res: "Resources", phrase: str, bearer_texts: list[str]) -> list[dict] | None:
+    """The values of one listed shape: a word ("narrowly ovate") or a botanical compound
+    ("linear-lanceolate", between linear and lanceolate), as chain values ``{text, term}``."""
+
+    from flopo2.annotation.operands import DEGREE_CUES
+
+    words = phrase.split()
+    while words and words[0].lower() in DEGREE_CUES:
+        words.pop(0)
+    core = " ".join(words)
+    if not core:
+        return None
+    prefix = phrase[: len(phrase) - len(core)]
+    if ground_value(res, core, bearer_texts):
+        return [{"text": phrase, "term": core}]
+    if "-" not in core or " " in core:
+        return None
+    parts = core.split("-")
+    kept = [p for p in parts if p.lower() not in _REDUNDANT_IN_COMPOUND]
+    if not kept or any(ground_value(res, p, bearer_texts) is None for p in kept):
+        return None
+    if len(kept) == 1:
+        return [{"text": phrase, "term": kept[0]}]
+    if len(kept) != len(parts):
+        return None
+    return [{"text": prefix + parts[0], "term": parts[0]}, *({"text": p, "term": p} for p in parts[1:])]
+
+
+def chain_from_phrase(res: "Resources", phrase: str, bearer_texts: list[str]) -> dict | None:
+    """Read a list of values with its connectors deterministically, compounds included:
+    "ovate to elongate-linear" is ovate to linear; "linear-lanceolate to oblong-ovate" is the
+    continuum linear - lanceolate - oblong - ovate.  A compound "X-Y" is between X and Y
+    (botanical usage), a continuum.  Leading words that do not ground (the part: "pods linear
+    to falcate") and trailing "in shape" are left out.  The answer has the shape of a cached
+    LLM chain, for :func:`relations_from_chain`."""
+
+    pieces = _CHAIN_CONNECTORS.split(_SHAPE_TAIL.sub("", phrase.strip(" .;:")))
+    segments, connectors = pieces[0::2], pieces[1::2]
+    for first in range(len(segments)):
+        values: list[dict] = []
+        links: list[dict] = []
+        for i in range(first, len(segments)):
+            segment = segments[i].strip()
+            # The first value may follow the part ("pods linear"), the last may precede a noun
+            # ("linear-lanceolate [segments]"): try the word windows, longest first.
+            words = segment.split()
+            n = len(words)
+            windows = [(a, b) for size in range(n, 0, -1) for a in range(n - size + 1) for b in [a + size]
+                       if (a == 0 or i == first) and (b == n or i == len(segments) - 1)]
+            found = None
+            for a, b in windows:
+                found = _compound_values(res, " ".join(words[a:b]), bearer_texts)
+                if found and (len(found) > 1 or first < len(segments) - 1):
+                    break
+                found = None
+            if not found:
+                values = []
+                break
+            if i > first:
+                connector = connectors[i - 1]
+                disjunctive = re.search(r"\bor\b|,|/", connector)
+                links.append({"text": connector,
+                              "interpretation": "taxon_level_alternatives" if disjunctive else "continuum"})
+            values.append(found[0])
+            for value in found[1:]:
+                links.append({"text": "-", "interpretation": "continuum"})
+                values.append(value)
+        if len(values) >= 2:
+            return {"values": values, "connectors": links, "model": ""}
+    return None
+
+
 def relations_from_chain(
     res: "Resources", answer: dict, text: str, start: int, end: int, po_id: str, bearer_texts: list[str]
 ) -> list[dict]:
@@ -1480,13 +1598,14 @@ def _mark_approximate(assertion: dict, word: str, text: str) -> None:
 def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposition]]:
     """Return the corpus segment rows (Arabic/English description and habitat) for one species."""
 
-    if res.compound_habits or res.rereads:
+    if res.compound_habits or res.rereads or res.relations:
         rec = copy.deepcopy(rec)
     if res.compound_habits:
         merge_compound_habits(rec)
     if res.rereads:
         apply_rereads(rec, res.rereads)
     if res.relations:
+        measurements_from_quality(rec)
         split_inline_alternatives(rec)
         normalize_counts(rec)
     segments = [seg.to_row() for seg in ncvc_guide.iter_segments_from_records([rec])]
@@ -1639,11 +1758,20 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
 
         relation = union = None
         extra_relations: list[dict] = []
+        compound = reason == "no_ontology_term_for_quality" and "-" in str(phenotype.get("quality_en") or "")
         if res.relations and not has_value and not str(phenotype.get("unit") or "").strip() \
-                and reason in {"taxon_level_alternatives_or_continuum", "explicit_disjunction"}:
+                and (compound or reason in {"taxon_level_alternatives_or_continuum", "explicit_disjunction"}):
             relation = build_relation(res, phenotype, text, start, end, grounding.po_id)
             answer = (res.llm_relations or {}).get((ncvc_guide._source_id(rec), index))
             bearer_texts = [phenotype.get("entity_en", ""), phenotype.get("po_label", "")]
+            if relation is None:
+                # Compounds and lists read deterministically ("ovate to elongate-linear").
+                read = chain_from_phrase(res, text[start:end], bearer_texts)
+                chained = relations_from_chain(res, read, text, start, end, grounding.po_id, bearer_texts) if read else []
+                if chained:
+                    relation, extra_relations = chained[0], chained[1:]
+                    for extra in extra_relations:
+                        extra["relation"] = refine_endpoints(res, extra["pato_id"], extra["relation"], text, bearer_texts)
             if relation is None and answer is not None:
                 relation = relation_from_llm(res, answer, text, start, end, grounding.po_id, bearer_texts)
             chain = (res.llm_relation_chains or {}).get((ncvc_guide._source_id(rec), index))
@@ -1818,7 +1946,8 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
             other["source_text"] = text[other["source_start"] : other["source_end"]]
             other["mapping_provenance"] = [
                 *[p for p in assertion["mapping_provenance"] if not p.startswith("relation:")],
-                f"relation: endpoints located by {extra['llm']} (flopo2.ingest.llm_relations), verified verbatim and grounded",
+                *([f"relation: endpoints located by {extra['llm']} (flopo2.ingest.llm_relations), verified verbatim and grounded"]
+                  if extra.get("llm") else []),
                 f"relation: {extra['chain']}",
                 f"relation: {rel['interpretation']} {rel['from_value']} -> {rel['to_value']} (connector {rel['connector_text'].strip()!r})",
             ]
