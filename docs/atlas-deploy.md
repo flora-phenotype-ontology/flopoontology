@@ -1,183 +1,111 @@
-# Deploying the Saudi Flora Trait Atlas to phenomebrowser.net/flopo/
+# Deploying the Saudi Flora Trait Atlas at phenomebrowser.net/flopo/
 
-Design for serving the atlas publicly: the browser in `web/saudi/`, backed by live SPARQL queries
-against a QLever endpoint, at `http://phenomebrowser.net/flopo/`. Nothing here is implemented yet.
-
-## Why this location
-
-The atlas data IRIs are already `http://phenomebrowser.net/flopo/…` (annotations, browse index,
-places, vocabulary). FLOPO has no w3id redirect and keeps its own identifier space (curator
-decision 2026-10-05), so serving the atlas under `/flopo/` makes those IRIs dereferenceable
-without any redirect service. Ontology terms stay OBO PURLs.
-
-## Target layout
+The browser in `web/saudi/` runs live SPARQL queries against a QLever endpoint. Both run on ws
+(10.73.11.158) in Docker; the phenomebrowser.net frontends proxy `/flopo/` to ws.
 
 ```
-phenomebrowser.net (nginx 1.20, 45.223.22.138; "/" is an existing Express app, /flopo/ is 404 today)
-  /flopo/                 static browser (index.html, app.js, styles.css, summary.json)
-  /flopo/sparql           -> QLever (read-only, GET + POST, SPARQL JSON/CSV/TSV, Turtle for CONSTRUCT/DESCRIBE)
-  /flopo/annotation/…     -> 303 to /flopo/#/query?describe=<iri>, or Turtle by Accept (DESCRIBE via QLever)
-  /flopo/browse, /taxon/…, /place/…, /vocab/…   same dereferencing rule
-  /flopo/releases/<stamp>/  the dumped RDF of each deployment (only for the public profile, see below)
-
-QLever container(s) on the web host, bound to 127.0.0.1, blue/green ports 7001/7002.
+phenomebrowser.net/flopo/…  (frontend, frontend1: nginx, deploy/atlas/frontend-phenomebrowser.conf)
+   │  strips /flopo, sends X-Forwarded-Prefix: /flopo
+   ▼
+ws :8778  flopo-atlas-nginx (live)          ws 127.0.0.1:8779 (staging: the release being deployed)
+   │  /            browser of the live release
+   │  /sparql      → QLever (read-only, CORS, 10 req/s per client, ?format=csv|tsv|json|xml)
+   │  /<ns>/<id>   data IRIs: Turtle/N-Triples by Accept (DESCRIBE), otherwise 303 to the browser
+   ▼
+127.0.0.1:7001 flopo-atlas-qlever-blue   127.0.0.1:7002 flopo-atlas-qlever-green
 ```
 
-Oxigraph stays as the local development server (`flopo2.saudi.server`); QLever is the public
-endpoint. Both read the same RDF files, and the checks below prove they answer the browser's
-queries identically.
+The data IRIs are `http://phenomebrowser.net/flopo/…` (FLOPO keeps its own identifier space; there
+is no w3id redirect), so serving the atlas at `/flopo/` makes them resolve:
+`curl -H 'Accept: text/turtle' http://phenomebrowser.net/flopo/annotation-class/FAC_…`.
+Ontology terms stay OBO PURLs.
 
-## Changes to the code before the first deployment
+The Oxigraph server (`flopo2.saudi.server`, port 8777) stays the development server. The checks
+prove that QLever gives the browser the same answers.
 
-1. **Relative endpoints in `web/saudi/app.js`.** `fetch("/sparql")` and `fetch("/summary.json")`
-   are absolute and break under `/flopo/`. Use `new URL("sparql", document.baseURI)`, or a
-   `<meta name="sparql-endpoint">` in `index.html` so the same build runs locally and under a
-   prefix. Same for `window.open("/sparql?…")` in the Query tab.
-2. **Prefixes.** The browser already prepends its `PREFIX` block, except for queries typed in the
-   Query tab, which today rely on the server predefining `fb:`, `obo:`, … . QLever has no
-   predefined prefixes, so the Query tab must also prepend the declarations that the query does
-   not declare itself. The example queries keep working.
-3. **DESCRIBE.** The Oxigraph server answers `DESCRIBE <iri>` itself, following blank nodes, so
-   OWL class expressions come out whole. QLever's DESCRIBE also expands blank-node objects; the
-   parity check (below) verifies that the triples match. If they do not, the browser sends a
-   `CONSTRUCT` with a bounded property path over blank nodes instead.
-4. **Graph semantics.** Oxigraph runs with the default graph as the union of all named graphs;
-   QLever's default graph is also the union. Keep one input file per named graph (as in
-   `manifest.json`) so that blank-node labels stay scoped to one file, which is what broke
-   Oxigraph's `bulk_load`.
-5. **`build_release` step** (`tools/build_atlas_release.py`, new): writes a self-contained
-   directory `deploy/atlas/<stamp>/` with
-   - `rdf/*.nq` (each manifest file converted to N-Quads in its named graph, plus
-     `ontology/flopo-inferred.owl` as graph `…/graph/flopo`);
-   - `web/` with the stamped static files and `summary.json`;
-   - `Qleverfile` and `release.json` (git commit, build stamp, triple counts per graph,
-     SHA-256 of every file).
+## Deploying
 
-## The public profile: a decision needed first
-
-The atlas quotes the sentences of two copyrighted guides as evidence (`fb:text`, `fb:context`,
-`source_en` in the browse index and pending statements), which is why the data is git-ignored.
-A public endpoint publishes those quotes to anyone who runs a `SELECT ?t { ?x fb:text ?t }`.
-The release step therefore has a **profile**:
-
-| Profile | Quotes | Who can reach it |
-|---|---|---|
-| `public` | removed; each statement keeps its source, page and taxon, so readers can check the printed guide | phenomebrowser.net/flopo/ |
-| `restricted` | kept | behind nginx basic auth or KAUST network only |
-
-Check `C2` below blocks a `public` deployment that still contains a quote. Which profile goes live
-(or whether permission from NCVC is sought for the quotes) is the user's call.
-
-The 20 value terms FLOPO:0991026–0991045 are not yet reviewed. Either review them before the first
-public deployment, or deploy them marked provisional; check `C5` enforces whichever is chosen.
-
-## Workflow
-
-`tools/deploy_atlas.sh <stamp> [--profile public|restricted] [--target staging|production]`
-runs the stages in order and stops at the first failed check. Every stage writes its result to
-`deploy/atlas/<stamp>/checks.json`, so a deployment is auditable afterwards.
-
-### Stage 1: build and pre-flight (local, on ws)
-
-| Check | What it verifies | Fails when |
-|---|---|---|
-| C1 tests | `pytest tests/test_atlas_patterns.py tests/test_saudi_flora.py tests/test_ncvc_annotate.py` and the release compatibility test | any test fails |
-| C2 profile | no `fb:text`/`fb:context`/quote literal in a `public` release; no local paths, hostnames or API keys in any literal | a quote or secret is present |
-| C3 parse | every `rdf/*.nq` parses with rapper/riot; counts per graph match `release.json` | parse error or count drift |
-| C4 IRIs | every data IRI is under `http://phenomebrowser.net/flopo/`; no `w3id.org/flopo`, no `file:`, no `localhost`; every FLOPO IRI used exists in `flopo-inferred.owl` | foreign or dangling IRI |
-| C5 terms | terms used by the data are released or listed as approved/provisional | unreviewed term in a public release |
-| C6 coverage | `summary.json` coverage per source is not lower than the last deployed release by more than 1 point | silent regression |
-
-### Stage 2: index and parity (local)
-
-1. Build the QLever index from the release (`qlever index` with the `Qleverfile`, docker image
-   `adfreiburg/qlever` pinned by digest).
-2. Start it on localhost and run:
-
-| Check | What it verifies |
-|---|---|
-| C7 graph counts | `SELECT ?g (COUNT(*) …) GROUP BY ?g` equals `release.json` (catches blank-node merging and dropped triples) |
-| C8 OWL integrity | every annotation class has its full equivalent-class expression: same number of `owl:intersectionOf`/`owl:complementOf`/`owl:withRestrictions` nodes in QLever and Oxigraph |
-| C9 query parity | every query the browser issues gives the same result set in QLever and Oxigraph |
-| C10 latency | each browser query answers within 2 s (the overview and Coverage queries are the heaviest) |
-| C11 DESCRIBE | `DESCRIBE` of 50 sampled annotations and annotation classes returns the same triples as the Oxigraph server |
-
-C9 needs the browser's queries. A small `--record` flag on `flopo2.saudi.server` logs every
-`/sparql` request to `queries.jsonl`, and a headless pass over the browser (overview, ten taxa,
-every trait group, identify, query examples, coverage) fills it. `tools/atlas_parity.py` then
-replays the log against both endpoints and compares sorted bindings. Literal comparison ignores
-`GROUP_CONCAT` order; numbers are compared as numbers.
-
-### Stage 3: ship (to the web host)
-
-1. `rsync` the release directory (index + web, no source PDFs, no LLM caches) to
-   `/srv/flopo-atlas/releases/<stamp>/`.
-2. Start QLever for the release on the idle colour (blue 7001 / green 7002), read-only: no
-   access token for updates, query timeout 30 s, memory limit set.
-3. **Staging checks against the new container on localhost** (C12): health query, C7 again, five
-   browser queries, a malformed query returns 400, an `INSERT` is refused.
-4. Switch: `/srv/flopo-atlas/current` → the new release; nginx `upstream flopo_sparql` points to
-   the new colour (one include file); `nginx -t && nginx -s reload`.
-
-### Stage 4: post-deploy checks (from outside, against the public URL)
-
-| Check | Request | Expect |
-|---|---|---|
-| C13 page | `GET /flopo/` | 200, `<title>Saudi Flora Trait Atlas`, `app.js` and `styles.css` 200 |
-| C14 endpoint | `POST /flopo/sparql` with the overview query | 200 SPARQL JSON, count equals `release.json` |
-| C15 formats | `format=csv`, `Accept: text/turtle` on a CONSTRUCT | right content types |
-| C16 IRIs | `GET` 10 sampled annotation IRIs with `Accept: text/turtle` and with `text/html` | Turtle description / 303 to the browser view |
-| C17 read-only | `INSERT DATA {…}` | refused |
-| C18 browser | headless load of `/flopo/#/taxon/<sample>` | no console errors, the record table has rows |
-| C19 not leaking | profile `public`: `SELECT (COUNT(*) …) { ?s fb:text ?o }` | 0 |
-
-Any failure in stage 4 triggers the rollback: point the upstream back at the previous colour,
-reload nginx, and record the failure in `checks.json`. The previous release stays on disk until
-the next successful deployment.
-
-### Stage 5: after
-
-- Freeze: copy `release.json` and the public RDF dump to `/flopo/releases/<stamp>/`.
-- Monitoring: a cron job on the web host runs C13, C14 and C17 every 15 minutes and mails the
-  user on failure.
-
-## nginx sketch
-
-```nginx
-upstream flopo_sparql { server 127.0.0.1:7001; }   # managed by deploy_atlas.sh (blue/green)
-
-location = /flopo { return 301 /flopo/; }
-location /flopo/ {
-    alias /srv/flopo-atlas/current/web/;
-    try_files $uri /flopo/index.html;
-    add_header Cache-Control "public, max-age=300";
-}
-location = /flopo/sparql {
-    limit_req zone=sparql burst=20 nodelay;            # limit_req_zone defined in http {}
-    client_max_body_size 64k;
-    proxy_read_timeout 60s;
-    proxy_pass http://flopo_sparql/;                   # QLever answers SPARQL at its root
-    add_header Access-Control-Allow-Origin "*";
-}
-# Data IRIs: Turtle for machines, the browser for people.
-location ~ ^/flopo/(annotation|browse|taxon|place|vocab|saudi-flora)/ {
-    if ($http_accept ~* "text/turtle|application/n-triples") {
-        rewrite ^ /flopo/describe last;                # a small handler that issues DESCRIBE <$scheme://$host$request_uri>
-    }
-    return 303 /flopo/#/query?describe=$scheme://$host$request_uri;
-}
+```bash
+tools/build_saudi_flora.sh            # rebuild the data, when it changed
+tools/deploy_atlas.sh                 # release, index, check, switch, check
+tools/deploy_atlas.sh --status        # what is live
+tools/deploy_atlas.sh --rollback      # previous release back (its QLever is kept running)
 ```
 
-The `/flopo/describe` handler can be a 20-line script (or nginx `njs`) that builds the DESCRIBE
-query from the request IRI and proxies it to QLever.
+`PUBLIC_URL` (default `http://phenomebrowser.net/flopo/`) is checked after the switch; use
+`PUBLIC_URL= tools/deploy_atlas.sh` while the frontends do not yet proxy `/flopo/`.
 
-## Open questions
+A release is `local-corpora/saudi-flora/releases/<stamp>/` (git-ignored):
 
-1. **Host access.** phenomebrowser.net is nginx in front of an Express app at 45.223.22.138.
-   Who administers it, can QLever run there (the RDF is 158 MB plus the 43 MB inferred ontology, a few million
-   triples; Oxigraph's store is 1.9 GB, and a QLever index of this size needs a few GB of RAM and disk), and how do deployments reach it?
-   `webfront` (10.254.145.58) was not reachable from ws.
-2. **Profile.** public without quotes, restricted with quotes, or ask NCVC for permission.
-3. **Unreviewed terms** FLOPO:0991026–0991045: review first, or deploy as provisional.
-4. **https.** The server has no https today; the IRIs stay `http://` either way, but the browser
-   page would benefit from TLS (Let's Encrypt) if the host allows it.
+- `rdf/*.nq`: one N-Quads file per named graph (the manifest graphs and `flopo-inferred.owl`), with
+  blank-node labels prefixed per file;
+- `index/`: the QLever index;
+- `web/`: the browser, `summary.json`, `release.json`;
+- `release.json`: commit, triple count and SHA-256 per graph;
+- `queries.jsonl`: every query the browser sent during the crawl;
+- `checks.json`: the result of every check, per stage.
+
+`releases/state/` holds what is live (`live.env`) and the nginx includes that point the live and
+staging servers at a release and its QLever container.
+
+The browser uses relative URLs (`sparql`, `summary.json`), so the same files work at `/` and under
+`/flopo/`. It adds the PREFIX declarations a query does not make (QLever predefines none).
+
+## Checks
+
+The script stops at the first failed check. Before the switch nothing live changes. After the
+switch, a failure restores the previous release. Warnings are recorded and do not stop a deployment.
+
+| Stage | Check | What it verifies |
+|---|---|---|
+| pre-flight | C1 | atlas, Saudi flora and NCVC annotation tests pass |
+| | C2 | no local paths, hostnames or API keys in literals |
+| | C3 | every N-Quads file matches its SHA-256 and triple count |
+| | C4 | data IRIs are under `http://phenomebrowser.net/flopo/`, none on w3id, `file:` or localhost; every FLOPO class used exists (obsolete ones: warning) |
+| | C5 | provisional value terms carry IAO:0000114 'pending final vetting'; every FLOPO:0991xxx used is in the spec |
+| | C6 | accepted statements and taxa are not more than 1% below the live release |
+| staging | C13–C17 | below, against the staging server |
+| | C18 | headless Chromium opens the overview, 10 taxa, every trait group, identify, coverage and every example query, without console errors, failed requests or error messages |
+| | C7 | QLever's triple count per graph equals `release.json` |
+| | C8 | OWL class expressions are complete: the counts of intersectionOf, unionOf, complementOf, restrictions and list cells equal Oxigraph's |
+| | C9 | every query from C18 runs on QLever and gives the same number of rows as Oxigraph on the same files; values are compared too, except for a LIMIT without ORDER BY (any rows are right) and language tags (QLever's `SAMPLE()` drops them). `SAMPLE()` may pick another label: a warning below 5% of cells |
+| | C10 | every browser query answers within 2 s (warning), 5 s (failure) |
+| | C11 | `DESCRIBE` of 40 annotation classes, records and taxa equals the development server's description (literals by value: QLever writes integers as `xsd:int`) |
+| live, public | C13 | page and static files load, and the page is the expected release (`X-Atlas-Release`) |
+| | C14 | the endpoint answers with the release's quad count (the union default graph counts a triple stated in two graphs once) |
+| | C15 | `?format=csv`, Turtle for CONSTRUCT, CORS, a malformed query is a 400 |
+| | C16 | an annotation-class IRI returns Turtle with its OWL definition; with `Accept: text/html` it redirects to the browser; a taxon IRI opens the taxon page |
+| | C17 | updates are refused and nothing is written |
+
+Oxigraph accepts `(SAMPLE(?x) AS ?x)`; SPARQL and QLever do not, so a browser query must not
+name an aggregate after a variable of its body. The first deployment found five such queries.
+
+The reference for C8, C9 and C11 is an in-memory Oxigraph store loaded from the release's own
+N-Quads, so both engines read identical data.
+
+## Monitoring
+
+`tools/deploy_atlas.sh --monitor` runs C13–C17 against the live and public addresses. It appends
+one line to `releases/state/monitor.log` and keeps the details in `state/monitor-last.json`.
+ws's crontab runs it every 15 minutes, with `PUBLIC_URL=` until the frontends proxy `/flopo/`
+(then drop that setting so the public address is checked too). It writes to the log only and does
+not send mail.
+
+## Connecting phenomebrowser.net
+
+`deploy/atlas/frontend-phenomebrowser.conf` is the location block for the phenomebrowser.net server
+on `frontend` and `frontend1` (borg-infrastructure: `/etc/nginx/sites-available/phenomebrowser.net`,
+root via `sudo rootsh`). It was tested against a local nginx with the same block: C13–C18 pass
+under `/flopo/`. After it is applied, run `tools/deploy_atlas.sh --monitor` without `PUBLIC_URL=`.
+
+## Provisional terms
+
+FLOPO:0991026–0991045 are not yet reviewed. They carry IAO:0000114 'pending final vetting'
+(IAO:0000125), and their editor note says "Provisional: not yet reviewed by the curator". They
+are set by the `status` column of `config/flopo_flora_value_terms.tsv`. C5 checks the marking.
+
+## Pinned images
+
+`tools/deploy_atlas.sh` pins `adfreiburg/qlever` and `nginx:1.27-alpine` by digest. To upgrade,
+pull the new image, put its digest in the script and deploy; C7–C11 show whether the new QLever
+answers like the old one.

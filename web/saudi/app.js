@@ -1,19 +1,43 @@
-/* Saudi Flora Trait Atlas: a browser over the SPARQL endpoint at /sparql. */
+/* Saudi Flora Trait Atlas: a browser over the SPARQL endpoint next to this page ("sparql"). */
 "use strict";
 
 const FB = "http://phenomebrowser.net/flopo/browse#";
 const TAXON = "http://phenomebrowser.net/flopo/taxon/";
-const PREFIX = `PREFIX fb: <${FB}>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX obo: <http://purl.obolibrary.org/obo/>
-`;
+// Relative to the page, so the atlas runs at / (development) and under /flopo/ (public).
+const ENDPOINT = new URL("sparql", document.baseURI).href;
+const SUMMARY = new URL("summary.json", document.baseURI).href;
+// The endpoint predefines no prefixes; queries get the declarations they do not make themselves.
+const PREFIXES = {
+  fb: FB,
+  flopoann: "http://phenomebrowser.net/flopo/annotation/",
+  obo: "http://purl.obolibrary.org/obo/",
+  rdfs: "http://www.w3.org/2000/01/rdf-schema#",
+  rdf: "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+  owl: "http://www.w3.org/2002/07/owl#",
+  skos: "http://www.w3.org/2004/02/skos/core#",
+  dcterms: "http://purl.org/dc/terms/",
+  sio: "http://semanticscience.org/resource/",
+  prov: "http://www.w3.org/ns/prov#",
+  dwc: "http://rs.tdwg.org/dwc/terms/",
+  geo: "http://www.opengis.net/ont/geosparql#",
+  xsd: "http://www.w3.org/2001/XMLSchema#",
+};
+function withPrefixes(query) {
+  const declared = new Set([...query.matchAll(/PREFIX\s+([\w-]*):/gi)].map((m) => m[1]));
+  // IRIs and strings may contain "x:" or "#"; drop them, then comments, before looking for uses.
+  const body = query.replace(/<[^<>\s]*>/g, " ").replace(/"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'/g, " ").replace(/#[^\n]*/g, "");
+  const missing = Object.entries(PREFIXES).filter(([p]) => !declared.has(p) && new RegExp(`(^|[^\\w:.-])${p}:`).test(body));
+  return missing.map(([p, iri]) => `PREFIX ${p}: <${iri}>\n`).join("") + query;
+}
+const sparqlUrl = (query, extra = {}) => ENDPOINT + "?" + new URLSearchParams({ query: withPrefixes(query), ...extra });
+document.getElementById("endpoint")?.replaceChildren(ENDPOINT);
 const view = document.getElementById("view");
 const cache = new Map();
 
 /* ---------------------------------------------------------------- helpers */
-async function sparql(query, { raw = false } = {}) {
-  const body = new URLSearchParams({ query: raw ? query : PREFIX + query });
-  const response = await fetch("/sparql", {
+async function sparql(query) {
+  const body = new URLSearchParams({ query: withPrefixes(query) });
+  const response = await fetch(ENDPOINT, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded", Accept: "application/sparql-results+json" },
     body,
@@ -66,7 +90,7 @@ const groups = () =>
     const pick = (type) => rows.filter((r) => r.type === FB + type).sort((a, b) => a.order - b.order);
     return { organs: pick("OrganGroup"), traits: pick("TraitGroup"), label: Object.fromEntries(rows.map((r) => [r.g, r.label])) };
   });
-const summary = () => cached("summary", () => fetch("/summary.json").then((r) => r.json()));
+const summary = () => cached("summary", () => fetch(SUMMARY).then((r) => r.json()));
 const sources = () =>
   cached("sources", () => sparql(`SELECT ?s (SAMPLE(?l) AS ?label) (SAMPLE(?t) AS ?title) WHERE { ?s a fb:Source ; rdfs:label ?l ; <http://purl.org/dc/terms/title> ?t } GROUP BY ?s`));
 
@@ -201,10 +225,10 @@ async function taxonPage(t) {
   const [g, info, names, records, merged, places, growth, pending, notes, conflicts] = await Promise.all([
     groups(),
     sparql(`SELECT (SAMPLE(?l) AS ?label) (SAMPLE(?a) AS ?auth) (SAMPLE(?f) AS ?family) (SAMPLE(?o) AS ?order) (SAMPLE(?w) AS ?wfo)
-      (GROUP_CONCAT(DISTINCT ?ar; separator="، ") AS ?arabic) (SAMPLE(?emin) AS ?emin) (SAMPLE(?emax) AS ?emax) (SAMPLE(?nr) AS ?range) WHERE {
+      (GROUP_CONCAT(DISTINCT ?ar; separator="، ") AS ?arabic) (SAMPLE(?elo) AS ?emin) (SAMPLE(?ehi) AS ?emax) (SAMPLE(?nr) AS ?range) WHERE {
       ${T} rdfs:label ?l . OPTIONAL { ${T} fb:authorship ?a } OPTIONAL { ${T} fb:family ?f } OPTIONAL { ${T} fb:order ?o }
       OPTIONAL { ${T} fb:wfo ?w } OPTIONAL { ${T} fb:vernacularName ?ar } OPTIONAL { ${T} fb:nativeRange ?nr }
-      OPTIONAL { ${T} fb:elevationMin ?emin ; fb:elevationMax ?emax } }`),
+      OPTIONAL { ${T} fb:elevationMin ?elo ; fb:elevationMax ?ehi } }`),
     sparql(`SELECT ?name ?src (GROUP_CONCAT(DISTINCT ?page; separator=", ") AS ?pages) (SAMPLE(?st) AS ?status) WHERE {
       ${T} fb:printedName ?pn . ?pn fb:name ?name ; fb:source/rdfs:label ?src .
       OPTIONAL { ?pn fb:page ?page } OPTIONAL { ?pn fb:nameStatus ?st } } GROUP BY ?name ?src`),
@@ -212,18 +236,18 @@ async function taxonPage(t) {
       (SAMPLE(?st) AS ?status) (SAMPLE(?tx) AS ?text) (SAMPLE(?cx) AS ?context) (SAMPLE(?fc) AS ?fclass) (SAMPLE(?fcl) AS ?flabel)
       (SAMPLE(?q) AS ?quality) (SAMPLE(?ql) AS ?qlabel) (SAMPLE(?b) AS ?bearer) (SAMPLE(?bl) AS ?blabel) (SAMPLE(?qual) AS ?qualifier)
       (SAMPLE(?at) AS ?attribute) (SAMPLE(?rel) AS ?relation) (SAMPLE(?fv) AS ?from) (SAMPLE(?fvl) AS ?fromLabel)
-      (SAMPLE(?tv) AS ?to) (SAMPLE(?tvl) AS ?toLabel) (SAMPLE(?ftx) AS ?fromText) (SAMPLE(?ttx) AS ?toText) (SAMPLE(?u) AS ?unit) (SAMPLE(?ul) AS ?unitLabel) (SAMPLE(?fac) AS ?fac) (SAMPLE(?neg) AS ?negated) WHERE {
+      (SAMPLE(?tv) AS ?to) (SAMPLE(?tvl) AS ?toLabel) (SAMPLE(?ftx) AS ?fromText) (SAMPLE(?ttx) AS ?toText) (SAMPLE(?u) AS ?unit) (SAMPLE(?ul) AS ?unitLabel) (SAMPLE(?pc) AS ?fac) (SAMPLE(?neg) AS ?negated) WHERE {
       ?r a fb:TraitRecord ; fb:taxon ${T} ; rdfs:label ?lab ; fb:organGroup ?og ; fb:traitGroup ?tg ;
          fb:source/rdfs:label ?src ; fb:status ?st ; fb:text ?tx ; fb:quality ?q ; fb:bearer ?b ; fb:negated ?neg .
       OPTIONAL { ?q rdfs:label ?ql } OPTIONAL { ?b rdfs:label ?bl }
       OPTIONAL { ?r fb:context ?cx } OPTIONAL { ?r fb:qualifier ?qual } OPTIONAL { ?r fb:attribute ?at }
       OPTIONAL { ?r fb:relation ?rel ; fb:fromValue ?fv ; fb:toValue ?tv . OPTIONAL { ?fv rdfs:label ?fvl } OPTIONAL { ?tv rdfs:label ?tvl }
                  OPTIONAL { ?r fb:fromText ?ftx } OPTIONAL { ?r fb:toText ?ttx } }
-      OPTIONAL { ?r fb:unit ?u . OPTIONAL { ?u rdfs:label ?ul } } OPTIONAL { ?r fb:phenotypeClass ?fac }
+      OPTIONAL { ?r fb:unit ?u . OPTIONAL { ?u rdfs:label ?ul } } OPTIONAL { ?r fb:phenotypeClass ?pc }
       OPTIONAL { ?r fb:flopoClass ?fc . OPTIONAL { ?fc rdfs:label ?fcl } } } GROUP BY ?r`),
-    sparql(`SELECT ?m (SAMPLE(?l) AS ?label) (SAMPLE(?b) AS ?bearer) (SAMPLE(?a) AS ?attribute) (SAMPLE(?fac) AS ?fac)
+    sparql(`SELECT ?m (SAMPLE(?l) AS ?label) (SAMPLE(?b) AS ?bearer) (SAMPLE(?a) AS ?attribute) (SAMPLE(?pc) AS ?fac)
       (SAMPLE(?u) AS ?unit) (SAMPLE(?n) AS ?sources) (GROUP_CONCAT(STR(?mem); separator=" ") AS ?members) WHERE {
-      ?m a fb:MergedTrait ; fb:taxon ${T} ; rdfs:label ?l ; fb:bearer ?b ; fb:attribute ?a ; fb:phenotypeClass ?fac ;
+      ?m a fb:MergedTrait ; fb:taxon ${T} ; rdfs:label ?l ; fb:bearer ?b ; fb:attribute ?a ; fb:phenotypeClass ?pc ;
          fb:unit ?u ; fb:sourceCount ?n ; fb:member ?mem } GROUP BY ?m`),
     sparql(`SELECT ?region (SAMPLE(?rl) AS ?rlabel) ?loc (SAMPLE(?lat) AS ?la) (SAMPLE(?lon) AS ?lo) (GROUP_CONCAT(DISTINCT ?src; separator="|") AS ?sources) WHERE {
       ?o a fb:Occurrence ; fb:taxon ${T} ; fb:source/rdfs:label ?src .
@@ -234,8 +258,8 @@ async function taxonPage(t) {
     sparql(`SELECT ?text ?reason ?context ?src WHERE { ?p a fb:PendingStatement ; fb:taxon ${T} ; fb:text ?text ; fb:reason ?reason ;
       fb:source/rdfs:label ?src . OPTIONAL { ?p fb:context ?context } }`),
     sparql(`SELECT ?kind ?text ?src WHERE { VALUES ?kind { fb:abundance fb:habitat } ${T} ?kind ?node . ?node rdfs:label ?text ; fb:source/rdfs:label ?src }`),
-    sparql(`SELECT ?c (SAMPLE(?k) AS ?kind) (SAMPLE(?note) AS ?note) (SAMPLE(?bs) AS ?between) (GROUP_CONCAT(STR(?m); separator=" ") AS ?members) WHERE {
-      ?c a fb:Conflict ; fb:taxon ${T} ; fb:kind ?k ; rdfs:comment ?note ; fb:betweenSources ?bs ; fb:member ?m } GROUP BY ?c`),
+    sparql(`SELECT ?c (SAMPLE(?k) AS ?kind) (SAMPLE(?cm) AS ?note) (SAMPLE(?bs) AS ?between) (GROUP_CONCAT(STR(?m); separator=" ") AS ?members) WHERE {
+      ?c a fb:Conflict ; fb:taxon ${T} ; fb:kind ?k ; rdfs:comment ?cm ; fb:betweenSources ?bs ; fb:member ?m } GROUP BY ?c`),
   ]);
   const pane = document.getElementById("tpane");
   if (!pane) return;
@@ -539,7 +563,7 @@ async function query(params) {
   let text = EXAMPLES[first];
   if (params.get("describe")) text = `DESCRIBE <${params.get("describe")}>`;
   if (params.get("taxon")) text = `PREFIX fb: <${FB}>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT ?annotation ?bearer ?quality ?flopoClass ?source WHERE {\n  ?r fb:taxon <${params.get("taxon")}> ; rdfs:label ?annotation ;\n     fb:bearer ?bearer ; fb:quality ?quality ; fb:source/rdfs:label ?source .\n  OPTIONAL { ?r fb:flopoClass ?flopoClass }\n} ORDER BY ?annotation`;
-  setView(`<h1>Query</h1><p class="muted">All annotations are RDF. Write SPARQL 1.1 against the endpoint at <code>/sparql</code> (all graphs are queried together; the FLOPO class hierarchy is loaded too). Common prefixes such as <code>fb:</code>, <code>obo:</code> and <code>rdfs:</code> are predefined.</p>
+  setView(`<h1>Query</h1><p class="muted">All annotations are RDF. Write SPARQL 1.1 against the endpoint at <code>${esc(ENDPOINT)}</code> (all graphs are queried together; the FLOPO class hierarchy is loaded too). Common prefixes such as <code>fb:</code>, <code>obo:</code> and <code>rdfs:</code> are predefined.</p>
     <div class="toolbar"><label for="ex" class="muted">Examples</label><select id="ex">${Object.keys(EXAMPLES).map((k) => `<option>${esc(k)}</option>`).join("")}</select></div>
     <textarea class="sparql" id="q" spellcheck="false" aria-label="SPARQL query">${esc(text)}</textarea>
     <div class="toolbar"><button type="button" id="runq">Run query</button><a id="csv" href="#">Download as CSV</a><span class="muted" id="qinfo"></span></div>
@@ -553,12 +577,12 @@ async function query(params) {
     const started = performance.now();
     try {
       if (/^\s*(PREFIX[^\n]*\n\s*)*(DESCRIBE|CONSTRUCT)/i.test(area.value)) {
-        const r = await fetch("/sparql?" + new URLSearchParams({ query: area.value }), { headers: { Accept: "text/turtle" } });
+        const r = await fetch(sparqlUrl(area.value), { headers: { Accept: "text/turtle" } });
         const body = await r.text();
         if (!r.ok) throw new Error(body);
         out.innerHTML = `<pre>${esc(body)}</pre>`;
       } else {
-        const rows = await sparql(area.value, { raw: true });
+        const rows = await sparql(area.value);
         const cols = rows.length ? Object.keys(rows.reduce((a, r) => Object.assign(a, r), {})) : [];
         out.innerHTML = rows.length
           ? `<table class="results"><thead><tr>${cols.map((c) => `<th>${esc(c)}</th>`).join("")}</tr></thead><tbody>${rows
@@ -581,7 +605,7 @@ async function query(params) {
   area.addEventListener("keydown", (e) => { if ((e.ctrlKey || e.metaKey) && e.key === "Enter") run(); });
   document.getElementById("csv").addEventListener("click", (e) => {
     e.preventDefault();
-    window.open("/sparql?" + new URLSearchParams({ query: area.value, format: "csv" }));
+    window.open(sparqlUrl(area.value, { format: "csv" }));
   });
   if (params.get("describe") || params.get("taxon")) run();
 }

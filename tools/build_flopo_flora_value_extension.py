@@ -46,6 +46,9 @@ ID_BLOCK = (991000, 991999)
 RETIRED_IDS = {"FLOPO:0991008": "semi-prostrate: rejected in the 2026-10-13 review (no criterion distinguishing it from PATO:0002343 decumbent)"}
 DEFINITION = OBO.IAO_0000115
 EDITOR_NOTE = OBO.IAO_0000116
+# Value terms added without curator review are deployed as provisional (user, 2026-10-23).
+CURATION_STATUS = OBO.IAO_0000114
+PENDING_FINAL_VETTING = OBO.IAO_0000125
 RULE_FIELDS = [
     "rule_id", "match_field", "match_key", "bearer_constraint", "kind", "po_id", "pato_id",
     "value_term", "flopo_class", "target_label", "evidence", "review_status",
@@ -110,6 +113,9 @@ def build_graph(rows: list[dict[str, str]], pato: dict) -> Graph:
             f"added {date} for quality words of the Saudi Flora corpora that PATO lacks "
             f"(evidence: {row['source_words']}). Candidate for submission to PATO."
         )
+        if row.get("status") == "provisional":
+            note += " Provisional: not yet reviewed by the curator."
+            graph.add((cls, CURATION_STATUS, PENDING_FINAL_VETTING))
         graph.add((cls, EDITOR_NOTE, Literal(note, lang="en")))
         graph.add((cls, DCTERMS.date, Literal(date, datatype=XSD.date)))
     return graph
