@@ -87,6 +87,16 @@ the three matching assets, run the full gate without this option, then update
 staging option for updates to `master`. The staging result is
 not a claim that the public release has passed the complete Dashboard.
 
+### 2026-10-25
+
+[Published release](https://github.com/flora-phenotype-ontology/flopoontology/releases/tag/v2026-10-25):
+27,437 FLOPO classes, including 1,522 new EQs and 69 provisional flora qualities
+since v2026-10-14. All previous identifiers are preserved. The 90 release tests
+passed, and the complete postpublication OBO Dashboard passed all 14 implemented
+checks with zero errors and zero unsatisfiable classes. Download hashes and the
+unaltered Dashboard results are recorded in
+[the release validation](releases/2026-10-25/validation.json).
+
 ### 2026-10-14
 
 - Plane and solid egg shapes are separated. PATO:0001891 is a solid (3-D) egg shape but was
