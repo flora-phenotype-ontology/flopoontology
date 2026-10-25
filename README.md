@@ -28,6 +28,23 @@ uv run --frozen python tools/classify_flopo_release.py
 uv run --frozen python -m flopo2.owl.light
 ```
 
+### Automatic EQ review and trait annotations
+
+The global-flora candidate promotion workflow classifies candidates with ELK and then
+checks their bearer compatibility and inferred neighbourhoods with Qwen. Every input
+gets an added, equivalent-reuse, or triage disposition. See
+[the workflow and annotation semantics](docs/automatic-eq-promotion.md).
+
+The 2026-10-25 release adds 1,522 EQ classes after classification and Qwen review:
+963 in the initial pass and 559 after re-extraction. Another 25 re-extracted
+proposals map to existing classes. Of the original 2,195 candidates, 687 still
+require review, including 28 with partially accepted corrections; see the
+[current outcome ledger](curation/flopo-current-eq-dispositions-2026-10-25.tsv).
+The release also includes 69 defined provisional flora qualities since v2026-10-14:
+20 from earlier unpublished work, 25 missing IDs, and 24 additional qualities.
+The `traitOrPhenotype` annotation identifies 5,956 traits and 19,051 phenotypes,
+with explicit reasons for the 2,430 unclassified or inapplicable cases.
+
 ### Release procedure
 
 Each `tools/update_flopo_*_release.py` command embeds one generated module in
@@ -43,6 +60,7 @@ python -m flopo2.ids.registry ontology/flopo.owl -o config/flopo_id_registry.tsv
 python -m tools.update_flopo_bearer_parents         # EQ class under its bearer's 'E phenotype'
 python tools/classify_flopo_release.py
 python -m tools.update_flopo_inferred_parents       # assert the classified hierarchy (browsers)
+python -m flopo2.owl.trait_phenotype                # annotate PATO attributes versus values
 python tools/classify_flopo_release.py && python -m flopo2.owl.light
 python tools/obo_dashboard_gate.py                   # FP04 passes once the release is published
 ```
@@ -57,6 +75,17 @@ without reflexive parthood.
 release (`releases/<date>/`) to survive. After publishing, freeze the release with
 `tools/freeze_flopo_release.py`. The colour backbone builder may be re-run on an embedded
 release: it restores the pre-backbone declarations from `config/flopo_colour_backbone_base.ttl`.
+
+For a new GitHub-hosted version, FP04 cannot resolve until the assets are published.
+The normal pre-push and CI gates reject this error. An explicit release-staging
+option is available: `FLOPO_PENDING_RELEASE_VERSION=YYYY-MM-DD git push ...`.
+It runs a fresh official Dashboard and permits only the exact unresolved-version
+FP04 result, checks the canonical version metadata and artifact SHA-256, and rejects
+all other failures. Use it only for the release branch/tag publication step. Publish
+the three matching assets, run the full gate without this option, then update
+`master` through its ordinary gate and freeze the release. The hook rejects this
+staging option for updates to `master`. The staging result is
+not a claim that the public release has passed the complete Dashboard.
 
 ### 2026-10-14
 

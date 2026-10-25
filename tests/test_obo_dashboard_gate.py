@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from copy import deepcopy
+import hashlib
+import pytest
 
 from tools.obo_dashboard_gate import (
     DEFAULT_CONFIG,
@@ -13,7 +15,73 @@ from tools.obo_dashboard_gate import (
     ROBOT_VERSION,
     assess_dashboard,
     assess_public_dashboard_version,
+    assess_pending_release,
 )
+
+
+def _pending_release(tmp_path):
+    version = "2026-10-25"
+    iri = f"http://purl.obolibrary.org/obo/flopo/releases/{version}/flopo.owl"
+    ontology = tmp_path / "flopo.owl"
+    ontology.write_text(f'''<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+      xmlns:owl="http://www.w3.org/2002/07/owl#">
+      <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/flopo.owl">
+      <owl:versionIRI rdf:resource="{iri}"/><owl:versionInfo>{version}</owl:versionInfo>
+      </owl:Ontology></rdf:RDF>''')
+    data = _passing_dashboard()
+    data["version"] = iri
+    data["sha256_hash"] = hashlib.sha256(ontology.read_bytes()).hexdigest()
+    data["results"]["FP04 Versioning"] = {
+        "status": "ERROR",
+        "comment": "Version IRI does not resolve",
+    }
+    data["summary"] = {"status": "ERROR", "summary_count": {"ERROR": 1}}
+    return data, ontology, version
+
+
+def test_pending_release_defers_only_publication_and_preserves_real_report(tmp_path):
+    data, ontology, version = _pending_release(tmp_path)
+    original = deepcopy(data)
+    assert not assess_dashboard(data).passed
+    assert assess_pending_release(data, ontology, version).passed
+    assert data == original
+    assert not assess_dashboard(data).passed
+
+
+@pytest.mark.parametrize(
+    "kind", ["robot", "other", "missing", "unsatisfiable", "bad_versioning", "extra_summary_error"]
+)
+def test_pending_release_keeps_other_failures_closed(tmp_path, kind):
+    data, ontology, version = _pending_release(tmp_path)
+    if kind == "robot":
+        data["results"]["ROBOT Report"]["results"]["ERROR"] = 1
+    elif kind == "other":
+        data["results"]["FP06 Textual Definitions"]["status"] = "ERROR"
+    elif kind == "missing":
+        del data["results"]["FP20 Responsiveness"]
+    elif kind == "unsatisfiable":
+        data["metrics"]["Entities: Number of unsatisfiable classes"] = 1
+    elif kind == "bad_versioning":
+        data["results"]["FP04 Versioning"]["comment"] = "Missing version IRI"
+    else:
+        data["summary"]["summary_count"]["ERROR"] = 2
+    assert not assess_pending_release(data, ontology, version).passed
+
+
+def test_pending_release_cannot_approve_another_version(tmp_path):
+    data, ontology, version = _pending_release(tmp_path)
+    with pytest.raises(ValueError, match="metadata"):
+        assess_pending_release(data, ontology, "2026-10-26")
+    data["version"] = "wrong"
+    with pytest.raises(ValueError, match="different release"):
+        assess_pending_release(data, ontology, version)
+
+
+def test_pending_release_checks_exact_artifact_hash(tmp_path):
+    data, ontology, version = _pending_release(tmp_path)
+    data["sha256_hash"] = "wrong"
+    with pytest.raises(ValueError, match="exact artifact bytes"):
+        assess_pending_release(data, ontology, version)
 
 
 def _passing_dashboard() -> dict:
@@ -93,9 +161,7 @@ def test_dashboard_pass_policy_accepts_non_error_notices():
     data["summary"]["status"] = "WARN"
     assessment = assess_dashboard(data)
     assert assessment.passed
-    assert assessment.notices == (
-        "FP06 Textual Definitions = WARN: one missing definition",
-    )
+    assert assessment.notices == ("FP06 Textual Definitions = WARN: one missing definition",)
 
 
 def test_dashboard_gate_rejects_any_error_result():

@@ -7,8 +7,8 @@ creeping, mat-forming, twiggy, leafy), odours (sweet-, spicy-, sour-scented, mus
 surfaces (exfoliating, fissured), plus subsessile, bipinnate and unisexual.  Each becomes a
 FLOPO-local value class directly beneath its closest live PATO class, the pattern of the
 provisional PATO candidates in FLOPO_0985xxx, so every value is grounded in PATO and can later be
-replaced by a PATO term.  The Saudi Flora corpora (NCVC 2024 and Collenette 1985) are the
-evidence; ``source_words`` records the word and its frequency there.
+replaced by a PATO term. Parsed floras, including NCVC 2024 and Collenette 1985, supply
+the evidence; ``source_words`` records source wording or audit counts and provenance.
 
 Outputs
     ontology/flopo-flora-value-extension.ttl   the module (embedded in flopo.owl by
@@ -43,15 +43,27 @@ COMBINATIONS = Path("config/valid_combinations.tsv")
 DECISION_DATE = "2026-10-06"
 ID_BLOCK = (991000, 991999)
 # Identifiers withdrawn before any release; never to be reused.
-RETIRED_IDS = {"FLOPO:0991008": "semi-prostrate: rejected in the 2026-10-13 review (no criterion distinguishing it from PATO:0002343 decumbent)"}
+RETIRED_IDS = {
+    "FLOPO:0991008": "semi-prostrate: rejected in the 2026-10-13 review (no criterion distinguishing it from PATO:0002343 decumbent)"
+}
 DEFINITION = OBO.IAO_0000115
 EDITOR_NOTE = OBO.IAO_0000116
 # Value terms added without curator review are deployed as provisional (user, 2026-10-23).
 CURATION_STATUS = OBO.IAO_0000114
 PENDING_FINAL_VETTING = OBO.IAO_0000125
 RULE_FIELDS = [
-    "rule_id", "match_field", "match_key", "bearer_constraint", "kind", "po_id", "pato_id",
-    "value_term", "flopo_class", "target_label", "evidence", "review_status",
+    "rule_id",
+    "match_field",
+    "match_key",
+    "bearer_constraint",
+    "kind",
+    "po_id",
+    "pato_id",
+    "value_term",
+    "flopo_class",
+    "target_label",
+    "evidence",
+    "review_status",
 ]
 # Taste/odour words that a fruit can carry as a taste ("sweet and edible"): odour readings only.
 NOT_FRUIT = r"^(?!.*\b(?:fruit|berry|drupe|pod|capsule)s?\b).+"
@@ -94,6 +106,7 @@ def build_graph(rows: list[dict[str, str]], pato: dict) -> Graph:
     graph.bind("oboInOwl", OIO)
     graph.bind("dcterms", DCTERMS)
     graph.add((MODULE, RDF.type, OWL.Ontology))
+    graph.add((OIO.inSubset, RDF.type, OWL.AnnotationProperty))
     graph.add((MODULE, RDFS.comment, Literal(__doc__.split("\n\n")[0], lang="en")))
     for row in rows:
         if row["parent"] not in pato:
@@ -103,6 +116,9 @@ def build_graph(rows: list[dict[str, str]], pato: dict) -> Graph:
         graph.add((cls, RDFS.label, Literal(row["label"], datatype=XSD.string)))
         graph.add((cls, RDFS.subClassOf, OBO[_local(row["parent"])]))
         graph.add((cls, DEFINITION, Literal(row["definition"], lang="en")))
+        graph.add((cls, OIO.inSubset, URIRef("http://purl.obolibrary.org/obo/pato#value_slim")))
+        if row.get("definition_source"):
+            graph.add((cls, DCTERMS.source, URIRef(row["definition_source"])))
         for synonym in filter(None, row["exact_synonyms"].split("|")):
             graph.add((cls, OIO.hasExactSynonym, Literal(synonym, datatype=XSD.string)))
         for synonym in filter(None, row["related_synonyms"].split("|")):
@@ -110,11 +126,13 @@ def build_graph(rows: list[dict[str, str]], pato: dict) -> Graph:
         date = row.get("added") or DECISION_DATE
         note = (
             f"FLOPO-local value class beneath PATO {row['parent']} ({pato[row['parent']].name}), "
-            f"added {date} for quality words of the Saudi Flora corpora that PATO lacks "
+            f"added {date} for quality words of the parsed flora corpora "
             f"(evidence: {row['source_words']}). Candidate for submission to PATO."
         )
         if row.get("status") == "provisional":
-            note += " Provisional: not yet reviewed by the curator."
+            note += " Provisional: pending final curator vetting."
+            if row.get("provisional_reason"):
+                note += " Review issue: " + row["provisional_reason"]
             graph.add((cls, CURATION_STATUS, PENDING_FINAL_VETTING))
         graph.add((cls, EDITOR_NOTE, Literal(note, lang="en")))
         graph.add((cls, DCTERMS.date, Literal(date, datatype=XSD.date)))
@@ -149,7 +167,9 @@ def rule_rows(rows: list[dict[str, str]], pato: dict, attributes: set[str]) -> l
                     "target_label": row["label"],
                     "evidence": f"{row['flopo_id']} {row['label']} ({_word_kind(row, word)}); "
                     f"FLOPO flora value module {row.get('added') or DECISION_DATE}",
-                    "review_status": "claude_reviewed",
+                    "review_status": "provisional"
+                    if row.get("status") == "provisional"
+                    else "claude_reviewed",
                 }
             )
     return out
@@ -163,7 +183,9 @@ def _word_kind(row: dict[str, str], word: str) -> str:
     return "transcription phrasing"
 
 
-def combination_rows(rows: list[dict[str, str]], pato: dict, attributes: set[str]) -> list[dict[str, str]]:
+def combination_rows(
+    rows: list[dict[str, str]], pato: dict, attributes: set[str]
+) -> list[dict[str, str]]:
     out = []
     for row in rows:
         attribute = attribute_of(pato, attributes, row["parent"])
@@ -203,7 +225,11 @@ def write(root: Path = ROOT) -> dict[str, int]:
         reader = csv.DictReader(handle, delimiter="\t")
         fields = reader.fieldnames
         existing = {(r["po_id"], r["pato_id"]) for r in reader}
-    added = [r for r in combination_rows(rows, pato, attributes) if (r["po_id"], r["pato_id"]) not in existing]
+    added = [
+        r
+        for r in combination_rows(rows, pato, attributes)
+        if (r["po_id"], r["pato_id"]) not in existing
+    ]
     added = list({(r["po_id"], r["pato_id"]): r for r in added}.values())
     if added:
         with path.open("a", encoding="utf-8", newline="") as handle:
@@ -212,7 +238,9 @@ def write(root: Path = ROOT) -> dict[str, int]:
 
 
 def main() -> None:
-    argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter).parse_args()
+    argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    ).parse_args()
     print(write())
 
 

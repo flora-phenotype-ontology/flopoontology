@@ -25,10 +25,18 @@ check_commit() {
     config/obo_dashboard.yml \
     tools/obo_dashboard_gate.py | tar -x -C "$candidate"
   echo "Running the official OBO Dashboard gate for $label ($commit)..."
-  python3 "$candidate/tools/obo_dashboard_gate.py"
+  if [[ -n "${FLOPO_PENDING_RELEASE_VERSION:-}" ]]; then
+    python3 "$candidate/tools/obo_dashboard_gate.py" --pending-version "$FLOPO_PENDING_RELEASE_VERSION"
+  else
+    python3 "$candidate/tools/obo_dashboard_gate.py"
+  fi
 }
 
 while read -r local_ref local_sha remote_ref _remote_sha; do
+  if [[ "$remote_ref" == "refs/heads/master" && -n "${FLOPO_PENDING_RELEASE_VERSION:-}" ]]; then
+    echo "Release staging cannot update master: publish the version, then use the full Dashboard gate." >&2
+    exit 1
+  fi
   REF_COUNT=$((REF_COUNT + 1))
   check_commit "$local_sha" "$local_ref -> $remote_ref"
 done

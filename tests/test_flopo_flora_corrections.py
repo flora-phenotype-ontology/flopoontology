@@ -31,7 +31,7 @@ def registry() -> list[dict[str, str]]:
         return [r for r in csv.DictReader(handle, delimiter="\t") if r["deprecated"] == "0"]
 
 
-def test_flat_organs_use_plane_ovate_and_others_are_ovoid(module):
+def test_flat_organs_use_plane_ovate_and_others_are_ovoid(module, registry):
     seen = {"plane": 0, "solid": 0}
     for cls in module.subjects(OWL.equivalentClass, None):
         entity, quality = eq_parts(module, cls)
@@ -42,10 +42,35 @@ def test_flat_organs_use_plane_ovate_and_others_are_ovoid(module):
         else:
             assert quality == SOLID_OVATE and label.endswith(" ovoid")
             seen["solid"] += 1
-    assert seen == {"plane": 30, "solid": 120}
+    expected = {"plane": 0, "solid": 0}
+    for row in registry:
+        parts = row["signature"].split("|")
+        if len(parts) != 3 or parts[0] != "EQ":
+            continue
+        _, entity, quality = parts
+        if quality == "PATO_0001891":
+            expected["plane" if entity in FLAT_BEARERS else "solid"] += 1
+        elif quality == "FLOPO_0991024" and entity in FLAT_BEARERS:
+            expected["plane"] += 1
+    assert seen == expected
+    assert seen["plane"] >= 30 and seen["solid"] >= 120
     leaf = URIRef(OBO + "FLOPO_0000286")
     assert eq_parts(module, leaf) == (URIRef(OBO + "PO_0025034"), PLANE_OVATE)
     assert str(module.value(URIRef(OBO + "FLOPO_0003805"), RDFS.label)) == "seed ovoid"
+
+
+def test_new_eq_definition_uses_solid_ovoid_wording_without_changing_quality():
+    from tools.build_flopo_flora_corrections import DEFINITION, ovate_classes
+    from flopo2.verify.eq_release import eq_axioms
+
+    graph, out = Graph(), Graph()
+    cls = eq_axioms(graph, OBO + "FLOPO_9999998", OBO + "PO_0009072",
+                    str(SOLID_OVATE), "plant ovary ovate", "")
+    graph.add((cls, DEFINITION, Literal("A flora phenotype in which a plant ovary exhibits ovate.", lang="en")))
+    ovate_classes(graph, out)
+    assert str(out.value(cls, RDFS.label)) == "plant ovary ovoid"
+    assert str(out.value(cls, DEFINITION)).endswith("exhibits ovoid.")
+    assert eq_parts(out, cls)[1] == SOLID_OVATE
 
 
 def test_registry_keeps_the_identifiers(registry):

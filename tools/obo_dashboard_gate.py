@@ -3,13 +3,17 @@
 
 The Dashboard combines checks of the OWL release with checks of FLOPO's live OBO
 registry entry.  This wrapper runs the exact container used by the public Dashboard,
-then fails unless every currently implemented check ran and the Dashboard considers
+then, by default, fails unless every currently implemented check ran and the Dashboard considers
 the ontology to have passed (that is, no ERROR result).
+An explicit prepublication mode may defer only unresolved version-URL resolution;
+the ordinary full gate is still required before updating master.
 """
 
 from __future__ import annotations
 
 import argparse
+import copy
+import datetime
 import hashlib
 import os
 import shutil
@@ -17,6 +21,7 @@ import subprocess
 import sys
 import urllib.error
 import urllib.request
+import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from pathlib import Path
 from re import search
@@ -78,9 +83,7 @@ def assess_public_dashboard_version(html: str) -> GateAssessment:
     """Confirm that our reproducible runner is still the public runner."""
 
     failures: list[str] = []
-    commit_match = search(
-        r"github\.com/OBOFoundry/OBO-Dashboard/commit/([0-9a-f]{40})", html
-    )
+    commit_match = search(r"github\.com/OBOFoundry/OBO-Dashboard/commit/([0-9a-f]{40})", html)
     robot_match = search(r"ROBOT version ([0-9]+(?:\.[0-9]+)+)", html)
     if commit_match is None:
         failures.append("Public Dashboard page does not advertise its source commit")
@@ -179,11 +182,62 @@ def assess_dashboard(data: dict, *, require_all_pass: bool = False) -> GateAsses
     if unsatisfiable != 0:
         failures.append(f"Dashboard found {unsatisfiable!r} unsatisfiable classes")
     if metrics.get("Info: Syntax") != "RDF/XML Syntax":
-        failures.append(
-            f"Dashboard did not recognize RDF/XML: {metrics.get('Info: Syntax')!r}"
-        )
+        failures.append(f"Dashboard did not recognize RDF/XML: {metrics.get('Info: Syntax')!r}")
 
     return GateAssessment(tuple(dict.fromkeys(failures)), tuple(notices))
+
+
+def assess_pending_release(data: dict, ontology: Path, version: str) -> GateAssessment:
+    """Explicit prepublication assessment; the normal full gate is unchanged.
+
+    GitHub-hosted version IRIs cannot resolve before a release is published. Only
+    that exact failure may be deferred for a specifically named, locally verified
+    version. The original Dashboard report remains unmodified. Publication must
+    be followed by the ordinary gate, without this option.
+    """
+    if datetime.date.fromisoformat(version).isoformat() != version:
+        raise ValueError("Pending release version must be YYYY-MM-DD")
+    obo = "http://purl.obolibrary.org/obo/"
+    owl = "{http://www.w3.org/2002/07/owl#}"
+    rdf = "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}"
+    tree = ET.parse(ontology)
+    declarations = [
+        n
+        for n in tree.getroot().findall(owl + "Ontology")
+        if n.get(rdf + "about") == obo + "flopo.owl"
+    ]
+    versions = [
+        n.get(rdf + "resource") for d in declarations for n in d.findall(owl + "versionIRI")
+    ]
+    infos = [n.text for d in declarations for n in d.findall(owl + "versionInfo")]
+    expected = f"{obo}flopo/releases/{version}/flopo.owl"
+    if versions != [expected] or infos != [version]:
+        raise ValueError("Pending version does not match the canonical artifact metadata")
+    if data.get("version") != expected:
+        raise ValueError("Dashboard evaluated a different release version")
+    if data.get("sha256_hash") != hashlib.sha256(ontology.read_bytes()).hexdigest():
+        raise ValueError("Dashboard did not evaluate these exact artifact bytes")
+    assessment = assess_dashboard(data)
+    if assessment.passed:
+        return assessment
+    fp04 = data.get("results", {}).get("FP04 Versioning", {})
+    if fp04.get("status") != "ERROR" or fp04.get("comment") != "Version IRI does not resolve":
+        return assessment
+    summary = data.get("summary", {})
+    if summary.get("status") != "ERROR" or summary.get("summary_count", {}).get("ERROR") != 1:
+        return assessment
+    adjusted = copy.deepcopy(data)
+    adjusted["results"]["FP04 Versioning"] = {"status": "PASS"}
+    adjusted["summary"]["status"] = "INFO"
+    remaining = assess_dashboard(adjusted)
+    return GateAssessment(
+        remaining.failures,
+        remaining.notices
+        + (
+            f"PENDING PUBLICATION: only FP04 URL resolution deferred for {expected}; "
+            "run the full gate after publishing, without --pending-version",
+        ),
+    )
 
 
 def _chown_cache(cache: Path, image: str) -> None:
@@ -308,6 +362,10 @@ def main() -> None:
     parser.add_argument("--cache-dir", type=Path, default=_default_cache())
     parser.add_argument("--image", default=DEFAULT_IMAGE)
     parser.add_argument(
+        "--pending-version",
+        help="Explicit release staging only: defer unresolved FP04 for this YYYY-MM-DD version; rerun the full gate after publication.",
+    )
+    parser.add_argument(
         "--results",
         type=Path,
         help="Assess an existing dashboard.yml instead of running Docker.",
@@ -324,14 +382,22 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    if args.pending_version and (args.results or args.all_pass):
+        parser.error(
+            "--pending-version requires a fresh Dashboard run and cannot use --results or --all-pass"
+        )
+
     try:
         if args.results is None and not args.skip_upstream_pin_check:
             verify_public_dashboard_version()
         result_path = args.results or run_dashboard(
             args.ontology, args.config, args.cache_dir, args.image
         )
-        assessment = assess_dashboard(
-            load_dashboard(result_path), require_all_pass=args.all_pass
+        data = load_dashboard(result_path)
+        assessment = (
+            assess_pending_release(data, args.ontology, args.pending_version)
+            if args.pending_version
+            else assess_dashboard(data, require_all_pass=args.all_pass)
         )
     except (FileNotFoundError, RuntimeError, ValueError, subprocess.CalledProcessError) as error:
         print(f"OBO Dashboard gate failed: {error}", file=sys.stderr)
@@ -345,7 +411,10 @@ def main() -> None:
         print(f"OBO Dashboard result: {result_path}", file=sys.stderr)
         raise SystemExit(1)
 
-    print(f"OBO Dashboard gate passed ({len(EXPECTED_RESULTS)} checks, zero errors)")
+    if args.pending_version:
+        print("OBO prepublication assessment passed; full postpublication gate still required")
+    else:
+        print(f"OBO Dashboard gate passed ({len(EXPECTED_RESULTS)} checks, zero errors)")
     print(f"OBO Dashboard result: {result_path}")
 
 

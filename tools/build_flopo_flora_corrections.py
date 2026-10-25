@@ -125,7 +125,8 @@ def ovate_classes(graph: Graph, out: Graph) -> dict[str, int]:
             if p == RDFS.label and not flat and str(o).endswith(" ovate"):
                 o = Literal(str(o)[: -len(" ovate")] + " ovoid", datatype=o.datatype, lang=o.language)
             elif p == DEFINITION and not flat:
-                o = Literal(str(o).replace("being ovate.", "being ovoid."), lang=o.language, datatype=o.datatype)
+                text = str(o).replace("being ovate.", "being ovoid.").replace("exhibits ovate.", "exhibits ovoid.")
+                o = Literal(text, lang=o.language, datatype=o.datatype)
             out.add((cls, p, _copy(graph, out, o, rename, f"FLOPOShape_{_local(cls)}", swap)))
         note = (
             f"Plane (2-D) outline: uses the temporary class FLOPO:0991024 (ovate) for PATO:0104368, "

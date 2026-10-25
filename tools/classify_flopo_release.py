@@ -29,9 +29,7 @@ def obo_without_imports(text: str) -> str:
     """Remove OBO import header clauses while preserving every local ontology stanza."""
 
     return "".join(
-        line
-        for line in text.splitlines(keepends=True)
-        if not line.startswith("import: ")
+        line for line in text.splitlines(keepends=True) if not line.startswith("import: ")
     )
 
 
@@ -58,6 +56,62 @@ def _run(command: list[str]) -> None:
         raise RuntimeError(f"ROBOT command failed ({completed.returncode}): {detail}")
 
 
+def prepare_classification_input(
+    source: Graph,
+    work: Path,
+    po_path: Path,
+    pato_path: Path,
+    go_path: Path,
+    robot_command: list[str],
+) -> Path:
+    """Build the controlled offline closure shared by release and candidate checks."""
+    local_source = Graph()
+    for triple in source:
+        if triple[1] != OWL.imports:
+            local_source.add(triple)
+    source_local_path = work / "flopo-local.owl"
+    local_source.serialize(source_local_path.as_posix(), format="xml")
+
+    converted_inputs: list[Path] = []
+    for name, ontology_path in (("po", po_path), ("pato", pato_path)):
+        local_obo = work / f"{name}-local.obo"
+        local_obo.write_text(
+            obo_without_imports(ontology_path.read_text(encoding="utf-8")),
+            encoding="utf-8",
+        )
+        converted = work / f"{name}-local.owl"
+        _run(
+            [
+                *robot_command,
+                "convert",
+                "--input",
+                str(local_obo),
+                "--output",
+                str(converted),
+            ]
+        )
+        converted_inputs.append(converted)
+
+    merged = work / "flopo-classification-input.owl"
+    _run(
+        [
+            *robot_command,
+            "merge",
+            "--input",
+            str(source_local_path),
+            "--input",
+            str(converted_inputs[0]),
+            "--input",
+            str(converted_inputs[1]),
+            "--input",
+            str(go_path),
+            "--output",
+            str(merged),
+        ]
+    )
+    return merged
+
+
 def classify_release(
     source_path: Path,
     output_path: Path,
@@ -76,49 +130,8 @@ def classify_release(
 
     with tempfile.TemporaryDirectory(prefix="flopo-classify-") as directory:
         work = Path(directory)
-        local_source = Graph()
-        for triple in source:
-            if triple[1] != OWL.imports:
-                local_source.add(triple)
-        source_local_path = work / "flopo-local.owl"
-        local_source.serialize(source_local_path.as_posix(), format="xml")
-
-        converted_inputs: list[Path] = []
-        for name, ontology_path in (("po", po_path), ("pato", pato_path)):
-            local_obo = work / f"{name}-local.obo"
-            local_obo.write_text(
-                obo_without_imports(ontology_path.read_text(encoding="utf-8")),
-                encoding="utf-8",
-            )
-            converted = work / f"{name}-local.owl"
-            _run(
-                [
-                    *robot_command,
-                    "convert",
-                    "--input",
-                    str(local_obo),
-                    "--output",
-                    str(converted),
-                ]
-            )
-            converted_inputs.append(converted)
-
-        merged = work / "flopo-classification-input.owl"
-        _run(
-            [
-                *robot_command,
-                "merge",
-                "--input",
-                str(source_local_path),
-                "--input",
-                str(converted_inputs[0]),
-                "--input",
-                str(converted_inputs[1]),
-                "--input",
-                str(go_path),
-                "--output",
-                str(merged),
-            ]
+        merged = prepare_classification_input(
+            source, work, po_path, pato_path, go_path, robot_command
         )
         classified = work / "flopo-inferred.owl"
         _run(
@@ -156,14 +169,10 @@ def classify_release(
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", type=Path, default=Path("ontology/flopo.owl"))
-    parser.add_argument(
-        "--output", type=Path, default=Path("ontology/flopo-inferred.owl")
-    )
+    parser.add_argument("--output", type=Path, default=Path("ontology/flopo-inferred.owl"))
     parser.add_argument("--po", type=Path, default=Path("ont/plant_ontology.obo"))
     parser.add_argument("--pato", type=Path, default=Path("ont/quality.obo"))
-    parser.add_argument(
-        "--go", type=Path, default=Path("ontology/imports/go_import.owl")
-    )
+    parser.add_argument("--go", type=Path, default=Path("ontology/imports/go_import.owl"))
     parser.add_argument("--robot", default=None)
     args = parser.parse_args()
     stats = classify_release(
