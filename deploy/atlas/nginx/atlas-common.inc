@@ -12,7 +12,7 @@ location = / {
     add_header Cache-Control "no-cache";
 }
 
-location ~ "^/(index\.html|app\.js|styles\.css|summary\.json|release\.json)$" {
+location ~ "^/(index\.html|app\.js|styles\.css|summary\.json|release\.json|inaturalist\.json)$" {
     try_files $uri =404;
     add_header X-Atlas-Release $atlas_release always;
     add_header Cache-Control "no-cache";
