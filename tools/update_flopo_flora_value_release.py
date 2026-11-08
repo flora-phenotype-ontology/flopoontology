@@ -13,7 +13,7 @@ import re
 from datetime import date
 from pathlib import Path
 
-from rdflib import OWL, RDF, RDFS, Graph, URIRef
+from rdflib import OWL, RDF, RDFS, Graph, Literal, URIRef
 
 from tools.update_flopo_botanical_release import _remove_named_owl_class
 from tools.update_flopo_release import _extension_fragment, _update_release_metadata
@@ -71,8 +71,12 @@ def update_release(release_path: Path, module_path: Path, release_date: str) -> 
     check = Graph().parse(release_path.as_posix())
     for class_iri in classes:
         cls = URIRef(class_iri)
+        if (cls, RDF.type, OWL.Class) not in check:
+            raise ValueError(f"flora value class not embedded: {class_iri}")
+        if (cls, OWL.deprecated, Literal(True)) in check:
+            continue  # withdrawn term: deprecated shell with its replacement, no PATO parent
         parents = [p for p in check.objects(cls, RDFS.subClassOf) if str(p).startswith(OBO + "PATO_")]
-        if (cls, RDF.type, OWL.Class) not in check or not parents:
+        if not parents:
             raise ValueError(f"flora value class not embedded beneath PATO: {class_iri}")
     return {"classes": len(classes), "replaced_declarations": replaced}
 

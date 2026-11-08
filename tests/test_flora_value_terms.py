@@ -112,4 +112,6 @@ def test_grounding_rule_overrides_an_older_hold():
 def test_value_terms_are_in_the_live_catalog(spec):
     res = load_resources()
     for row in spec:
+        if row.get("status") == "obsolete":
+            continue  # withdrawn terms stay in the release as deprecated shells, not live values
         assert row["flopo_id"].replace(":", "_") in res.flopo_labels

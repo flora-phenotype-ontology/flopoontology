@@ -113,6 +113,17 @@ def build_graph(rows: list[dict[str, str]], pato: dict) -> Graph:
             raise ValueError(f"{row['label']}: parent {row['parent']} is not a live PATO class")
         cls = OBO[_local(row["flopo_id"])]
         graph.add((cls, RDF.type, OWL.Class))
+        if row.get("status") == "obsolete":
+            # Withdrawn after release: the identifier stays, deprecated, with its replacement.
+            graph.add((cls, RDFS.label, Literal("obsolete " + row["label"], datatype=XSD.string)))
+            graph.add((cls, OWL.deprecated, Literal(True)))
+            graph.add((cls, DEFINITION, Literal(row["definition"], lang="en")))
+            if row.get("replaced_by"):
+                graph.add((cls, OBO.IAO_0100001, OBO[_local(row["replaced_by"])]))
+            graph.add((cls, EDITOR_NOTE, Literal(
+                f"Obsoleted FLOPO flora value term. {row.get('review_note') or ''}".strip(), lang="en")))
+            graph.add((cls, DCTERMS.date, Literal(row.get("added") or DECISION_DATE, datatype=XSD.date)))
+            continue
         graph.add((cls, RDFS.label, Literal(row["label"], datatype=XSD.string)))
         graph.add((cls, RDFS.subClassOf, OBO[_local(row["parent"])]))
         graph.add((cls, DEFINITION, Literal(row["definition"], lang="en")))
@@ -134,6 +145,8 @@ def build_graph(rows: list[dict[str, str]], pato: dict) -> Graph:
             if row.get("provisional_reason"):
                 note += " Review issue: " + row["provisional_reason"]
             graph.add((cls, CURATION_STATUS, PENDING_FINAL_VETTING))
+        elif row.get("review_note"):
+            note += " Review: " + row["review_note"]
         graph.add((cls, EDITOR_NOTE, Literal(note, lang="en")))
         graph.add((cls, DCTERMS.date, Literal(date, datatype=XSD.date)))
     return graph
@@ -143,6 +156,8 @@ def rule_rows(rows: list[dict[str, str]], pato: dict, attributes: set[str]) -> l
     out: list[dict[str, str]] = []
     seen: set[str] = set()
     for row in rows:
+        if row.get("status") == "obsolete":
+            continue
         attribute = attribute_of(pato, attributes, row["parent"])
         # Label, exact synonyms, and rule-only words: phrasings of the transcriptions ("head",
         # "sweet" for "sweet scent") that are not ontology synonyms.
@@ -188,6 +203,8 @@ def combination_rows(
 ) -> list[dict[str, str]]:
     out = []
     for row in rows:
+        if row.get("status") == "obsolete":
+            continue
         attribute = attribute_of(pato, attributes, row["parent"])
         for bearer in filter(None, row["bearers"].split("|")):
             out.append(

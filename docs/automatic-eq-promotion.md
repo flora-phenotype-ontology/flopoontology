@@ -281,3 +281,38 @@ umbellate-racemose, retained glabrate and hypogeal only as related synonyms wher
 their senses differ, and removed the unsupported numeric range from pea-sized.
 These are preliminary FLOPO vocabulary decisions; no PATO or PO submission is
 implied by publication of the local classes.
+
+## Curator review of the held candidates (2026-11-08)
+
+The 687 candidates held after the 2026-10-25 re-extraction were reviewed one by one by
+Claude Fable 5.1, an AI, at Robert Hoehndorf's instruction. This is a curator-role review
+by a model, recorded as such; it is not an expert botanist's approval. Decisions:
+
+| Decision | Candidates | Rule |
+| --- | ---: | --- |
+| accept | 506 | the only objections were Qwen disagreements with hierarchy edges that follow from PO/PATO (cotyledon is a leaf, width is a size, colour groups under morphology, present under amount); the bearer–quality class is botanically well formed |
+| remap | 56 | the quality was misgrounded: "acute" (34) and "subacute" (7) apices to PATO process-duration qualities, "capitate" stigma to the inflorescence arrangement, "fascicled" to fibre bundles, "cartilaginous" and "glutinous" to animal/chemical compositions, "netted" to a colour pattern, "aromatic" to a molecular quality, "herbaceous"/"leafy" bracts and sepals (leaf-like); five bearers corrected (root system, stem, leaf) |
+| reuse_existing | 27 | an existing class carries the label; no second class is minted |
+| reject | 98 | 41 unsupported by the source passages after re-extraction; relational or vacuous qualities; process qualities on anatomical entities; ill-formed legacy values; developmental stages; three "purplish red" colours with no FLOPO class for that ISCC-NBS sector |
+
+New flora values for the remaps: FLOPO:0991095 acute (sensu botany), 0991096 subacute
+(sensu botany), 0991097 head-shaped, 0991098 fascicled, 0991099 cartilaginous (sensu
+botany), 0991100 reticulate (`config/flopo_flora_value_terms.tsv`).
+
+The 561 distinct resulting signatures were classified with ELK by `eq_release prepare`;
+none failed the deterministic checks. `eq_release curate` then recorded the decisions
+with the reviewer's name in place of a model review, and `eq_release promote` added
+**544** classes and reused **17** existing classes (run `066f0473963c`, module
+`ontology/flopo-automatic-eq-066f0473963c.ttl`). The editor note on each class names the
+review and the ledger.
+
+```bash
+.venv/bin/python -m flopo2.verify.eq_release prepare --work scratchpad/eq-curate --candidates <accepted signatures>
+.venv/bin/python -m flopo2.verify.eq_release curate --work scratchpad/eq-curate --reviewer "<who>" --review-note "<editor note>"
+.venv/bin/python -m flopo2.verify.eq_release promote --work scratchpad/eq-curate --date 2026-11-08 --dispositions curation/flopo-curator-eq-dispositions-2026-11-08.tsv
+```
+
+Ledgers: `curation/flopo-eq-curator-review-2026-11-08.tsv` (all 687 originals with
+decision, target and note) and `curation/flopo-curator-eq-dispositions-2026-11-08.tsv`
+(the promotion outcome per classified signature).
+

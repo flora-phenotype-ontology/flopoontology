@@ -42,6 +42,23 @@ require review, including 28 with partially accepted corrections; see the
 [current outcome ledger](curation/flopo-current-eq-dispositions-2026-10-25.tsv).
 The release also includes 69 defined provisional flora qualities since v2026-10-14:
 20 from earlier unpublished work, 25 missing IDs, and 24 additional qualities.
+
+On 2026-11-08 the 687 held candidates were reviewed by Claude Fable 5.1 (an AI, at the
+curator's instruction; not an expert botanist's review). 506 were accepted as proposed,
+56 were remapped to the botanical quality the source meant (34 "acute" and 7 "subacute"
+apices had been grounded to PATO process-duration qualities; others to new FLOPO values
+such as head-shaped, fascicled, cartilaginous and reticulate), 27 reuse an existing class
+with the same label, and 98 were rejected (unsupported by the source passages, relational
+or vacuous qualities, process qualities on anatomical entities). The 561 resulting
+signatures passed ELK and the deterministic bearer checks; 544 new classes were added and
+17 reuse existing classes (`flopo2.verify.eq_release curate`, module
+`ontology/flopo-automatic-eq-066f0473963c.ttl`). Every decision is in
+[the curator ledger](curation/flopo-eq-curator-review-2026-11-08.tsv) and the
+[promotion dispositions](curation/flopo-curator-eq-dispositions-2026-11-08.tsv). The same
+review accepted 67 of the 69 provisional flora qualities, withdrew cherry-like
+(FLOPO:0991042) and amplexicaul (FLOPO:0991066, replaced by clasping), widened unisexual to
+inflorescences, and added six values (FLOPO:0991095–0991100); see
+[the term review](curation/flopo-provisional-term-review-2026-11-08.tsv).
 The `traitOrPhenotype` annotation identifies 5,956 traits and 19,051 phenotypes,
 with explicit reasons for the 2,430 unclassified or inapplicable cases.
 
@@ -86,6 +103,19 @@ the three matching assets, run the full gate without this option, then update
 `master` through its ordinary gate and freeze the release. The hook rejects this
 staging option for updates to `master`. The staging result is
 not a claim that the public release has passed the complete Dashboard.
+
+### 2026-11-08 (in preparation)
+
+- 544 EQ classes added after the curator review of the 687 candidates held on 2026-10-25;
+  17 further candidates reuse existing classes, 27 collided with an existing label and were
+  not minted, 98 were rejected. Reviewer: Claude Fable 5.1 (AI) at the curator's instruction.
+- Six FLOPO flora values: acute (sensu botany), subacute (sensu botany), head-shaped,
+  fascicled, cartilaginous (sensu botany), reticulate. 67 provisional values are now
+  reviewed; cherry-like and amplexicaul are obsolete (amplexicaul replaced by clasping).
+- Open follow-ups: PATO released PATO:0104350–0104367 on 2026-10-01 for the 18 provisional
+  bridge qualities FLOPO:0985000–0985016 and FLOPO:0987000; the pinned PATO copy and the
+  bridges still have to be migrated. Three "purplish red" candidates await a colour class
+  for that ISCC-NBS sector.
 
 ### 2026-10-25
 

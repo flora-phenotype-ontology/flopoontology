@@ -708,6 +708,55 @@ def review(args):
     print("Review complete", Counter(d["status"] for d in decisions), flush=True)
 
 
+def curate(args):
+    """Record curator decisions for a prepared classification instead of a Qwen review.
+
+    Every prepared candidate was selected by a named reviewer; a candidate passes when the
+    deterministic ELK/bearer checks pass. The manifest records the reviewer so the
+    promotion annotates the classes as curator-reviewed vocabulary, never as model review.
+    """
+    work = args.work.resolve()
+    manifest = json.loads((work / "manifest.json").read_text())
+    items = json.loads((work / "review-items.json").read_text())
+    if not args.reviewer or not args.review_note:
+        raise ValueError("--reviewer and --review-note are required for a curated review")
+    decisions = []
+    for item in items:
+        reasons = list(item["deterministic_reasons"])
+        decisions.append(
+            {
+                "signature": item["signature"],
+                "candidate": item["id"],
+                "label": item["label"],
+                "status": "pass" if not reasons else "triage",
+                "reasons": "|".join(reasons),
+                "failed_checks": "[]",
+                "qwen_chunks": 0,
+                "superclasses": sum(r["direction"] == "superclass" for r in item["relations"]),
+                "subclasses": sum(r["direction"] == "subclass" for r in item["relations"]),
+                "existing_equivalents": "|".join(item["existing_equivalents"]),
+            }
+        )
+    write_tsv(work / "decisions.tsv", decisions)
+    cache = work / "qwen-responses.jsonl"
+    cache.write_text("")
+    save_json(
+        work / "review-manifest.json",
+        {
+            "run_id": manifest["run_id"],
+            "prompt_version": "curator_review_v1",
+            "review_kind": "curator",
+            "model": args.reviewer,
+            "review_note": args.review_note,
+            "base_url": "",
+            "items_sha256": file_hash(work / "review-items.json"),
+            "decisions_sha256": file_hash(work / "decisions.tsv"),
+            "responses_sha256": file_hash(cache),
+        },
+    )
+    print("Curated review recorded", Counter(d["status"] for d in decisions), flush=True)
+
+
 def promote(args):
     work = args.work.resolve()
     manifest = json.loads((work / "manifest.json").read_text())
@@ -797,7 +846,8 @@ def promote(args):
                         cls,
                         URIRef(OBO + "IAO_0000116"),
                         Literal(
-                            "Passed ELK checks and post-classification Qwen inherence and hierarchy review; machine-reviewed vocabulary, not curator approval of source occurrences.",
+                            rm.get("review_note")
+                            or "Passed ELK checks and post-classification Qwen inherence and hierarchy review; machine-reviewed vocabulary, not curator approval of source occurrences.",
                             lang="en",
                         ),
                     )
@@ -894,7 +944,7 @@ def promote(args):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("phase", choices=["prepare", "review", "promote"])
+    p.add_argument("phase", choices=["prepare", "review", "curate", "promote"])
     p.add_argument("--work", type=Path, required=True)
     p.add_argument("--release", type=Path, default=Path("ontology/flopo.owl"))
     p.add_argument(
@@ -906,6 +956,8 @@ def main():
     p.add_argument("--model", default=DEFAULT_MODEL)
     p.add_argument("--key-file", default=DEFAULT_KEY_FILE)
     p.add_argument("--workers", type=int, default=8)
+    p.add_argument("--reviewer", default="", help="curate: who made the decisions (recorded as the review model)")
+    p.add_argument("--review-note", default="", help="curate: editor note placed on every promoted class")
     p.add_argument("--date", default="2026-10-25")
     p.add_argument(
         "--evidence",
