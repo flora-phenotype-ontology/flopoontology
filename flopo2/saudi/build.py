@@ -33,6 +33,7 @@ from rdflib import OWL, RDF, RDFS, XSD, BNode, Graph, Literal, Namespace, URIRef
 from rdflib.collection import Collection
 from rdflib.namespace import DCTERMS, SKOS
 
+from flopo2.ingest.external import FLORA_SOURCES
 from flopo2.owl.annotation_class import annotation_class_iri
 from flopo2.owl.assertions import (
     HAS_PHENOTYPE,
@@ -78,6 +79,16 @@ SOURCES = {
         "corpus": Path("local-corpora/saudi-collenette/derived/collenette-saudi-annotated.jsonl"),
         "raw_jsonl": Path("local-corpora/saudi-collenette/raw/collenette-qwen.jsonl"),
         "dispositions": Path("local-corpora/saudi-collenette/derived/collenette-saudi-dispositions.tsv"),
+    },
+    **{
+        _k: {
+            "title": _meta["title"],
+            "short": _meta["short"],
+            "corpus": Path(f"local-corpora/{_k}/derived/{_k}-annotated.jsonl"),
+            "raw_jsonl": Path(f"local-corpora/{_k}/raw/{_k}-qwen.jsonl"),
+            "dispositions": Path(f"local-corpora/{_k}/derived/{_k}-dispositions.tsv"),
+        }
+        for _k, _meta in FLORA_SOURCES.items()
     },
 }
 
@@ -399,35 +410,43 @@ class Builder:
                     info["abundance"].add(("ncvc", row["abundance_en"]))
         return count
 
-    def collenette_extras(self, cfg: dict, g: Graph) -> int:
+    def collenette_extras(self, cfg: dict, g: Graph, key: str = "collenette") -> int:
         """Localities, elevation, abundance, habitat and flowering from the LLM transcription."""
 
-        source = URIRef(BASE + "saudi-flora/source/collenette")
+        raw_path = cfg.get("raw_jsonl")
+        if not raw_path or not raw_path.exists():
+            return 0
+        source = URIRef(BASE + "saudi-flora/source/" + key)
         gazetteer = _gazetteer()
         latest = {}
-        for line in cfg["raw_jsonl"].open(encoding="utf-8"):
+        for line in raw_path.open(encoding="utf-8"):
+            if not line.strip():
+                continue
             row = json.loads(line)
-            if "error" not in row:
+            if "error" not in row and row.get("source_id"):
                 latest[row["source_id"]] = row
         count = 0
         for raw in latest.values():
-            taxon = self.taxon(raw["taxon"], "collenette")
+            taxon = self.taxon(raw.get("taxon", ""), key, family=raw.get("family", ""))
             info = self.taxa[str(taxon)]["extra"]
             if raw.get("abundance_en"):
-                info["abundance"].add(("collenette", raw["abundance_en"]))
+                info["abundance"].add((key, raw["abundance_en"]))
             if raw.get("habitat_en"):
-                info["habitat"].add(("collenette", raw["habitat_en"]))
+                info["habitat"].add((key, raw["habitat_en"]))
             elevation = raw.get("elevation") or {}
             if elevation.get("low") or elevation.get("high"):
-                low, high = elevation.get("low") or elevation.get("high"), elevation.get("high") or elevation.get("low")
+                low = elevation.get("low") if elevation.get("low") is not None else elevation.get("high")
+                high = elevation.get("high") if elevation.get("high") is not None else elevation.get("low")
+                unit_str = str(elevation.get("unit") or ("ft" if key == "collenette" else "m")).lower()
+                scale = 0.3048 if unit_str in {"ft", "feet", "foot"} else 1.0
                 try:
-                    metres = [round(float(v) * 0.3048) for v in (low, high)]
+                    metres = [round(float(v) * scale) for v in (low, high)]
                     info["elevation_m"].update(metres)
                 except (TypeError, ValueError):
                     pass
             for month in raw.get("flowering_months") or []:
                 if isinstance(month, int) and 1 <= month <= 12:
-                    node = URIRef(BASE + "saudi-flora/growth/" + _digest("collenette", raw["source_id"], "flowering"))
+                    node = URIRef(BASE + "saudi-flora/growth/" + _digest(key, raw["source_id"], "flowering"))
                     g.add((node, RDF.type, FB.GrowthTrait))
                     g.add((node, FB.taxon, taxon))
                     g.add((node, FB.source, source))
@@ -680,6 +699,8 @@ class Builder:
             g.add((URIRef(REGION + code), RDFS.label, Literal(name)))
             g.add((URIRef(REGION + code), SKOS.notation, Literal(code)))
         for key, cfg in SOURCES.items():
+            if key not in {"ncvc", "collenette"} and key not in self.summary and not cfg["corpus"].exists():
+                continue
             node = URIRef(BASE + "saudi-flora/source/" + key)
             g.add((node, RDF.type, FB.Source))
             g.add((node, DCTERMS.title, Literal(cfg["title"])))
@@ -702,8 +723,8 @@ class Builder:
                     names += [r["taxon"] for r in csv.DictReader(handle, delimiter="\t")]
                 with cfg["taxa"].open(encoding="utf-8") as handle:
                     names += [r["scientific_name"] for r in csv.DictReader(handle, delimiter="\t")]
-            if key == "collenette":
-                names += [json.loads(line)["taxon"] for line in cfg["raw_jsonl"].open(encoding="utf-8")]
+            if key != "ncvc" and cfg.get("raw_jsonl") and cfg["raw_jsonl"].exists():
+                names += [json.loads(line)["taxon"] for line in cfg["raw_jsonl"].open(encoding="utf-8") if line.strip() and "error" not in json.loads(line)]
         self.resolve_names(sorted(set(names)))
 
         files = {}
@@ -738,7 +759,7 @@ class Builder:
                 counts["occurrences"] = self.ncvc_places(cfg, places)
                 counts["growth_traits"] = self.ncvc_extras(cfg, index)
             else:
-                counts["occurrences"] = self.collenette_extras(cfg, places)
+                counts["occurrences"] = self.collenette_extras(cfg, places, key=key)
             counts.update(_disposition_counts(cfg["dispositions"]))
             for name, graph in ((f"{key}/index", index), (f"{key}/places", places)):
                 path = rdf / f"{name.replace('/', '-')}.nt"

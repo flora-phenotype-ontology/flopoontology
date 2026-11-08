@@ -83,7 +83,7 @@ def collect(corpora: list[tuple[Path, Path]]) -> list[dict]:
         texts = {}
         for line in corpus.open(encoding="utf-8"):
             record = json.loads(line)
-            if record.get("language") == "en" and record.get("organ") == "description":
+            if record.get("language") != "ar" and record.get("organ") == "description":
                 texts[record["source_id"]] = record["text"]
         with dispositions.open(encoding="utf-8", newline="") as handle:
             for row in csv.DictReader(handle, delimiter="\t"):
@@ -137,11 +137,15 @@ def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("pairs", nargs="+", type=Path, help="annotated.jsonl dispositions.tsv [...]")
     parser.add_argument("--out", type=Path, default=CACHE)
+    parser.add_argument("--chain-out", type=Path, default=None)
     parser.add_argument("--workers", type=int, default=12)
     parser.add_argument("--base-url", default=DEFAULT_BASE_URL)
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--key-file", default=DEFAULT_KEY_FILE)
     args = parser.parse_args(argv)
+    chain_out = args.chain_out or (
+        args.out.with_name("llm-relation-chains.jsonl") if args.out != CACHE else CHAIN_CACHE
+    )
     pairs = list(zip(args.pairs[0::2], args.pairs[1::2]))
     done = load(args.out)
     todo = [i for i in collect(pairs) if (i["source_id"], i["row"]) not in done]
@@ -155,17 +159,18 @@ def main(argv: list[str] | None = None) -> None:
 
     # Rows the pairwise answer could not take (three or more values): split them as chains.
     answers = load(args.out)
-    chains_done = load(CHAIN_CACHE)
+    chains_done = load(chain_out)
     chain_todo = [
         i for i in collect(pairs)
         if (i["source_id"], i["row"]) not in chains_done
         and "skip" in answers.get((i["source_id"], i["row"]), {})
     ]
-    with CHAIN_CACHE.open("a", encoding="utf-8") as sink, ThreadPoolExecutor(args.workers) as pool:
+    chain_out.parent.mkdir(parents=True, exist_ok=True)
+    with chain_out.open("a", encoding="utf-8") as sink, ThreadPoolExecutor(args.workers) as pool:
         for row in pool.map(lambda i: resolve_chain(i, base_url=args.base_url, model=args.model, key=key), chain_todo):
             sink.write(json.dumps(row, ensure_ascii=False) + "\n")
             sink.flush()
-    print(f"{len(chain_todo)} multi-value rows sent; {len(load(CHAIN_CACHE))} cached chain answers")
+    print(f"{len(chain_todo)} multi-value rows sent; {len(load(chain_out))} cached chain answers")
 
 
 if __name__ == "__main__":

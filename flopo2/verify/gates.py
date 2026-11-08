@@ -53,8 +53,8 @@ MANUAL_REVIEW_PATO_IDS = {
 }
 
 NEGATION_EVIDENCE = re.compile(
-    r"(?<!\w)(?:not|never|no|without|lacking|non|ne|n['’]|pas|jamais|ni|sans|"
-    r"d[ée]pourvu(?:e|es|s)?|absent(?:e|es|s)?)(?!\w)|"
+    r"(?<!\w)(?:not|never|no|without|lacking|non|ne|n['’]|pas|jamais|ni|sans|sin|"
+    r"d[ée]pourvu(?:e|es|s)?|absent(?:e|es|s)?|ausentes?)(?!\w)|"
     r"\b(?:unbranched|unarmed|unlobed|unstalked|unwinged|unawned|unspotted|"
     r"unmarked|unridged|unveined|unhairy|unscented|"
     r"(?:leaf|spine|thorn|hair|scent|stem|wing|petal|prickle|awn|stalk)less)\b",
@@ -69,7 +69,7 @@ _FR_BOUND_VERB = (
 UPPER_BOUND_EVIDENCE = re.compile(
     r"(?<!\w)(?:up\s+to|at\s+most|no\s+more\s+than|"
     r"not\s+(?:more\s+than|exceeding|over|longer\s+than|surpassing)|"
-    r"maximum|max\.?)(?!\w)|"
+    r"maximum|max\.?|hasta)(?!\w)|"
     # Field-guide idiom "stems to 1 m long" / "a shrub to 2 m": a bare "to" before a number with
     # no number before it is an upper bound ("5 to 10 mm" is a range and keeps both bounds).
     r"(?<=[A-Za-z,;(]\s)to\s+(?=\d)|^to\s+(?=\d)|"

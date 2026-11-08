@@ -87,7 +87,7 @@ def collect(corpora: list[tuple[Path, Path]]) -> list[dict]:
         texts, taxa = {}, {}
         for line in corpus.open(encoding="utf-8"):
             record = json.loads(line)
-            if record.get("language") == "en" and record.get("organ") == "description":
+            if record.get("language") != "ar" and record.get("organ") == "description":
                 texts[record["source_id"]] = record["text"]
                 taxa[record["source_id"]] = record.get("taxon", "")
         with dispositions.open(encoding="utf-8", newline="") as handle:

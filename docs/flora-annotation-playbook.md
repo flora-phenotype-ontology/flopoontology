@@ -118,3 +118,40 @@ under "no ontology term for quality" are candidates for FLOPO flora value terms
 reviewed before release and later proposed to PATO. Comparisons such as "palm-like" or
 "comb-like" belong in FLOPO, not PATO. A term withdrawn in review (semi-prostrate, FLOPO:0991008,
 not distinguishable from decumbent) is not re-added.
+
+## Multi-Flora Pipeline (`tools/build_flora.sh`)
+
+All 20 publicly available external and in-repo floras (`FLORA_SOURCES` in
+`flopo2.ingest.external`: `eflora-fna`, `eflora-foc`, `eflora-fop`, `eflora-other`, `powo-fz`,
+`powo-ftea`, `powo-fsom`, `powo-fwta`, `powo-fiq`, `powo-cayman`, `powo-tong`, `powo-neotropical`,
+`powo-kew`, `wfo`, `plazi`, `flora-guianas`, `flora-malesiana`, `kew-african`, `flora-gabon`,
+`fdac`) run through the generalized pipeline:
+
+```bash
+# List available floras and treatment counts
+~/.cache/flopo-venv/bin/python -m flopo2.ingest.external stats
+
+# Run all 7 stages (segment dump -> Qwen transcription on unimatrix01 -> initial annotation ->
+# LLM re-read -> LLM lexical term rules -> LLM relations/chains -> final annotation, data-model
+# validation, and per-flora FLOPO candidate staging):
+tools/build_flora.sh powo-fiq powo-cayman
+
+# Or run a batch across large floras (resumable; cached in local-corpora/<source>/raw/<source>-qwen.jsonl):
+LIMIT=100 tools/build_flora.sh eflora-fna eflora-foc wfo
+
+# Rebuild cross-flora FLOPO candidate roll-up in curation/candidates/SUMMARY.md:
+~/.cache/flopo-venv/bin/python -m flopo2.ingest.flora_candidates --all --rollup
+
+# Build the unified multi-flora Trait Atlas RDF store:
+~/.cache/flopo-venv/bin/python -m flopo2.saudi.build
+```
+
+For each flora `<source>`, staged FLOPO addition candidates are written to
+`curation/candidates/<source>/`:
+- `value_term_candidates.tsv`: unmatched botanical quality words (`no_ontology_term_for_quality`)
+  with suggested PATO parent classes and bearer distributions;
+- `bearer_candidates.tsv`: unmatched plant structures (`missing_or_unsupported_bearer`);
+- `novel_po_pato_combinations.tsv`: grounded `(PO, PATO/FLOPO)` pairs marked `novel` or
+  `new_class_candidate`;
+- `CANDIDATES.md`: human-readable report for the flora, rolled up across all floras in
+  `curation/candidates/SUMMARY.md`.

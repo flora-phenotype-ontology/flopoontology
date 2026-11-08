@@ -149,19 +149,21 @@ async function overview() {
 /* ---------------------------------------------------------------- taxa */
 const taxonIndex = () =>
   cached("taxa", async () => {
-    const [base, counts, arabic] = await Promise.all([
+    const [base, counts, arabic, srcRows] = await Promise.all([
       sparql(`SELECT ?t (SAMPLE(?l) AS ?label) (SAMPLE(?f) AS ?family) WHERE { ?t a fb:Taxon ; rdfs:label ?l . OPTIONAL { ?t fb:family ?f } } GROUP BY ?t`),
       sparql(`SELECT ?t (COUNT(?r) AS ?n) WHERE { ?r a fb:TraitRecord ; fb:taxon ?t } GROUP BY ?t`),
       sparql(`SELECT ?t (GROUP_CONCAT(?ar; separator=" ") AS ?arabic) WHERE { ?t fb:vernacularName ?ar } GROUP BY ?t`),
+      sparql(`SELECT ?t (GROUP_CONCAT(DISTINCT ?sl; separator="|") AS ?srcs) WHERE { ?t fb:printedName/fb:source/rdfs:label ?sl } GROUP BY ?t`),
     ]);
     const count = Object.fromEntries(counts.map((r) => [r.t, r.n]));
     const ar = Object.fromEntries(arabic.map((r) => [r.t, r.arabic]));
-    return base.map((r) => ({ ...r, n: count[r.t] || 0, arabic: ar[r.t] || "" }));
+    const srcs = Object.fromEntries(srcRows.map((r) => [r.t, (r.srcs || "").split("|").filter(Boolean)]));
+    return base.map((r) => ({ ...r, n: count[r.t] || 0, arabic: ar[r.t] || "", sources: srcs[r.t] || [] }));
   });
 
-function taxonList(rows, filter, current) {
+function taxonList(rows, filter, current, sourceFilter = "") {
   const f = filter.trim().toLowerCase();
-  const shown = rows.filter((r) => !f || r.label.toLowerCase().includes(f) || (r.family || "").toLowerCase().includes(f) || (r.arabic || "").includes(filter.trim()));
+  const shown = rows.filter((r) => (!sourceFilter || (r.sources && r.sources.includes(sourceFilter))) && (!f || r.label.toLowerCase().includes(f) || (r.family || "").toLowerCase().includes(f) || (r.arabic || "").includes(filter.trim())));
   const byFamily = new Map();
   for (const r of shown.sort((a, b) => (a.family || "~").localeCompare(b.family || "~") || a.label.localeCompare(b.label))) {
     const fam = r.family || "Family not resolved";
@@ -176,21 +178,30 @@ function taxonList(rows, filter, current) {
 async function taxa(key) {
   const current = key ? TAXON + decodeURIComponent(key) : "";
   if (!cache.has("taxa")) setView(`<p class="loading">Loading the taxon list…</p>`);
-  const rows = await taxonIndex();
+  const [rows, srcList] = await Promise.all([taxonIndex(), sources()]);
   const filterValue = sessionStorage.getItem("taxonFilter") || "";
+  const sourceValue = sessionStorage.getItem("taxonSourceFilter") || "";
   setView(html`<div class="split">
       <aside class="listpane">
-        <label for="tfilter" class="col-title">Find a taxon by name, family or Arabic name</label>
+        <label for="sfilter" class="col-title">Filter by flora source</label>
+        <select id="sfilter" style="width:100%;margin-bottom:.5rem"><option value="">All floras (${n(rows.length)} taxa)</option>${srcList.map((s) => `<option value="${esc(s.label)}" ${s.label === sourceValue ? "selected" : ""}>${esc(s.label)}</option>`).join("")}</select>
+        <label for="tfilter" class="col-title">Find a taxon by name, family or vernacular name</label>
         <input id="tfilter" type="search" value="${esc(filterValue)}" placeholder="e.g. Acacia, Lamiaceae, سدر">
-        <div class="taxonlist" id="tlist">${taxonList(rows, filterValue, current)}</div>
+        <div class="taxonlist" id="tlist">${taxonList(rows, filterValue, current, sourceValue)}</div>
       </aside>
       <section id="tpane">${current ? `<p class="loading">Loading…</p>` : `<h1>${n(rows.length)} taxa</h1><p class="muted">Choose a taxon to see its traits, sources and where it grows. The number after each name counts its trait annotations.</p>`}</section>
     </div>`);
   const input = document.getElementById("tfilter");
-  input.addEventListener("input", () => {
-    try { sessionStorage.setItem("taxonFilter", input.value); } catch (e) { /* storage unavailable */ }
-    document.getElementById("tlist").innerHTML = taxonList(rows, input.value, current);
-  });
+  const sselect = document.getElementById("sfilter");
+  const updateList = () => {
+    try {
+      sessionStorage.setItem("taxonFilter", input.value);
+      sessionStorage.setItem("taxonSourceFilter", sselect.value);
+    } catch (e) { /* storage unavailable */ }
+    document.getElementById("tlist").innerHTML = taxonList(rows, input.value, current, sselect.value);
+  };
+  input.addEventListener("input", updateList);
+  sselect.addEventListener("change", updateList);
   const active = document.querySelector(".taxonlist a.current");
   if (active) active.scrollIntoView({ block: "center" });
   if (current) await taxonPage(current);

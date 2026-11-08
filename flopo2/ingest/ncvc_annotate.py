@@ -311,7 +311,10 @@ _COUNTED_IN_QUALITY = re.compile(
     r"|^([a-z][a-z-]*?)\s+(?:per|in each)\s+[a-z].*$",
     re.IGNORECASE,
 )
-_NOT_PARTS = {"count", "number", "amount", "", "pair", "pairs", "count unit"}
+_NOT_PARTS = {
+    "count", "number", "amount", "", "pair", "pairs", "count unit",
+    "mm", "cm", "m", "dm", "in", "ft", "time", "times", "series", "sery", "row", "rows",
+}
 _NUMBER_WORDS = {"a": 1, "an": 1, "one": 1, "single": 1, "a single": 1, "two": 2, "three": 3, "four": 4, "five": 5,
                  "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10, "twelve": 12}
 _COUNT_PHRASE = re.compile(
@@ -1586,7 +1589,9 @@ def _mark_approximate(assertion: dict, word: str, text: str) -> None:
 
     start = assertion.get("source_start") or 0
     end = assertion.get("source_end") or len(text)
-    position = text.lower().find(word.lower(), max(0, start - 40), end + 40)
+    position = text.lower().find(word.lower(), start, end)
+    if position < 0:
+        position = text.lower().find(word.lower(), max(0, start - 40), end + 40)
     if position < 0 or assertion.get("modality_start") is not None:
         return  # no locatable cue: keep the generalisation without an unsupported qualifier
     assertion["value_qualifier"] = "approximately"
@@ -1726,7 +1731,7 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                 alternatives = []
         if not reason and alternatives:
             reason = "taxon_level_alternatives_or_continuum"
-        if not reason and _OR_RE.search(span_text):
+        if not reason and gates._has_real_disjunction(span_text):
             reason = "explicit_disjunction"
         if not reason and str(qualifiers.get("stage") or "").strip():
             reason = "developmental_stage_context"
@@ -1740,7 +1745,9 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                     phenotype.get("value_low"), phenotype.get("value_high"), span_text
                 )
                 reason = problem
-        negated = bool(qualifiers.get("negated"))
+        negated = bool(qualifiers.get("negated")) and str(qualifiers.get("negated")).strip().lower() not in {
+            "false", "0", "no", "none"
+        }
         if not reason and grounding.negate:
             negated = True
             grounding.provenance.append("negation: the reviewed rule states the absence of the part")
@@ -1759,7 +1766,7 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
         relation = union = None
         extra_relations: list[dict] = []
         compound = reason == "no_ontology_term_for_quality" and "-" in str(phenotype.get("quality_en") or "")
-        if res.relations and not has_value and not str(phenotype.get("unit") or "").strip() \
+        if res.relations and not negated and not has_value and not str(phenotype.get("unit") or "").strip() \
                 and (compound or reason in {"taxon_level_alternatives_or_continuum", "explicit_disjunction"}):
             relation = build_relation(res, phenotype, text, start, end, grounding.po_id)
             answer = (res.llm_relations or {}).get((ncvc_guide._source_id(rec), index))
