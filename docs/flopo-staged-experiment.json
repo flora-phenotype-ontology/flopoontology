@@ -1,0 +1,198 @@
+{
+  "status": "queued_for_training",
+  "created_UTC": "2026-10-27T12:03:53.720917+00:00",
+  "goal": "Recognize visible FLOPO traits; species prediction is not trained or used for model selection.",
+  "encoders": {
+    "fgclip2": "Pinned existing FG-CLIP 2 Large, frozen",
+    "bioclip2": {
+      "repo": "imageomics/bioclip-2",
+      "revision": "2957b322090f9cb17ae72c71981c7218a28d81e0",
+      "frozen": true
+    },
+    "dinov3": "Deferred: gated weights; current credentials do not grant access."
+  },
+  "architecture": {
+    "spatial_views": "Whole detected organ plus four overlapping 65%-width/height quadrants; fixed crops, not segmentation.",
+    "concept_head": "Learned quality-specific attention over five frozen feature vectors; shared quality and bearer residuals; separate visibility logits.",
+    "quality_identity": "Shared only for equal quality IRIs, not label-string matches.",
+    "FGCLIP_initialization": "Original fixed text/image scores.",
+    "BioCLIP_initialization": "Training-only ridge regression from frozen BioCLIP features to frozen FG-CLIP text/image logits; this baseline is not native BioCLIP zero-shot."
+  },
+  "teacher": {
+    "model": "qwen3.8-27b",
+    "endpoint": "unimatrix Qwen service",
+    "protocol": "flopo-visible-traits-v3-schema",
+    "images": 8152,
+    "workers": 4,
+    "training_inputs": "EXIF-free organ crop, visual definitions and a fixed trait vocabulary only; no species, taxonomy, filenames, URLs or flora profiles.",
+    "outputs": "Present/absent/unobservable, confidence and normalized supporting box.",
+    "target_policy": "High-confidence observed signs supervise trait heads; unobservable remains unknown for the trait. High-confidence observability states supervise a separate noisy visibility head.",
+    "annotation_role": "Training only; never evaluation truth.",
+    "abandoned_attempt": "staged-teacher-v1 stopped after malformed compact JSON. Kept for audit, excluded from training.",
+    "directory": "local-corpora/staged-teacher-v2"
+  },
+  "primary_arms": [
+    "flora",
+    "teacher",
+    "combined",
+    "flopo",
+    "shuffled_rules",
+    "shuffled_profiles"
+  ],
+  "transfer_arms": [
+    "independent",
+    "combined",
+    "flopo",
+    "shuffled_rules"
+  ],
+  "transfer_withheld": [
+    {
+      "index": 21,
+      "label": "fruit pubescent hair"
+    },
+    {
+      "index": 34,
+      "label": "petal oblong"
+    },
+    {
+      "index": 35,
+      "label": "fruit white"
+    }
+  ],
+  "transfer_policy": "Remove any source disjunction containing a withheld trait; remove direct teacher, visibility and pretrained-anchor training targets for that trait. Shared quality parameters and symbolic implications may transfer. Foundation-model prior knowledge is not removed. Independent arm uses separate quality parameters per phenotype.",
+  "seeds": [
+    20261027,
+    20261028,
+    20261029
+  ],
+  "steps": 6000,
+  "learning_rate": 0.0003,
+  "weight_decay": 0.01,
+  "gradient_clip": 1.0,
+  "sampling": "4 uniformly sampled trait groups per step; uniform supporting taxon within trait; one source event; 8 observation draws (without replacement when possible) and one crop per drawn observation. Same image schedule per seed across arms within regime.",
+  "flora_loss": "Negative log of average sampled-observation support for positive source disjunctions; detached predicted-visibility weighting in combined arms. Not a numerical population-prevalence constraint. Missing source traits remain unknown. Scoped explicit hair contrasts only.",
+  "loss_weights": {
+    "teacher_signs": 1,
+    "flora_assertions": 1,
+    "scoped_hair_contrasts": 1,
+    "teacher_observability": 0.25,
+    "teacher_box_attention": 0.1,
+    "pretrained_anchor": 1,
+    "logical_implications": 1
+  },
+  "shuffled_profiles": "Permute event targets within organ while retaining the exact original image/trait sampling schedule; no scoped source negatives in this control.",
+  "reasoning": "Six supported typed marginal implications, soft squared violation loss; not exact WMC/full OWL. Shuffled rules preserve organ and graph degrees.",
+  "planned_model_outputs": 62,
+  "models_per_encoder": 31,
+  "validation": {
+    "tests": "86 vision tests passed, including 7 staged supervision/schema/sampling tests.",
+    "teacher_preflight": {
+      "images": 3,
+      "seconds": 74.6284,
+      "schema_errors": 0
+    },
+    "GPU_preflight": {
+      "job": "348029",
+      "state": "COMPLETED",
+      "elapsed": "00:00:33",
+      "exit_code": "0:0",
+      "checks": {
+        "fgclip2": {
+          "prediction_arrays_identical": 8,
+          "max_absolute_difference": 0.0,
+          "checkpoint_verified": true,
+          "steps": 3
+        },
+        "bioclip2": {
+          "prediction_arrays_identical": 8,
+          "max_absolute_difference": 0.0,
+          "checkpoint_verified": true,
+          "steps": 3
+        }
+      }
+    },
+    "independent_packet": "1500-image blinded packet remains unannotated.",
+    "development_diagnostic": "All models scored on existing inspected single-AI leaf-shape audit; no checkpoint/hyperparameter selection. Withheld fruit/petal combinations have no independent reference labels yet.",
+    "thresholds": "Independent validation only; never old development audit or test set."
+  },
+  "operational": {
+    "extraction_job": "347987",
+    "controller": "deploy/orix/staged/watch.py",
+    "state": "local-corpora/staged-v1/workflow.json",
+    "teacher_state": "local-corpora/staged-teacher-v2/progress.json",
+    "teacher_pid": 2521738,
+    "controller_pid": 4053714,
+    "source": "local-corpora/staged-train-source-v2",
+    "remote_root": "/mnt/data/u/hohndor/flopo-vision",
+    "workflow": "Features and teacher run concurrently. After features: GPU preflight. After preflight and all valid teacher annotations: automatic Slurm submission, model fitting, development diagnostics, download and hash verification. No GPU held waiting for the teacher.",
+    "preflight_job": "348029",
+    "extraction_state": "COMPLETED",
+    "extraction_elapsed": "00:16:49",
+    "previous_preflight_job": "348027",
+    "teacher_progress_at_launch_verification": {
+      "completed": 40,
+      "failed": 0,
+      "total": 8152,
+      "elapsed_seconds": 485.7565
+    },
+    "training_job": "349466",
+    "training_partition": "batch-h200",
+    "training_qos": "batch"
+  },
+  "source_sha256": {
+    "flopo2/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "deploy/orix/modern/full-extract.sbatch": "b6e8552845be9f6b84cb9c2fbc2e9811b01cb0f68f5e14ad9bc075ddcfdaf3db",
+    "deploy/orix/modern/full_workflow.py": "7215c3c426bfb31244f63ea4881254df1d937f4c68f8c9dbe86eb4291a2ade7a",
+    "deploy/orix/modern/full-train.sbatch": "781a7fddeba17c8bc1be65c76643cc59b2806236dd7ab372b402f1cb07f0ac6f",
+    "deploy/orix/staged/train.sbatch": "ca17d5355ee9dd7eaf7d7f1e75f3a53d5abf7c9c4a355e529dfa61bcd2569826",
+    "deploy/orix/staged/watch.py": "161bc39b0db53fe1fd72748ae5a3b80a68929b5794ee776d0ab9307207bfa062",
+    "flopo2/saudi/inaturalist.py": "57374bb69c239bff6e919e523acd46b5029ff85636923348b6b8d0ba09c52ed1",
+    "flopo2/saudi/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "flopo2/vision/staged_features.py": "7399e9969ad31ddbe21cd11ae05051046299563a53e4681e32ef3c3f852d92dc",
+    "flopo2/vision/modern_weak.py": "67e4b3d5ae66ed75dfd4f6df229432a8681d59cb54ab5593d0de9f4b22be64ab",
+    "flopo2/vision/trait_heads.py": "0bac9d3b5b96993514ecab272baea80748f31de14695d2d674dd87448aaae44f",
+    "flopo2/vision/staged_train.py": "f3caffa4142f5ebf444c4ee5b08fe2955ef15a2144e74b9142ded8025d22f879",
+    "flopo2/vision/logic.py": "4a0aa07fd33788897485b278732e3ac3454bb87e41eb00e732824d4167724cde",
+    "flopo2/vision/modern.py": "6bcc647e796da621221d835460c065e90b49cd9b6b13b9cfe132d7d7db47b009",
+    "flopo2/vision/staged_teacher.py": "b4930eb42f563f150d5145ef11fd70d756662284cc80957ff11bd9a8e100b47f",
+    "flopo2/vision/full_train.py": "ee36c7d2f4d1cc6c0a3ec4dbc3eb3992922a5e4d61dca842374662d33e9762f5",
+    "flopo2/vision/trait_packet.py": "5a742d2f3b313c32cf59c339fb44c8c0b8954582e03738d11746ae967283f3da",
+    "flopo2/vision/full_data.py": "498ba29da5e2bed7be326b4168c46af39bfa5b75fdee27a21bf11624c96c31ff",
+    "flopo2/vision/pilot.py": "628557f938d12b7a5c283e686649ddb663f08aa7acf879131fe4f0723bdc3b03",
+    "flopo2/vision/__init__.py": "4037b7e4fd66f924fe0c90ddb342b42f85e3c4665256bd74d921e9fb7b022b32",
+    "flopo2/vision/extract.py": "da568aa182239a86d5c9a99fdfcdc1940b308d06f7ccf63d620b396e9ea1fa1a",
+    "flopo2/vision/cohort.py": "eccf02f480260ecb14fe011049ef479289074478e6654fa8b6cf7bf5a877d99a",
+    "flopo2/vision/trait_eval.py": "78177ee19e75685fa1fd0e5490d451f4765db2a3676fecf89c1e1907360f9132",
+    "flopo2/vision/full_eval.py": "6dda4a373cb53f93099fe22d358e76364afbd0d1eb68c6813fc793c3c8fd3864",
+    "flopo2/vision/full_diagnostic.py": "4aa45331b67270a141aed1dd729847a5548e1bf8c0d21c9bc77ced82880e7a2d"
+  },
+  "limitations": [
+    "Teacher errors and self-reported confidence remain uncalibrated.",
+    "Detected organ boxes may contain wrong organs or other plants.",
+    "This fixed frozen-head stage does not include encoder fine-tuning or a species decoder.",
+    "Withheld combinations are few and weakly supported; no reasoning-generalization success claim without independent image labels."
+  ],
+  "ETA": "Slurm estimates start at 07:17 Riyadh on 28 October; provisional queue estimate. Completion ETA awaits measured full-training throughput.",
+  "recovery_20261028": {
+    "previous_stop_UTC": "2026-10-27T17:23:02",
+    "cause": "One crop repeatedly received degenerate evidence boxes; teacher retries exhausted and controller stopped before training.",
+    "model_annotations_verified": 8151,
+    "pipeline_abstentions": 1,
+    "row_index": 2106,
+    "policy": "All teacher trait, visibility and attention targets suppressed for this image. Flora supervision and matched image schedule unchanged. No model annotation was invented or repaired.",
+    "verification": "All 8152 cache joins and protocol hashes checked; explicit abstention has only NaN trait/visibility targets and zero attention targets.",
+    "recovery_script": "local-corpora/staged-v1/recover_teacher_abstention.py",
+    "recovery_sha256": "17e15367397b18eef2923400c89276b71fd27ffd602a03d5f45cb938f36463dd",
+    "resumed_UTC": "2026-10-28T04:08:53.216761+00:00",
+    "controller_pid": 4053714,
+    "queue": {
+      "checked_UTC": "2026-10-28T04:12:44.390036+00:00",
+      "state": "PENDING",
+      "reason": "Resources",
+      "scheduler_start_estimate": "2026-10-28T04:16:38 UTC",
+      "reserved_allocation_cpu_usage": "64/64 occupied by other jobs",
+      "action": "Moved pending job to permitted batch QoS / batch-h200 with unchanged one-H200 and four-CPU request.",
+      "update_warning": "scontrol returned Access/permission denied; subsequent scontrol and scheduler state confirm batch-h200 / batch and reason Resources."
+    }
+  }
+}

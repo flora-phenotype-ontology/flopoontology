@@ -1,0 +1,188 @@
+{
+  "date": "2026-10-24",
+  "status": "automatic weak training completed; independent evaluation pending",
+  "release": "20261024-global-inat-0620",
+  "data_directory": "/home/leechuck/.herdr/worktrees/flopoontology/worktree-inaturalist-integration/local-corpora/visual-pilot-200",
+  "orix_directory": "/mnt/data/u/hohndor/flopo-vision/audit-200-20261024",
+  "review_url": "http://10.73.11.158:8780/",
+  "collection": {
+    "observations": 200,
+    "images": 365,
+    "taxa": 48,
+    "download_errors": [],
+    "duplicate_candidates": [],
+    "licenses": {
+      "cc-by": 220,
+      "cc-by-sa": 44,
+      "cc0": 101
+    },
+    "sampling": "up to 5 distinct observers per species from a recent, licensed research-grade pool; observed since 2026-01-01",
+    "target_observations": 200,
+    "status": "unreviewed development collection; not independent gold labels"
+  },
+  "extraction": {
+    "status": "complete_unreviewed",
+    "images": 365,
+    "regions": 1162,
+    "without_proposals": 56,
+    "model_manifest_sha256": "c681fa1a0bccee7cb34b397b3f66fcdfa4997d7c34d6c5d8465cc962990da7d5",
+    "input_manifest_sha256": "56b8fada3e263256ad22665db33c36901a71a3ae551a9cd3308af8be8352ace5",
+    "review_sha256": null,
+    "extractor_sha256": "da568aa182239a86d5c9a99fdfcdc1940b308d06f7ccf63d620b396e9ea1fa1a",
+    "environment_lock_sha256": "af231881b7d9a50e2f7ecfe7cffeeee06a4ef489ba4a8706460872da2d27c9c8",
+    "slurm_job_id": "339536",
+    "gpu": "NVIDIA H200",
+    "torch": "2.8.0+cu128",
+    "seconds": 63.73828491382301,
+    "precision": "detector float32; encoder bfloat16 autocast; normalized float32 features",
+    "threshold": 0.3,
+    "text_threshold": 0.25,
+    "max_regions": 6,
+    "note": "Frozen features; machine proposals are not gold. No accuracy estimates."
+  },
+  "coverage": {
+    "compiled_queries": 174,
+    "fully_grounded_queries": 15,
+    "unreviewed_candidate_events": 143,
+    "candidate_images": 133,
+    "candidate_taxa": 18
+  },
+  "artifact_sha256": {
+    "audit.json": "e3a5fa33b236999a01ea3b744177877038873536485cf06dfd96ce227e62a7d3",
+    "profiles.json": "12c1148e35ffba5723a3c8d6273e701b87b67b1a6d0002d697085b58d28f465c",
+    "queries.json": "2838a6bd984ef5e6fee33c84f2a11817a960a453017a52484c7c593bcd4822ac",
+    "images.jsonl": "56b8fada3e263256ad22665db33c36901a71a3ae551a9cd3308af8be8352ace5",
+    "collection.json": "9429b8d85805504b5f53e923400bf137bc45d2c51b6f335b837ae28e526af9b6",
+    "vocabulary.json": "3fe15120e689dfe5c112a057698b7da054a0961786992b351683ad2b4d4b92b8",
+    "coverage.json": "5053b9980b9c0d8fb8b68c34bea4a3877d94a7848d2866730bbe9206b3029b3c",
+    "weak-event-candidates.json": "35314d2326964beb7f829fa2594f926d7100109a909ea986f470a92586f2cfe5",
+    "extraction/run.json": "879a8fda17f78722a77d18b06f84813159df44b9d583f9ebe020e6a770726fee",
+    "extraction/regions.jsonl": "12c1a53d91e942b9b81512c90a2d4839f2ff0aec10d1ead6c5c2b237db008285",
+    "browser-check.json": "042001ea9747334cdba2955e1b665dcdaeca6f59ae9c3c5f5b3b92dad449af85"
+  },
+  "code_sha256": {
+    "flopo2/vision/__init__.py": "4037b7e4fd66f924fe0c90ddb342b42f85e3c4665256bd74d921e9fb7b022b32",
+    "flopo2/vision/audit.py": "381d084b854c96f158d35d0d7b53d73050d0aea7cf24d7b58d870b371e5a39aa",
+    "flopo2/vision/extract.py": "da568aa182239a86d5c9a99fdfcdc1940b308d06f7ccf63d620b396e9ea1fa1a",
+    "flopo2/vision/logic.py": "4a0aa07fd33788897485b278732e3ac3454bb87e41eb00e732824d4167724cde",
+    "flopo2/vision/model.py": "0e8aa7873dd359fd7270976cceada1586cc531ed6ef722910b078ecaa026dce6",
+    "flopo2/vision/pilot.py": "ae695d8868e13500cf9ead292b2bb4af54df7ffb63a52bf9268656c1390c1666",
+    "flopo2/vision/prefetch.py": "249e34ee72699fe6613523bd565004872dd5c7a98a40fdf62d0dadce598a5c24",
+    "flopo2/vision/review.html": "9ab0263705a98be5caddfc99bedd9327a54ac1f010e0ec08b9c8808f7ae5a1fb",
+    "flopo2/vision/review.py": "f484b40b405fd34a0fce80bbe4e44fce8311e25cd07c16d06d0ed713a8afa9f2",
+    "flopo2/vision/train.py": "20d03bb5a1fe6735d49544a29bdb5fe1d62617ccb03ded466f170e970b054b26"
+  },
+  "environment_lock_sha256": "af231881b7d9a50e2f7ecfe7cffeeee06a4ef489ba4a8706460872da2d27c9c8",
+  "limitations": [
+    "Research-grade species identity is weak metadata, not a visible trait label.",
+    "The image set is a recent licensed development sample, not a representative or independent test set.",
+    "Machine organ proposals require correction and visibility review.",
+    "No independent gold accuracy, trained plant recognition model, or ontology improvement has been demonstrated.",
+    "The present organ-colour executor may be equivalent to a strong procedural EQ control."
+  ],
+  "next_dependencies": [
+    "Expand trait coverage and training data beyond this small development fit.",
+    "Grouped held-out research-grade species labels and matched baselines for plant identification evaluation.",
+    "An independent annotated benchmark for direct visual trait accuracy; not a training prerequisite."
+  ],
+  "automatic_weak_training": {
+    "job_id": "340597",
+    "state_at_submission_check": "PENDING: Resources",
+    "manual_annotations_required": false,
+    "entrypoint": "flopo2.vision.weak_train",
+    "gpu_script": "deploy/orix/prototypes.sbatch",
+    "remote_output": "/mnt/data/u/hohndor/flopo-vision/audit-200-20261024/weak-runs/340597",
+    "configuration": {
+      "source_exclusions": {
+        "missing_or_unsupported_definition": 56,
+        "unrepresentable_event": 32,
+        "qualified_or_stage_sensitive_record": 60,
+        "groups_with_unresolved_records": 37
+      },
+      "accepted_source_groups": 17,
+      "regions": 348,
+      "images": 265,
+      "weak_events": 27,
+      "weak_observations": 20,
+      "weak_taxa": 9,
+      "threshold": 0.3,
+      "min_side": 32,
+      "visibility": "uncalibrated frozen proposal/size heuristic; not a reviewed assessability decision"
+    },
+    "epsilon_sensitivity": [
+      0.1,
+      0.3,
+      0.5
+    ],
+    "visual_prior": "pinned BioCLIP 2 organ/colour prompts; no taxon names; uncalibrated",
+    "tests": "24 focused tests passed; constructed training fixtures are not plant accuracy",
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed_seconds": 25,
+    "local_output": "/home/leechuck/.herdr/worktrees/flopoontology/worktree-inaturalist-integration/local-corpora/visual-pilot-200/weak-runs/340597",
+    "results": [
+      {
+        "epsilon": 0.1,
+        "checkpoint": "epsilon-0.1.pt",
+        "history": [
+          {
+            "step": 0,
+            "objective": 1.6194968223571777,
+            "weak_loss": 1.6194968223571777,
+            "kl_to_frozen_prior": 0.0,
+            "training_allowed_event_mass": 0.15601105988025665
+          },
+          {
+            "step": 100,
+            "objective": 0.9537178874015808,
+            "weak_loss": 0.7496713995933533,
+            "kl_to_frozen_prior": 0.20404648780822754,
+            "training_allowed_event_mass": 0.4805222451686859
+          }
+        ]
+      },
+      {
+        "epsilon": 0.3,
+        "checkpoint": "epsilon-0.3.pt",
+        "history": [
+          {
+            "step": 0,
+            "objective": 0.9340517520904541,
+            "weak_loss": 0.9340517520904541,
+            "kl_to_frozen_prior": 0.0,
+            "training_allowed_event_mass": 0.15601105988025665
+          },
+          {
+            "step": 100,
+            "objective": 0.6619688272476196,
+            "weak_loss": 0.5621917843818665,
+            "kl_to_frozen_prior": 0.09977701306343079,
+            "training_allowed_event_mass": 0.4301120936870575
+          }
+        ]
+      },
+      {
+        "epsilon": 0.5,
+        "checkpoint": "epsilon-0.5.pt",
+        "history": [
+          {
+            "step": 0,
+            "objective": 0.5590267181396484,
+            "weak_loss": 0.5590267181396484,
+            "kl_to_frozen_prior": 0.0,
+            "training_allowed_event_mass": 0.15601105988025665
+          },
+          {
+            "step": 100,
+            "objective": 0.44049131870269775,
+            "weak_loss": 0.3973083198070526,
+            "kl_to_frozen_prior": 0.043182991445064545,
+            "training_allowed_event_mass": 0.37271133065223694
+          }
+        ]
+      }
+    ],
+    "training_report_sha256": "c0f67d8632a63bf3e4f23f895ca1ac01ca6d814204097136b484be2b100014da",
+    "artifacts_verified": true
+  }
+}

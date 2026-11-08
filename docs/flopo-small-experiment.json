@@ -1,0 +1,905 @@
+{
+  "status": "completed_known_species_diagnostic_zero_shot_not_scored",
+  "orix_jobs": {
+    "initial_extraction_and_weak_numeric": 341603,
+    "expanded_field_extraction": 341624,
+    "field_training": 341629
+  },
+  "numeric_control": {
+    "protocol.json": {
+      "source": "https://archive.ics.uci.edu/dataset/288/leaf",
+      "doi": "10.24432/C53C78",
+      "license": "CC BY 4.0",
+      "specimens": 98,
+      "classes": [
+        1,
+        3,
+        5,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "counts": {
+        "test": 17,
+        "validation": 17,
+        "train": 64
+      },
+      "target_names": [
+        "aspect_ratio",
+        "elongation",
+        "solidity",
+        "lobedness"
+      ],
+      "source_table_sha256": "9d372307705b6be3cb6d7d99045a65517d7d89124e620197656d97c08a41537e",
+      "manifest_sha256": "81c0282ba92f3f6cd7acae109f237621ced44deedd55340371a6babc8c71fc7e",
+      "role": "Independent quantitative image-geometry control; not categorical FLOPO ground truth.",
+      "controls": [
+        "species-mean lookup (label-assisted reference)",
+        "measured geometry -> species",
+        "image features -> species",
+        "supervised numeric trait probe",
+        "PlantTraitNet-inspired image-only weak Gaussian trait regression"
+      ],
+      "caveats": [
+        "small controlled-background dataset",
+        "unknown foundation-model pretraining overlap",
+        "specimen split, not independently sampled sites or populations"
+      ]
+    },
+    "extraction.json": {
+      "encoder": {
+        "repository": "imageomics/bioclip-2",
+        "revision": "2957b322090f9cb17ae72c71981c7218a28d81e0",
+        "license": "mit",
+        "files": {
+          "README.md": "807e4daa2b3486bc542a7c796c84a117be02818e671c934a66cd1898c3c098c1",
+          "merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+          "open_clip_config.json": "1bf947e96e943fe50efd5c3e26c37f843a2fa3c358967719a68c8a6d17ce68c8",
+          "open_clip_model.safetensors": "b7b2bf6fbc95799e42630e394cf95803892ab447c1a8ab629dbc82fbeaf7dfef",
+          "special_tokens_map.json": "2cdb3b8331a60c92fc1e55a13e9fd61fd2293c5a51275fdcccd62b780052530e",
+          "tokenizer.json": "72ed5c96db5729294468543e4bc75fce14ca63f58e37300290189ba1c1e52b85",
+          "tokenizer_config.json": "6bdcee9ccce2a16ca2b4c0c5ed00b42c50ea225f4472a8c4c1e963a2902c2881",
+          "vocab.json": "5047b556ce86ccaf6aa22b3ffccfc52d391ea4accdab9c2f2407da5b742d4363"
+        }
+      },
+      "manifest_sha256": "81c0282ba92f3f6cd7acae109f237621ced44deedd55340371a6babc8c71fc7e",
+      "features_sha256": "fcc241476c673657498c96f159dae678fa58bbff5232750d959757176e65ef6e",
+      "gpu": "NVIDIA H200",
+      "scope": "original RGB and supplied-mask foreground crop"
+    },
+    "ridge-results.json": {
+      "species_mean_reference": {
+        "aspect_ratio": {
+          "mae": 0.11342526610644244,
+          "r2": 0.98727741816831
+        },
+        "elongation": {
+          "mae": 0.02738222782446313,
+          "r2": 0.9656627960022226
+        },
+        "solidity": {
+          "mae": 0.016735994864612542,
+          "r2": 0.9817679217928686
+        },
+        "lobedness": {
+          "mae": 0.08725064145658265,
+          "r2": 0.9885364229128614
+        }
+      },
+      "models": {
+        "original": {
+          "supervised_numeric_probe": {
+            "aspect_ratio": {
+              "mae": 0.10372310076422159,
+              "r2": 0.9934849488830356
+            },
+            "elongation": {
+              "mae": 0.024299207531824542,
+              "r2": 0.9748035651215122
+            },
+            "solidity": {
+              "mae": 0.02468623329475258,
+              "r2": 0.9674934062265274
+            },
+            "lobedness": {
+              "mae": 0.1625662645171633,
+              "r2": 0.9666300756242497
+            }
+          },
+          "ridge_alpha": 100.0,
+          "image_species_accuracy": 1.0,
+          "species_alpha": 10.0
+        },
+        "masked": {
+          "supervised_numeric_probe": {
+            "aspect_ratio": {
+              "mae": 0.16111072182311995,
+              "r2": 0.983302725302976
+            },
+            "elongation": {
+              "mae": 0.0239249159670662,
+              "r2": 0.9718952715259914
+            },
+            "solidity": {
+              "mae": 0.021932278388138614,
+              "r2": 0.9766645841915897
+            },
+            "lobedness": {
+              "mae": 0.11038137706690543,
+              "r2": 0.9822059692767872
+            }
+          },
+          "ridge_alpha": 100.0,
+          "image_species_accuracy": 1.0,
+          "species_alpha": 10.0
+        }
+      },
+      "measured_traits_species_accuracy": 0.7647058823529411,
+      "protocol": {
+        "source": "https://archive.ics.uci.edu/dataset/288/leaf",
+        "doi": "10.24432/C53C78",
+        "license": "CC BY 4.0",
+        "specimens": 98,
+        "classes": [
+          1,
+          3,
+          5,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "counts": {
+          "test": 17,
+          "validation": 17,
+          "train": 64
+        },
+        "target_names": [
+          "aspect_ratio",
+          "elongation",
+          "solidity",
+          "lobedness"
+        ],
+        "source_table_sha256": "9d372307705b6be3cb6d7d99045a65517d7d89124e620197656d97c08a41537e",
+        "manifest_sha256": "81c0282ba92f3f6cd7acae109f237621ced44deedd55340371a6babc8c71fc7e",
+        "role": "Independent quantitative image-geometry control; not categorical FLOPO ground truth.",
+        "controls": [
+          "species-mean lookup (label-assisted reference)",
+          "measured geometry -> species",
+          "image features -> species",
+          "supervised numeric trait probe",
+          "PlantTraitNet-inspired image-only weak Gaussian trait regression"
+        ],
+        "caveats": [
+          "small controlled-background dataset",
+          "unknown foundation-model pretraining overlap",
+          "specimen split, not independently sampled sites or populations"
+        ]
+      },
+      "note": "These ridge controls are not PlantTraitNet; its adapted uncertainty baseline is specified separately."
+    },
+    "weak-gaussian-results.json": {
+      "name": "PlantTraitNet-inspired image-only weak Gaussian regression",
+      "source": "https://github.com/GeoSense-Freiburg/PlantTraitNet",
+      "differences": [
+        "different numeric targets and smaller MLP",
+        "no depth/geolocation inputs",
+        "no iterative uncertainty filtering",
+        "training-specimen moments instead of TRY",
+        "exact expected Gaussian NLL instead of sampled targets"
+      ],
+      "results": {
+        "original": {
+          "selected_step": 360,
+          "validation_normalized_mae": 0.13508905470371246,
+          "traits": {
+            "aspect_ratio": {
+              "mae": 0.07285846769809723,
+              "r2": 0.9960488677024841
+            },
+            "elongation": {
+              "mae": 0.034934379160404205,
+              "r2": 0.9513413310050964
+            },
+            "solidity": {
+              "mae": 0.01818825490772724,
+              "r2": 0.9792140126228333
+            },
+            "lobedness": {
+              "mae": 0.12354609370231628,
+              "r2": 0.9798105359077454
+            }
+          }
+        },
+        "masked": {
+          "selected_step": 210,
+          "validation_normalized_mae": 0.10841870307922363,
+          "traits": {
+            "aspect_ratio": {
+              "mae": 0.11594313383102417,
+              "r2": 0.9896153211593628
+            },
+            "elongation": {
+              "mae": 0.028212914243340492,
+              "r2": 0.9550687074661255
+            },
+            "solidity": {
+              "mae": 0.022091109305620193,
+              "r2": 0.9659579396247864
+            },
+            "lobedness": {
+              "mae": 0.08191873133182526,
+              "r2": 0.9919037818908691
+            }
+          }
+        }
+      },
+      "training": "species-level aggregate targets only",
+      "test": "untouched individual specimen measurements",
+      "seed": 20261025
+    }
+  },
+  "files": {
+    "manifest.json": "81c0282ba92f3f6cd7acae109f237621ced44deedd55340371a6babc8c71fc7e",
+    "features.npz": "fcc241476c673657498c96f159dae678fa58bbff5232750d959757176e65ef6e",
+    "weak-gaussian-original.pt": "9ca4a8817aa18ca4d653e47c0bb1068397c9e04ae27fdc8225b7ce169782a1e5",
+    "weak-gaussian-masked.pt": "4370a1884e0ba164abfa022818ca7e4f2972d69ad2e1a5b7f4f5ff8c6337181c"
+  },
+  "field_collection": {
+    "requested_per_taxon": 150,
+    "maximum_pages": 10,
+    "observed_since": "2010-01-01",
+    "metadata_observations": {
+      "Arnoglossum plantagineum": 138,
+      "Abutilon grandifolium": 140,
+      "Pistia stratiotes": 150,
+      "Allium canadense": 150,
+      "Ziziphus nummularia": 10
+    },
+    "images": 1071,
+    "observations": 588,
+    "download_errors": [],
+    "excluded_prior_duplicate_photos": [],
+    "excluded_prior_observers": 437,
+    "previous_manifest_sha256": {
+      "local-corpora/visual-v2/images.jsonl": "b9d26cc92cb23878072a3948ea9ed53ce19fdc148c90c4d125ee507aab7b1108",
+      "local-corpora/visual-pilot-200/images.jsonl": "56b8fada3e263256ad22665db33c36901a71a3ae551a9cd3308af8be8352ace5"
+    },
+    "licenses": {
+      "cc-by-sa": 78,
+      "cc-by": 729,
+      "cc0": 264
+    }
+  },
+  "field_protocol": {
+    "status": "frozen_before_new_images_and_predictions",
+    "names": [
+      "Arnoglossum plantagineum",
+      "Abutilon grandifolium",
+      "Pistia stratiotes",
+      "Allium canadense",
+      "Ziziphus nummularia"
+    ],
+    "unseen_species": "Ziziphus nummularia",
+    "groups": [
+      "leaf.outline",
+      "leaf.hairiness"
+    ],
+    "profile_worlds_checked": 12,
+    "pairwise_profile_overlap": 0,
+    "ideal_trait_species_accuracy": 1.0,
+    "source_profiles_sha256": "dc7d745c150928c7491cbaffe2252b3801afba37a702c84a681f09a77b129766",
+    "catalogue_sha256": "5ceeead58121d328faf5958e756a242f7448f9df852b77fdf77f43529cb6ddbd",
+    "schema_sha256": "f0ef0e3036be2b2ff366b1ef77c0e6cb2f4431fa90766a9774eeb9862207037e",
+    "weak_label_warning": "Flora profiles are not individual-image trait labels.",
+    "visibility_gate": {
+      "organ": "leaf",
+      "minimum_side_pixels": 192,
+      "minimum_detector_score": 0.4
+    },
+    "training": "four species; pretrained heads reset, no earlier adapted checkpoints",
+    "splits": "observer-disjoint train/validation/test; fifth species only zero_shot_test",
+    "test_policy": "Freeze split before training; inspect no test predictions during development.",
+    "baselines": [
+      "pretrained traits + WMC",
+      "flat weak trait predictor + WMC",
+      "taxon-trained WMC",
+      "taxon-trained WMC + BEARS",
+      "direct image classification (known species only)"
+    ],
+    "comparison_note": "Categorical flat baseline is an adaptation, not the released numerical PlantTraitNet model.",
+    "allow_known_only": true,
+    "amendment_before_fitting": {
+      "reason": "Round-one availability audit: only two held-out-species observations pass the visibility gate. Known-species training may proceed independently once all four known-species gates pass.",
+      "zero_shot_policy": "Do not score or claim zero-shot performance unless original eight-observation gate passes.",
+      "known_species_and_visibility_gates": "unchanged",
+      "new_model_predictions_inspected": false
+    }
+  },
+  "checks": {
+    "vision_tests_passed": 46
+  },
+  "job_results": {
+    "341603": {
+      "exit_code": "0:0",
+      "elapsed": "00:01:42"
+    },
+    "341624": {
+      "exit_code": "0:0",
+      "elapsed": "00:03:09"
+    },
+    "341629": {
+      "exit_code": "0:0",
+      "elapsed": "00:00:27"
+    }
+  },
+  "field_run": {
+    "results": {
+      "pretrained": {
+        "validation": {
+          "n": 41,
+          "accuracy": 0.4878048598766327,
+          "macro_accuracy": 0.4517857376486063,
+          "per_taxon_accuracy": {
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000073256": 0.10000000149011612,
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000273956": 0.8571429252624512,
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000511941": 0.6000000238418579,
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000755875": 0.25
+          },
+          "nll": 1.359891653060913
+        },
+        "test": {
+          "n": 39,
+          "accuracy": 0.5384615659713745,
+          "macro_accuracy": 0.4017857313156128,
+          "per_taxon_accuracy": {
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000073256": 0.0,
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000273956": 0.8571429252624512,
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000511941": 0.75,
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000755875": 0.0
+          },
+          "nll": 1.3509694337844849
+        }
+      },
+      "flat_weak": {
+        "validation": {
+          "n": 41,
+          "accuracy": 0.8780487775802612,
+          "macro_accuracy": 0.8875000029802322,
+          "per_taxon_accuracy": {
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000073256": 1.0,
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000273956": 1.0,
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000511941": 0.800000011920929,
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000755875": 0.75
+          },
+          "nll": 0.7968451976776123
+        },
+        "test": {
+          "n": 39,
+          "accuracy": 0.9487179517745972,
+          "macro_accuracy": 0.8888888955116272,
+          "per_taxon_accuracy": {
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000073256": 0.8888888955116272,
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000273956": 1.0,
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000511941": 1.0,
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000755875": 0.6666666865348816
+          },
+          "nll": 0.821190595626831
+        }
+      },
+      "wmc": {
+        "validation": {
+          "n": 41,
+          "accuracy": 0.8780487775802612,
+          "macro_accuracy": 0.8875000029802322,
+          "per_taxon_accuracy": {
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000073256": 1.0,
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000273956": 1.0,
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000511941": 0.800000011920929,
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000755875": 0.75
+          },
+          "nll": 0.9971553087234497
+        },
+        "test": {
+          "n": 39,
+          "accuracy": 0.9230769276618958,
+          "macro_accuracy": 0.9319444447755814,
+          "per_taxon_accuracy": {
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000073256": 0.7777777910232544,
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000273956": 1.0,
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000511941": 0.949999988079071,
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000755875": 1.0
+          },
+          "nll": 1.0118731260299683
+        }
+      },
+      "wmc_bears": {
+        "validation": {
+          "n": 41,
+          "accuracy": 0.9024389982223511,
+          "macro_accuracy": 0.9000000059604645,
+          "per_taxon_accuracy": {
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000073256": 1.0,
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000273956": 1.0,
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000511941": 0.8500000238418579,
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000755875": 0.75
+          },
+          "nll": 0.9980204105377197
+        },
+        "test": {
+          "n": 39,
+          "accuracy": 0.9230769276618958,
+          "macro_accuracy": 0.9319444447755814,
+          "per_taxon_accuracy": {
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000073256": 0.7777777910232544,
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000273956": 1.0,
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000511941": 0.949999988079071,
+            "http://phenomebrowser.net/flopo/taxon/wfo-0000755875": 1.0
+          },
+          "nll": 1.0126827955245972
+        }
+      },
+      "direct": {
+        "validation": {
+          "n": 41,
+          "accuracy": 0.9999999403953552
+        },
+        "test": {
+          "n": 39,
+          "accuracy": 1.0
+        }
+      }
+    },
+    "selection": {
+      "flat_weak": [
+        {
+          "seed": 20261025,
+          "step": 300,
+          "validation_nll": 0.7961011528968811
+        },
+        {
+          "seed": 20261026,
+          "step": 300,
+          "validation_nll": 0.7972555160522461
+        },
+        {
+          "seed": 20261027,
+          "step": 300,
+          "validation_nll": 0.7971826791763306
+        }
+      ],
+      "wmc": [
+        {
+          "seed": 20261025,
+          "step": 300,
+          "validation_nll": 0.9969928860664368
+        },
+        {
+          "seed": 20261026,
+          "step": 300,
+          "validation_nll": 0.9977500438690186
+        },
+        {
+          "seed": 20261027,
+          "step": 300,
+          "validation_nll": 0.9967264533042908
+        }
+      ],
+      "wmc_bears": [
+        {
+          "seed": 20261025,
+          "step": 300,
+          "validation_nll": 0.9976841807365417
+        },
+        {
+          "seed": 20261026,
+          "step": 300,
+          "validation_nll": 0.9970982074737549
+        },
+        {
+          "seed": 20261027,
+          "step": 300,
+          "validation_nll": 0.9992932677268982
+        }
+      ]
+    },
+    "direct_selected_step": 300,
+    "provenance": {
+      "source_sha256": {
+        "small_train.py": "1ac54afe7d20fd60509830dccf310c0fc02271b4020695478c1da11f22dd2c17",
+        "small.py": "cc2679084a7c78a76c16f8384442b16232466a3e4cc6ee90afe5f25e3aec5351",
+        "latent.py": "d8570a3e148a5c0b5acf5707b07e95df38e08608561d694ab5ac75a6e6b613f1",
+        "bears.py": "903525bb58b6d49809565ad2b20b523757de4e2b96efde384c6bdd44e4174157",
+        "multi.py": "044ea96bdf937f3ed363d9bde90df40d10192e68f0acf72fafd39fd3ec20859a",
+        "model.py": "526989081673face458e5c05bccdd7be487dd5688bda943c57098f5015533626"
+      },
+      "protocol": {
+        "status": "frozen_before_new_images_and_predictions",
+        "names": [
+          "Arnoglossum plantagineum",
+          "Abutilon grandifolium",
+          "Pistia stratiotes",
+          "Allium canadense",
+          "Ziziphus nummularia"
+        ],
+        "unseen_species": "Ziziphus nummularia",
+        "groups": [
+          "leaf.outline",
+          "leaf.hairiness"
+        ],
+        "profile_worlds_checked": 12,
+        "pairwise_profile_overlap": 0,
+        "ideal_trait_species_accuracy": 1.0,
+        "source_profiles_sha256": "dc7d745c150928c7491cbaffe2252b3801afba37a702c84a681f09a77b129766",
+        "catalogue_sha256": "5ceeead58121d328faf5958e756a242f7448f9df852b77fdf77f43529cb6ddbd",
+        "schema_sha256": "f0ef0e3036be2b2ff366b1ef77c0e6cb2f4431fa90766a9774eeb9862207037e",
+        "weak_label_warning": "Flora profiles are not individual-image trait labels.",
+        "visibility_gate": {
+          "organ": "leaf",
+          "minimum_side_pixels": 192,
+          "minimum_detector_score": 0.4
+        },
+        "training": "four species; pretrained heads reset, no earlier adapted checkpoints",
+        "splits": "observer-disjoint train/validation/test; fifth species only zero_shot_test",
+        "test_policy": "Freeze split before training; inspect no test predictions during development.",
+        "baselines": [
+          "pretrained traits + WMC",
+          "flat weak trait predictor + WMC",
+          "taxon-trained WMC",
+          "taxon-trained WMC + BEARS",
+          "direct image classification (known species only)"
+        ],
+        "comparison_note": "Categorical flat baseline is an adaptation, not the released numerical PlantTraitNet model.",
+        "allow_known_only": true,
+        "amendment_before_fitting": {
+          "reason": "Round-one availability audit: only two held-out-species observations pass the visibility gate. Known-species training may proceed independently once all four known-species gates pass.",
+          "zero_shot_policy": "Do not score or claim zero-shot performance unless original eight-observation gate passes.",
+          "known_species_and_visibility_gates": "unchanged",
+          "new_model_predictions_inspected": false
+        }
+      },
+      "split_audit": {
+        "status": "ready_known_only",
+        "counts": {
+          "Arnoglossum plantagineum": {
+            "train": 28,
+            "validation": 10,
+            "test": 9,
+            "zero_shot_test": 0
+          },
+          "Abutilon grandifolium": {
+            "train": 60,
+            "validation": 20,
+            "test": 20,
+            "zero_shot_test": 0
+          },
+          "Pistia stratiotes": {
+            "train": 21,
+            "validation": 7,
+            "test": 7,
+            "zero_shot_test": 0
+          },
+          "Allium canadense": {
+            "train": 10,
+            "validation": 4,
+            "test": 3,
+            "zero_shot_test": 0
+          },
+          "Ziziphus nummularia": {
+            "train": 0,
+            "validation": 0,
+            "test": 0,
+            "zero_shot_test": 2
+          }
+        },
+        "unseen_species_ready": false,
+        "total_observations": 588,
+        "eligible_observations": 201,
+        "split_sha256": "58be54a715b25cc65b2fa1ebd4e8295e5ea70450f08ad320e4707c2a86202163",
+        "image_manifest_sha256": "1d9008b67dd73515532328abb530f7a0dbc90f3dd76b40c2709ebb94eb2f60ac",
+        "extraction_sha256": "c3a7bddd4990f99a68a7acae33937e0deaf7a847eba79775a70d4f4aceacb721",
+        "note": "No model predictions or species correctness used for eligibility or splitting. Leaf visibility is machine-estimated."
+      },
+      "feature_hashes": {
+        "563619143": "87c5604d679be1ec1d3ce5349a15c95e0d797914359dd7ce55ad40973b790906",
+        "528878796": "e12527035a0d6ce2544fb734b8d72c1a0c023f7eab1aa35c6db164a872d4e27e",
+        "509817739": "c5aede3d3f7a6c97bc8fbd7458451b70cb6ecbd1586c75950d4f8794937b14c5",
+        "635585905": "f815bc4e590153e9f115892666b97056f2284ee83fc6c56e02bdd82199c5c9db",
+        "525635888": "a278d7e5f3359a8b6884895eec6cf21162aa6ce7f8a2ff1ea0297741604eee61",
+        "644512224": "f5b5551e677806df9bf0579490598c25bf8b1c7f4ccbc2aa8f831f623dd42bf8",
+        "649112562": "f51e711d7b2191b9c723df2536b5bdbf5ac4538be9f4919cd8acc7dc9076ade3",
+        "669728201": "25fdc2bdbc784feb36a7fef856c5721cc7ef8d7b02f2b483b89639bce8bf0b18",
+        "623991776": "cb50f5eb0933d6e85f2f8527bb95c6cad5e6db5fc3f6305489c81b1eda0c4347",
+        "514810862": "b6a2fe35a06e0e09e6e3d26e65a134d641f48a3336d4a666f46130505643c43a",
+        "534354426": "c6b0e26ffce25fdbcef1627d246385a70f7e29bb16eb5fce2d57a4d030f9e8c4",
+        "701684660": "647d91ca8777f343f5ae01189145bfded46998118c7ad597dbde8d5ae40ff2b6",
+        "649155960": "7adfe8a6e638f2df884b116cf7da58202123d1b7f19b3ee082fe679294274814",
+        "677882188": "160820a7b95fefbe27326c72e6cd7e623e1f0cadd7d28f8c2611c2616c58756c",
+        "508316712": "ab98cb2cc968e659311af4d1cf74fd48eff19c9217ea9361f2a504162545ac05",
+        "627131387": "36fe715779f9678bbc7f465f107eb3620e39f3d1c590f6ef66a1d19a769c3a11",
+        "478085148": "baa9a7d94b3db0726a84a56025ae9fdd04f3efa58e8b870f2ba76e276933ac0a",
+        "485508706": "edf85eab415afba16612ef15c318c93b49ddcdc03c123b50bd27c66107a27266",
+        "485280600": "30400883494fd6a1bb89c9f37edce5f948eee0202b5be278eb4a43dfbbba34b2",
+        "340512318": "3958cef1827c3495f217cb7351b05051fb9d48c8a58197748dafdd40c56dfcc1",
+        "479857118": "8cd01436634fc038e1c4793eb64e3e798fad23b3286d33963cfe0e4c8900421e",
+        "475406294": "90f5d78fbd84bb51a82cce63d62d4c69749bf718406071c9234f3bcddbdffc21",
+        "382057534": "89ba6fdf3bb4961a2e180ad261f67658787baadfbd8887bb99dd8d686d3da3ef",
+        "360167102": "4d92e409cfbe12f9bc3e0480e3a7dbe156b36d7e6bb2017c94f7aceccf8ad029",
+        "479210633": "4d23c88a5b64c7e02d383e21506a64d47445360d3126f0129a2a6f84d931d1b1",
+        "385384203": "1616c3ee099b15298efd68abad71a75fd8d64b77d58c42a2f2e599f037eef73f",
+        "472120750": "1f1fdbd047c87a1511bd81a34c3d9ecff24f9ec6bd6533d738a92037d55b3204",
+        "488745952": "aed8bd1fc4a9d6e1170789ba367bc0cd9e5bfa234f93a3042cf0c0c5456ed93d",
+        "436527755": "12aff48979a83bda48aa00d666bd6b08baf21816a3cc41fd87120684350034f1",
+        "488992787": "e626d393e401e5f87dc13813f5c1d125186946259ee0fa4ef613e5cc5481fc83",
+        "503666526": "2320b0ccc1d446bb2943cf7989d1dffeac80046241f39382ad76309a185ca934",
+        "471631063": "6b1548324c534c59825cc19aefdd83dd18c284dcd71bd30040c00e937b3ecdff",
+        "487619303": "d966a747b7c7b1fdfb1dc517f5654f35917f486e739efe8d629ba306f86e980f",
+        "363012732": "9c4156b52c82b0e95115ffa1964f067a21d12c6117df342d4ecb7bef0ee9abe7",
+        "251633350": "fe97cc6aeee69fbae38fbcb847a2f659f68e5aa45766292b9cbd2b8fb94e3189",
+        "284724371": "898c38e7adc1d217d6db36e05f7e667a827848cdad1c1bc60bff52d261682f48",
+        "200595891": "538fad4332805a7a4767ee176ad59579df4c96c1f7f58982df23fbc75ea01acd",
+        "294531015": "eeaf5f8aa9e29510489a6703fca3d6973a3561a0e9d04a23d4a0dad11b829035",
+        "197608920": "ba9983f200f40de03db1dc1a6beb862b3e35fcfee1a4b748acff464988096f19",
+        "71664407": "cc936d52b77f914410bfe0b4973509117b6473f03083c36b484b3405f7d0655e",
+        "127183592": "c7bb89b154b756cce8e0281d6b1e2446ed72cf853978ed778ca2e377f4036e51",
+        "119546843": "c0a5d52aac039c8e41d362fda78e5061f609d866d7e715cccc80f7737af06605",
+        "120031992": "78536b4f53deb7cebc1f16477abe0894b656d652ec7fa6195a0cbe40aac779a8",
+        "39232510": "82675b677d1ea38ce8e84fd60e2578b50733336a3033a26878448c643b14ceb4",
+        "1093951": "bcac68bb36438dc2dd087e964c88f08bc205dd8eaeaffbedf96d472bdca122be",
+        "5300314": "6926d3f076d24dd59b652e049a1dc018efee8c476b4ed899ba5fae100dde7bd8",
+        "6815460": "02066bcbe84f7deb8e99278dbed51c2acdd6d6fa360f1ab5978b0e21a6839bf0",
+        "487819960": "391fadca3bb4282377a3395d70d63a24f03768b7c252767133fcd0dc825cbe42",
+        "540998975": "2c76584e111ce4265fd7bc93511f653c01165d3f717c19e1ab57ca5b0b3dbfd6",
+        "468641786": "62bfc9c76fbfe5a817177c453adc675cb7049e8e43ccb2ac4a6ae4ca8782689d",
+        "489576001": "a2e94f446889f880a1acdd475ca8d9498c45496dd2d6a481504657fd4f34a24c",
+        "565974272": "063c9e670e17ac19acd5e3441e66b5b0220dc1593944990fb6349c4868ffbdd2",
+        "698066566": "3be60ac672404ceca6f336a93a5172a0e82f76848d8692338b82008141bd155d",
+        "587165881": "042535b0406745689841ef0831daeeb98aa779c33070fe9e053db6aeaf3f02a3",
+        "465007395": "4ac743940047d86d1d6007a41a0bc85cf7ebbee90011f7a1397325f3c2bcaa21",
+        "617742666": "f127ddb1b6d7a981ee6c101d1b5b5b717af411c30cf804cc7e5b38c65ccd8700",
+        "633849066": "ea09990196d573887d6e16ac2ac982500baa15ba216e469bbc708dbd6013fbec",
+        "685934340": "b95f021ff6b1ebb4a185f35b68fe74e4b961682d9fd9ee79e97ebe0decf17139",
+        "479158070": "ea69aa11d72cfe7b40dd6cb12086ab27a2ed96566623e99b94ec2d8828dd7ac5",
+        "443366919": "f4bba4722c6c553e6bbef7f5158df92a163fa6c045d816ba597fbea44dfc7f72",
+        "467072063": "c85f36d21298fd592d8aa93d7fb096ccf58dfefc7094f99cac50d5d298eb9f23",
+        "687462242": "d75cdd044cdfef11e3cf35a84fac2e0e3a4ca7c64cdd70f9d6e22756d461629a",
+        "465975172": "f7de86440338a88e390bb924636ebe3b8695312974804ef91125c3250460e4bb",
+        "585620117": "24fbc4ce6baa36271d2506de8076ded80871de7cd0479a13b98d1d798b230f0d",
+        "481834633": "2cb883a2ca4daea24fdbb083c7994ad586e232517a9390e8db575ac5787d9ea9",
+        "575065713": "fe9ac74f332e728a0f82b53f6a745b4828fd67c4b6ca0d9ddb78e9cc557978be",
+        "583498722": "f65d84c339e100f414c2fddd2de958198b2276bb02f9dac0587fe0788d826f4e",
+        "739737017": "cf7adab6a804ebf9dde4ceb61b6ff5f69ed3b761bf53c06133a3565ddce0feeb",
+        "678395064": "58d0f7394a655af1ee6d7cc8f42091c12b28f55e76f82d3edba5d25c88d14369",
+        "451897812": "e9753464fb44c4ad564951366f8fdd9a8439f3e66447351b5f7af7423f6ad422",
+        "727629829": "783aa64b2fff4206fc097dd498022929e0c6d39cd2b61b19d21602b46c1db19d",
+        "542758947": "0f9f26a1a9cf18d09381a69f8511589ec77ceb4833c14225d88eda3571c8ff72",
+        "611079808": "d34f2fb6a379321bfde86befc47d91258553b4815bbec9d06851f577724258db",
+        "324517509": "a4d8198f37403a4cc6d4bd21baabf761f96aacb3691147917919a5ba80154811",
+        "354707379": "27cedcfbdc1a5286eabbca46870751c8eb10065d0e2026724c8b5cb647543a34",
+        "437749841": "f72662e7840947d784620741ea5ad122d42f9d6247a01c8cc24e176ad13c3bca",
+        "350915066": "a2f362e0fe581c7bebb9b65e2c44ab6186b0402e83ad60f3c3a3205ff1c46ad3",
+        "331426022": "1ef8c8f6bc906725e28246dcf6d13254cbe51466557fba78ac29346335f00cec",
+        "292700607": "cc4dd7a3fe10a50d9b44a61dc28781d1a2377944d5097ee0108184354636f8ce",
+        "337588677": "d881887045afa4bb5afe8d69c505762f9934154aab89d42eaeb48000b5bc4a9f",
+        "364260281": "f29021df77e3d8d440b1275c7b88ce1791d6a6d66320a234d3c74cca2697a145",
+        "280231908": "d547889a321a9359a8b520454b5856929cbdf54f171d2b347f2093e2e7862134",
+        "377728273": "209dd6c70d454c0ef15b3eb48d508243cc36788e680fca54e555a544b5b89748",
+        "310792403": "6b294a4ce4af368966d946f804a9804e2751b2dd377377e0010eaba8bc73b178",
+        "331096725": "1aaba69d84e7572f421c1ed600c95bede6c517144e1540a8add836978722011d",
+        "349806533": "d128898306013f628e40be06c7702b250aed14ebd54d999fd95e339dc99dfbaf",
+        "329316564": "27a0f9e1227286d6cd11be5a2b982bc56446fb7a7a1da89da0ca23d070ea10f5",
+        "443335138": "dc5d14f965ee9838f3ccd11a8e4cab424f484ee8670ce40bd9e3fb12a38a9df0",
+        "415065253": "d69564e27981f27fd8cdd4333cddfba4f01a1c87645b79b53e1cbf0dd478e85f",
+        "394220870": "1499e87c8e4898c2f74fbfc4fb5475fba287ea68af01f6306bf58df092144146",
+        "333566840": "a3e75d5a4c4f734aa78d832d5adb3bba55f013eb88301033ea975e1151119c4b",
+        "440758466": "f8fac0f3d584ee18c5e2220bea422f06e413d74621d50b7837a8d8ed523d2d11",
+        "281078043": "2dd4877c6371ec587d22052305eb1cac023d45e7edc366e4e129cf18feb93a2d",
+        "390023560": "485461f7e9d503c17b01a85f2f6c4d759df87d1a00586a89379b23ea94072b8f",
+        "332240365": "1346b20f5caa73bd7fda6ac1563bb3e7651b719029e38208c3bc95acee5a102d",
+        "409909905": "6c3d847b954e7e9d4801242b5e6136384354d3245e27e98cf7b7fc98264117d2",
+        "293423786": "fdff99ce6c3a984b51886653f3e9fcc5110301f703a1b82e285fe0bd9f617c55",
+        "332950998": "88a99a3839b18e8fcaea77451235382d68af5790a56a8f0bc50263f0c98341fa",
+        "285975343": "dcb4e0c25f1f895a5a357cfb84ad3beb725f4187fb4d51fd99dbf86b6f820c42",
+        "346744156": "1e82b2ce9ed8b2af486ee73976fd3ce503fe7852351d755d7ce13f54c7a014f8",
+        "287974239": "a4c4e3f24db4e8dd8463959fde41411c41cb079d42800e17cecc4e7ad5473240",
+        "387810897": "8db66847726f2e0ad875ca9dee518ed37fbef1428c551b6ad0766837acb99625",
+        "317329153": "6e909681339999b8f404989c4c43bacea650aee497a96b862251958ad5ccf3c7",
+        "416071393": "76694963bc30ae721fedba0bbcfa6f6bfc9ab8d774c9649065b60567ca497f7b",
+        "265860358": "bfa217a12e813888913f8264712982012b823c296cbf16ba5f26a9e3b859830e",
+        "205949934": "41a3ef0c45582a45170c3d3db3a830d71bca901ad5ed41594ef85d9685fdfc4e",
+        "198941710": "3fa42557c37bbcbf34cd4bd9e2a9f9f7786773678a1ab13853e88aeae41ad195",
+        "202026425": "8b85bab028c4da29563ff8f1dd4e3b5ac764c862ebfc2e1e3e78e01206439ed2",
+        "240892247": "b08d6814426323420361f6497896a470c679901c0f345d9e5c95397487264f71",
+        "236773633": "e3752f04e1151da1b2f07bc4bdc99612adfcc23737256cfacd128e2c7e75a94d",
+        "199762374": "156f7f7af6e571fecf758fda6138796f3df61134d92c4e34f738cba36f1121c5",
+        "236754650": "911079b9ca4876b4057b74b4ab8b4d6a3d414a831ea33b9c31d95c0060ca4c16",
+        "215923599": "ba4141f56ce25ac6b417558354accd4820fa5c4a504cf6af4c09178b7fc7ab9f",
+        "230620862": "804577217ce5461b39bdac9ceb23836d3a7164783a810c114d0b8c72567201fc",
+        "235984603": "c10600ea38d7d793b41971c3ef82f25c0afc161a65c6e9110ff0235065600e8f",
+        "194650723": "b7bf92240a18b64b7680bf4282bed3e2e2bc5e072309d171375b263db67e5d9c",
+        "210789734": "00fa8ba7157f6756665edb0f42f1fe47c0db2b74c08a8ccbfa0c3bf4ea375865",
+        "222306941": "1bba658cea63353e9cb25806dc716f9ca4adc765c1cb56edfd9a95866d1da132",
+        "266154164": "e333a9431658d12fb5a3090cf14f5dfe2e3143874b82356e7498311a4c24c4ef",
+        "267955484": "432f75338f742f5b9b108754542030800a23c0ca91086379e7184223432d9222",
+        "243663950": "8ab2d12064498fab2d469955aebde975ef637bb9398d7c48d41c18b18bab4732",
+        "241108470": "97a17e025034bec5c4378868fd7c41a30c094c896d9c778257fa72ccb14c5816",
+        "264159622": "745880be65ef7fcb68dc7bcc11d8d506553066b08fdd632dd19e8986172ca5d3",
+        "199488235": "70e7edb33a36efd5cb771160bdc467cd9031e18f69ad546e63ef712f0fcc6321",
+        "195086598": "6065e85ebc5bbbf63d207544f388992690cb8897603967eb32d8b0b714ebd32b",
+        "185759287": "d71f1bd7da011c982c64f38321dc00de439f605c4bd87a08ee56714431ab2896",
+        "118687924": "9e5eb837f63a13c08816d7cc0f6a3322193302b077c253621f8c12e74124414d",
+        "117646222": "7a158a77b4795e955cc509654848e66156ea7c256867e862f277d4e68c05559f",
+        "146737459": "43a10f55def61ca8bee2732731d553b54cd62ee65a2b7ae06fe6ebf4cb912582",
+        "165339795": "d081881b9a6913aaa534bef1d3306db6527b9aa1c1801f2f06b11f507413fac8",
+        "165381108": "235fb2d46701aa6ed327ce32cc6374b94948435ff52fee8a62e17491c4c0fd73",
+        "154098812": "222894dca800786d42e51e63529c1ad7ee7905f0e4224f3db012290bd01d06bd",
+        "125486805": "7c5e3817f19b93766ef8aca84fa602b8f591aef3e699e63904687e33c3c4a261",
+        "183819411": "8111f6665ad1df7a90df17eac05eb8909c78888b531a5e22cecfdf556047330a",
+        "165869342": "022a759789710186bc7c0881985129162cc24dd6f0d155894866f3d193ab6bd5",
+        "169853556": "bf19bbb333a3e7033ee63747c23f5ddf6da0f820f72e171ca54e3ca1701aac04",
+        "186871080": "af49675f7785583be53278701c100ea5c28692a86b170f203d98611fc0cb1540",
+        "138006471": "8736146bce16967cd628d2b812fbbccfe3240188d5dde12868e7bdeba37e045d",
+        "170838789": "c7fb45d103e733c566fb01ffe59f574efe21caeafb3b7758e9acdc8e7825c47e",
+        "32723102": "5da7956165818957da7303dcf6047640856b3a37cbc897c82b1a82e255fea0bc",
+        "109835398": "eef751c244bcb414d1c8ee3638e0259f696db58845ff3f543baeec8b124cf915",
+        "46821056": "d0807d7684b4485bf6f91947a7ad8492d0d0f4490e412a0e050ee29d66faef2e",
+        "2713385": "527166d6d2732a4d6c7b2f5667f2a03e64a55475aee681e13cd6854eaf258e44",
+        "44559569": "c0d151459a536f175525c78395673738ed5ec6e324988a15057f1f0137419ef9",
+        "23292540": "a155e0d7358589e7ee59e5c609a4d04ee34a30ecda5d9b9a455d0d56c456d4f0",
+        "29939358": "e62e452d786c21f163ab1091a715cb216076dee7c85cfcd4d37ddfa04210cb0f",
+        "48248585": "582455d25d8f658e47b03f6e4c0a4dd9f512f7482ba47ad031fad3218cda56c8",
+        "673351102": "d0839926c7360eb4a4dbab992520c36d583db3a955f9b0c775463815220359f2",
+        "635170706": "09cf0a8afbee3d7ff20171afe605a07e637fa90c9a08cba0acd7d16dcbc3383e",
+        "678994534": "9017cba08d00bc8291829e3a055fa1f137ab266e30401a9db618d681a12d78db",
+        "692517368": "7b4b250edbebf5b6153a0cf8e35d532bf93e08894df671eeccdd8559ecd2054a",
+        "651436119": "1097738e2e188676d5460f3e0ab2a55f1e9f3c94777fdf074b02cbab2bc1ad14",
+        "658230821": "f8ce84aa4b10612fee3a9bf26a2e78c09d287afd7b38b3f3d28811e421793416",
+        "722936608": "4c48e73d4a0a80d4f67ff6314806d778936cb6d9a7684966da9d62a54dd8ebdf",
+        "707530504": "ff1dd956ae5122e052dec1e79d3f14387b425efdb420c849c1df0dc1dd81b521",
+        "689023381": "eccffe1c570aa5cfe159c0330273bf72a46bd2d3b3b2d080c798f86fa214cb13",
+        "730514518": "36536cf864ff27c80d964ef36b6e6ddbe1025cb90dad9373bb9d92b512170f9d",
+        "594588800": "647b214a753c6904ec4bbf331f28ca0506587dc473e5280232d46d823ffe2a27",
+        "608049257": "ecdc0a6e104b122c1210338ee9a3ff365bf5a285b2be0de614ae26ed92c0d66e",
+        "630286137": "a9635580a5cd071ce9e6781f3df94fdfca5d3e1bd92595933302048ab8b6903a",
+        "620836849": "2152f820dedabe057e0504601e7e5c05bdf5876fce394d549d3c208288f0d383",
+        "604981273": "d2641d6f246ddb9e967708ec225029c2f96f5ef503b34d0b1bb546edf312496f",
+        "617528720": "6da3f923b2615a3f4e3e3e733289da879fc9bc16bbce9f06f3285d8839f761de",
+        "603469564": "9a27b746b7673edc9637ab3a6648a527049da8223f24b145460bed3ceb002393",
+        "601371255": "81e40c4d6a9b894b3cdae5342cf3934aac65a384f2f36b65c87755fefe75adf4",
+        "625716138": "14de552227ea59a246345fff2b1a2b249b6cb1900d0b1b952b81b05468845d87",
+        "630086558": "fb9497523bbef38ef8c2fc337ec03d859bbda5ccfef001f8fa7525577c53a443",
+        "632575690": "3141b1fba412dc4fd593f2c7e467c5175e5d56fc9b18561b91096500427730ce",
+        "603325217": "d6014ea743ffab3ba828e1f751887c07897146ff0563149f5766af175848adb2",
+        "557891606": "45c10402945f1a2c1535d8d152cc58c7aa9c90097a60657dad54dccfc8ac836f",
+        "571610595": "65a15f0c4f31b3eec68e2e60ef50a1f1712b69a11c981c38aed61ef589d5e310",
+        "547655898": "ea4999e20b645d2c293009dc0294f55e4ff1861a6a6c6f588b0474c1974bec16",
+        "538211234": "409c303c57a86151f91a857afb0519cec84317b6bdfae860ac3bf4f77a8a3d89",
+        "546525308": "2cfbc0eb0420b1acae38f99ae9064099c1d9b76d8ce6052afa028c963271c4a7",
+        "534468959": "0229d2aa272a4b8d30a6be7277ce81923762491130239f9174c37f6351974dd0",
+        "585422690": "61185331dee37faca5fc203f37e3201b738315945d2b6807d0fb786403a8a3b2",
+        "525622456": "618e157f6e0aa4de8ef0c28cb752b0a9a4dd520cef05f49cba0b209d392db3ec",
+        "493701709": "d081266001fe5a30f547800db042273ea6f048f4c2f8619c8ddf1607ae78f5d5",
+        "474809052": "dfedaa2a658a0765b891cda2bd2b01528c89f26f6832ca9b4ad13801fdbc1129",
+        "480023053": "7f4a226f4a2c0162dc9022a8a865f0682b939fe287ac32925bef3562b9de41bb",
+        "521322030": "707de48c9cdf50ffcc1347062ea498f1f5f5c27a6edbe6c27045a312595355a3",
+        "496125708": "cbc74f5b36436b2596a60de5bda120c1911f3fe8bf7c8e5a48c9ceb7b6fa83e3",
+        "647669203": "89a7028bdffa92f2ac77bbd063bcee6650e4e723d0453207d0ce9f7b5f7fbb7c",
+        "660325052": "11ce3374678a527afb2d114168a78809368a42254f95309104ac3d7fd89f77ca",
+        "657651115": "efc9b970eb7fab957b98267f36fb163e6ec672c4a208be7a7ad7ce6cba2ce778",
+        "652548904": "80d5bb88cd944db251def19de3023a3159e05e11a31652fe0ff60c5554ea2ef5",
+        "655123704": "347558f4a65d1cf0d908ee371b4ef7398b346b043190af73610e76e89aa7e819",
+        "631930934": "da24dd5a0f8c377ab0d456f1119e6aca6c58209c30d42c2b9652104b8833df59",
+        "629270813": "75cf92776d15984b39291bc95d69056b2b40934a990bc507ad9e81d7456f811f",
+        "511357267": "c9060242f717e0966226661cedbd01369f69954a6060a3e64ed2b33115b7ec35",
+        "530472417": "967d39c3589ce065730a61ec3ee99ac22631e56e50efd73d0ede965ec351f59f",
+        "502037359": "01eed6dafad9d092ea8519d08cca15833b80590e4672c3a3f1fe0584042646fa",
+        "518227745": "16c7baf425e99cac99faecbd4adc92c2027b3b224e815aab24a3321dfdde982b",
+        "600587270": "979eeafa5cf15dc58504b4e9600b28b70033c054110ce3ae5bf2120514951d01",
+        "506411663": "620518bcf5ff52a039847aa4eb74613a0e63692baa0fdbf11fdee916f082cbf2",
+        "493080345": "463fc48dba3e610f98e2e11a0747e0b4a2f66a7277303971618144c765b1e3b9",
+        "416380841": "f09dcb4a948f6928beec7a72128016bfde97f378f08407818308f80d25ed40c5",
+        "492839007": "0685612ae13a3d3a115b900aee67a3b6a43b680d1f97f572b707c62162d74b96",
+        "394643467": "3994f122e58b02b581e3091738dd974c994aa955ea155d5da401c6b25491a69a",
+        "323274142": "833aecbb486d705e7346e755e81d858bce10e1f2790db6f8ef32eb7b73e5e722",
+        "241529934": "294a639f12c37cdeb89e85279585ef74d237c4bd02d79fa7ab5d6d0db5a9891b"
+      },
+      "encoder": {
+        "repository": "imageomics/bioclip-2",
+        "revision": "2957b322090f9cb17ae72c71981c7218a28d81e0",
+        "license": "mit",
+        "files": {
+          "README.md": "807e4daa2b3486bc542a7c796c84a117be02818e671c934a66cd1898c3c098c1",
+          "merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+          "open_clip_config.json": "1bf947e96e943fe50efd5c3e26c37f843a2fa3c358967719a68c8a6d17ce68c8",
+          "open_clip_model.safetensors": "b7b2bf6fbc95799e42630e394cf95803892ab447c1a8ab629dbc82fbeaf7dfef",
+          "special_tokens_map.json": "2cdb3b8331a60c92fc1e55a13e9fd61fd2293c5a51275fdcccd62b780052530e",
+          "tokenizer.json": "72ed5c96db5729294468543e4bc75fce14ca63f58e37300290189ba1c1e52b85",
+          "tokenizer_config.json": "6bdcee9ccce2a16ca2b4c0c5ed00b42c50ea225f4472a8c4c1e963a2902c2881",
+          "vocab.json": "5047b556ce86ccaf6aa22b3ffccfc52d391ea4accdab9c2f2407da5b742d4363"
+        }
+      },
+      "plan": {
+        "steps": 300,
+        "learning_rate": 0.001,
+        "teacher_KL_weight": 1.0,
+        "bears_weight": 0.1,
+        "bears_entropy_weight": 0.01,
+        "ensemble_members": 3,
+        "seeds": [
+          20261025,
+          20261026,
+          20261027
+        ],
+        "selection": "minimum validation species NLL, every 10 steps, including initialization",
+        "test_policy": "single final scoring after all checkpoints selected",
+        "taxonomy_prior": "uniform; reference learned from training images only",
+        "reasoning_scope": "finite two-group FLOPO-grounded profiles, not full OWL reasoning"
+      }
+    },
+    "gpu": "NVIDIA H200",
+    "caveats": [
+      "No categorical image-level trait gold: species accuracy does not validate trait meaning.",
+      "Only five selected species and two groups; not evidence of broad FLOPO coverage.",
+      "Held-out-species result is a small compositional transfer check, not general open-set recognition.",
+      "No full-ontology reasoning ablation or published PlantTraitNet reproduction.",
+      "Overlap with foundation-model pretraining images is unknown."
+    ]
+  },
+  "verification": {
+    "flat_weak": {
+      "correct": 37,
+      "reload_max_abs_probability_difference": 8.940696716308594e-07,
+      "mean_trait_epistemic_mi": 1.3282666259328835e-05
+    },
+    "wmc": {
+      "correct": 36,
+      "reload_max_abs_probability_difference": 6.556510925292969e-07,
+      "mean_trait_epistemic_mi": 3.294226553407498e-05
+    },
+    "wmc_bears": {
+      "correct": 36,
+      "reload_max_abs_probability_difference": 8.940696716308594e-07,
+      "mean_trait_epistemic_mi": 4.5082510041538626e-05
+    },
+    "direct": {
+      "correct": 39,
+      "macro_accuracy": 1.0
+    },
+    "test_size": 39,
+    "majority_class_accuracy": 0.5128205128205128,
+    "source_hashes_verified": true,
+    "observer_disjointness_verified": true,
+    "checkpoint_sha256": {
+      "flat_weak-20261027.pt": "3e953776cd33fc0b56ee457b1286aea1ba61d025ca80e9a2c04818361093d640",
+      "wmc_bears-20261026.pt": "79ee73570dfc1c9cb5503afe86ebbc3d4eabe3c15a767fc518af303adb2e8cbe",
+      "flat_weak-20261026.pt": "e37fef131cbfface8f1122665c82d4840e5fde1c5f45ddf1e37c445feddf2c9c",
+      "wmc_bears-20261025.pt": "77415bf7f6ddc5f205e0afa3212ff201f5ce5ceb2cf16d5adb2a298031c90c80",
+      "wmc_bears-20261027.pt": "e80d86701f185502c30b6fd140b3b07567e17ec717f5593e7921e308ff757829",
+      "wmc-20261025.pt": "5835f83c8a1cba493a1af94c23bbe627e7307d628c75fe932dc727ff87bf8f7e",
+      "wmc-20261026.pt": "9bb142ece027f4c6cea33049b10db15bf8c888501eb440b3f3946931e810bb4a",
+      "direct.pt": "7e23d93db94152c2283166315189709ffae793e44781a3bf12bf077ecf9374c7",
+      "prepared.pt": "82528b4debaabc13f1b5f6350cf7b1bee485a71c13273048c4a6d674060c561b",
+      "flat_weak-20261025.pt": "bab177f7d7c85d124135d2bc4d8b0be93c671f2141e673d8a0c1249214cf1bcf",
+      "wmc-20261027.pt": "9f2c4057ffee872958e751ffcc0c2e61501353250b55da884716b1e4b155f27c"
+    },
+    "all_remote_checkpoint_hashes_match": true
+  },
+  "artifacts": {
+    "local": "local-corpora/small-run-v1",
+    "orix": "/mnt/data/u/hohndor/flopo-vision/small-run-v1",
+    "numeric": "local-corpora/leaf-control-v1",
+    "results_sha256": "6680c1cf2e723adf41308e6662a841db369bfcdeebaff310e75a4567ac7e47da",
+    "predictions_sha256": "a02fae884d013506fc348cb8ba6dbd21cfc1f188d849834297a0d7625ede59e1",
+    "environment_lock_sha256": "40e935b04ad61b973158cd4f52db6a8715f3cc372e508c434c88d171055d9ccb"
+  },
+  "interpretation": "Trait-mediated species recognition succeeds on this small known-species cohort. No advantage over the flat weak baseline or direct classifier, no verified categorical trait semantics, and no general ontology-reasoning benefit are established.",
+  "primary_goal_correction": {
+    "primary_outcome": "image-level phenotype recognition",
+    "species_results_role": "secondary diagnostic only; do not validate semantic trait outputs",
+    "trait_evaluation": "docs/flopo-trait-evaluation.json",
+    "current_status": "Trait recognition is poor in a provisional image-only AI audit. Expert-validated phenotype accuracy is not established."
+  }
+}

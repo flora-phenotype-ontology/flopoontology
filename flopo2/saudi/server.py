@@ -123,6 +123,11 @@ class Handler(BaseHTTPRequestHandler):
             return self._query(params["query"][0], params.get("format", [""])[0])
         if url.path == "/summary.json":
             return self._file(self.data / "summary.json")
+        if url.path == "/inaturalist.json":
+            path = self.data / "inaturalist.json"
+            if not path.exists():
+                return self._send(200, b'{"taxa":{}}', "application/json")
+            return self._file(path)
         path = (self.web / url.path.lstrip("/")).resolve()
         if url.path in {"", "/"} or not path.is_file():
             path = self.web / "index.html"  # client-side routes

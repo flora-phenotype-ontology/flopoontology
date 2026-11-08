@@ -19,6 +19,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -80,6 +81,11 @@ def build(stamp: str, out: Path = RELEASES, data: Path = DATA, web: Path = WEB) 
         print(f"{graph}: {triples} triples ({time.time() - started:.1f}s)", file=sys.stderr)
     shutil.copytree(web, release / "web")
     shutil.copy2(data / "summary.json", release / "web" / "summary.json")
+    inat = data / "inaturalist.json"
+    if inat.exists():
+        shutil.copy2(inat, release / "web" / "inaturalist.json")
+    else:
+        (release / "web" / "inaturalist.json").write_text('{"taxa":{}}\n')
     meta = {
         "stamp": stamp,
         "created": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -87,7 +93,45 @@ def build(stamp: str, out: Path = RELEASES, data: Path = DATA, web: Path = WEB) 
         "dirty": bool(_git("status", "--porcelain", "--untracked-files=no")),
         "triples": sum(g["triples"] for g in graphs),
         "graphs": graphs,
+        "inaturalist_sha256": _sha256(release / "web" / "inaturalist.json"),
     }
+    for target in (release / "release.json", release / "web" / "release.json"):
+        target.write_text(json.dumps(meta, indent=1) + "\n")
+    return release
+
+
+def build_web(stamp: str, base: Path, out: Path = RELEASES, data: Path = DATA, web: Path = WEB) -> Path:
+    """Stage new website assets against an immutable, previously checked RDF release.
+
+    Reuse its graph files and index; the deployment may keep its existing QLever process.
+    Copy its summary too, so unshipped flora data cannot leak into displayed coverage.
+    """
+    release = out / stamp
+    if release.exists():
+        raise SystemExit(f"{release} exists; choose another stamp")
+    meta = json.loads((base / "release.json").read_text())
+    (release / "rdf").mkdir(parents=True)
+    for graph in meta["graphs"]:
+        source, target = base / graph["file"], release / graph["file"]
+        target.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            os.link(source, target)
+        except OSError:
+            shutil.copy2(source, target)
+    if (base / "index").exists():
+        (release / "index").symlink_to((base / "index").resolve(), target_is_directory=True)
+    shutil.copytree(web, release / "web")
+    shutil.copy2(base / "web" / "summary.json", release / "web" / "summary.json")
+    inat = data / "inaturalist.json"
+    if inat.exists():
+        shutil.copy2(inat, release / "web" / "inaturalist.json")
+    else:
+        (release / "web" / "inaturalist.json").write_text('{"taxa":{}}\n')
+    meta.update({"stamp": stamp, "base_release": meta["stamp"], "base_commit": meta.get("commit"),
+                 "commit": _git("rev-parse", "HEAD"),
+                 "dirty": bool(_git("status", "--porcelain", "--untracked-files=no")),
+                 "created": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                 "inaturalist_sha256": _sha256(release / "web" / "inaturalist.json")})
     for target in (release / "release.json", release / "web" / "release.json"):
         target.write_text(json.dumps(meta, indent=1) + "\n")
     return release
@@ -97,8 +141,9 @@ def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--stamp", default=datetime.now().strftime("%Y%m%d-%H%M"))
     parser.add_argument("--out", type=Path, default=RELEASES)
+    parser.add_argument("--base-release", type=Path, help="update website assets, preserving this release's RDF and summary")
     args = parser.parse_args(argv)
-    print(build(args.stamp, args.out))
+    print(build_web(args.stamp, args.base_release, args.out) if args.base_release else build(args.stamp, args.out))
 
 
 if __name__ == "__main__":

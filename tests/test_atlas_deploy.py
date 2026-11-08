@@ -1,4 +1,4 @@
-from tools.atlas_checks import compare
+from tools.atlas_checks import compare, graph_count_differences
 from tools.atlas_release import export_graph
 
 
@@ -31,3 +31,11 @@ def test_export_keeps_blank_nodes_of_two_files_apart(tmp_path):
     export_graph(tmp_path / "b.nt", "http://g/b", tmp_path / "b.nq", "g1x")
     a, b = (tmp_path / "a.nq").read_text(), (tmp_path / "b.nq").read_text()
     assert a.startswith("_:g0xx ") and b.startswith("_:g1xx ") and "<http://g/a>" in a
+
+
+def test_graph_counts_allow_empty_graphs_but_detect_data_loss_and_unexpected_data():
+    expected = {"http://g/traits": 23, "http://g/places": 0}
+    assert graph_count_differences(expected, {"http://g/traits": 23}) == []
+    assert graph_count_differences(expected, {}) == ["http://g/traits 23 -> 0"]
+    assert graph_count_differences(expected, {"http://g/traits": 22}) == ["http://g/traits 23 -> 22"]
+    assert graph_count_differences(expected, {"http://g/traits": 23, "http://g/extra": 1}) == ["http://g/extra 0 -> 1"]

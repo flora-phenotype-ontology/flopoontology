@@ -143,10 +143,14 @@ This release repairs the 2026-09-18 release:
 The annotation class extension is rebuilt from the stage-25 corpus, after conflict resolution
 and the colour-backbone migration.
 
-## Saudi Flora Trait Atlas
+## FLOPO Trait Atlas
 
-Trait statements from Saudi floras are annotated with FLOPO, PO and PATO, published as RDF, and
-browsed through a local website with a SPARQL endpoint.
+Trait statements from multiple floras are annotated with FLOPO, PO and PATO, published as RDF,
+and browsed through a website with a SPARQL endpoint. The collection began with the Saudi
+guides below and now includes extracts from 40 sources (24 October 2026), including African,
+Asian and American floras. Many are small pilot samples; the website reports the included
+taxa and transcribed statements per source, not completeness of the original floras.
+The historical `web/saudi/` and `local-corpora/saudi-flora/` paths remain in use.
 
 | Source | Ingest |
 |---|---|
@@ -175,7 +179,7 @@ table; the atlas reads its own NCVC run in `local-corpora/saudi-flora/ncvc-deriv
 
 ### FLOPO flora value terms (FLOPO:0991000-0991999)
 
-Quality words of the Saudi floras that PATO lacks are FLOPO-local value classes, each directly
+Quality words of the floras that PATO lacks are FLOPO-local value classes, each directly
 beneath its closest PATO class, like the provisional PATO candidates of FLOPO:0985xxx. Examples
 are axillary, solitary, capitate, caespitose (tufted), creeping, mat-forming,
 leafy, twiggy, subsessile, bipinnate, unisexual, exfoliating, fissured, and the odours
@@ -186,6 +190,11 @@ FLOPO:0991026–0991045 (2026-10-15, not yet reviewed) add fibrous, fibrous-root
 horned, zigzag, umbelliform, medium-sized, pectinate (comb-like), indeterminate, subterranean,
 aerial, androgynous, virgate (broom-like), palm-like, claw-shaped, pea-sized, cherry-like,
 straggly, submerged and floating.
+
+FLOPO:0991046–0991070 add 25 provisional values required by the broader flora extracts,
+including membranous, scarious, pilose, puberulous and mucronate. These remain marked
+`pending final vetting`; embedding them makes the dataset self-contained without implying
+curatorial acceptance.
 
 ```bash
 python -m tools.build_flopo_flora_value_extension   # spec -> module, rules, (bearer, attribute) pairs
@@ -201,6 +210,126 @@ built from the release itself, after the value terms are embedded:
 python -m tools.build_flopo_flora_corrections            # -> ontology/flopo-flora-corrections.ttl
 python -m tools.update_flopo_flora_corrections_release   # embed, then the final passes above
 ```
+
+### iNaturalist images and observations
+
+The atlas can display licensed iNaturalist photographs and observation links through the
+audited crosswalk built by `python -m flopo2.saudi.inaturalist --snapshot /path/to/inat_taxa.csv`.
+Difficult names are assessed by Qwen and checked against live iNaturalist records and WFO.
+Unresolved taxa retain a name-search link. See
+[iNaturalist integration and trait-learning research](docs/inaturalist-trait-learning.md)
+for refresh instructions, matching safeguards and the weak-supervision literature review.
+
+### Visual trait reasoning pilot
+
+The experimental implementation in `flopo2/vision/` follows the
+[architecture and experiment design](docs/flopo-visual-reasoning-design.md). It compiles
+a bounded positive OWL fragment, preserves organ–quality binding, computes exact marginal
+query probabilities under explicit categorical choices, and trains small organ × colour
+heads on frozen localized features. The downstream profile scorer has no hidden image or
+species-classification channel. This is a development pilot, not a validated recognition service.
+
+GPU extraction runs on Orix with the pinned environment and model revisions in `deploy/orix/`.
+Download models with `flopo2/vision/prefetch.py` before allocating a GPU; submit
+`deploy/orix/extract.sbatch` after copying the image manifest, images and extractor to Orix.
+The completed extraction produces `regions.jsonl`, per-image crop features and `run.json`.
+
+```bash
+# Local CPU preparation (the release and raw artifacts are not committed).
+python -m flopo2.vision.pilot freeze --release PATH_TO_RELEASE --out DATA --taxa 60
+python -m flopo2.vision.pilot collect --out DATA --observations 200
+# After retrieving the completed Orix extraction under DATA/extraction:
+python -m flopo2.vision.review --data DATA
+python -m flopo2.vision.audit --data DATA
+REVIEW_BIND=127.0.0.1 bash tools/serve_visual_review.sh DATA
+```
+
+The review packet exports only explicitly reviewed images. Review organ boxes and colour
+labels, or mark a region's colour `unlabelled` to review eligibility without providing a
+colour target. Unknown and unassessable colours never become negative labels. Corrected or
+deleted boxes require feature re-extraction with `extract.py --reviewed EXPORT.json` into
+a separate output directory. Machine proposals are not independent gold annotations.
+
+`weak-event-candidates.json` is a separate source-review worksheet. It is intentionally
+unusable for training until a reviewer checks source stability, compatible scope and eligible
+region indices, and supplies development-audited contamination/reliability values. Every
+allowed alternative must be representable by visually anchored primitives; partially
+representable unions are rejected. Retain each candidate's pinned source identifiers/hash.
+
+```bash
+# Localized supervised control; CPU suffices for these small frozen-feature heads.
+python -m flopo2.vision.train --data DATA --reviewed EXPORT.json \
+  --extraction REVIEWED_EXTRACTION --out RUN_SUPERVISED --seed 0
+# Same inputs and seed, now with reviewed weak source events.
+python -m flopo2.vision.train --data DATA --reviewed EXPORT.json \
+  --extraction REVIEWED_EXTRACTION --weak-events AUDITED_EVENTS.json \
+  --out RUN_WEAK --seed 0
+python -m pytest -q tests/vision
+```
+
+Both commands produce development training diagnostics only. The independent evaluation,
+grouped splits, learned composition baseline and richer-axiom controls in the experiment
+design remain necessary before making an accuracy or reasoning-benefit claim.
+
+Manual annotations are **optional for training**. The fully automatic path uses frozen
+organ proposals, a BioCLIP image/text prior and research-grade taxon labels joined to flora
+events. It preserves machine labels as unreviewed, uses one focal region per organ per image,
+balances repeated observations, and runs fixed noise sensitivities rather than treating
+species descriptions as exact image labels:
+
+```bash
+# On Orix, encode the pinned text prior and train three noise settings in one GPU job.
+# First copy flopo2/vision/{__init__,extract,logic,model,prototypes,weak_train}.py into
+# the isolated workbench package. The existing frozen audit and models remain on data storage.
+sbatch deploy/orix/prototypes.sbatch
+# Alternatively, after retrieving DATA/text-prior, train the small heads locally:
+python -m flopo2.vision.weak_train --data DATA --out NEW_RUN_DIRECTORY
+```
+
+The earlier reviewed-anchor trainer remains available for optional supervised refinement.
+Held-out research-grade species labels can evaluate plant identification without manual
+trait labels. Direct visual trait accuracy needs an independent annotated benchmark; source
+compatibility and agreement with a pretrained model are not substitutes for that evaluation.
+
+The next model (`flopo2.vision.multi`) has a shared organ predictor and conditional heads for
+colour, outline, three-dimensional shape, hairiness and margins. It predicts 33 named states
+plus unknown states. `expand.py` freezes the schema and split before fitting: earlier pilot
+genera remain in training, while novel genera are reserved and overlapping observers,
+observations and exact/perceptual duplicate candidates are excluded across splits. The
+pretrained-prior regularizer also sees training images only.
+
+```bash
+python -m flopo2.vision.pilot freeze --release RELEASE --out DATA_V2 --taxa 120
+python -m flopo2.vision.pilot collect --out DATA_V2 --per-taxon 8
+python -m flopo2.vision.expand --data DATA_V2 --prior DATA_V1
+python -m flopo2.vision.phenotypes --release RELEASE --data DATA_V2
+# Copy inputs/code to the Orix workbench and data directory specified in this script:
+sbatch deploy/orix/multi.sbatch
+```
+
+The saved `model.pt` includes the trait heads, fixed species profiles and a reference
+distribution estimated from training-image priors. Species ranking consumes only explicit
+trait distributions. There is no species-loss gradient or hidden image embedding in the
+ranker. The first evaluation compares pretrained traits, weakly trained traits and colour-only
+evidence over the same candidate catalogue. It measures held-out species identification,
+not direct trait accuracy or an advantage of OWL over equivalent procedural reasoning.
+
+```bash
+# Predict on cached image regions; the photo's true taxon is not an input.
+python -m flopo2.vision.predict --checkpoint RUN/model.pt \
+  --extraction DATA_V2/extraction --photo-id PHOTO_ID \
+  --phenotypes DATA_V2/phenotype-queries.json --out prediction.json
+# For a new image, run feature extraction inside an Orix GPU allocation:
+python -m flopo2.vision.predict --checkpoint RUN/model.pt \
+  --image plant.jpg --models PINNED_MODEL_DIRECTORY \
+  --phenotypes DATA_V2/phenotype-queries.json --out prediction.json
+```
+
+Predictions include region boxes, uncertain trait states, species evidence contributions and
+supported FLOPO phenotype identifiers. Broad entailed phenotypes are included in the query
+coverage count; they are not additional independently learned outputs. Unsupported or
+unobservable traits remain unknown. The initial collection samples one species per genus,
+so its identification results do not establish discrimination among closely related species.
 
 ### How statements are represented
 
@@ -245,3 +374,52 @@ browser is in `web/saudi/`.
 
 The data stays git-ignored because both guides are copyrighted and the dataset quotes their
 sentences as evidence.
+
+### Experimental latent-trait taxon likelihood (DeepLog)
+
+`flopo2.vision.latent` adds an optional exact DeepLog backend for grounded categorical
+queries and a normalized taxon likelihood through which species labels can train latent
+traits. The real-image development branch now trains through this likelihood;
+the deployed predictor still uses the earlier model. See
+[the architecture and experiment](docs/flopo-visual-reasoning-design.md) for the revised
+objective, missing-profile normalization, grounding requirements and matched ablations.
+
+Use a separate Python >=3.12 environment with PyTorch and `pydeeplog[mvsdd]==5.0.0`.
+The existing Orix vision environment is Python 3.11 and must not be replaced in place.
+The optional tests skip when DeepLog is absent:
+
+```bash
+python -m pip install 'pydeeplog[mvsdd]==5.0.0'
+python -m pytest -q tests/vision/test_latent.py
+```
+
+`CompiledQueries(domains, queries)` consumes the finite formulas from `logic.Scene` and
+batched normalized categorical probabilities. `LatentTaxonWMC(domains, profiles, reference)`
+returns log probabilities over the named taxon profiles. Remove unassessable groups before
+constructing each profile; an empty profile is `True`. Training minimizes NLL of the
+research-grade taxon label plus the grounding/source auxiliary losses described in the
+design. No human trait labels are needed for the synthetic learning check or for starting
+this weakly supervised training design. All substantive GPU experiments belong on Orix.
+
+The real-image development runner now uses those pretrained trait heads with a five-member
+BEARS ensemble and a matched ordinary ensemble. BEARS joint-concept diversity uses a
+Monte Carlo estimator; the taxon likelihood uses exact DeepLog circuits. Preparation stays
+outside the GPU allocation, and the run uses training and validation only:
+
+```bash
+# In the separate deploy/orix/latent Pixi environment; cached DATA_V2 features/prototypes.
+python -m flopo2.vision.latent_train prepare --data DATA_V2 --out PREPARED
+# On Orix: deploy/orix/latent/train.sbatch runs this in an H200 allocation.
+python -m flopo2.vision.latent_train train --prepared PREPARED --out NEW_RUN \
+  --members 5 --epochs 200 --world-samples 64
+```
+
+The heads begin with the pinned BioCLIP 2 prototypes and are regularized toward their
+pretrained predictions. Ensemble disagreement is reported separately from recognition
+accuracy; it does not establish that shortcuts have been eliminated.
+
+Orix run **341490** completed both ensembles; checkpoints and metrics are recorded in
+[the run record](docs/flopo-latent-bears-run.json). Both trained ensembles achieved 0/26
+top-1 and 1/26 top-5 validation identifications, below the pretrained top-5 baseline.
+BEARS increased disagreement, but it remained small. These are experimental checkpoints,
+not an improved production recognizer; the test split was not evaluated.

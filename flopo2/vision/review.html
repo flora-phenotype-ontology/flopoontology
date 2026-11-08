@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FLOPO · visual development audit</title>
+<style>
+body{font:16px system-ui;margin:24px;background:#f5f4ed;color:#19362b}h1{font-size:25px}button,select,input{font:inherit;padding:7px;margin:4px}button{cursor:pointer}main{display:grid;grid-template-columns:minmax(350px,2fr) minmax(320px,1fr);gap:24px}#frame{position:relative;align-self:start;touch-action:none}img{width:100%;display:block}svg{position:absolute;inset:0;width:100%;height:100%;cursor:crosshair}rect{fill:#ffce0030;stroke:#ffce00;stroke-width:3;vector-effect:non-scaling-stroke}section{background:white;padding:12px;margin:8px 0;border:1px solid #ccd6ce}.small{font-size:14px}#message{min-height:1.5em;color:#9b370a}a{color:#185c43}@media(max-width:850px){main{grid-template-columns:1fr}}label{display:block}
+</style>
+<h1>FLOPO visual development audit</h1>
+<p>Confirm what is visible. Boxes are unreviewed machine proposals. Draw a box to add a focal organ; delete unsuitable or duplicate boxes. A flower box is not a petal box. Limit: six distinct regions.</p>
+<p class="small">Use a region with one assessable colour. Mark mixed colours, uncertain organs, poor lighting and unresolved detail as unassessable. Choose “unlabelled” when reviewing eligibility for weak supervision without providing a colour label. This packet is development data; it cannot become a held-out test set.</p>
+<label>Reviewer <input id="reviewer" placeholder="Name or stable reviewer identifier"></label>
+<button id="previous">Previous</button><button id="next">Next</button><span id="counter"></span>
+<button id="export">Export reviewed annotations</button><label class="small">Resume from export <input id="import" type="file" accept=".json"></label>
+<p id="message" role="status"></p>
+<main><div><div id="frame"><img id="photo" alt="Plant photograph for trait annotation"><svg id="boxes"></svg></div><p id="credit" class="small"></p></div>
+<div><div id="regions"></div><label>Notes <input id="notes" placeholder="Ambiguity, missing organ, mixed specimen…"></label><button id="review">Mark image reviewed</button><p id="status"></p></div></main>
+<script id="packet" type="application/json">__PAYLOAD__</script>
+<script>
+const packet=JSON.parse(document.getElementById('packet').textContent), images=packet.images, $=id=>document.getElementById(id);
+let current=0,start=null;
+const key='flopo-review-'+packet.packet_id;
+function save(){try{localStorage.setItem(key,JSON.stringify({images,reviewer:$('reviewer').value,current}));}catch(e){$('message').textContent='Browser storage unavailable: export regularly.';}}
+try{const old=JSON.parse(localStorage.getItem(key));if(old&&old.images.length===images.length&&old.images.every((x,i)=>x.sha256===images[i].sha256)){old.images.forEach((x,i)=>images[i]=x);$('reviewer').value=old.reviewer;current=old.current||0;}}catch(e){}
+function changed(){images[current].review_status='unreviewed';save();render();}
+function render(){const row=images[current];$('counter').textContent=`${current+1} / ${images.length} · ${images.filter(x=>x.review_status==='reviewed').length} reviewed`;
+ $('photo').src=row.image_path;$('boxes').setAttribute('viewBox',`0 0 ${row.width} ${row.height}`);$('boxes').setAttribute('preserveAspectRatio','none');$('boxes').replaceChildren();$('regions').replaceChildren();$('credit').replaceChildren();
+ const a=document.createElement('a');a.href=row.photo_url;a.textContent=`Photo ${row.photo_id}`;a.target='_blank';a.rel='noopener';$('credit').append(a,document.createTextNode(` · ${row.attribution} · ${row.license}`));
+ $('notes').value=row.notes||'';$('status').textContent=row.review_status==='reviewed'?`Reviewed by ${row.reviewer}`:'Unreviewed';
+ row.regions.forEach((r,i)=>{const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');['x','y','width','height'].forEach((k,j)=>rect.setAttribute(k,[r.box[0],r.box[1],r.box[2]-r.box[0],r.box[3]-r.box[1]][j]));$('boxes').append(rect);
+ const section=document.createElement('section');section.append(document.createTextNode(`Region ${i+1} · proposed ${r.proposal_label||'manually'}`));
+ for(const [field,values] of [['organ',packet.vocabulary.organs],['colour',[...packet.vocabulary.colours,{name:'unlabelled'}]]]){const label=document.createElement('label');label.textContent=field;const select=document.createElement('select');values.forEach(v=>{const opt=document.createElement('option');opt.value=v.name;opt.textContent=v.name;select.append(opt)});select.value=r[field];select.onchange=()=>{r[field]=select.value;r.confirmed=false;changed()};label.append(select);section.append(label);}
+ for(const [field,text] of [['assessable','Colour assessable on this organ'],['confirmed','I checked this box and its labels']]){const label=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.checked=r[field];check.onchange=()=>{r[field]=check.checked;changed()};label.append(check,document.createTextNode(text));section.append(label)}
+ const del=document.createElement('button');del.textContent='Delete region';del.onclick=()=>{row.regions.splice(i,1);changed()};section.append(del);$('regions').append(section);});}
+function point(event){const b=$('boxes').getBoundingClientRect(),r=images[current];return [Math.max(0,Math.min(r.width,(event.clientX-b.left)*r.width/b.width)),Math.max(0,Math.min(r.height,(event.clientY-b.top)*r.height/b.height))];}
+$('boxes').onpointerdown=e=>{start=point(e);$('boxes').setPointerCapture(e.pointerId)};
+$('boxes').onpointerup=e=>{if(!start)return;const end=point(e),box=[Math.min(start[0],end[0]),Math.min(start[1],end[1]),Math.max(start[0],end[0]),Math.max(start[1],end[1])];start=null;if(box[2]-box[0]<12||box[3]-box[1]<12)return;if(images[current].regions.length>=6){$('message').textContent='Delete a region before adding another (six maximum).';return;}images[current].regions.push({box,organ:'other',colour:'unknown',assessable:false,confirmed:false});changed();};
+$('notes').onchange=()=>{images[current].notes=$('notes').value;changed()};
+$('previous').onclick=()=>{current=Math.max(0,current-1);save();render()};$('next').onclick=()=>{current=Math.min(images.length-1,current+1);save();render()};
+$('review').onclick=()=>{const r=images[current],name=$('reviewer').value.trim();if(!name){$('message').textContent='Enter your reviewer identifier.';return;}if(r.regions.some(x=>!x.confirmed||(x.assessable&&(x.colour==='unknown'||x.organ==='other')))){ $('message').textContent='Check every region. Assessable colour requires a supported organ and a known colour.';return;}r.review_status='reviewed';r.reviewer=name;r.reviewed_at=new Date().toISOString();save();$('message').textContent='Review saved locally. Export regularly.';render();};
+$('export').onclick=()=>{const output={schema:'flopo-visual-review-v1',purpose:'development_audit',images:images.filter(r=>r.review_status==='reviewed')};const url=URL.createObjectURL(new Blob([JSON.stringify(output,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='flopo-visual-reviewed.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+$('import').onchange=async e=>{try{const data=JSON.parse(await e.target.files[0].text());if(data.schema!=='flopo-visual-review-v1')throw Error('Wrong schema');for(const row of data.images){const i=images.findIndex(x=>x.photo_id===row.photo_id&&x.sha256===row.sha256);if(i<0)throw Error('Unknown image');images[i]=row;}save();render();}catch(error){$('message').textContent='Cannot import: '+error.message;}};
+render();
+</script></html>

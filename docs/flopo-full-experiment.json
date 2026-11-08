@@ -1,0 +1,211 @@
+{
+  "status": "training_and_predictions_complete_awaiting_independent_review",
+  "date": "2026-10-26",
+  "primary_goal": "Image-level trait recognition; species metrics cannot select the model.",
+  "inventory": {
+    "eligible_taxa": 445,
+    "taxa_with_usable_assertions": 345,
+    "candidate_traits": 36,
+    "source_assertions": 856
+  },
+  "collection": {
+    "observations_per_taxon_target": 200,
+    "maximum_pages_per_taxon": 5,
+    "page_size": 200,
+    "maximum_observations_per_observer_per_taxon": 2,
+    "photos_per_observation": 3,
+    "observed_since": "2020-01-01",
+    "licenses": [
+      "cc0",
+      "cc-by",
+      "cc-by-sa"
+    ],
+    "target_is_not_achieved_count": true
+  },
+  "architecture": {
+    "encoder": "FG-CLIP 2 Large",
+    "trainable_encoder_blocks": 2,
+    "trainable_encoder_parameters": 25194496,
+    "head": "centered residual on fixed pretrained region/text logits",
+    "encoder_learning_rate": 1e-06,
+    "head_learning_rate": 0.0003,
+    "steps": 1200,
+    "head_only_warmup_steps": 200,
+    "bag_views": 4,
+    "events_per_step": 2,
+    "loss_weights": {
+      "weak": 1,
+      "pretrained_probability_anchor": 1,
+      "pretrained_feature_anchor": 1,
+      "scoped_hair_negative": 1,
+      "logical": 1
+    }
+  },
+  "arms": [
+    "pretrained",
+    "frozen MIL",
+    "adapted direct",
+    "adapted MIL",
+    "adapted hierarchy",
+    "adapted projected marginal teacher",
+    "adapted shuffled profiles"
+  ],
+  "seeds": [
+    20261026,
+    20261027,
+    20261028
+  ],
+  "learning_curves": {
+    "observations_per_taxon": [
+      10,
+      50,
+      200
+    ],
+    "arms": [
+      "frozen MIL",
+      "adapted MIL"
+    ],
+    "nested_training_subsets": true
+  },
+  "planned_model_outputs": 31,
+  "slurm": {
+    "extraction_array_tasks": 4,
+    "training_array_tasks": 15,
+    "maximum_concurrent_GPUs": 4,
+    "gpu_type": "H200",
+    "extraction_time_limit_hours": 4,
+    "training_task_time_limit_hours": 6
+  },
+  "preflight": {
+    "training_job": "345096",
+    "training_state": "COMPLETED",
+    "training_elapsed": "00:00:32",
+    "encoder_gradient_verified": true,
+    "prediction_job": "345106",
+    "prediction_state": "COMPLETED",
+    "prediction_elapsed": "00:00:44",
+    "scope": "Three-step gradient/checkpoint/inference integration check on existing pilot crops, not full experiment results."
+  },
+  "validation": {
+    "vision_tests_passed": 76,
+    "independent_reference_status": "Pending botanical review; asynchronous reviewer question asked.",
+    "review_packet_target": 1500,
+    "packet_policy": "Fresh images only, one per observation, reserved validation/test partitions, taxonomy/profiles/model predictions hidden.",
+    "metrics": [
+      "per-trait average precision",
+      "macro AP",
+      "F1/balanced accuracy with validation-only thresholds",
+      "Brier score",
+      "prediction coverage",
+      "taxon-bootstrap uncertainty"
+    ],
+    "no_model_selection_from_existing_development_audit": true
+  },
+  "limitations": [
+    "Organ proposals are frozen and visibility/target identity is not independently established.",
+    "Only supported typed marginal implications are used; projection is approximate, not exact WMC/full OWL.",
+    "Independent annotations and any resulting adjudication are not yet available.",
+    "Separate fixed-total taxon-diversity ablations and a species decoder are not part of this first full-scale training stage."
+  ],
+  "paths": {
+    "source_snapshot": "local-corpora/full-source-v1",
+    "runtime_state": "local-corpora/flopo-full-v1/workflow.json",
+    "workflow_log": "local-corpora/flopo-full-v1/workflow.log",
+    "collection_log": "local-corpora/flopo-full-v1/collection.log",
+    "remote_root": "/mnt/data/u/hohndor/flopo-vision",
+    "review_packet": "local-corpora/full-trait-review-v1/review.html",
+    "results_report": "docs/flopo-full-results.md",
+    "sampling_audit": "local-corpora/flopo-full-v1/sampling-audit.json"
+  },
+  "source_sha256": {
+    "flopo2/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "flopo2/saudi/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "flopo2/saudi/inaturalist.py": "57374bb69c239bff6e919e523acd46b5029ff85636923348b6b8d0ba09c52ed1",
+    "flopo2/vision/__init__.py": "4037b7e4fd66f924fe0c90ddb342b42f85e3c4665256bd74d921e9fb7b022b32",
+    "flopo2/vision/extract.py": "da568aa182239a86d5c9a99fdfcdc1940b308d06f7ccf63d620b396e9ea1fa1a",
+    "flopo2/vision/modern.py": "6bcc647e796da621221d835460c065e90b49cd9b6b13b9cfe132d7d7db47b009",
+    "flopo2/vision/modern_weak.py": "67e4b3d5ae66ed75dfd4f6df229432a8681d59cb54ab5593d0de9f4b22be64ab",
+    "flopo2/vision/trait_heads.py": "0bac9d3b5b96993514ecab272baea80748f31de14695d2d674dd87448aaae44f",
+    "flopo2/vision/trait_eval.py": "78177ee19e75685fa1fd0e5490d451f4765db2a3676fecf89c1e1907360f9132",
+    "flopo2/vision/full_data.py": "498ba29da5e2bed7be326b4168c46af39bfa5b75fdee27a21bf11624c96c31ff",
+    "flopo2/vision/full_train.py": "ee36c7d2f4d1cc6c0a3ec4dbc3eb3992922a5e4d61dca842374662d33e9762f5",
+    "flopo2/vision/full_eval.py": "6dda4a373cb53f93099fe22d358e76364afbd0d1eb68c6813fc793c3c8fd3864",
+    "flopo2/vision/cohort.py": "eccf02f480260ecb14fe011049ef479289074478e6654fa8b6cf7bf5a877d99a",
+    "flopo2/vision/pilot.py": "628557f938d12b7a5c283e686649ddb663f08aa7acf879131fe4f0723bdc3b03",
+    "flopo2/vision/logic.py": "4a0aa07fd33788897485b278732e3ac3454bb87e41eb00e732824d4167724cde",
+    "flopo2/vision/trait_packet.py": "5a742d2f3b313c32cf59c339fb44c8c0b8954582e03738d11746ae967283f3da",
+    "deploy/orix/modern/full_workflow.py": "7215c3c426bfb31244f63ea4881254df1d937f4c68f8c9dbe86eb4291a2ade7a",
+    "deploy/orix/modern/full-extract.sbatch": "b6e8552845be9f6b84cb9c2fbc2e9811b01cb0f68f5e14ad9bc075ddcfdaf3db",
+    "deploy/orix/modern/full-train.sbatch": "781a7fddeba17c8bc1be65c76643cc59b2806236dd7ab372b402f1cb07f0ac6f"
+  },
+  "workflow_pid": 1490687,
+  "runtime_at_handoff": {
+    "status": "collecting",
+    "updated": "2026-10-26T11:07:13.492823+00:00",
+    "collector_pid": 360177
+  },
+  "downloaded_photos_at_handoff": 5278,
+  "collection_progress_at_handoff": "Metadata 241/345: 137 observations; 39694 photos planned",
+  "recovery": {
+    "extraction_job": "346624",
+    "previous_failure_UTC": "2026-10-26T13:43:33",
+    "original_scheduler_reason": "Not preserved by the original driver; resubmission succeeded.",
+    "operational_driver_sha256": "9fece4e5a9b55c9bcfb76922e62ec30ea9f3d61e18d84bf37f96bfccdfa854ab",
+    "change": "Preserve command stderr and retry transient SSH transport failures; frozen experiment/training sources unchanged."
+  },
+  "submission_limit_recovery": {
+    "job": "347540",
+    "account_max_submitted_jobs": 16,
+    "previous_error": "AssocMaxSubmitJobLimit",
+    "training_submission_slots": 1,
+    "parallel_gpu_workers": 4,
+    "unchanged_experiment_tasks": 15,
+    "unchanged_planned_model_outputs": 31,
+    "job_walltime_hours": 12,
+    "operational_source_sha256": {
+      "deploy/orix/modern/full_workers.py": "5037ddf1ae0f00539ddae7621c0903ab26a645d023de53e6e33ab2788e9e51ba",
+      "deploy/orix/modern/full-workers.sbatch": "e7ab57801c053c6118a3f993799c2cf29d652efbee72fcae4f505a121e82eb2e",
+      "deploy/orix/modern/full_workflow.py": "24c2847cf1406edcf37de1aaefd6f478b7dd20ead42ab80cf73a300a4bfd05d5"
+    }
+  },
+  "confirmed_progress": {
+    "job": "347540",
+    "gpus": 4,
+    "extracted_regions": 10110,
+    "training_regions": 8152,
+    "training_region_taxa": 192,
+    "first_finetuning_task_step_observed": 300,
+    "planned_steps": 1200,
+    "early_frozen_baselines_fitted": 2,
+    "independent_trait_results_available": false,
+    "models_verified": 31,
+    "training_complete": true
+  },
+  "completion": {
+    "training_job": "347540",
+    "training_state": "COMPLETED",
+    "elapsed": "00:57:01",
+    "exit_code": "0:0",
+    "models_verified": 31,
+    "verified_UTC": "2026-10-27T07:25:49.944487+00:00",
+    "diagnostic_job": "347621",
+    "independent_reference_status": "1500-image blinded packet prepared; botanical annotations pending.",
+    "diagnostic_state": "COMPLETED",
+    "diagnostic_elapsed": "00:02:43",
+    "diagnostic_models_verified": 31
+  },
+  "achieved_data": {
+    "downloaded_images": 52011,
+    "observations": 28250,
+    "taxa": 333,
+    "organ_regions": 10110,
+    "training_regions": 8152,
+    "training_region_taxa": 192,
+    "source_supervised_taxa": 157,
+    "source_supervised_observations": 3423,
+    "source_supervised_traits": 32,
+    "candidate_traits": 36,
+    "usable_source_events": 336
+  },
+  "interpretation": "No consistent improvement in visible leaf-shape recognition on the small, previously inspected AI development audit. No established FLOPO reasoning benefit; broad 36-trait evaluation awaits independent annotations."
+}
