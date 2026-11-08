@@ -1,0 +1,232 @@
+{
+  "version": "flopo-pxgpt-v1",
+  "source": "https://zenodo.org/records/22907554",
+  "goal": "Evaluate useful FLOPO-derived flora supervision of visible qualitative traits.",
+  "records": 599,
+  "images": 7896,
+  "splits": {
+    "test": 415,
+    "development": 184
+  },
+  "split_policy": "SHA256 flopo-pxgpt-v1:cultivar_id; first 64 bits below .25 => development. All stages/views stay together.",
+  "references": "Published human scores only. Strict: >=2 raters and >.5 agreement, no ordinal tiebreak. All assessable references are sensitivity only.",
+  "primary_endpoint": "Equal-dataset mean of hairy/glabrous macro AP on strict TEST references; each dataset requires >=5 hairy and >=5 glabrous cases.",
+  "primary_comparisons": [
+    "flora minus baseline",
+    "combined minus teacher"
+  ],
+  "secondary_comparisons": [
+    "flopo minus combined",
+    "combined minus shuffled_profiles"
+  ],
+  "encoders": [
+    "fgclip2",
+    "bioclip2"
+  ],
+  "modes": [
+    "baseline",
+    "flora",
+    "teacher",
+    "combined",
+    "flopo",
+    "shuffled_rules",
+    "shuffled_profiles"
+  ],
+  "seeds": [
+    20261027,
+    20261028,
+    20261029
+  ],
+  "selection": "Report all primary arms and seeds. No checkpoint, encoder, mapping or aggregation selection on test results.",
+  "hair_indices": {
+    "hairy": 32,
+    "glabrous": 12
+  },
+  "shape_groups": {
+    "seedling": {
+      "ovate": [
+        0
+      ],
+      "orbicular": [
+        22
+      ],
+      "lanceolate": [
+        1
+      ],
+      "obovate_spatulate": [
+        14,
+        29
+      ]
+    },
+    "mature_v1": {
+      "ovate": [
+        0
+      ],
+      "orbicular": [
+        22
+      ],
+      "lanceolate": [
+        1
+      ],
+      "obovate_spatulate": [
+        14,
+        29
+      ]
+    },
+    "mature_v2": {
+      "ovate_obovate": [
+        0,
+        14
+      ],
+      "spatulate": [
+        29
+      ],
+      "oblong_elliptic_lanceolate": [
+        2,
+        10,
+        1
+      ]
+    }
+  },
+  "shape_scope": "Source categorical task restricted to completely represented categories; not complete OWL truth assignments. Max probability within a grouped category; no splitting grouped references.",
+  "views": [
+    "detected_leaf",
+    "whole_image"
+  ],
+  "primary_view": "detected_leaf",
+  "detector": "Existing pinned detector; leaf. petal. flower. fruit.; threshold .4, text .25; highest selected leaf with both dimensions >=96 pixels.",
+  "spatial_features": "Existing five spatial tiles and pinned encoders; identical views across heads.",
+  "aggregation": "Arithmetic mean across every photograph of a set. Missing leaf detection gives zero evidence for every trait. Whole-image results are secondary.",
+  "threshold": "Maximize balanced accuracy on strict development references when each class has >=5 cases; otherwise .5. Never tune on test.",
+  "uncertainty": "2000 paired cultivar-cluster bootstrap replicates, seed 20261028; two-sided 95% percentile intervals, exploratory multiple comparisons.",
+  "overlap": "Brassica tournefortii occurs in fine-tuning; no unseen-genus claim. Audit exact and perceptual image overlap before scoring. Foundation pretraining overlap unknown.",
+  "source_tables_sha256": {
+    "records.csv": "4647af6bfac7c150578292b26de7d94c103212298f214e1ba6b55aa55d629102",
+    "images.csv": "13a88988d5f34a397142ecd8ab055f9ef4884c8562ea795b3061b368adef7b1e",
+    "reference_labels.csv": "3c8dd764284a5bf911c00fb46eb79109c79d13b16a32208ff584337266e0c38a",
+    "human_scores.csv": "9146a8282a8d7bc15279364cf0ad50d0957033d33992172f8aaff3cba0a6441e",
+    "trait_dictionary.csv": "17d0db31c0517c3c5dc93730f5bd4d14f530c57a25bd5532fa1bef1f2335f840"
+  },
+  "source_sha256": "0e5d17f39c68cf1e45e79bf57d1dc086d5c9cf0cbd0d589effefef2b5cc8bf57",
+  "sha256": {
+    "records.jsonl": "1ec2bec740abf7cf060b4c442b350b7c0a8d3181fa128116293eb746e111380f",
+    "images.jsonl": "8a67e1651001e90f34ab4e099b0717bafc803200138a0e0d0a3efa67724c0b62",
+    "annotations.jsonl": "55bcd8ec952dab6ae3973b0a5796d67e3fcc1ade32d300025ad8fb1853968c84",
+    "inventory.json": "c3d2a090c21a7e32dcfe7e5a910219a3744a7b90126d416a4f08149beb131ff5"
+  },
+  "image_overlap_policy": "Before scoring, exclude every cultivar with an exact SHA256 match or a 64-bit dHash distance <=4 to any current fine-tuning training photo. This conservative candidate exclusion is not a claim that every perceptual match is a duplicate. Also exclude cultivars sharing an identical benchmark image across cultivar IDs.",
+  "operational_status": {
+    "status": "independent_evaluation_complete",
+    "preflight_job": "351295",
+    "updated": "2026-10-28T19:17:04.387767+00:00",
+    "preflight_verified_files": 42,
+    "preflight_seconds": 33.47778055258095,
+    "image_overlap_candidates": 0,
+    "inference_job": "351305",
+    "shards": 4,
+    "images_transferred": 7896,
+    "scoring_source_sha256": {
+      "flopo2/vision/benchmark.py": "0e5d17f39c68cf1e45e79bf57d1dc086d5c9cf0cbd0d589effefef2b5cc8bf57",
+      "flopo2/vision/benchmark_score.py": "454cf08f003a8c2915b969a4322c2cd5023bd5e0c8d445450beb0b8e657eb11d",
+      "flopo2/vision/extract.py": "da568aa182239a86d5c9a99fdfcdc1940b308d06f7ccf63d620b396e9ea1fa1a"
+    },
+    "slurm": {
+      "351305_0": {
+        "state": "COMPLETED",
+        "exit": "0:0",
+        "elapsed": "00:16:04"
+      },
+      "351305_1": {
+        "state": "COMPLETED",
+        "exit": "0:0",
+        "elapsed": "00:16:18"
+      },
+      "351305_2": {
+        "state": "COMPLETED",
+        "exit": "0:0",
+        "elapsed": "00:16:35"
+      },
+      "351305_3": {
+        "state": "COMPLETED",
+        "exit": "0:0",
+        "elapsed": "00:17:15"
+      }
+    },
+    "results": "/home/leechuck/.herdr/worktrees/flopoontology/worktree-inaturalist-integration/local-corpora/pxgpt-results-v1/results.json",
+    "results_sha256": "8f1406493d745c259d9fc56644dfbdb67c15ec5e7bf0a6d9bfd2ad72ac55c709"
+  },
+  "image_overlap_audit": {
+    "images_manifest_sha256": "8a67e1651001e90f34ab4e099b0717bafc803200138a0e0d0a3efa67724c0b62",
+    "training_manifest_sha256": "865b0113fe28b6a057e16350d5dfa8676d7ba3c1e2eb756800ec8e49466b87b8",
+    "source_sha256": "2582b7b8188dda9c63b11f9cbf131a62043691e514cbd2acab508782d002747a",
+    "training_images": 21654,
+    "verified_images": 7896,
+    "exact_matches": 0,
+    "perceptual_candidates": 0,
+    "cross_cultivar_identical_pixels": [],
+    "excluded_cultivars": [],
+    "matches": [],
+    "limitations": "Perceptual candidates are conservatively excluded, not asserted duplicates. Foundation-model training overlap is unknown."
+  },
+  "human_reference_audit": {
+    "reference_cells_crosschecked_against_human_scores": 27566,
+    "unique_raters_and_agreement_verified": true,
+    "strict_majority_values_verified": true,
+    "agreement_fraction_rounding_tolerance": 5.1e-05
+  },
+  "validation": {
+    "unit_tests": 11,
+    "gpu_preflight_job": "351295",
+    "gpu_preflight_exit": "0:0",
+    "verified_preflight_files": 42,
+    "inference_has_no_reference_labels": true,
+    "completion_audit": {
+      "status": "passed",
+      "benchmark_images": 7896,
+      "detected_leaf_images": 4567,
+      "detected_leaf_fraction": 0.5783941236068896,
+      "verified_inference_files": 168,
+      "models_and_ensembles": 50,
+      "prediction_arrays": 100,
+      "max_ensemble_rounding_error": 7.947285973752827e-08,
+      "primary_test_sets": 239,
+      "primary_cultivars": 173,
+      "secondary_point_estimates_match_primary_report": true,
+      "focused_tests_passed": 11,
+      "results_sha256": "8f1406493d745c259d9fc56644dfbdb67c15ec5e7bf0a6d9bfd2ad72ac55c709",
+      "secondary_results_sha256": "2b9a505564c95612eb293c3781697c9075eb38eca22e7a3ee517fe796f83e120",
+      "source_sha256": "4e545546192fa082467f11d1388bd573666afe8ff5c5c1a7fa6db7a81a03a47e"
+    }
+  },
+  "controller": {
+    "pid": 1711389,
+    "status": "finished"
+  },
+  "scoring_validation_amendment": {
+    "date_UTC": "2026-10-28T18:49:50.469633+00:00",
+    "old_scoring_sha256": "26d564183875ebf347bd2d79d24dfd468de47c0e7953ec4fff4f6898f0e2d466",
+    "new_scoring_sha256": "454cf08f003a8c2915b969a4322c2cd5023bd5e0c8d445450beb0b8e657eb11d",
+    "reason": [
+      "Reject missing or inconsistent per-shard model grids and checkpoint identities.",
+      "Use strict development references for thresholds in both primary and sensitivity evaluation."
+    ],
+    "primary_metric_or_labels_changed": false,
+    "tests_passed": 10,
+    "performance_results_inspected": false,
+    "inference_job_unchanged": "351305"
+  },
+  "execution_partition_update": {
+    "job": "351305",
+    "tasks": [
+      1,
+      2,
+      3
+    ],
+    "partition": "freecycle-h200",
+    "qos": "freecycle",
+    "requeue": true,
+    "reason": "Scheduler test reports spare H200 capacity; pending tasks moved through Slurm, no duplicate submissions."
+  },
+  "results_report": "docs/flopo-pxgpt-results.md",
+  "results_summary": "docs/flopo-pxgpt-results.json"
+}

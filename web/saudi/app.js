@@ -1,4 +1,4 @@
-/* Saudi Flora Trait Atlas: a browser over the SPARQL endpoint next to this page ("sparql"). */
+/* FLOPO Trait Atlas: a browser over the SPARQL endpoint next to this page ("sparql"). */
 "use strict";
 
 const FB = "http://phenomebrowser.net/flopo/browse#";
@@ -6,6 +6,7 @@ const TAXON = "http://phenomebrowser.net/flopo/taxon/";
 // Relative to the page, so the atlas runs at / (development) and under /flopo/ (public).
 const ENDPOINT = new URL("sparql", document.baseURI).href;
 const SUMMARY = new URL("summary.json", document.baseURI).href;
+const INATURALIST = new URL("inaturalist.json", document.baseURI).href;
 // The endpoint predefines no prefixes; queries get the declarations they do not make themselves.
 const PREFIXES = {
   fb: FB,
@@ -35,20 +36,42 @@ const view = document.getElementById("view");
 const cache = new Map();
 
 /* ---------------------------------------------------------------- helpers */
+async function requestJson(url, options = {}) {
+  // These are read-only requests. Retry one interrupted connection or transient service failure.
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        const error = new Error((await response.text()) || `Trait service returned HTTP ${response.status}`);
+        error.transient = [429, 502, 503, 504].includes(response.status);
+        throw error;
+      }
+      return await response.json();
+    } catch (error) {
+      const network = error instanceof TypeError || error.name === "NetworkError";
+      if (attempt || (!network && !error.transient)) throw error;
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    }
+  }
+}
 async function sparql(query) {
   const body = new URLSearchParams({ query: withPrefixes(query) });
-  const response = await fetch(ENDPOINT, {
+  const json = await requestJson(ENDPOINT, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded", Accept: "application/sparql-results+json" },
     body,
   });
-  if (!response.ok) throw new Error(await response.text());
-  const json = await response.json();
   if (json.boolean !== undefined) return [{ result: String(json.boolean) }];
   return json.results.bindings.map((b) => Object.fromEntries(Object.entries(b).map(([k, v]) => [k, v.value])));
 }
 async function cached(key, fn) {
-  if (!cache.has(key)) cache.set(key, fn());
+  if (!cache.has(key)) {
+    const pending = Promise.resolve().then(fn).catch((error) => {
+      if (cache.get(key) === pending) cache.delete(key);
+      throw error;
+    });
+    cache.set(key, pending);
+  }
   return cache.get(key);
 }
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -58,7 +81,28 @@ const taxonHref = (iri) => `#/taxon/${encodeURIComponent(taxonKey(iri))}`;
 const local = (iri) => iri.replace(/^.*[#/]/, "");
 const curie = (iri) => local(iri).replace("_", ":");
 const n = (x) => Number(x).toLocaleString("en");
-const sourceClass = (label) => (/collenette/i.test(label) ? "collenette" : "ncvc");
+const sourceClass = (label) => (/collenette/i.test(label) ? "collenette" : /ncvc/i.test(label) ? "ncvc" : "");
+const inaturalistData = () => cached("inaturalist", () => requestJson(INATURALIST));
+function inaturalistPanel(entry, label, generated) {
+  if (!entry || entry.status !== "matched") return `<section class="inat-panel"><h2>iNaturalist</h2>
+    <p class="muted">No confirmed iNaturalist match yet.</p>
+    <a href="https://www.inaturalist.org/taxa/search?q=${encodeURIComponent(label || "")}" target="_blank" rel="noopener">Search iNaturalist by name</a></section>`;
+  const id = Number(entry.id);
+  if (!Number.isSafeInteger(id) || id <= 0) return "";
+  const allowedLicenses = new Set(["cc0", "cc-by", "cc-by-sa", "cc-by-nc", "cc-by-nc-sa"]);
+  const pictures = (entry.photos || []).filter((p) => allowedLicenses.has(p.license) && /^https:\/\//.test(p.url));
+  return `<section class="inat-panel" aria-label="iNaturalist images and observations"><h2>iNaturalist</h2>
+    <p><a href="https://www.inaturalist.org/taxa/${id}" target="_blank" rel="noopener"><i>${esc(entry.inat_name)}</i></a>
+      <span class="muted">(${esc(entry.rank)})</span></p>
+    <div class="inat-gallery">${pictures.map((p) => `<figure>
+      <a href="https://www.inaturalist.org/photos/${Number(p.id)}" target="_blank" rel="noopener"><img src="${esc(p.url)}" alt="${esc(entry.inat_name)} — iNaturalist taxon photograph" loading="lazy" referrerpolicy="no-referrer"></a>
+      <figcaption>${esc(p.attribution)} · <a href="${p.license === "cc0" ? "https://creativecommons.org/publicdomain/zero/1.0/" : `https://creativecommons.org/licenses/${p.license.slice(3)}/4.0/`}" target="_blank" rel="noopener">${esc(p.license.toUpperCase())}</a></figcaption>
+    </figure>`).join("")}</div>
+    ${pictures.length ? `<p class="muted">These photographs illustrate the taxon. The traits below come from floras and have not been verified in each image.</p>` : `<p class="muted">No reusable photograph in this catalogue snapshot.</p>`}
+    <p><a href="https://www.inaturalist.org/observations?taxon_id=${id}" target="_blank" rel="noopener">View observations (${n(entry.observations_count)} at last update)</a>
+      · <a href="https://www.inaturalist.org/observations?taxon_id=${id}&photos=true&quality_grade=research" target="_blank" rel="noopener">Research-grade photo observations</a></p>
+    ${generated ? `<p class="muted inat-updated">Catalogue updated ${esc(generated.slice(0, 10))}.</p>` : ""}</section>`;
+}
 function html(strings, ...values) {
   return strings.reduce((out, s, i) => out + s + (i < values.length ? values[i] : ""), "");
 }
@@ -90,7 +134,7 @@ const groups = () =>
     const pick = (type) => rows.filter((r) => r.type === FB + type).sort((a, b) => a.order - b.order);
     return { organs: pick("OrganGroup"), traits: pick("TraitGroup"), label: Object.fromEntries(rows.map((r) => [r.g, r.label])) };
   });
-const summary = () => cached("summary", () => fetch(SUMMARY).then((r) => r.json()));
+const summary = () => cached("summary", () => requestJson(SUMMARY));
 const sources = () =>
   cached("sources", () => sparql(`SELECT ?s (SAMPLE(?l) AS ?label) (SAMPLE(?t) AS ?title) WHERE { ?s a fb:Source ; rdfs:label ?l ; <http://purl.org/dc/terms/title> ?t } GROUP BY ?s`));
 
@@ -153,20 +197,22 @@ async function overview() {
   setView(html`
     <section class="intro">
       <div>
-        <h1>Traits of the Saudi flora</h1>
-        <p class="lede">Every trait stated in the source floras is recorded as an RDF annotation: a taxon,
-          a FLOPO phenotype class built from a Plant Ontology part and a PATO quality, and the sentence it came from.</p>
+        <h1>Plant traits across floras</h1>
+        <p class="lede">Explore annotated plant traits from ${n(keys.length)} flora sources. Each annotation links a taxon,
+          a FLOPO phenotype built from a Plant Ontology part and a PATO quality, and its source sentence.
+          The collection includes selected extracts and small pilot samples, not complete coverage of every flora.</p>
         <div class="figures">
-          <div class="figure"><b class="num">${n(s.taxa.taxa)}</b><span>taxa, ${n(s.taxa.with_wfo)} matched to World Flora Online</span></div>
+          <div class="figure"><b class="num">${n(s.taxa.taxa)}</b><span>taxa, ${n(s.taxa.with_wfo)} with a recorded WFO mapping</span></div>
           <div class="figure"><b class="num">${n(records)}</b><span>trait annotations</span></div>
           <div class="figure"><b class="num">${Math.round((formal / Math.max(rows, 1)) * 100)}%</b><span>of ${n(rows)} transcribed trait statements captured</span></div>
           <div class="figure"><b class="num">${n(occurrences)}</b><span>records of where taxa grow</span></div>
         </div>
         <p class="muted">Each number in the atlas counts the taxa with at least one trait for that plant part and kind of trait. Select a cell to see them.</p>
       </div>
-      <div>${atlasTable(atlasCells, g.organs, g.traits, { caption: "Taxa with an annotation, by plant part and kind of trait" })}</div>
+      <div class="tablewrap" tabindex="0" role="region" aria-label="Taxa by plant part and trait">${atlasTable(atlasCells, g.organs, g.traits, { caption: "Taxa with an annotation, by plant part and kind of trait" })}</div>
     </section>
     <h2>Sources</h2>
+    <p class="muted">Counts describe the extracts currently included. Annotation percentages refer to transcribed statements, not the complete source. Taxon mappings and provisional traits remain under review.</p>
     <div class="sources">${srcRows}</div>`);
 }
 
@@ -204,8 +250,8 @@ async function taxa(key) {
   const filterValue = sessionStorage.getItem("taxonFilter") || "";
   setView(html`<div class="split">
       <aside class="listpane">
-        <label for="tfilter" class="col-title">Find a taxon by name, family or Arabic name</label>
-        <input id="tfilter" type="search" value="${esc(filterValue)}" placeholder="e.g. Acacia, Lamiaceae, سدر">
+        <label for="tfilter" class="col-title">Find a taxon by scientific name, common name or family</label>
+        <input id="tfilter" type="search" value="${esc(filterValue)}" placeholder="e.g. Abies grandis, Lamiaceae">
         <div class="taxonlist" id="tlist">${taxonList(rows, filterValue, current)}</div>
       </aside>
       <section id="tpane">${current ? `<p class="loading">Loading…</p>` : `<h1>${n(rows.length)} taxa</h1><p class="muted">Choose a taxon to see its traits, sources and where it grows. The number after each name counts its trait annotations.</p>`}</section>
@@ -357,6 +403,7 @@ async function taxonPage(t) {
         ${i.wfo ? `<a href="https://list.worldfloraonline.org/${esc(i.wfo)}" target="_blank" rel="noopener">World Flora Online ${esc(i.wfo)}</a>` : `<span>Not matched to World Flora Online</span>`}
       </div>
     </div>
+    <div id="inat-panel"></div>
     <div class="taxon-grid">
       <div>
         <h2>Traits</h2>
@@ -367,7 +414,7 @@ async function taxonPage(t) {
       </div>
       <div>
         <h2>Trait fingerprint</h2>
-        <div class="fingerprint">${records.length ? atlasTable(fpCells, g.organs, g.traits, { link: false }) : `<p class="muted">Nothing to show.</p>`}</div>
+        <div class="fingerprint tablewrap" tabindex="0" role="region" aria-label="Trait fingerprint">${records.length ? atlasTable(fpCells, g.organs, g.traits, { link: false }) : `<p class="muted">Nothing to show.</p>`}</div>
         <h2>Where it grows</h2>
         ${regions.size ? `<div class="regions">${[...regions].map(([, l]) => `<span class="region on">${esc(l)}</span>`).join("")}</div>` : `<p class="muted">No region recorded.</p>`}
         ${points.length ? `<div class="map" id="map" role="img" aria-label="Map of recorded localities"></div>` : ""}
@@ -379,6 +426,19 @@ async function taxonPage(t) {
         <p><a href="#/query?taxon=${encodeURIComponent(t)}">Query this taxon in SPARQL</a></p>
       </div>
     </div>`;
+  const photoPane = pane.querySelector("#inat-panel");
+  const loadPhotos = () => inaturalistData().then((data) => {
+    if (!photoPane.isConnected) return;
+    photoPane.innerHTML = inaturalistPanel(data.taxa?.[t], i.label, data.generated);
+    photoPane.querySelectorAll("img").forEach((img) => img.addEventListener("error", () => {
+      img.replaceWith(Object.assign(document.createElement("span"), { textContent: "Photograph unavailable; open the source to view it." }));
+    }));
+  }).catch(() => {
+    if (!photoPane.isConnected) return;
+    photoPane.innerHTML = `<section class="inat-panel"><h2>iNaturalist</h2><p>Could not load the image catalogue.</p><button type="button">Retry images</button></section>`;
+    photoPane.querySelector("button").addEventListener("click", loadPhotos);
+  });
+  loadPhotos();
   pane.querySelectorAll("tr.rec").forEach((tr) => {
     const toggle = () => {
       const d = document.getElementById(tr.dataset.detail);
@@ -524,13 +584,13 @@ SELECT DISTINCT ?name ?height WHERE {
   ?occ a fb:Occurrence ; fb:taxon ?t ; fb:region <http://phenomebrowser.net/flopo/geo/region/SA-14> .
   ?t rdfs:label ?name .
 } ORDER BY DESC(?height)`,
-  "FLOPO classes most used in the Saudi data": `PREFIX fb: <${FB}>
+  "FLOPO classes most used across the floras": `PREFIX fb: <${FB}>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT ?class (SAMPLE(?l) AS ?label) (COUNT(DISTINCT ?t) AS ?taxa) WHERE {
   ?r fb:flopoClass ?class ; fb:taxon ?t . ?class rdfs:label ?l .
 } GROUP BY ?class ORDER BY DESC(?taxa) LIMIT 50`,
-  "Taxa recorded in both guides": `PREFIX fb: <${FB}>
+  "Taxa recorded in multiple flora sources": `PREFIX fb: <${FB}>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT ?taxon ?name (COUNT(DISTINCT ?src) AS ?sources) WHERE {
@@ -637,7 +697,7 @@ async function coverage() {
           .join("")}</div>`;
     })
     .join("");
-  setView(`<h1>Coverage</h1><p>Each guide was transcribed into trait statements, one per plant part and quality. A statement becomes an annotation when its part and quality match ontology terms and it passes FLOPO's checks. The rest are kept with the reason, so they can be added later.</p>
+  setView(`<h1>Coverage</h1><p>The included source extracts were transcribed into trait statements, one per plant part and quality. A statement becomes an annotation when its part and quality match ontology terms and it passes FLOPO's checks. The rest are kept with the reason, so they can be added later.</p>
     <p class="muted">Taxa: ${n(s.taxa.taxa)} in total, ${n(s.taxa.with_wfo)} matched to World Flora Online, ${n(s.taxa.families)} families${keys.length > 1 ? `, ${n(s.taxa.in_all_sources)} described in every source` : ""}.</p>${blocks}`);
   view.querySelectorAll("details.reason").forEach((d) => d.addEventListener("toggle", () => { if (d.open) pendingPhrases(d); }));
 }
@@ -717,7 +777,9 @@ async function route() {
     else if (section === "coverage") await coverage();
     else setView(`<h1>Page not found</h1><p><a href="#/">Go to the overview</a>.</p>`);
   } catch (err) {
-    setView(`<h1>Something went wrong</h1><p class="error">${esc(err.message)}</p><p>Check that the server is running and reload the page.</p>`);
+    setView(`<h1>Could not load the atlas</h1><p class="error">${esc(err.message)}</p>
+      <p>The connection to the trait service may have been interrupted.</p><button id="retry-atlas" type="button">Retry</button>`);
+    document.getElementById("retry-atlas").addEventListener("click", route);
   }
 }
 window.addEventListener("hashchange", route);

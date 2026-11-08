@@ -1,0 +1,305 @@
+{
+  "status": "completed_development_trait_evaluation",
+  "date": "2026-10-26",
+  "question": "Do weak updates learn image-dependent trait evidence, or mainly alter trait preferences? Does a larger encoder change that outcome?",
+  "encoders": [
+    "fgclip2-base",
+    "fgclip2-large"
+  ],
+  "modes": [
+    "mil_weak",
+    "mil_flopo",
+    "offset_mil",
+    "offset_flopo",
+    "centered_mil",
+    "centered_flopo"
+  ],
+  "seeds": [
+    20261025,
+    20261026,
+    20261027
+  ],
+  "steps": 300,
+  "training_regions": 318,
+  "training_taxa": 55,
+  "source_assertions": 77,
+  "source_supervised_traits": 25,
+  "data_policy": "Identical frozen crops, split, vocabulary and source events. Missing traits remain unknown. No new labels or species loss.",
+  "primary_diagnostic": "Per-trait average precision on unambiguous image shape annotations; report field, external original and masked views separately. No selecting variants or stopping based on audit results.",
+  "secondary_diagnostic": "Set-compatible top-choice accuracy; train-organ mean and SD of logit changes. Offset-only heads must preserve per-trait image rankings.",
+  "reference_limitations": "Previously inspected AI development audit (23 assessable field, 14 external); not independent expert gold. Thirty-output model is not validated across all traits. Reserved 200-image packet remains unannotated.",
+  "architecture_limitations": "Frozen modern encoders and learned linear heads, not end-to-end fine-tuning. Centering prevents a constant shift on training organ features; it does not guarantee causal grounding, eliminate taxon shortcuts or prevent shift on new domains.",
+  "source_sha256": {
+    "flopo2/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "flopo2/vision/__init__.py": "4037b7e4fd66f924fe0c90ddb342b42f85e3c4665256bd74d921e9fb7b022b32",
+    "flopo2/vision/extract.py": "da568aa182239a86d5c9a99fdfcdc1940b308d06f7ccf63d620b396e9ea1fa1a",
+    "flopo2/vision/modern.py": "6bcc647e796da621221d835460c065e90b49cd9b6b13b9cfe132d7d7db47b009",
+    "flopo2/vision/modern_weak.py": "27e706e008657d68f47801eee1a9fc2fde1c1733f298951135da2ccd6d48b965",
+    "flopo2/vision/trait_heads.py": "0bac9d3b5b96993514ecab272baea80748f31de14695d2d674dd87448aaae44f",
+    "flopo2/vision/followup.py": "7c0bed61355e8b98635f8f5272e33f75e2e94709b04c35799a8cf12902d8003e",
+    "flopo2/vision/trait_eval.py": "78177ee19e75685fa1fd0e5490d451f4765db2a3676fecf89c1e1907360f9132",
+    "deploy/orix/modern/followup.sbatch": "9c0feb96e178a2c3fcf3026513eeae7c6e76479e4b639b243de3ae80a97b0f0d"
+  },
+  "parent_extraction_sha256": "35dd70332b79b4a63c9ca0823b0749c5d4135fb9344e0bc54b7d11b02f43d98c",
+  "job_id": "344746",
+  "tests_passed": 69,
+  "remote_output": "/mnt/data/u/hohndor/flopo-vision/modern-followup-v1",
+  "remote_source": "/mnt/data/u/hohndor/flopo-vision/modern-followup-source-v1",
+  "job_state": "COMPLETED",
+  "elapsed": "00:01:47",
+  "exit_code": "0:0",
+  "checkpoints_verified": 36,
+  "results": {
+    "fgclip2-base": {
+      "field": {
+        "pretrained_same_vocabulary": {
+          "assessable_outline": 23,
+          "set_compatible_correct": 5,
+          "macro_average_precision": 0.5800087478658907
+        },
+        "mil_weak": {
+          "assessable_outline": 23,
+          "set_compatible_correct": 5,
+          "macro_average_precision": 0.5292909471480899
+        },
+        "mil_flopo": {
+          "assessable_outline": 23,
+          "set_compatible_correct": 10,
+          "macro_average_precision": 0.5292909471480899
+        },
+        "offset_mil": {
+          "assessable_outline": 23,
+          "set_compatible_correct": 5,
+          "macro_average_precision": 0.5800087478658907
+        },
+        "offset_flopo": {
+          "assessable_outline": 23,
+          "set_compatible_correct": 5,
+          "macro_average_precision": 0.5800087478658907
+        },
+        "centered_mil": {
+          "assessable_outline": 23,
+          "set_compatible_correct": 12,
+          "macro_average_precision": 0.5396000824572252
+        },
+        "centered_flopo": {
+          "assessable_outline": 23,
+          "set_compatible_correct": 15,
+          "macro_average_precision": 0.5409889713461141
+        }
+      },
+      "external_original": {
+        "pretrained_same_vocabulary": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 1,
+          "macro_average_precision": 0.4706349206349206
+        },
+        "mil_weak": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 2,
+          "macro_average_precision": 0.3974867724867724
+        },
+        "mil_flopo": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 2,
+          "macro_average_precision": 0.3974867724867724
+        },
+        "offset_mil": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 2,
+          "macro_average_precision": 0.4706349206349206
+        },
+        "offset_flopo": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 2,
+          "macro_average_precision": 0.4706349206349206
+        },
+        "centered_mil": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 2,
+          "macro_average_precision": 0.43862433862433853
+        },
+        "centered_flopo": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 2,
+          "macro_average_precision": 0.433068783068783
+        }
+      },
+      "external_masked": {
+        "pretrained_same_vocabulary": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 2,
+          "macro_average_precision": 0.4662698412698412
+        },
+        "mil_weak": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 2,
+          "macro_average_precision": 0.5212962962962963
+        },
+        "mil_flopo": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 2,
+          "macro_average_precision": 0.4974867724867725
+        },
+        "offset_mil": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 2,
+          "macro_average_precision": 0.4662698412698412
+        },
+        "offset_flopo": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 3,
+          "macro_average_precision": 0.4662698412698412
+        },
+        "centered_mil": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 2,
+          "macro_average_precision": 0.5935185185185184
+        },
+        "centered_flopo": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 2,
+          "macro_average_precision": 0.5161375661375661
+        }
+      }
+    },
+    "fgclip2-large": {
+      "field": {
+        "pretrained_same_vocabulary": {
+          "assessable_outline": 23,
+          "set_compatible_correct": 12,
+          "macro_average_precision": 0.8793278811135954
+        },
+        "mil_weak": {
+          "assessable_outline": 23,
+          "set_compatible_correct": 12,
+          "macro_average_precision": 0.628213849642421
+        },
+        "mil_flopo": {
+          "assessable_outline": 23,
+          "set_compatible_correct": 11,
+          "macro_average_precision": 0.628213849642421
+        },
+        "offset_mil": {
+          "assessable_outline": 23,
+          "set_compatible_correct": 12,
+          "macro_average_precision": 0.8793278811135954
+        },
+        "offset_flopo": {
+          "assessable_outline": 23,
+          "set_compatible_correct": 13,
+          "macro_average_precision": 0.8793278811135954
+        },
+        "centered_mil": {
+          "assessable_outline": 23,
+          "set_compatible_correct": 14,
+          "macro_average_precision": 0.5319175533461248
+        },
+        "centered_flopo": {
+          "assessable_outline": 23,
+          "set_compatible_correct": 15,
+          "macro_average_precision": 0.5319175533461248
+        }
+      },
+      "external_original": {
+        "pretrained_same_vocabulary": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 0,
+          "macro_average_precision": 0.4345238095238095
+        },
+        "mil_weak": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 2,
+          "macro_average_precision": 0.4437830687830688
+        },
+        "mil_flopo": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 2,
+          "macro_average_precision": 0.4345238095238095
+        },
+        "offset_mil": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 0,
+          "macro_average_precision": 0.4345238095238095
+        },
+        "offset_flopo": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 1,
+          "macro_average_precision": 0.4345238095238095
+        },
+        "centered_mil": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 2,
+          "macro_average_precision": 0.5687830687830687
+        },
+        "centered_flopo": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 2,
+          "macro_average_precision": 0.5687830687830687
+        }
+      },
+      "external_masked": {
+        "pretrained_same_vocabulary": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 0,
+          "macro_average_precision": 0.6990740740740741
+        },
+        "mil_weak": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 2,
+          "macro_average_precision": 0.8068783068783069
+        },
+        "mil_flopo": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 2,
+          "macro_average_precision": 0.7402116402116402
+        },
+        "offset_mil": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 0,
+          "macro_average_precision": 0.6990740740740741
+        },
+        "offset_flopo": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 4,
+          "macro_average_precision": 0.6990740740740741
+        },
+        "centered_mil": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 2,
+          "macro_average_precision": 0.8253968253968255
+        },
+        "centered_flopo": {
+          "assessable_outline": 14,
+          "set_compatible_correct": 2,
+          "macro_average_precision": 0.8365079365079365
+        }
+      }
+    }
+  },
+  "validation": {
+    "fgclip2-base": {
+      "centered_max_abs_train_mean_logit_change": 1.2814999195143173e-07,
+      "offset_per_trait_AP_unchanged": true,
+      "field_training_taxon_overlap": [],
+      "external_training_name_overlap": [],
+      "training_manifest_sha256": "5239489a28b3cf1f67f5ddfdb0787d0828c18046911720db0cd4734f91bedfcc",
+      "audit_sha256": "6a43d83fbc73f3d5ff21ce6e75e759dc8e91577990a1ff4a5cad391e80d48fc0"
+    },
+    "fgclip2-large": {
+      "centered_max_abs_train_mean_logit_change": 1.1722247705847622e-07,
+      "offset_per_trait_AP_unchanged": true,
+      "field_training_taxon_overlap": [],
+      "external_training_name_overlap": [],
+      "training_manifest_sha256": "771e79cf80eadcf82307dbbc58bdf031366061347a7a868d8ab05c7cc0767f8a",
+      "audit_sha256": "5d8cc833c69c58be19444ee146830e1bd48fc72c37b57525950175c4be728a6d"
+    }
+  },
+  "repeated_base_controls": "All six unrestricted MIL/FLOPO checkpoint state dictionaries exactly match the previous run.",
+  "interpretation": [
+    "Centering with Large improves external-original macro AP from 0.4345 to 0.5688, but reduces field macro AP from 0.8793 to 0.5319. No broadly improved model established.",
+    "FLOPO does not improve external-original AP or top-choice accuracy over centered MIL. Masked external AP rises slightly (0.8254 to 0.8365); this alone does not establish a reasoning benefit.",
+    "Offset-only controls preserve every per-trait AP while altering some top-choice counts, demonstrating that top-choice gains need not mean better image discrimination. They do not reproduce all gains of the unrestricted learned heads.",
+    "Primary evaluation remains a small, already-inspected AI shape audit. All 25 trained trait predicates are not independently validated."
+  ]
+}

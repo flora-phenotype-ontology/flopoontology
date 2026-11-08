@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Deploy the Saudi Flora Trait Atlas on ws with a QLever endpoint (docs/atlas-deploy.md).
+# Deploy the FLOPO Trait Atlas on ws with a QLever endpoint (docs/atlas-deploy.md).
 #
-#   tools/deploy_atlas.sh [--stamp S] [--skip-tests]   build, index, check on staging, switch, check live
+#   tools/deploy_atlas.sh [--stamp S] [--skip-tests] [--web-only]   stage, check, switch, check live
 #   tools/deploy_atlas.sh --rollback                     make the previous release live again
 #   tools/deploy_atlas.sh --monitor                      check the live site (for cron)
 #   tools/deploy_atlas.sh --status                       show what is live
@@ -66,7 +66,7 @@ start_qlever() {  # colour stamp
   docker run -d --name "$name" --restart unless-stopped -u "$(id -u):$(id -g)" \
     -p "127.0.0.1:$port:$port" -v "$RELEASES/$2/index:/data" -w /data \
     --entrypoint /qlever/qlever-server "$QLEVER_IMAGE" \
-    -i atlas -p "$port" -j 8 -m 8G -c 4G -s 30s --index-description "Saudi Flora Trait Atlas $2" >/dev/null
+    -i atlas -p "$port" -j 8 -m 8G -c 4G -s 30s --index-description "FLOPO Trait Atlas $2" >/dev/null
   for _ in $(seq 120); do
     curl -sf "http://127.0.0.1:$port/?query=ASK%7B%3Fs%20%3Fp%20%3Fo%7D" -H 'Accept: application/sparql-results+json' \
       | grep -q true && return 0
@@ -105,28 +105,39 @@ case "${1:-}" in
     exit $status ;;
 esac
 
-STAMP=$(date +%Y%m%d-%H%M) SKIP_TESTS=0
+STAMP=$(date +%Y%m%d-%H%M) SKIP_TESTS=0 WEB_ONLY=0
 while [[ $# -gt 0 ]]; do
   case $1 in
     --stamp) STAMP=$2; shift 2 ;;
     --skip-tests) SKIP_TESTS=1; shift ;;
+    --web-only) WEB_ONLY=1; shift ;;
     *) die "unknown option $1" ;;
   esac
 done
 REL=$RELEASES/$STAMP
 COLOUR=blue; [[ $LIVE_COLOUR == blue ]] && COLOUR=green
+if [[ $WEB_ONLY == 1 ]]; then
+  [[ -n $LIVE_STAMP ]] || die "--web-only needs a published RDF release"
+  COLOUR=$LIVE_COLOUR
+fi
 
 # Stage 1: build and pre-flight.
 if [[ $SKIP_TESTS == 0 ]]; then
   log "C1 tests"
   "$PY" -m pytest -q tests/test_atlas_patterns.py tests/test_saudi_flora.py tests/test_ncvc_annotate.py \
+    tests/test_inaturalist.py tests/test_atlas_deploy.py tests/test_atlas_network.py \
     || die "C1 tests failed"
 fi
 log "release $STAMP"
-"$PY" -m tools.atlas_release --stamp "$STAMP"
+if [[ $WEB_ONLY == 1 ]]; then
+  "$PY" -m tools.atlas_release --stamp "$STAMP" --base-release "$RELEASES/$LIVE_STAMP"
+else
+  "$PY" -m tools.atlas_release --stamp "$STAMP"
+fi
 checks preflight "$REL" ${LIVE_STAMP:+--previous "$RELEASES/$LIVE_STAMP"} || die "pre-flight checks failed"
 
 # Stage 2: QLever index, candidate endpoint on the idle colour, staging checks and parity.
+if [[ $WEB_ONLY == 0 ]]; then
 log "QLever index"
 mkdir -p "$REL/index"
 files=(); for f in "$REL"/rdf/*.nq; do files+=(-f "rdf/$(basename "$f")"); done
@@ -134,6 +145,7 @@ docker run --rm -u "$(id -u):$(id -g)" -v "$REL:/data" -w /data --entrypoint /ql
   -i index/atlas "${files[@]}" -F nq > "$REL/index.log" 2>&1 || { tail -20 "$REL/index.log"; die "index build failed"; }
 log "QLever $COLOUR on port ${PORT[$COLOUR]}"
 start_qlever "$COLOUR" "$STAMP"
+fi
 write_conf staging "$STAMP" "$COLOUR"
 [[ -f $STATE/live.conf ]] || write_conf live "$STAMP" "$COLOUR"   # first deployment: nothing live yet
 reload_nginx

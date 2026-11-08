@@ -1,7 +1,9 @@
-# Deploying the Saudi Flora Trait Atlas at phenomebrowser.net/flopo/
+# Deploying the FLOPO Trait Atlas
 
 The browser in `web/saudi/` runs live SPARQL queries against a QLever endpoint. Both run on ws
-(10.73.11.158) in Docker; the phenomebrowser.net frontends proxy `/flopo/` to ws.
+(10.73.11.158) in Docker. The campus address is `http://10.73.11.158:8778/`.
+The diagram below shows the intended public proxy; `phenomebrowser.net/flopo/` still
+returned 404 on 23 October 2026, so campus deployments use `PUBLIC_URL=` until it is configured.
 
 ```
 phenomebrowser.net/flopo/…  (frontend, frontend1: nginx, deploy/atlas/frontend-phenomebrowser.conf)
@@ -28,6 +30,7 @@ prove that QLever gives the browser the same answers.
 ```bash
 tools/build_saudi_flora.sh            # rebuild the data, when it changed
 tools/deploy_atlas.sh                 # release, index, check, switch, check
+tools/deploy_atlas.sh --web-only      # new browser/catalogue, keep the published RDF and QLever
 tools/deploy_atlas.sh --status        # what is live
 tools/deploy_atlas.sh --rollback      # previous release back (its QLever is kept running)
 ```
@@ -45,6 +48,14 @@ A release is `local-corpora/saudi-flora/releases/<stamp>/` (git-ignored):
 - `queries.jsonl`: every query the browser sent during the crawl;
 - `checks.json`: the result of every check, per stage.
 
+The optional `web/inaturalist.json` catalogue is copied from the atlas data directory and its
+SHA-256 is recorded in `release.json`. Its private audit and API/model caches are not published.
+`--web-only` copies the published summary and reuses its immutable RDF files and index; it runs
+the same preflight, browser, parity and smoke checks while leaving the QLever process in place.
+The new release records `base_release` and links to its resolved index, so retain the base
+release and the original release owning that index when cleaning old deployments. This mode is useful when unrelated flora/ontology work
+is not yet ready to publish. Rollback switches the website back against the same RDF.
+
 `releases/state/` holds what is live (`live.env`) and the nginx includes that point the live and
 staging servers at a release and its QLever container.
 
@@ -58,7 +69,7 @@ switch, a failure restores the previous release. Warnings are recorded and do no
 
 | Stage | Check | What it verifies |
 |---|---|---|
-| pre-flight | C1 | atlas, Saudi flora and NCVC annotation tests pass |
+| pre-flight | C1 | atlas, flora annotation, iNaturalist, deployment and browser request-recovery tests pass |
 | | C2 | no local paths, hostnames or API keys in literals |
 | | C3 | every N-Quads file matches its SHA-256 and triple count |
 | | C4 | data IRIs are under `http://phenomebrowser.net/flopo/`, none on w3id, `file:` or localhost; every FLOPO class used exists (obsolete ones: warning) |

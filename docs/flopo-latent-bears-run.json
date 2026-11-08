@@ -1,0 +1,1007 @@
+{
+  "status": "completed",
+  "job_id": 341490,
+  "cluster": "orix",
+  "partition": "freecycle-h200",
+  "requested_gpu": "nvidia_h200:1",
+  "train_observations": 453,
+  "validation_observations": 26,
+  "train_observations_with_usable_profiles": 180,
+  "train_taxa_with_usable_profiles": 54,
+  "training_candidates": 81,
+  "validation_candidates": 120,
+  "members_per_condition": 5,
+  "conditions": [
+    "ordinary",
+    "bears"
+  ],
+  "epochs_per_member": 200,
+  "tests": "41 passed locally",
+  "test_images_loaded": 0,
+  "remote_results": "/mnt/data/u/hohndor/flopo-vision/latent-runs/341490",
+  "code_sha256": {
+    "flopo2/vision/latent.py": "d8570a3e148a5c0b5acf5707b07e95df38e08608561d694ab5ac75a6e6b613f1",
+    "flopo2/vision/latent_train.py": "ec5e52e951dc9a9288afb6184f2485b1a7ca99b1c542eabd84d61c5581982f49",
+    "flopo2/vision/bears.py": "903525bb58b6d49809565ad2b20b523757de4e2b96efde384c6bdd44e4174157"
+  },
+  "profile_audit": {
+    "training": {
+      "observations": 453,
+      "with_visual_groups": 371,
+      "with_comparable_true_profile": 180,
+      "with_unique_true_profile_signature": 104,
+      "equivalence_class_sizes": {
+        "1": 104,
+        "2": 43,
+        "3": 13,
+        "4": 7,
+        "6": 6,
+        "7": 7
+      }
+    },
+    "validation": {
+      "observations": 26,
+      "with_visual_groups": 21,
+      "with_comparable_true_profile": 11,
+      "with_unique_true_profile_signature": 9,
+      "equivalence_class_sizes": {
+        "1": 9,
+        "3": 2
+      }
+    },
+    "note": "Unique signatures do not prove visual identifiability; equal signatures cannot be distinguished by this fixed profile likelihood."
+  },
+  "slurm": {
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:07:46"
+  },
+  "run": {
+    "status": "completed_development_run",
+    "validation": {
+      "pretrained": {
+        "observations": 26,
+        "candidate_species": 120,
+        "top1": 0.0,
+        "top5": 0.07848232848232847,
+        "macro_top1": 0.0,
+        "nll": 4.745473146438599,
+        "coverage": 0.5384615384615384,
+        "comparable_true_observations": 11,
+        "mean_trait_epistemic_mi": 0.0,
+        "mean_trait_predictive_entropy": 1.500875627828969
+      },
+      "ordinary": {
+        "observations": 26,
+        "candidate_species": 120,
+        "top1": 0.0,
+        "top5": 0.038461538461538464,
+        "macro_top1": 0.0,
+        "nll": 4.755294543046218,
+        "coverage": 0.46153846153846156,
+        "comparable_true_observations": 11,
+        "mean_trait_epistemic_mi": 3.665961601116039e-06,
+        "mean_trait_predictive_entropy": 1.4898094394140773
+      },
+      "bears": {
+        "observations": 26,
+        "candidate_species": 120,
+        "top1": 0.0,
+        "top5": 0.038461538461538464,
+        "macro_top1": 0.0,
+        "nll": 4.755408250368559,
+        "coverage": 0.46153846153846156,
+        "comparable_true_observations": 11,
+        "mean_trait_epistemic_mi": 3.042706736811885e-05,
+        "mean_trait_predictive_entropy": 1.491127152133871
+      }
+    },
+    "histories": {
+      "ordinary": [
+        [
+          {
+            "step": 0,
+            "objective": 4.5827813148498535,
+            "taxon_nll": 4.370689392089844,
+            "grounding_kl": 4.829401586903259e-05,
+            "source_loss": 0.8481752872467041,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          },
+          {
+            "step": 50,
+            "objective": 4.4405436515808105,
+            "taxon_nll": 4.230418682098389,
+            "grounding_kl": 0.04007205739617348,
+            "source_loss": 0.680212676525116,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          },
+          {
+            "step": 100,
+            "objective": 4.33790397644043,
+            "taxon_nll": 4.1288743019104,
+            "grounding_kl": 0.06447675824165344,
+            "source_loss": 0.578210711479187,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          },
+          {
+            "step": 150,
+            "objective": 4.248370170593262,
+            "taxon_nll": 4.037968635559082,
+            "grounding_kl": 0.08793416619300842,
+            "source_loss": 0.48987075686454773,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          },
+          {
+            "step": 200,
+            "objective": 4.187911033630371,
+            "taxon_nll": 3.973252773284912,
+            "grounding_kl": 0.10754067450761795,
+            "source_loss": 0.4284709095954895,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          }
+        ],
+        [
+          {
+            "step": 0,
+            "objective": 4.582995414733887,
+            "taxon_nll": 4.370839595794678,
+            "grounding_kl": 3.087170625803992e-05,
+            "source_loss": 0.8484987020492554,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          },
+          {
+            "step": 50,
+            "objective": 4.440677165985107,
+            "taxon_nll": 4.230563640594482,
+            "grounding_kl": 0.04000580310821533,
+            "source_loss": 0.6804322004318237,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          },
+          {
+            "step": 100,
+            "objective": 4.338194370269775,
+            "taxon_nll": 4.129149436950684,
+            "grounding_kl": 0.06441417336463928,
+            "source_loss": 0.5785236954689026,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          },
+          {
+            "step": 150,
+            "objective": 4.248592853546143,
+            "taxon_nll": 4.038192272186279,
+            "grounding_kl": 0.0878710150718689,
+            "source_loss": 0.4901178479194641,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          },
+          {
+            "step": 200,
+            "objective": 4.188068389892578,
+            "taxon_nll": 3.9734084606170654,
+            "grounding_kl": 0.1074981540441513,
+            "source_loss": 0.4286481440067291,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          }
+        ],
+        [
+          {
+            "step": 0,
+            "objective": 4.582939147949219,
+            "taxon_nll": 4.370819091796875,
+            "grounding_kl": 3.116009247605689e-05,
+            "source_loss": 0.8483560681343079,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          },
+          {
+            "step": 50,
+            "objective": 4.440650939941406,
+            "taxon_nll": 4.2305378913879395,
+            "grounding_kl": 0.04000625014305115,
+            "source_loss": 0.6804280877113342,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          },
+          {
+            "step": 100,
+            "objective": 4.338155269622803,
+            "taxon_nll": 4.129112720489502,
+            "grounding_kl": 0.06441020965576172,
+            "source_loss": 0.578528642654419,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          },
+          {
+            "step": 150,
+            "objective": 4.248607158660889,
+            "taxon_nll": 4.038206577301025,
+            "grounding_kl": 0.08785373717546463,
+            "source_loss": 0.49018582701683044,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          },
+          {
+            "step": 200,
+            "objective": 4.188093185424805,
+            "taxon_nll": 3.973443031311035,
+            "grounding_kl": 0.10746613144874573,
+            "source_loss": 0.4287365674972534,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          }
+        ],
+        [
+          {
+            "step": 0,
+            "objective": 4.583062648773193,
+            "taxon_nll": 4.3709025382995605,
+            "grounding_kl": 4.8152520321309566e-05,
+            "source_loss": 0.8484469056129456,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          },
+          {
+            "step": 50,
+            "objective": 4.440706729888916,
+            "taxon_nll": 4.230550765991211,
+            "grounding_kl": 0.04004151374101639,
+            "source_loss": 0.6804584860801697,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          },
+          {
+            "step": 100,
+            "objective": 4.338399410247803,
+            "taxon_nll": 4.129342079162598,
+            "grounding_kl": 0.06435953825712204,
+            "source_loss": 0.5787907242774963,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          },
+          {
+            "step": 150,
+            "objective": 4.248794078826904,
+            "taxon_nll": 4.038400650024414,
+            "grounding_kl": 0.087794728577137,
+            "source_loss": 0.49039366841316223,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          },
+          {
+            "step": 200,
+            "objective": 4.188108444213867,
+            "taxon_nll": 3.9734606742858887,
+            "grounding_kl": 0.10745669901371002,
+            "source_loss": 0.42876526713371277,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          }
+        ],
+        [
+          {
+            "step": 0,
+            "objective": 4.582547664642334,
+            "taxon_nll": 4.370541572570801,
+            "grounding_kl": 3.524121711961925e-05,
+            "source_loss": 0.8478826284408569,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          },
+          {
+            "step": 50,
+            "objective": 4.440549373626709,
+            "taxon_nll": 4.230367183685303,
+            "grounding_kl": 0.04013022407889366,
+            "source_loss": 0.6802089214324951,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          },
+          {
+            "step": 100,
+            "objective": 4.3380513191223145,
+            "taxon_nll": 4.129005432128906,
+            "grounding_kl": 0.06444486975669861,
+            "source_loss": 0.5784028768539429,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          },
+          {
+            "step": 150,
+            "objective": 4.248324394226074,
+            "taxon_nll": 4.037925720214844,
+            "grounding_kl": 0.08793062716722488,
+            "source_loss": 0.4898720979690552,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          },
+          {
+            "step": 200,
+            "objective": 4.187771797180176,
+            "taxon_nll": 3.973102331161499,
+            "grounding_kl": 0.10757924616336823,
+            "source_loss": 0.4283604025840759,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          }
+        ]
+      ],
+      "bears": [
+        [
+          {
+            "step": 0,
+            "objective": 4.5827813148498535,
+            "taxon_nll": 4.370689392089844,
+            "grounding_kl": 4.829401586903259e-05,
+            "source_loss": 0.8481752872467041,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          },
+          {
+            "step": 50,
+            "objective": 4.4405436515808105,
+            "taxon_nll": 4.230418682098389,
+            "grounding_kl": 0.04007204994559288,
+            "source_loss": 0.6802127361297607,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          },
+          {
+            "step": 100,
+            "objective": 4.33790397644043,
+            "taxon_nll": 4.1288743019104,
+            "grounding_kl": 0.06447675824165344,
+            "source_loss": 0.578210711479187,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          },
+          {
+            "step": 150,
+            "objective": 4.248370170593262,
+            "taxon_nll": 4.037968635559082,
+            "grounding_kl": 0.08793415129184723,
+            "source_loss": 0.48987069725990295,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          },
+          {
+            "step": 200,
+            "objective": 4.187910556793213,
+            "taxon_nll": 3.973252296447754,
+            "grounding_kl": 0.10754068195819855,
+            "source_loss": 0.4284709095954895,
+            "diversity_kl": 0.0,
+            "entropy": 0.0
+          }
+        ],
+        [
+          {
+            "step": 0,
+            "objective": 4.556280136108398,
+            "taxon_nll": 4.370839595794678,
+            "grounding_kl": 3.087170625803992e-05,
+            "source_loss": 0.8484987020492554,
+            "diversity_kl": 0.19407907128334045,
+            "entropy": 0.7307631969451904
+          },
+          {
+            "step": 50,
+            "objective": 4.423206806182861,
+            "taxon_nll": 4.231666564941406,
+            "grounding_kl": 0.03961247578263283,
+            "source_loss": 0.6813321113586426,
+            "diversity_kl": 0.11213502287864685,
+            "entropy": 0.7191457152366638
+          },
+          {
+            "step": 100,
+            "objective": 4.329566478729248,
+            "taxon_nll": 4.132589817047119,
+            "grounding_kl": 0.06303258240222931,
+            "source_loss": 0.5818517804145813,
+            "diversity_kl": 0.04359854757785797,
+            "entropy": 0.7159115672111511
+          },
+          {
+            "step": 150,
+            "objective": 4.242213249206543,
+            "taxon_nll": 4.039947032928467,
+            "grounding_kl": 0.08762725442647934,
+            "source_loss": 0.4911966323852539,
+            "diversity_kl": 0.010778035037219524,
+            "entropy": 0.7083025574684143
+          },
+          {
+            "step": 200,
+            "objective": 4.180830001831055,
+            "taxon_nll": 3.973445415496826,
+            "grounding_kl": 0.10735957324504852,
+            "source_loss": 0.428346186876297,
+            "diversity_kl": 0.0007414979627355933,
+            "entropy": 0.6987215280532837
+          }
+        ],
+        [
+          {
+            "step": 0,
+            "objective": 4.55415153503418,
+            "taxon_nll": 4.370819091796875,
+            "grounding_kl": 3.116009247605689e-05,
+            "source_loss": 0.8483560681343079,
+            "diversity_kl": 0.21486185491085052,
+            "entropy": 0.7301196455955505
+          },
+          {
+            "step": 50,
+            "objective": 4.423750400543213,
+            "taxon_nll": 4.2311906814575195,
+            "grounding_kl": 0.039678916335105896,
+            "source_loss": 0.6811026930809021,
+            "diversity_kl": 0.10197857767343521,
+            "entropy": 0.719750702381134
+          },
+          {
+            "step": 100,
+            "objective": 4.328371047973633,
+            "taxon_nll": 4.131539344787598,
+            "grounding_kl": 0.06344406306743622,
+            "source_loss": 0.5806261897087097,
+            "diversity_kl": 0.046033479273319244,
+            "entropy": 0.7165642380714417
+          },
+          {
+            "step": 150,
+            "objective": 4.241201877593994,
+            "taxon_nll": 4.039170265197754,
+            "grounding_kl": 0.08759836852550507,
+            "source_loss": 0.4906257390975952,
+            "diversity_kl": 0.011385366320610046,
+            "entropy": 0.7084418535232544
+          },
+          {
+            "step": 200,
+            "objective": 4.180017471313477,
+            "taxon_nll": 3.972759485244751,
+            "grounding_kl": 0.10727929323911667,
+            "source_loss": 0.42796167731285095,
+            "diversity_kl": 0.00029780311160720885,
+            "entropy": 0.6982061862945557
+          }
+        ],
+        [
+          {
+            "step": 0,
+            "objective": 4.555378437042236,
+            "taxon_nll": 4.3709025382995605,
+            "grounding_kl": 4.8152520321309566e-05,
+            "source_loss": 0.8484469056129456,
+            "diversity_kl": 0.20372259616851807,
+            "entropy": 0.7311742305755615
+          },
+          {
+            "step": 50,
+            "objective": 4.423428535461426,
+            "taxon_nll": 4.231043815612793,
+            "grounding_kl": 0.03974412381649017,
+            "source_loss": 0.6808521747589111,
+            "diversity_kl": 0.10380594432353973,
+            "entropy": 0.7191526889801025
+          },
+          {
+            "step": 100,
+            "objective": 4.327721118927002,
+            "taxon_nll": 4.131171226501465,
+            "grounding_kl": 0.06348004937171936,
+            "source_loss": 0.5805062651634216,
+            "diversity_kl": 0.04894024133682251,
+            "entropy": 0.7162120342254639
+          },
+          {
+            "step": 150,
+            "objective": 4.241154670715332,
+            "taxon_nll": 4.038730621337891,
+            "grounding_kl": 0.08774731308221817,
+            "source_loss": 0.49039846658706665,
+            "diversity_kl": 0.008388852700591087,
+            "entropy": 0.7084053754806519
+          },
+          {
+            "step": 200,
+            "objective": 4.179773330688477,
+            "taxon_nll": 3.9722909927368164,
+            "grounding_kl": 0.10753524303436279,
+            "source_loss": 0.4276350438594818,
+            "diversity_kl": -0.0002171925298171118,
+            "entropy": 0.6983931064605713
+          }
+        ],
+        [
+          {
+            "step": 0,
+            "objective": 4.554338455200195,
+            "taxon_nll": 4.370541572570801,
+            "grounding_kl": 3.524121711961925e-05,
+            "source_loss": 0.8478826284408569,
+            "diversity_kl": 0.20897459983825684,
+            "entropy": 0.7311967611312866
+          },
+          {
+            "step": 50,
+            "objective": 4.423725605010986,
+            "taxon_nll": 4.230783462524414,
+            "grounding_kl": 0.03979659080505371,
+            "source_loss": 0.6806536912918091,
+            "diversity_kl": 0.0982525572180748,
+            "entropy": 0.7193136215209961
+          },
+          {
+            "step": 100,
+            "objective": 4.328009605407715,
+            "taxon_nll": 4.130397796630859,
+            "grounding_kl": 0.0638468936085701,
+            "source_loss": 0.5796065330505371,
+            "diversity_kl": 0.0397622287273407,
+            "entropy": 0.7160592675209045
+          },
+          {
+            "step": 150,
+            "objective": 4.240545749664307,
+            "taxon_nll": 4.038028240203857,
+            "grounding_kl": 0.08796171098947525,
+            "source_loss": 0.4896199107170105,
+            "diversity_kl": 0.007642473094165325,
+            "entropy": 0.7084900736808777
+          },
+          {
+            "step": 200,
+            "objective": 4.179387092590332,
+            "taxon_nll": 3.971930742263794,
+            "grounding_kl": 0.10766250640153885,
+            "source_loss": 0.42711883783340454,
+            "diversity_kl": 2.283860885654576e-05,
+            "entropy": 0.6983188390731812
+          }
+        ]
+      ]
+    },
+    "train_observations_with_profile": 180,
+    "train_taxa_with_profile": 54,
+    "training_candidate_taxa": 81,
+    "hyperparameters": {
+      "command": "train",
+      "data": null,
+      "prepared": "/mnt/data/u/hohndor/flopo-vision/latent-prepared-20261025",
+      "out": "/mnt/data/u/hohndor/flopo-vision/latent-runs/341490",
+      "epochs": 200,
+      "members": 5,
+      "lr": 0.001,
+      "epsilon": 0.3,
+      "grounding_weight": 1.0,
+      "source_weight": 0.25,
+      "gamma1": 0.1,
+      "gamma2": 0.01,
+      "world_samples": 64
+    },
+    "preparation": {
+      "input_hashes": {
+        "multi-vocabulary.json": "f0ef0e3036be2b2ff366b1ef77c0e6cb2f4431fa90766a9774eeb9862207037e",
+        "splits.jsonl": "cb3167e66a7d58a20ae988dd21856c82beb12ee47af853dfd782a6783d963eeb",
+        "profiles.json": "dc7d745c150928c7491cbaffe2252b3801afba37a702c84a681f09a77b129766",
+        "queries.json": "1adeeeea1de6ff717dffb8ed8d0f036773c48e5b0be9e67546137fd518aa4752",
+        "images.jsonl": "b9d26cc92cb23878072a3948ea9ed53ce19fdc148c90c4d125ee507aab7b1108"
+      },
+      "excluded_profiles": {
+        "colour:unrepresented_alternative": 7,
+        "colour:uncompiled": 82,
+        "colour:scope": 74,
+        "outline:uncompiled": 228,
+        "outline:scope": 10,
+        "outline:unrepresented_alternative": 2,
+        "volume:uncompiled": 49,
+        "volume:unrepresented_alternative": 1,
+        "hairiness:scope": 7,
+        "hairiness:uncompiled": 11,
+        "margin:uncompiled": 10
+      },
+      "observation_counts": {
+        "train": 453,
+        "validation": 26
+      },
+      "compilation": [
+        {
+          "split": "train",
+          "groups": [
+            "fruit.colour",
+            "fruit.hairiness",
+            "fruit.volume"
+          ],
+          "taxa": 81,
+          "unique_nonconstant_roots": 20,
+          "compile_seconds": 0.6302807591855526
+        },
+        {
+          "split": "train",
+          "groups": [
+            "fruit.colour",
+            "fruit.hairiness",
+            "fruit.volume",
+            "leaf.colour",
+            "leaf.hairiness",
+            "leaf.margin",
+            "leaf.outline"
+          ],
+          "taxa": 81,
+          "unique_nonconstant_roots": 45,
+          "compile_seconds": 0.13525205105543137
+        },
+        {
+          "split": "train",
+          "groups": [
+            "fruit.colour",
+            "fruit.hairiness",
+            "fruit.volume",
+            "leaf.colour",
+            "leaf.hairiness",
+            "leaf.margin",
+            "leaf.outline",
+            "petal.colour",
+            "petal.outline"
+          ],
+          "taxa": 81,
+          "unique_nonconstant_roots": 55,
+          "compile_seconds": 0.25330667197704315
+        },
+        {
+          "split": "train",
+          "groups": [
+            "fruit.colour",
+            "fruit.hairiness",
+            "fruit.volume",
+            "leaf.colour",
+            "leaf.margin",
+            "leaf.outline"
+          ],
+          "taxa": 81,
+          "unique_nonconstant_roots": 37,
+          "compile_seconds": 0.10171431303024292
+        },
+        {
+          "split": "train",
+          "groups": [
+            "fruit.colour",
+            "fruit.hairiness",
+            "fruit.volume",
+            "leaf.colour",
+            "leaf.margin",
+            "leaf.outline",
+            "petal.colour",
+            "petal.outline"
+          ],
+          "taxa": 81,
+          "unique_nonconstant_roots": 49,
+          "compile_seconds": 0.21148276887834072
+        },
+        {
+          "split": "train",
+          "groups": [
+            "fruit.colour",
+            "fruit.hairiness",
+            "fruit.volume",
+            "petal.colour",
+            "petal.outline"
+          ],
+          "taxa": 81,
+          "unique_nonconstant_roots": 38,
+          "compile_seconds": 0.10525796934962273
+        },
+        {
+          "split": "train",
+          "groups": [
+            "fruit.colour",
+            "fruit.volume"
+          ],
+          "taxa": 81,
+          "unique_nonconstant_roots": 13,
+          "compile_seconds": 0.02057168260216713
+        },
+        {
+          "split": "train",
+          "groups": [
+            "fruit.colour",
+            "fruit.volume",
+            "leaf.colour",
+            "leaf.hairiness",
+            "leaf.margin",
+            "leaf.outline"
+          ],
+          "taxa": 81,
+          "unique_nonconstant_roots": 39,
+          "compile_seconds": 0.1049775630235672
+        },
+        {
+          "split": "train",
+          "groups": [
+            "fruit.colour",
+            "fruit.volume",
+            "leaf.colour",
+            "leaf.hairiness",
+            "leaf.margin",
+            "leaf.outline",
+            "petal.colour",
+            "petal.outline"
+          ],
+          "taxa": 81,
+          "unique_nonconstant_roots": 51,
+          "compile_seconds": 0.21759667061269283
+        },
+        {
+          "split": "train",
+          "groups": [
+            "fruit.colour",
+            "fruit.volume",
+            "leaf.colour",
+            "leaf.margin",
+            "leaf.outline"
+          ],
+          "taxa": 81,
+          "unique_nonconstant_roots": 30,
+          "compile_seconds": 0.07387237064540386
+        },
+        {
+          "split": "train",
+          "groups": [
+            "fruit.colour",
+            "fruit.volume",
+            "leaf.colour",
+            "leaf.margin",
+            "leaf.outline",
+            "petal.colour",
+            "petal.outline"
+          ],
+          "taxa": 81,
+          "unique_nonconstant_roots": 43,
+          "compile_seconds": 0.23153600469231606
+        },
+        {
+          "split": "train",
+          "groups": [
+            "fruit.colour",
+            "fruit.volume",
+            "petal.colour",
+            "petal.outline"
+          ],
+          "taxa": 81,
+          "unique_nonconstant_roots": 29,
+          "compile_seconds": 0.07863911800086498
+        },
+        {
+          "split": "train",
+          "groups": [
+            "leaf.colour",
+            "leaf.hairiness",
+            "leaf.margin",
+            "leaf.outline"
+          ],
+          "taxa": 81,
+          "unique_nonconstant_roots": 24,
+          "compile_seconds": 0.05217917077243328
+        },
+        {
+          "split": "train",
+          "groups": [
+            "leaf.colour",
+            "leaf.hairiness",
+            "leaf.margin",
+            "leaf.outline",
+            "petal.colour",
+            "petal.outline"
+          ],
+          "taxa": 81,
+          "unique_nonconstant_roots": 37,
+          "compile_seconds": 0.1371873952448368
+        },
+        {
+          "split": "train",
+          "groups": [
+            "leaf.colour",
+            "leaf.margin",
+            "leaf.outline"
+          ],
+          "taxa": 81,
+          "unique_nonconstant_roots": 14,
+          "compile_seconds": 0.03214067779481411
+        },
+        {
+          "split": "train",
+          "groups": [
+            "leaf.colour",
+            "leaf.margin",
+            "leaf.outline",
+            "petal.colour",
+            "petal.outline"
+          ],
+          "taxa": 81,
+          "unique_nonconstant_roots": 28,
+          "compile_seconds": 0.10543745197355747
+        },
+        {
+          "split": "train",
+          "groups": [
+            "petal.colour",
+            "petal.outline"
+          ],
+          "taxa": 81,
+          "unique_nonconstant_roots": 14,
+          "compile_seconds": 0.038781341165304184
+        },
+        {
+          "split": "validation",
+          "groups": [
+            "fruit.colour",
+            "fruit.hairiness",
+            "fruit.volume",
+            "leaf.colour",
+            "leaf.hairiness",
+            "leaf.margin",
+            "leaf.outline"
+          ],
+          "taxa": 120,
+          "unique_nonconstant_roots": 57,
+          "compile_seconds": 0.15722986310720444
+        },
+        {
+          "split": "validation",
+          "groups": [
+            "fruit.colour",
+            "fruit.hairiness",
+            "fruit.volume",
+            "leaf.colour",
+            "leaf.hairiness",
+            "leaf.margin",
+            "leaf.outline",
+            "petal.colour",
+            "petal.outline"
+          ],
+          "taxa": 120,
+          "unique_nonconstant_roots": 70,
+          "compile_seconds": 0.29875856824219227
+        },
+        {
+          "split": "validation",
+          "groups": [
+            "fruit.colour",
+            "fruit.volume",
+            "leaf.colour",
+            "leaf.hairiness",
+            "leaf.margin",
+            "leaf.outline"
+          ],
+          "taxa": 120,
+          "unique_nonconstant_roots": 49,
+          "compile_seconds": 0.12150409631431103
+        },
+        {
+          "split": "validation",
+          "groups": [
+            "leaf.colour",
+            "leaf.hairiness",
+            "leaf.margin",
+            "leaf.outline"
+          ],
+          "taxa": 120,
+          "unique_nonconstant_roots": 32,
+          "compile_seconds": 0.06144982576370239
+        },
+        {
+          "split": "validation",
+          "groups": [
+            "leaf.colour",
+            "leaf.hairiness",
+            "leaf.margin",
+            "leaf.outline",
+            "petal.colour",
+            "petal.outline"
+          ],
+          "taxa": 120,
+          "unique_nonconstant_roots": 49,
+          "compile_seconds": 0.22605250403285027
+        },
+        {
+          "split": "validation",
+          "groups": [
+            "leaf.colour",
+            "leaf.margin",
+            "leaf.outline",
+            "petal.colour",
+            "petal.outline"
+          ],
+          "taxa": 120,
+          "unique_nonconstant_roots": 38,
+          "compile_seconds": 0.12118888460099697
+        }
+      ],
+      "elapsed_seconds": 7.304480968043208,
+      "source_policy": "partial",
+      "test_images_loaded": 0,
+      "encoder": {
+        "repository": "imageomics/bioclip-2",
+        "revision": "2957b322090f9cb17ae72c71981c7218a28d81e0",
+        "license": "mit",
+        "files": {
+          "README.md": "807e4daa2b3486bc542a7c796c84a117be02818e671c934a66cd1898c3c098c1",
+          "merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+          "open_clip_config.json": "1bf947e96e943fe50efd5c3e26c37f843a2fa3c358967719a68c8a6d17ce68c8",
+          "open_clip_model.safetensors": "b7b2bf6fbc95799e42630e394cf95803892ab447c1a8ab629dbc82fbeaf7dfef",
+          "special_tokens_map.json": "2cdb3b8331a60c92fc1e55a13e9fd61fd2293c5a51275fdcccd62b780052530e",
+          "tokenizer.json": "72ed5c96db5729294468543e4bc75fce14ca63f58e37300290189ba1c1e52b85",
+          "tokenizer_config.json": "6bdcee9ccce2a16ca2b4c0c5ed00b42c50ea225f4472a8c4c1e963a2902c2881",
+          "vocab.json": "5047b556ce86ccaf6aa22b3ffccfc52d391ea4accdab9c2f2407da5b742d4363"
+        }
+      },
+      "package_versions": {
+        "torch": "2.8.0+cu128",
+        "pydeeplog": "5.0.0",
+        "mv-sdd": "0.1.0b2",
+        "klaycircuits": "0.0.5"
+      }
+    },
+    "prepared_sha256": "b28d2cc34e9d6de3ad6a262a58af823de63365af6b5c8d6923e6ff19e6de5741",
+    "gpu": "NVIDIA H200",
+    "peak_gpu_bytes": 79230976,
+    "elapsed_seconds": 457.6103991214186,
+    "limitations": [
+      "Validation only; no new test-set claim",
+      "Pretrained BioCLIP features frozen; conditional trait heads adapted",
+      "BEARS joint KL uses Monte Carlo with score-function gradients",
+      "Ensemble disagreement is not verified trait calibration",
+      "Whole-profile contamination and fixed organ/visibility gates"
+    ]
+  },
+  "verification": {
+    "checkpoint_hashes_verified": 10,
+    "saved_bears_members_reloaded": 5,
+    "cpu_gpu_max_trait_probability_difference": 1.9669532775878906e-06,
+    "cpu_validation_metrics": {
+      "observations": 26,
+      "candidate_species": 120,
+      "top1": 0.0,
+      "top5": 0.038461538461538464,
+      "macro_top1": 0.0,
+      "nll": 4.75540828704834,
+      "coverage": 0.46153846153846156,
+      "comparable_true_observations": 11,
+      "mean_trait_epistemic_mi": 3.0469287324834754e-05,
+      "mean_trait_predictive_entropy": 1.491127134749183
+    }
+  },
+  "checkpoint_sha256": {
+    "bears-0.pt": "ef6ab3cf55c20964f655166eef8171f43418ad16bf98353f1004eff2ee689491",
+    "bears-1.pt": "03b74f89d4f993da42c9a4ec125dd923f58c9242335b5e7e09d889195c1ac708",
+    "bears-2.pt": "bf58c49ffc16eb73393858ecad497f1c91b5cd6bc6dfdae0c9d85374d379e2a7",
+    "bears-3.pt": "435883f9190695a8aff64d05acd80c1be6957783ccff83b21b86ec46a0093522",
+    "bears-4.pt": "6f84b78207ab6096e122fd3e3bb7300619da8aac0f818f3b24cde4367d00f9fc",
+    "ordinary-0.pt": "4180df827dc45a30cc7c18d7a1d3df10ddb3f8f36ac81b702965c13b6c3fee40",
+    "ordinary-1.pt": "4940d191a794d1e834f0e4b2a01131006f89106d174d21e820bcf033e19aa08d",
+    "ordinary-2.pt": "9d4e4dbfc0d7980d39f292eea2931640e69f9d7e91fc4568cd85d7d07c4fc89f",
+    "ordinary-3.pt": "9c149d16ae7cabfdfc91aa7930102632d390d42ec54b82a986f61798c9416e01",
+    "ordinary-4.pt": "541c6c76c13fec4c4bc63a0a27c74ba1d7b23c62ba2fd8537906e16ce2549fd4"
+  },
+  "uncertainty_comparison": {
+    "ordinary": {
+      "max_mi": 4.124641418457031e-05,
+      "mean_mi": 3.665961601116039e-06
+    },
+    "bears": {
+      "max_mi": 0.0002415180206298828,
+      "mean_mi": 3.042706736811885e-05
+    }
+  }
+}

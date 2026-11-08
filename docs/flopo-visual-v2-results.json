@@ -1,0 +1,330 @@
+{
+  "job_id": "340869",
+  "cluster": "Orix",
+  "gpu": "NVIDIA H200",
+  "elapsed_seconds": 247,
+  "state": "COMPLETED",
+  "exit_code": "0:0",
+  "protocol": {
+    "schema_sha256": "f0ef0e3036be2b2ff366b1ef77c0e6cb2f4431fa90766a9774eeb9862207037e",
+    "split_sha256": "cb3167e66a7d58a20ae988dd21856c82beb12ee47af853dfd782a6783d963eeb",
+    "previous_images_sha256": "56b8fada3e263256ad22665db33c36901a71a3ae551a9cd3308af8be8352ace5",
+    "excluded": {
+      "overlap_with_previous_pilot": 63,
+      "cross_split_identity_or_duplicate": 41
+    },
+    "groups": {
+      "colour": 12,
+      "outline": 11,
+      "volume": 4,
+      "hairiness": 4,
+      "margin": 2
+    },
+    "splits": {
+      "train": {
+        "images": 841,
+        "observations": 453,
+        "genera": 81
+      },
+      "validation": {
+        "images": 48,
+        "observations": 26,
+        "genera": 8
+      },
+      "test": {
+        "images": 92,
+        "observations": 56,
+        "genera": 12
+      }
+    },
+    "evaluation": "Exploratory novel-genus species ranking; test images excluded from fitting and prior regularization. Known candidate flora profiles are available for zero-shot ranking."
+  },
+  "training_and_evaluation": {
+    "status": "trained_and_exploratorily_evaluated",
+    "history": [
+      {
+        "step": 0,
+        "weak_loss": 1.0906206369400024,
+        "prior_kl": 0.0,
+        "objective": 1.0906206369400024
+      },
+      {
+        "step": 150,
+        "weak_loss": 0.8153125047683716,
+        "prior_kl": 0.0612763985991478,
+        "objective": 0.8765888810157776
+      }
+    ],
+    "evaluation": {
+      "validation:pretrained_traits": {
+        "observations": 26,
+        "candidate_species": 120,
+        "coverage": 0.5769230769230769,
+        "top1": 0.0,
+        "top5": 0.19366515837104073,
+        "macro_top1": 0.0
+      },
+      "validation:weak_traits": {
+        "observations": 26,
+        "candidate_species": 120,
+        "coverage": 0.6538461538461539,
+        "top1": 0.0,
+        "top5": 0.07692307692307693,
+        "macro_top1": 0.0
+      },
+      "validation:weak_colour_only": {
+        "observations": 26,
+        "candidate_species": 120,
+        "coverage": 0.5769230769230769,
+        "top1": 0.0,
+        "top5": 0.04954367666232073,
+        "macro_top1": 0.0
+      },
+      "test:pretrained_traits": {
+        "observations": 56,
+        "candidate_species": 120,
+        "coverage": 0.6071428571428571,
+        "top1": 0.0,
+        "top5": 0.03571428571428571,
+        "macro_top1": 0.0
+      },
+      "test:weak_traits": {
+        "observations": 56,
+        "candidate_species": 120,
+        "coverage": 0.5535714285714286,
+        "top1": 0.0,
+        "top5": 0.017857142857142856,
+        "macro_top1": 0.0
+      },
+      "test:weak_colour_only": {
+        "observations": 56,
+        "candidate_species": 120,
+        "coverage": 0.5178571428571429,
+        "top1": 0.017857142857142856,
+        "top5": 0.028147699757869245,
+        "macro_top1": 0.010416666666666666
+      }
+    },
+    "groups": {
+      "colour": 12,
+      "outline": 11,
+      "volume": 4,
+      "hairiness": 4,
+      "margin": 2
+    },
+    "training_events": 253,
+    "events_by_attribute": {
+      "outline": 82,
+      "volume": 9,
+      "hairiness": 69,
+      "colour": 91,
+      "margin": 2
+    },
+    "training_species": 49,
+    "excluded_sources": {
+      "colour:unrepresented_alternative": 7,
+      "colour:uncompiled": 82,
+      "colour:scope": 74,
+      "colour:unresolved_group": 48,
+      "outline:uncompiled": 228,
+      "outline:scope": 10,
+      "outline:unrepresented_alternative": 2,
+      "outline:unresolved_group": 77,
+      "outline:conflicting_group": 2,
+      "volume:uncompiled": 49,
+      "volume:unrepresented_alternative": 1,
+      "volume:unresolved_group": 38,
+      "hairiness:scope": 7,
+      "hairiness:uncompiled": 11,
+      "hairiness:unresolved_group": 6,
+      "margin:uncompiled": 10,
+      "margin:unresolved_group": 9
+    },
+    "inputs_sha256": {
+      "profiles.json": "dc7d745c150928c7491cbaffe2252b3801afba37a702c84a681f09a77b129766",
+      "queries.json": "1adeeeea1de6ff717dffb8ed8d0f036773c48e5b0be9e67546137fd518aa4752",
+      "splits.jsonl": "cb3167e66a7d58a20ae988dd21856c82beb12ee47af853dfd782a6783d963eeb",
+      "multi-vocabulary.json": "f0ef0e3036be2b2ff366b1ef77c0e6cb2f4431fa90766a9774eeb9862207037e",
+      "protocol.json": "1c826b8f98b00167e01a165db7d2a270f5fce83bba11f39782a240e5f7a2dc59",
+      "extraction/run.json": "87c713c098a3a2c2a9154a1c04e7454fca1b4c2bb1458b678491ef10d5a98ecf"
+    },
+    "epochs": 150,
+    "epsilon": 0.3,
+    "prior_weight": 1,
+    "manual_training_annotations": 0,
+    "note": "Exploratory held-out species identification, not direct trait accuracy or proof of ontology benefit. One sampled species per genus. Missing profiles contribute no evidence. Scores use only explicit traits."
+  },
+  "test_profile_coverage": {
+    "test_observations": 56,
+    "with_image_evidence": 44,
+    "with_any_true_profile": 31,
+    "with_comparable_true_profile": 17
+  },
+  "state_event_counts": {
+    "colour": {
+      "green": 2,
+      "yellow": 21,
+      "white": 25,
+      "pink": 0,
+      "red": 23,
+      "purple": 15,
+      "orange": 5,
+      "brown": 2,
+      "blue": 0,
+      "black": 0,
+      "gray": 15,
+      "cream": 0
+    },
+    "outline": {
+      "ovate": 14,
+      "elliptic": 14,
+      "oblong": 0,
+      "lanceolate": 2,
+      "obovate": 21,
+      "oblanceolate": 2,
+      "linear": 1,
+      "orbicular": 14,
+      "spatulate": 0,
+      "heart shaped": 32,
+      "triangular": 0
+    },
+    "volume": {
+      "spherical": 6,
+      "ovoid": 9,
+      "obovoid": 6,
+      "fusiform": 0
+    },
+    "hairiness": {
+      "glabrous": 31,
+      "hairy": 8,
+      "pubescent": 40,
+      "tomentose": 16
+    },
+    "margin": {
+      "serrated": 2,
+      "dentated": 2
+    }
+  },
+  "state_count_interpretation": "Allowed by weak events, not independent positive image labels. Broad events may cover multiple states.",
+  "flopo_query_count": 92,
+  "checkpoint_sha256": "a2f54d576be2146e70dd9f304ba014a67041f3588aee6348ac1c05725fcfa668",
+  "limitations": [
+    "No demonstrated gain in species identification; multi-trait test top-1 is zero.",
+    "Profiles or comparable photographed organs are missing for most test observations.",
+    "33 named output states and 92 evaluable FLOPO definitions do not establish trait accuracy.",
+    "One sampled species per genus; direct trait accuracy and within-genus discrimination remain untested."
+  ],
+  "profile_ablation": {
+    "job_id": "340893",
+    "state": "COMPLETED",
+    "elapsed_seconds": 31,
+    "validation_only": true,
+    "results": {
+      "status": "trained_and_exploratorily_evaluated",
+      "history": [
+        {
+          "step": 0,
+          "weak_loss": 1.076628565788269,
+          "prior_kl": 0.0,
+          "objective": 1.076628565788269
+        },
+        {
+          "step": 150,
+          "weak_loss": 0.830590009689331,
+          "prior_kl": 0.056113600730895996,
+          "objective": 0.886703610420227
+        }
+      ],
+      "evaluation": {
+        "validation:pretrained_traits": {
+          "observations": 26,
+          "candidate_species": 120,
+          "coverage": 0.6538461538461539,
+          "top1": 0.0,
+          "top5": 0.19282744282744285,
+          "macro_top1": 0.0
+        },
+        "validation:weak_traits": {
+          "observations": 26,
+          "candidate_species": 120,
+          "coverage": 0.6153846153846154,
+          "top1": 0.0,
+          "top5": 0.10256410256410256,
+          "macro_top1": 0.0
+        },
+        "validation:weak_colour_only": {
+          "observations": 26,
+          "candidate_species": 120,
+          "coverage": 0.4230769230769231,
+          "top1": 0.0,
+          "top5": 0.08156498673740052,
+          "macro_top1": 0.0
+        }
+      },
+      "groups": {
+        "colour": 12,
+        "outline": 11,
+        "volume": 4,
+        "hairiness": 4,
+        "margin": 2
+      },
+      "training_events": 371,
+      "events_by_attribute": {
+        "outline": 173,
+        "volume": 16,
+        "colour": 105,
+        "hairiness": 75,
+        "margin": 2
+      },
+      "training_species": 55,
+      "excluded_sources": {
+        "colour:unrepresented_alternative": 7,
+        "colour:uncompiled": 82,
+        "colour:scope": 74,
+        "outline:uncompiled": 228,
+        "outline:scope": 10,
+        "outline:unrepresented_alternative": 2,
+        "volume:uncompiled": 49,
+        "volume:unrepresented_alternative": 1,
+        "hairiness:scope": 7,
+        "hairiness:uncompiled": 11,
+        "margin:uncompiled": 10
+      },
+      "inputs_sha256": {
+        "profiles.json": "dc7d745c150928c7491cbaffe2252b3801afba37a702c84a681f09a77b129766",
+        "queries.json": "1adeeeea1de6ff717dffb8ed8d0f036773c48e5b0be9e67546137fd518aa4752",
+        "splits.jsonl": "cb3167e66a7d58a20ae988dd21856c82beb12ee47af853dfd782a6783d963eeb",
+        "multi-vocabulary.json": "f0ef0e3036be2b2ff366b1ef77c0e6cb2f4431fa90766a9774eeb9862207037e",
+        "protocol.json": "1c826b8f98b00167e01a165db7d2a270f5fce83bba11f39782a240e5f7a2dc59",
+        "extraction/run.json": "87c713c098a3a2c2a9154a1c04e7454fca1b4c2bb1458b678491ef10d5a98ecf"
+      },
+      "epochs": 150,
+      "epsilon": 0.3,
+      "prior_weight": 1,
+      "manual_training_annotations": 0,
+      "source_policy": "partial",
+      "validation_only": true,
+      "note": "Exploratory held-out species identification, not direct trait accuracy or proof of ontology benefit. One sampled species per genus. Missing profiles contribute no evidence. Scores use only explicit traits."
+    },
+    "checkpoint_sha256": "fe0484a021430d7b7c8be9306fa48ccfcbb1f9d267c7e11d3eefdb896edf0427"
+  },
+  "inference_check": {
+    "raw_image_on_orix": true,
+    "photo_id": 683222324,
+    "traits": 6,
+    "flopo_scores": 57,
+    "max_difference_from_cached_features": 9.834766387939453e-07,
+    "note": "Execution consistency only, not correctness of the predicted traits or species."
+  },
+  "verification": {
+    "focused_tests_passed": 30,
+    "manual_training_annotations": 0,
+    "all_gpu_jobs_on_orix": true
+  },
+  "next_steps": [
+    "Improve visible-organ/profile overlap, retaining the complete semantics of compound and stage-dependent traits.",
+    "Improve organ foreground isolation and visual trait grounding; current pretrained trait prior can misidentify obvious colours.",
+    "Expand weak training observations for rare states and use development data to compare backbone adaptation against frozen priors.",
+    "Keep the first test result frozen; use fresh held-out genera for confirmatory evaluation of subsequent method changes."
+  ]
+}

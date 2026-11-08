@@ -12,6 +12,7 @@ command exits 1 when a check fails. Warnings do not stop a deployment.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import csv
 import json
 import random
@@ -335,11 +336,17 @@ def _canonical(graph):
     return out
 
 
+def graph_count_differences(expected: dict[str, int], actual: dict[str, int]) -> list[str]:
+    # N-Quads cannot encode an empty graph, and GROUP BY over triples does not return it.
+    # Treat an absent graph as zero while still detecting missing nonempty or extra graphs.
+    return [f"{g.rsplit('/graph/', 1)[-1]} {expected.get(g, 0)} -> {actual.get(g, 0)}"
+            for g in sorted(expected.keys() | actual.keys()) if expected.get(g, 0) != actual.get(g, 0)]
+
+
 def parity(release: Path, qlever: str, queries: Path, report: Report) -> None:
     meta = _meta(release)
     graphs = {r["g"]: int(r["n"]) for r in rows(select(qlever, "SELECT ?g (COUNT(*) AS ?n) WHERE { GRAPH ?g { ?s ?p ?o } } GROUP BY ?g")[0])}
-    drift = [f"{g['graph'].rsplit('/graph/', 1)[-1]} {g['triples']} -> {graphs.get(g['graph'])}"
-             for g in meta["graphs"] if graphs.get(g["graph"]) != g["triples"]]
+    drift = graph_count_differences({g["graph"]: g["triples"] for g in meta["graphs"]}, graphs)
     report.check("C7", "QLever triple count per graph equals release.json", not drift,
                  "; ".join(drift) or f"{sum(graphs.values())} triples in {len(graphs)} graphs")
 
@@ -419,12 +426,16 @@ def smoke(base: str, release: Path | None, report: Report, expect_release: bool 
 
     status, headers, body, _ = http(base)
     stamp = headers.get("X-Atlas-Release", "") if headers else ""
-    ok = status == 200 and b"<title>Saudi Flora Trait Atlas</title>" in body
+    ok = status == 200 and any(title in body for title in (b"<title>FLOPO Trait Atlas</title>", b"<title>Saudi Flora Trait Atlas</title>"))
     if meta and expect_release:
         ok = ok and stamp == meta["stamp"]
     report.check("C13a", "the page loads (and is this release)", ok, f"HTTP {status}, release {stamp or '?'}")
     missing = [name for name in ("app.js", "styles.css", "summary.json", "release.json") if http(base + name)[0] != 200]
     report.check("C13b", "static files are served", not missing, " ".join(missing) or "all 200")
+    if meta and meta.get("inaturalist_sha256"):
+        status, _, catalogue, _ = http(base + "inaturalist.json")
+        ok = status == 200 and hashlib.sha256(catalogue).hexdigest() == meta["inaturalist_sha256"]
+        report.check("C13c", "iNaturalist catalogue matches the release", ok, f"HTTP {status}")
 
     try:
         result, seconds = select(endpoint, "SELECT (COUNT(*) AS ?n) WHERE { GRAPH ?g { ?s ?p ?o } }")
