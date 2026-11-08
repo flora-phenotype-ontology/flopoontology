@@ -62,7 +62,11 @@ VALID_GATE_STATUSES = {"accepted", "review", "blocked"}
 MANUAL_REVIEW_PATO_IDS = {"PATO_0000389", "PATO_0000455", "PATO_0002147"}
 # Reuse the gate lexicon so the data-model validator and the gate never drift on which negation or
 # upper-bound cues count as source evidence.
-from flopo2.verify.gates import NEGATION_EVIDENCE, UPPER_BOUND_EVIDENCE  # noqa: E402
+from flopo2.verify.gates import (  # noqa: E402
+    NEGATION_EVIDENCE,
+    UPPER_BOUND_EVIDENCE,
+    _clause_disjunction_is_off_topic,
+)
 
 
 @dataclass(frozen=True)
@@ -1133,7 +1137,13 @@ def _validate_assertion(
         # A qualitative value relation is the representation of "X or Y" / "X to Y".
         and not parsed.qualitative_value_relation
         and _has_real_disjunction(source_context)
-        and (gate_status_hint == "accepted" or _has_real_disjunction(parsed.source_text))
+        and (
+            _has_real_disjunction(parsed.source_text)
+            or (
+                gate_status_hint == "accepted"
+                and not _clause_disjunction_is_off_topic(source_context, parsed.quality)
+            )
+        )
     ):
         _add(
             issues,

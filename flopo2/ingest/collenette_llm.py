@@ -163,7 +163,7 @@ def expand(compact: dict) -> dict:
                 "unit": str(r["unit"] or ""),
                 "source_en": str(r["source_en"] or ""),
                 "qualifiers": {
-                    "negated": bool(r["negated"]),
+                    "negated": bool(r["negated"]) and str(r["negated"]).strip().lower() not in {"false", "0", "no", "none"},
                     "stage": str(r["stage"] or ""),
                     "frequency": str(r["frequency"] or ""),
                     "alternatives": [str(a) for a in (r["alternatives"] or []) if a],
