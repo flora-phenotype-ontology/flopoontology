@@ -169,6 +169,14 @@ def update_release(
         module_date = str(next(module.objects(MODULE, DCTERMS.modified)))
         check_module_is_releasable(module, module_date)
     text = _without_generated_block(release_path.read_text(encoding="utf-8"))
+    # Blocks the final release passes regenerate (asserted hierarchy, trait/phenotype annotations)
+    # also mention the module's classes; they must not count as prior declarations.
+    text = _update_release_metadata(text, release_date)
+    text = re.sub(
+        r"\n?  <!-- BEGIN GENERATED FLOPO TRAIT PHENOTYPE ANNOTATIONS -->.*?"
+        r"  <!-- END GENERATED FLOPO TRAIT PHENOTYPE ANNOTATIONS -->\n?",
+        "\n", text, count=1, flags=re.DOTALL,
+    )
     fragment, new_classes, redefined = module_fragment(module)
     for class_iri in new_classes:
         if f'rdf:about="{class_iri}"' in text:

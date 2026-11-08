@@ -48,9 +48,9 @@ ROBOT_AVAILABLE = (ROOT / "tools" / "robot.jar").exists() and shutil.which("java
 # Whole-plant classes that must receive the FLOPO EQ pattern, with their quality filler.
 EXPECTED_EQ = {
     "FLOPO_0980070": ("PO_0000003", "PATO_0000050"),  # whole plant lifestyle
-    "FLOPO_0980071": ("PO_0000003", "FLOPO_0985010"),  # annual (approved life span)
-    "FLOPO_0980072": ("PO_0000003", "FLOPO_0987000"),  # biennial (proposed life span)
-    "FLOPO_0980073": ("PO_0000003", "FLOPO_0985011"),  # perennial (approved life span)
+    "FLOPO_0980071": ("PO_0000003", "PATO_0104360"),  # annual life span (PATO 2026-10-01)
+    "FLOPO_0980072": ("PO_0000003", "PATO_0104367"),  # biennial life span (PATO 2026-10-01)
+    "FLOPO_0980073": ("PO_0000003", "PATO_0104361"),  # perennial life span (PATO 2026-10-01)
     "FLOPO_0900033": ("PO_0000003", "FLOPO_0987001"),  # arborescent / tree
     "FLOPO_0900034": ("PO_0000003", "FLOPO_0987002"),  # frutescent / shrub
     "FLOPO_0987004": ("PO_0000003", "FLOPO_0987003"),  # suffrutescent / subshrub
@@ -157,7 +157,7 @@ def test_registry_block_is_reserved_unique_and_matches_the_specification():
     released = {row["flopo_iri"].rsplit("/", 1)[1]: row["label"] for row in _tsv(FLOPO_REGISTRY)}
     for row in rows:
         # Before the release the IDs are unused; afterwards they must keep their labels.
-        assert released.get(row["flopo_id"], row["label"]) == row["label"]
+        assert released.get(row["flopo_id"], row["label"]) in {row["label"], "obsolete " + row["label"]}
     new_rows = {
         row["target"]: row["label"]
         for row in _tsv(SPEC)
@@ -173,6 +173,11 @@ def test_specification_references_live_terms_evidence_and_no_homonyms():
         "FLOPO:" + row["flopo_iri"].rsplit("_", 1)[1]
         for row in _tsv(FLOPO_REGISTRY)
         if row["deprecated"] == "0"
+    }
+    # Bridges superseded by released PATO terms resolve to the PATO identifier in the builder.
+    released |= {
+        row["flopo_id"].replace("_", ":", 1)
+        for row in _tsv(ROOT / "config" / "flopo_pato_bridge_migration.tsv")
     }
     for row in _tsv(SPEC):
         assert row["curator_decision"] in ACCEPTED | {"", "defer", "reject"}
@@ -214,8 +219,11 @@ def test_whole_plant_classes_get_the_eq_pattern_with_the_right_qualities():
 
 def test_local_qualities_sit_directly_under_live_pato_and_life_spans_are_disjoint():
     graph = _build(include_pending=True)
+    biennial = URIRef(OBO + "FLOPO_0987000")  # superseded by PATO:0104367 on 2026-11-08
+    assert (biennial, OWL.deprecated, Literal(True)) in graph
+    assert (biennial, URIRef(OBO + "IAO_0100001"), URIRef(OBO + "PATO_0104367")) in graph
+    assert not [p for p in graph.objects(biennial, RDFS.subClassOf)]
     parents = {
-        "FLOPO_0987000": "PATO_0000050",
         "FLOPO_0987001": "PATO_0000051",
         "FLOPO_0987002": "PATO_0000051",
         "FLOPO_0987003": "PATO_0000051",
@@ -229,7 +237,7 @@ def test_local_qualities_sit_directly_under_live_pato_and_life_spans_are_disjoin
         assert len(set(graph.objects(cls, RDFS.label))) == 1
     (disjoint,) = list(graph.subjects(RDF.type, OWL.AllDisjointClasses))
     members = set(Collection(graph, next(graph.objects(disjoint, OWL.members))))
-    assert members == {URIRef(OBO + f) for f in ("FLOPO_0985010", "FLOPO_0987000", "FLOPO_0985011")}
+    assert members == {URIRef(OBO + f) for f in ("PATO_0104360", "PATO_0104367", "PATO_0104361")}
 
 
 def test_module_is_additive_for_released_classes():
@@ -253,7 +261,7 @@ def test_module_is_additive_for_released_classes():
     for filler in fillers:
         for member in Collection(graph, next(graph.objects(filler, OWL.intersectionOf))):
             qualities.update(graph.objects(member, OWL.someValuesFrom))
-    assert qualities == {URIRef(OBO + "PATO_0002348"), URIRef(OBO + "FLOPO_0985011")}
+    assert qualities == {URIRef(OBO + "PATO_0002348"), URIRef(OBO + "PATO_0104361")}
 
 
 def _synthetic_release(path: Path) -> None:
@@ -296,9 +304,9 @@ obo:FLOPO_0980073 obo:IAO_0000115 "new text: more than two years."@en ;
     owl:equivalentClass [ a owl:Restriction ; owl:onProperty obo:BFO_0000051 ;
         owl:someValuesFrom [ a owl:Class ; owl:intersectionOf ( obo:PO_0000003
             [ a owl:Restriction ; owl:onProperty obo:RO_0000053 ;
-              owl:someValuesFrom obo:FLOPO_0985011 ] ) ] ] .
-obo:FLOPO_0987000 a owl:Class ; rdfs:label "biennial life span"@en ;
-    obo:IAO_0000115 "A life span quality."@en ; rdfs:subClassOf obo:PATO_0000050 .
+              owl:someValuesFrom obo:PATO_0104361 ] ) ] ] .
+obo:FLOPO_0987000 a owl:Class ; rdfs:label "obsolete biennial life span"@en ; owl:deprecated true ;
+    obo:IAO_0000115 "OBSOLETE. A life span quality."@en ; obo:IAO_0100001 obo:PATO_0104367 .
 """,
         encoding="utf-8",
     )

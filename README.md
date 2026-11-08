@@ -104,7 +104,10 @@ the three matching assets, run the full gate without this option, then update
 staging option for updates to `master`. The staging result is
 not a claim that the public release has passed the complete Dashboard.
 
-### 2026-11-08 (in preparation)
+### 2026-11-08
+
+27,987 FLOPO classes (1,306 deprecated identifiers retained); every earlier identifier
+preserved; ELK finds no unsatisfiable classes.
 
 - 544 EQ classes added after the curator review of the 687 candidates held on 2026-10-25;
   17 further candidates reuse existing classes, 27 collided with an existing label and were
@@ -112,10 +115,13 @@ not a claim that the public release has passed the complete Dashboard.
 - Six FLOPO flora values: acute (sensu botany), subacute (sensu botany), head-shaped,
   fascicled, cartilaginous (sensu botany), reticulate. 67 provisional values are now
   reviewed; cherry-like and amplexicaul are obsolete (amplexicaul replaced by clasping).
-- Open follow-ups: PATO released PATO:0104350–0104367 on 2026-10-01 for the 18 provisional
-  bridge qualities FLOPO:0985000–0985016 and FLOPO:0987000; the pinned PATO copy and the
-  bridges still have to be migrated. Three "purplish red" candidates await a colour class
-  for that ISCC-NBS sector.
+- PATO 2026-10-01 (pato-ontology/pato#618, #619, #620) is the pinned PATO. Its 18 new
+  botanical qualities PATO:0104350–0104367 replace the provisional FLOPO bridges
+  FLOPO:0985000–0985016 and FLOPO:0987000: every axiom, combination and rule now uses the
+  PATO identifier (`tools/migrate_pato_bridges.py`, `config/flopo_pato_bridge_migration.tsv`),
+  and the bridges are deprecated shells with `IAO:0100001`. The PO bridges (corolla lip,
+  corolla tube, haustorium, …) stay provisional until Planteome/plant-ontology#734 is merged.
+- Three "purplish red" candidates await a colour class for that ISCC-NBS sector.
 
 ### 2026-10-25
 

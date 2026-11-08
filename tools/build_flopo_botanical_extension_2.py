@@ -102,6 +102,15 @@ UPSTREAM_DRAFT = {
     "PATO": "curation/upstream_drafts/pato-pr-1-botanical-qualities.md",
     "PO": "curation/upstream_drafts/po-pr-5-anatomy-classes.md",
 }
+# Bridges whose upstream identifier has been released: ``flopo_id -> {pato_id, pato_release, ...}``.
+MIGRATION = Path("config/flopo_pato_bridge_migration.tsv")
+IAO_REPLACED_BY = URIRef(OBO + "IAO_0100001")
+
+
+def load_migration(path: Path = MIGRATION) -> dict[str, dict[str, str]]:
+    if not path.exists():
+        return {}
+    return {row["flopo_id"]: row for row in _rows(path)}
 
 
 def iri(curie: str) -> URIRef:
@@ -166,22 +175,35 @@ def _entity_with_quality(
 
 
 def _class_snippet(text: str, class_iri: str) -> str:
-    opening = f'<owl:Class rdf:about="{class_iri}">'
-    start = text.find(opening)
-    if start < 0:
-        raise ValueError(f"release does not declare {class_iri} as an owl:Class element")
-    if text.find(opening, start + 1) >= 0:
-        raise ValueError(f"release declares {class_iri} more than once")
-    token = re.compile(r"<owl:Class\b[^>]*?(/?)>|</owl:Class>")
-    depth = 0
-    for match in token.finditer(text, start):
-        if match.group(0).startswith("</"):
-            depth -= 1
-        elif match.group(1) != "/":
-            depth += 1
-        if depth == 0:
-            return text[start : match.end()]
-    raise ValueError(f"unterminated owl:Class element for {class_iri}")
+    """Every top-level element about ``class_iri`` (``owl:Class`` or ``rdf:Description``).
+
+    Releases since 2026-10 declare most classes as ``rdf:Description`` elements and may split a
+    class over several elements (declaration, asserted parents, trait annotations); all of them
+    are returned so the parsed graph carries the class's complete released triples.
+    """
+    snippets = []
+    for element in ("owl:Class", "rdf:Description"):
+        opening = f'<{element} rdf:about="{class_iri}">'
+        token = re.compile(rf"<{re.escape(element)}\b[^>]*?(/?)>|</{re.escape(element)}>")
+        start = text.find(opening)
+        while start >= 0:
+            depth = 0
+            end = None
+            for match in token.finditer(text, start):
+                if match.group(0).startswith("</"):
+                    depth -= 1
+                elif match.group(1) != "/":
+                    depth += 1
+                if depth == 0:
+                    end = match.end()
+                    break
+            if end is None:
+                raise ValueError(f"unterminated {element} element for {class_iri}")
+            snippets.append(text[start:end])
+            start = text.find(opening, end)
+    if not snippets:
+        raise ValueError(f"release does not declare {class_iri}")
+    return "\n".join(snippets)
 
 
 def _released_classes(release_path: Path, class_iris: list[str]) -> Graph:
@@ -251,10 +273,15 @@ def build_module(
         raise ValueError(f"accepted PO/PATO class proposals lack identifiers: {sorted(missing)}")
 
     local = {key: URIRef(OBO + entry["flopo_id"]) for key, entry in registry.items()}
+    migration = load_migration()
 
     def resolve(token: str) -> URIRef:
         token = token.strip()
         if token in local:
+            flopo_id = registry[token]["flopo_id"]
+            if flopo_id in migration:
+                # The upstream term exists now: axioms use it, the bridge is an obsolete shell.
+                return URIRef(OBO + migration[flopo_id]["pato_id"])
             return local[token]
         if token.startswith(("PO:", "PATO:")):
             if token not in live:
@@ -337,6 +364,30 @@ def build_module(
         row = proposals[key]
         cls = local[key]
         target = entry["provisional_for"]
+        if entry["flopo_id"] in migration:
+            upstream = migration[entry["flopo_id"]]
+            graph.add((cls, RDF.type, OWL.Class))
+            graph.add((cls, RDFS.label, Literal("obsolete " + row["preferred_label"], lang="en")))
+            graph.add((cls, OWL.deprecated, Literal(True)))
+            graph.add((cls, IAO_REPLACED_BY, URIRef(OBO + upstream["pato_id"])))
+            graph.add((cls, IAO_DEFINITION, Literal("OBSOLETE. " + row["definition"].strip(), lang="en")))
+            graph.add((cls, DCTERMS.contributor, CONTRIBUTOR))
+            graph.add((cls, DCTERMS.created, Literal(release_date, datatype=XSD.date)))
+            graph.add((cls, DCTERMS.modified, Literal(upstream["obsoleted"], datatype=XSD.date)))
+            graph.add(
+                (
+                    cls,
+                    IAO_EDITOR_NOTE,
+                    Literal(
+                        f"Provisional FLOPO bridge for the PATO request {key}; PATO released "
+                        f"{upstream['pato_id'].replace('_', ':')} on {upstream['pato_release']} "
+                        f"({upstream['provenance']}). Obsoleted on {upstream['obsoleted']}; every FLOPO "
+                        "axiom now uses the PATO identifier (tools/migrate_pato_bridges.py).",
+                        lang="en",
+                    ),
+                )
+            )
+            continue
         if target in {"PATO", "PO"}:
             annotate(
                 key,

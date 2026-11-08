@@ -77,7 +77,8 @@ def test_registry_block_is_reserved_unique_and_disjoint_from_other_allocations()
     for row in _tsv(ROOT / "config" / "flopo_id_registry.tsv"):
         flopo_id = row["flopo_iri"].rsplit("/", 1)[1]
         if flopo_id in labels:
-            assert row["label"] == labels[flopo_id]
+            # bridges superseded by released PATO terms are deprecated shells ("obsolete …")
+            assert row["label"] in {labels[flopo_id], "obsolete " + labels[flopo_id]}
         else:
             other.add(flopo_id)
     # Other blocks reserved before or after this one (e.g. the 2026-09-18 anatomy support block
@@ -100,7 +101,10 @@ def test_registry_rows_are_curator_accepted_and_materialized_with_provenance():
         assert "2026-09-18" in proposal["curator_notes"]
         cls = URIRef(OBO + row["flopo_id"])
         assert (cls, RDF.type, OWL.Class) in graph
-        assert (cls, RDFS.label, Literal(row["label"], lang="en")) in graph
+        if (cls, OWL.deprecated, Literal(True)) in graph:
+            assert (cls, RDFS.label, Literal("obsolete " + row["label"], lang="en")) in graph
+        else:
+            assert (cls, RDFS.label, Literal(row["label"], lang="en")) in graph
         assert (cls, IAO_DEFINITION, None) in graph
         assert (cls, DCTERMS.contributor, CONTRIBUTOR) in graph
         assert (cls, DCTERMS.created, None) in graph
@@ -151,6 +155,8 @@ def test_provisional_classes_sit_under_live_po_or_pato_parents_and_never_mint_th
         if row["provisional_for"] not in {"PO", "PATO"}:
             continue
         cls = URIRef(OBO + row["flopo_id"])
+        if (cls, OWL.deprecated, Literal(True)) in graph:
+            continue  # released upstream: obsolete shell with IAO:0100001, no parent
         named = [p for p in graph.objects(cls, RDFS.subClassOf) if isinstance(p, URIRef)]
         assert named, row
         for parent in named:
@@ -188,22 +194,24 @@ def test_anatomy_boundaries_follow_the_approved_counterexamples():
         assert _some(graph, _c(generic), PART_OF) == []
 
 
-def test_quality_parents_and_synonym_scopes_follow_the_approved_rows():
+def test_released_pato_bridges_are_obsolete_shells_pointing_at_pato():
+    # PATO released the 17 requested qualities on 2026-10-01 (pato-ontology/pato#618); since
+    # 2026-11-08 the bridges are deprecated shells and every axiom uses the PATO identifier.
     graph = _module()
-    assert (_c("FLOPO:0985005"), RDFS.subClassOf, _c("PATO:0002481")) in graph  # ascending
-    assert (_c("FLOPO:0985012"), RDFS.subClassOf, _c("PATO:0001786")) in graph  # dissected
-    assert (_c("FLOPO:0985009"), RDFS.subClassOf, _c("PATO:0001975")) in graph  # entire
-    assert (_c("FLOPO:0985004"), RDFS.subClassOf, _c("PATO:0002358")) not in graph
-
-    for cls, text in (
-        ("FLOPO:0985007", "woolly"),
-        ("FLOPO:0985008", "silky"),
-        ("FLOPO:0985015", "pleated"),
-    ):
-        assert (_c(cls), OIO.hasRelatedSynonym, Literal(text, lang="en")) in graph
-        assert (_c(cls), OIO.hasExactSynonym, Literal(text, lang="en")) not in graph
-    assert (_c("FLOPO:0985013"), OIO.hasNarrowSynonym, Literal("amplexicaul", lang="en")) in graph
-
+    migration = {row["flopo_id"]: row["pato_id"] for row in _tsv(ROOT / "config" / "flopo_pato_bridge_migration.tsv")}
+    bridges = {k: v for k, v in migration.items() if k.startswith("FLOPO_0985")}
+    assert len(bridges) == 17
+    for flopo_id, pato_id in bridges.items():
+        cls = URIRef(OBO + flopo_id)
+        assert (cls, OWL.deprecated, Literal(True)) in graph, flopo_id
+        assert (cls, URIRef(OBO + "IAO_0100001"), URIRef(OBO + pato_id)) in graph, flopo_id
+        assert str(next(graph.objects(cls, RDFS.label))).startswith("obsolete "), flopo_id
+        assert not [p for p in graph.objects(cls, RDFS.subClassOf)], flopo_id
+        assert (cls, OIO.hasNarrowSynonym, None) not in graph
+    # No live module class may still reference a bridge.
+    for s, p, o in graph:
+        if isinstance(o, URIRef) and str(o).rsplit("/", 1)[-1] in bridges:
+            assert p == URIRef(OBO + "IAO_0100001") or s in {URIRef(OBO + k) for k in bridges}, (s, p, o)
     definition = str(next(graph.objects(_c("FLOPO:0985001"), IAO_DEFINITION)))
     assert "terete" not in definition
     perennial = str(next(graph.objects(_c("FLOPO:0985011"), IAO_DEFINITION)))

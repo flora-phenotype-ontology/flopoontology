@@ -199,7 +199,9 @@ def test_proposal_is_current_for_the_annotated_corpus(spec):
     # colour value classes the 2026-09-18 backbone migration obsoleted, so its live label is now
     # "obsolete silvery". Trust ``propose()``'s own construction of those fields (checked below
     # for internal consistency) rather than the frozen copy, and compare everything else exactly.
-    label_derived = {"po_label", "pato_label", "label", "definition", "parent", "reason"}
+    # pair_status/pair_source move from "novel" to "allowed" when a later release promotes the
+    # (bearer, quality) combination (2026-10-25 automatic EQ review); that is lifecycle, not drift.
+    label_derived = {"po_label", "pato_label", "label", "definition", "parent", "reason", "pair_status", "pair_source"}
     for signature in still_open:
         if canonical[signature] != signature:
             continue  # quality renamed by the colour backbone: the PATO fields differ by design

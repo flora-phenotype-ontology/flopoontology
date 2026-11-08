@@ -77,6 +77,16 @@ SYNONYM_PROPERTY = {
 UPSTREAM_DRAFT = "PATO new-term request batch with the approved annual/perennial life spans"
 
 
+MIGRATION = Path("config/flopo_pato_bridge_migration.tsv")
+IAO_REPLACED_BY = URIRef(OBO + "IAO_0100001")
+
+
+def load_migration(path: Path = MIGRATION) -> dict[str, dict[str, str]]:
+    if not path.exists():
+        return {}
+    return {row["flopo_id"]: row for row in _rows(path)}
+
+
 def _rows(path: Path) -> list[dict[str, str]]:
     with path.open(encoding="utf-8", newline="") as handle:
         return list(csv.DictReader(handle, delimiter="\t"))
@@ -178,13 +188,20 @@ def build_module(
 
     rows = selected_rows(spec, include_pending)
     built_new = {row["target"] for row in rows if row["target"] in allocations}
+    migration = load_migration()
 
     def resolve(token: str) -> URIRef:
         token = token.strip()
         if token in allocations:
             if token not in built_new:
                 raise ValueError(f"{token} is referenced but its proposal row is not accepted")
-            return URIRef(OBO + allocations[token]["flopo_id"])
+            flopo_id = allocations[token]["flopo_id"]
+            if flopo_id in migration:
+                return URIRef(OBO + migration[flopo_id]["pato_id"])
+            return URIRef(OBO + flopo_id)
+        if token.startswith("FLOPO:") and token.replace(":", "_", 1) in migration:
+            # Bridge quality superseded by its released PATO term.
+            return URIRef(OBO + migration[token.replace(":", "_", 1)]["pato_id"])
         if token in FORBIDDEN_QUALITIES:
             raise ValueError(f"{token} is a homonym that must not be used here")
         if token.startswith(("PO:", "PATO:")):
@@ -281,6 +298,24 @@ def build_module(
         if action in {"new_local_quality", "new_phenotype"}:
             entry = allocations[row["target"]]
             cls = URIRef(OBO + entry["flopo_id"])
+            if entry["flopo_id"] in migration:
+                upstream = migration[entry["flopo_id"]]
+                graph.add((cls, RDF.type, OWL.Class))
+                graph.add((cls, RDFS.label, Literal("obsolete " + row["label"], lang="en")))
+                graph.add((cls, OWL.deprecated, Literal(True)))
+                graph.add((cls, IAO_REPLACED_BY, URIRef(OBO + upstream["pato_id"])))
+                graph.add((cls, IAO_DEFINITION, Literal("OBSOLETE. " + row["definition"], lang="en")))
+                graph.add((cls, DCTERMS.contributor, CONTRIBUTOR))
+                graph.add((cls, DCTERMS.created, Literal(release_date, datatype=XSD.date)))
+                graph.add((cls, DCTERMS.modified, Literal(upstream["obsoleted"], datatype=XSD.date)))
+                note(
+                    cls,
+                    row,
+                    f"Provisional bridge superseded by {upstream['pato_id'].replace('_', ':')} "
+                    f"(PATO release {upstream['pato_release']}, {upstream['provenance']}); obsoleted "
+                    f"{upstream['obsoleted']}, axioms re-pointed by tools/migrate_pato_bridges.py.",
+                )
+                continue
             parent = resolve(row["parent"])
             if action == "new_local_quality":
                 if not row["parent"].startswith("PATO:"):

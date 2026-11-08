@@ -105,7 +105,7 @@ def test_grounding_rule_overrides_an_older_hold():
     other = NormalizationRule("Q91", "quality", "leafy", "", "hold", "", "", "", "", "no PATO term", "")
     merged = merge_rules([hold, other], [ROOT / "flopo2/ingest/collenette_normalization.tsv"])
     keys = {(r.rule_id, r.match_key) for r in merged}
-    assert ("Q90", "spreading") not in keys  # superseded: FLOPO:0985006 spreading grounds it
+    assert ("Q90", "spreading") not in keys  # superseded: PATO:0104356 spreading grounds it
     assert ("Q91", "leafy") in keys  # no grounding rule in that table
 
 

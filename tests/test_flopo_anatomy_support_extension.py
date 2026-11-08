@@ -72,12 +72,18 @@ def test_registry_block_is_reserved_and_disjoint_from_every_other_allocation():
         # legitimately lists this block once the module has been released.
         if path in (REGISTRY, ROOT / "config" / "flopo_id_registry.tsv"):
             continue
-        text = path.read_text(encoding="utf-8")
-        assert not {flopo_id for flopo_id in ours if flopo_id in text}, path.name
+        # Only identifier columns count: a registry may legitimately *reference* this block in
+        # an EQ signature (e.g. config/flopo_automatic_eq_id_registry.tsv).
+        with path.open(encoding="utf-8", newline="") as handle:
+            reader = csv.DictReader(handle, delimiter="\t")
+            id_columns = [c for c in (reader.fieldnames or []) if c in {"flopo_id", "ontology_id", "flopo_iri", "iri"}]
+            allocated = {row[c].rsplit("/", 1)[-1].replace(":", "_", 1) for row in reader for c in id_columns}
+        assert not (ours & allocated), path.name
     for path in sorted((ROOT / "ontology").glob("*.ttl")):
         if path == MODULE_PATH:
             continue
-        assert not re.search(r"FLOPO_0986\d{3}", path.read_text(encoding="utf-8")), path.name
+        # Other modules may *reference* these bearers in EQ axioms; only declarations collide.
+        assert not re.search(r"(?m)^(?:obo:|<http://purl\.obolibrary\.org/obo/)FLOPO_0986\d{3}>?\s+(?:a|rdf:type)\s+owl:Class", path.read_text(encoding="utf-8")), path.name
 
 
 def test_committed_module_matches_the_builder():

@@ -66,6 +66,10 @@ from flopo2.ids.registry import _signature_of  # noqa: E402
 
 
 OBO = Namespace("http://purl.obolibrary.org/obo/")
+TRAIT_ANNOTATIONS = {
+    URIRef("http://phenomebrowser.net/flopo/annotation/traitOrPhenotype"),
+    URIRef("http://phenomebrowser.net/flopo/annotation/traitPhenotypeBasis"),
+}
 OBO_IN_OWL = Namespace("http://www.geneontology.org/formats/oboInOwl#")
 MODULE = URIRef(OBO + "flopo-colour-backbone.owl")
 
@@ -872,6 +876,8 @@ def _transform_class(
             all_used.extend(used)
             if rewritten != cls:
                 module.add((cls, RDFS.subClassOf, rewritten))
+        elif predicate in TRAIT_ANNOTATIONS:
+            continue  # written by flopo2.owl.trait_phenotype on every release; not part of the module
         elif isinstance(obj, BNode):
             raise ValueError(f"unexpected anonymous annotation value on {cls}")
         else:
@@ -912,6 +918,8 @@ def _obsolete_stub(
         if predicate in {RDF.type, RDFS.label, RDFS.subClassOf, OWL.equivalentClass, OWL.deprecated}:
             continue
         if predicate in SYNONYM_PROPERTIES or isinstance(obj, BNode):
+            continue
+        if predicate in TRAIT_ANNOTATIONS:
             continue
         if predicate == IAO_DEF:
             text = str(obj)

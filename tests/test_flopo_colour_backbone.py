@@ -108,15 +108,23 @@ def test_registry_block_is_reserved_and_disjoint_from_every_other_allocation():
     for path in sorted((ROOT / "config").glob("*registry*.tsv")):
         if path in (REGISTRY, ROOT / "config" / "flopo_id_registry.tsv"):
             continue
-        text = path.read_text(encoding="utf-8")
-        collisions = {
-            n for n in ours if f"FLOPO:{n:07d}" in text or f"FLOPO_{n:07d}" in text
-        }
+        # Only identifier columns count: EQ signatures in other registries may reference colours.
+        with path.open(encoding="utf-8", newline="") as handle:
+            reader = csv.DictReader(handle, delimiter="\t")
+            id_columns = [c for c in (reader.fieldnames or []) if c in {"flopo_id", "ontology_id", "flopo_iri", "iri"}]
+            allocated = set()
+            for row in reader:
+                for c in id_columns:
+                    m = re.search(r"FLOPO[_:](\d{7})", row[c])
+                    if m:
+                        allocated.add(int(m.group(1)))
+        collisions = ours & allocated
         assert not collisions, f"{path.name} collides on {sorted(collisions)}"
     for path in sorted((ROOT / "ontology").glob("*.ttl")):
         if path == MODULE_PATH:
             continue
-        assert not re.search(r"FLOPO_0988\d{3}", path.read_text(encoding="utf-8")), path.name
+        # EQ modules may *reference* backbone colours as quality fillers; only declarations collide.
+        assert not re.search(r"(?m)^(?:obo:|<http://purl\.obolibrary\.org/obo/)FLOPO_0988\d{3}>?\s+(?:a|rdf:type)\s+owl:Class", path.read_text(encoding="utf-8")), path.name
 
 
 def test_reused_pato_classes_are_the_documented_twenty_seven():

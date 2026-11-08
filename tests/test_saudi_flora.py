@@ -94,7 +94,7 @@ def test_llm_rule_guardrails():
     cands = Candidates()
     assert guardrail("quality", "red-veined", "PATO_0000322", "exact", cands)  # pattern, not colour
     assert guardrail("quality", "number 2-5", "PATO_0001555", "exact", cands)
-    assert guardrail("quality", "widespread", "FLOPO_0985006", "synonym", cands)
+    assert guardrail("quality", "widespread", "PATO_0104356", "synonym", cands)  # spreading
     assert guardrail("bearer", "corolla base", "PO_0009059", "broader", cands)
     assert not guardrail("quality", "four-angled", "PATO_0001988", "exact", cands)
 

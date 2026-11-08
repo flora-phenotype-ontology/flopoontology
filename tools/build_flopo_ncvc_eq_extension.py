@@ -425,16 +425,28 @@ def other_block_numbers(config_dir: Path = Path("config"), ontology_dir: Path = 
 
     import re
 
+    import csv as _csv
+
     numbers: set[int] = set()
     pattern = re.compile(r"FLOPO[_:](\d{7})")
+    # Identifier columns only: EQ signatures in other registries legitimately reference classes
+    # of this block without allocating them.
     for path in sorted(config_dir.glob("*registry*.tsv")):
         if path.name in {REGISTRY.name, FLOPO_REGISTRY.name}:
             continue
-        numbers |= {int(value) for value in pattern.findall(path.read_text(encoding="utf-8"))}
+        with path.open(encoding="utf-8", newline="") as handle:
+            reader = _csv.DictReader(handle, delimiter="\t")
+            id_columns = [c for c in (reader.fieldnames or []) if c in {"flopo_id", "ontology_id", "flopo_iri", "iri"}]
+            for row in reader:
+                for column in id_columns:
+                    numbers |= {int(value) for value in pattern.findall(row[column])}
+    # Staged modules: only the classes they declare, not the classes their axioms reference.
+    declaration = re.compile(r"^(?:obo:FLOPO_(\d{7})|<http://purl\.obolibrary\.org/obo/FLOPO_(\d{7})>)\s+(?:a|rdf:type)\s+owl:Class", re.M)
     for path in sorted(ontology_dir.glob("*.ttl")):
         if path.name == OUTPUT.name or path.name in _REPOINTING_MODULES:
             continue
-        numbers |= {int(value) for value in pattern.findall(path.read_text(encoding="utf-8"))}
+        for a, b in declaration.findall(path.read_text(encoding="utf-8")):
+            numbers.add(int(a or b))
     return numbers
 
 
