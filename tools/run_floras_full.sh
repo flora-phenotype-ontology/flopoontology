@@ -27,7 +27,21 @@ ORDER=(
   fdac nybg-naf eflora-fna kew-african eflora-foc wfo
 )
 
-segment_errors() { grep -c '"error"' "local-corpora/$1/raw/$1-qwen.jsonl" 2>/dev/null || echo 0; }
+# Segments with no successful transcription yet (the cache is append-only: an error row is
+# superseded by a later good row for the same source_id).
+segment_errors() {
+  "$PY" - "local-corpora/$1/raw/$1-qwen.jsonl" <<'PYEND'
+import json, sys
+from pathlib import Path
+path = Path(sys.argv[1]); ok, err = set(), set()
+if path.exists():
+    for line in path.open(encoding="utf-8"):
+        try: row = json.loads(line)
+        except json.JSONDecodeError: continue
+        (err if "error" in row else ok).add(row["source_id"])
+print(len(err - ok))
+PYEND
+}
 
 log() { echo "== $(date -Is) $*" | tee -a "$LOGS/driver.log" >&2; }
 
