@@ -28,24 +28,35 @@ seven stages (segment dump, Qwen transcription, annotation, Qwen re-read of unma
 Qwen term rules, Qwen relations and chains, final annotation and candidate staging) averaged
 about 19 s per treatment when the 38 pilots ran back to back on one evening.
 
-| Scope | Treatments | Wall time at ~19 s each | At ~10 s (tuned) |
+| Scope | Treatments | At 12 workers (~19 s each) | At 4 workers (~57 s each) |
 |---|---:|---:|---:|
-| Everything | 220,215 | ~48 days | ~26 days |
-| Everything except WFO | 108,605 | ~24 days | ~13 days |
-| African floras we hold in full | 25,931 | ~6 days | ~3 days |
+| Everything | 220,215 | ~48 days | ~5 months |
+| Everything except WFO | 108,605 | ~24 days | ~2.5 months |
+| The 36 floras below 35k treatments (all but eFlora of China and WFO) | 74,425 | ~16 days | ~7 weeks |
 
 The Qwen endpoint, not the pipeline, is the bottleneck: the KV cache saturates at about 14
-concurrent requests, so `WORKERS=12` is the ceiling and the time scales with the number of
-LLM calls. Storage is small (about 100 KB per treatment on disk in `local-corpora/<source>/`,
-so roughly 20 GB for everything; `/mnt/data2` has 260 GB free).
+concurrent requests, and the time scales with the number of LLM calls. Storage is small (about
+100 KB per treatment on disk in `local-corpora/<source>/`, so roughly 20 GB for everything;
+`/mnt/data2` has 250 GB free).
 
-The endpoint is shared with other users on unimatrix. Running continuously for weeks takes most
-of its capacity; agree the time window, or run only at night (a `--limit` per invocation and
-the per-source caches make the pipeline resumable, so it can be stopped and restarted).
+**Decision 2026-11-09: run with `WORKERS=4`.** The endpoint is shared with other users on
+unimatrix; the run may occupy it for months, but only at about a third of its capacity so other
+work can proceed alongside. Four concurrent requests is the setting; six is the allowed maximum.
 
-## Order (phases, each useful on its own)
+## Order: smallest flora first, publish after each
 
-1. **African floras we hold in full (26k, ~1 week).** `kew-african`, `fdac`, `flora-zimbabwe`,
+Decision 2026-11-09: the floras run one at a time in ascending order of size, and the trait
+atlas is rebuilt and redeployed as soon as a flora is complete, so the website grows flora by
+flora from the first day. `tools/run_floras_full.sh` holds the order (powo-tong 7 treatments …
+eflora-foc 34,180, wfo 111,610) and does the publishing; `tools/run_floras_full.sh --status`
+shows progress. With 4 workers, the 18 floras under 700 treatments finish in the first days,
+the 36 floras other than eFlora of China and WFO in about seven weeks, eFlora of China takes
+about three more weeks, and WFO about ten.
+
+The thematic grouping below is kept as the way to read the results; it is no longer the run
+order.
+
+1. **African floras we hold in full (26k, ~1 week at 12 workers).** `kew-african`, `fdac`, `flora-zimbabwe`,
    `flora-gabon`, `korup-flora`, `africa-tree-db`. These are the floras FLOPO was built from,
    the text is already in the repository, and they share the Saudi guides' African context.
 2. **Kew POWO regional floras and the other monographs (14k, ~3 days).** All `powo-*`,
@@ -66,17 +77,27 @@ atlas rebuild (`flopo2.saudi.build`) and a staged deployment (`tools/deploy_atla
 
 ## How to run
 
-On ws, in a `tmux` session, from `/mnt/data2/leechuck/flopoontology`:
+Started 2026-11-09 on ws in the `tmux` session `flopo-floras`
+(`tmux attach -t flopo-floras`), from `/mnt/data2/leechuck/flopoontology`:
 
 ```bash
-export WORKERS=12 LIMIT=0 PYTHON=$PWD/.venv/bin/python
-tools/build_flora.sh kew-african fdac flora-zimbabwe flora-gabon korup-flora africa-tree-db \
-  2>&1 | tee -a local-corpora/run-logs/phase1-$(date +%F).log
+tmux new -d -s flopo-floras 'tools/run_floras_full.sh 2>&1 | tee -a local-corpora/run-logs/console.log'
+tools/run_floras_full.sh --status          # done / running / failed / pending per flora
+tail -f local-corpora/run-logs/driver.log  # one line per flora, attempt and atlas deployment
 ```
 
-- One source at a time inside the script; the Qwen stages cache every answer in
-  `local-corpora/<source>/raw/<source>-qwen.jsonl` and `llm-*.jsonl`, so a crash or a stop
-  loses at most the in-flight batch. Re-running the same command resumes.
+- The driver runs `tools/build_flora.sh <source>` with `WORKERS=4 LIMIT=0`, one flora at a
+  time, retrying a failed flora twice (10 minutes apart) before moving on and marking it
+  `local-corpora/run-logs/<source>.failed`. A finished flora is marked in
+  `local-corpora/run-logs/done/`; remove the marker to run it again.
+- After each flora: `flopo2.saudi.build` (all sources) and `tools/deploy_atlas.sh --stamp
+  <time>-<source>` (tests, release, QLever index, staging checks, switch, live and public
+  checks, automatic rollback). Old atlas releases other than the live one, the previous one
+  and their bases are pruned to hold disk space (each release is about 1 GB).
+- The Qwen stages cache every answer in `local-corpora/<source>/raw/<source>-qwen.jsonl` and
+  `llm-*.jsonl`, so a crash or a stop loses at most the in-flight batch. Killing the tmux
+  session and starting it again resumes where it was.
+- One manual command still works for a single flora: `WORKERS=4 LIMIT=0 tools/build_flora.sh <source>`.
 - Watch `squeue`-free: the endpoint is a plain HTTP service, so check
   `curl -s unimatrix01.kaust.edu.sa:8000/v1/models` and the per-source log for 429/5xx.
 - Nightly: `python -m flopo2.verify.data_model <source>-annotated.jsonl --stage gated` on the
@@ -84,8 +105,9 @@ tools/build_flora.sh kew-african fdac flora-zimbabwe flora-gabon korup-flora afr
 
 ## Before starting
 
-- Confirm the Qwen window with the other users of unimatrix node005 (or accept night-only runs).
-- Decide on WFO: full run or genus sample first.
+- Qwen window: agreed 2026-11-09 (weeks or months, at 4 workers).
+- WFO runs last and in full unless decided otherwise before the run reaches it (a genus
+  sample of about 15k is the alternative).
 - `eflora-mfoc` (mosses) and `plazi` (treatments of many families) will produce the most
   "no ontology term" candidates; plan a curation pass after phase 2 and after phase 4 rather
   than at the very end.
