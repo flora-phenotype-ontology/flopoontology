@@ -190,8 +190,11 @@ def transcribe_segment(
     last_error = ""
     for attempt, pause in enumerate(RETRY_PAUSES):
         try:
+            # A long treatment can need more than 4,000 output tokens; a cut-off answer has no
+            # closing brace and fails to parse, so each retry allows more (within the 32k window).
             content, usage = call(
-                prompt, base_url=base_url, model=model, key=key, thinking=thinking, max_tokens=4000
+                prompt, base_url=base_url, model=model, key=key, thinking=thinking,
+                max_tokens=min(4000 * (attempt + 1), 16000),
             )
             record = expand(parse_json(content))
             if not isinstance(record.get("phenotypes"), list):

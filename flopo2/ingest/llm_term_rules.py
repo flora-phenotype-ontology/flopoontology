@@ -318,7 +318,10 @@ def main(argv: list[str] | None = None) -> None:
     migrated = _bridge_migration()
     if args.cache.exists():
         for line in args.cache.open(encoding="utf-8"):
-            row = json.loads(line)
+            try:
+                row = json.loads(line)
+            except json.JSONDecodeError:
+                continue  # a line torn by two concurrent writers (the unimatrix and ORIX lanes)
             # Decisions cached before a provisional FLOPO bridge quality was replaced by its PATO
             # term (config/flopo_pato_bridge_migration.tsv) keep their meaning under the PATO id.
             row["id"] = migrated.get(row.get("id", ""), row.get("id", ""))

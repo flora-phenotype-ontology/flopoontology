@@ -104,11 +104,37 @@ tail -f local-corpora/run-logs/driver.log  # one line per flora, attempt and atl
 - The Qwen stages cache every answer in `local-corpora/<source>/raw/<source>-qwen.jsonl` and
   `llm-*.jsonl`, so a crash or a stop loses at most the in-flight batch. Killing the tmux
   session and starting it again resumes where it was.
+- Transcriptions cut off at the output cap (long treatments) are retried with a larger cap
+  (4k, 8k, 12k, 16k tokens) before a segment is recorded as errored.
 - One manual command still works for a single flora: `WORKERS=4 LIMIT=0 tools/build_flora.sh <source>`.
 - Watch `squeue`-free: the endpoint is a plain HTTP service, so check
   `curl -s unimatrix01.kaust.edu.sa:8000/v1/models` and the per-source log for 429/5xx.
 - Nightly: `python -m flopo2.verify.data_model <source>-annotated.jsonl --stage gated` on the
   finished sources, and the candidate roll-up.
+
+## ORIX lane (added 2026-11-09)
+
+Decision 2026-11-09: ORIX runs floras too, opportunistically. `tools/orix_qwen_lane.sh` (tmux
+session `flopo-orix` on ws) keeps one preemptible job queued on the ORIX `freecycle-h100` or
+`freecycle-h200` partition (whichever has an idle GPU; the job is moved if the other type frees up
+first). The job (`tools/orix/qwen_flopo.sbatch`, copied to `/mnt/data/u/hohndor/flopo-qwen/`)
+serves Qwen3.8-27B-FP8 with vLLM 0.28 from the pixi environment that already exists on ORIX
+(`/mnt/data/u/hohndor/qwen-serve-cu129`, model in the HF cache; about four minutes to start) on
+one GPU, bound to the node network with a per-job random key. The lane script fetches the key,
+opens an SSH tunnel through the login node (`127.0.0.1:8200` on ws) and starts
+`LANE=orix WORKERS=32 tools/run_floras_full.sh`, which takes the **largest** flora first (WFO
+excluded, `ORIX_SKIP`) while the unimatrix lane continues from the smallest; the two lanes meet in
+the middle. Claims in `local-corpora/run-logs/claims/` keep them off the same flora; completed
+floras queue in `local-corpora/run-logs/publish-pending` and whichever lane holds the publish lock
+republishes the atlas, so publishing stays one at a time.
+
+When the job is preempted, hits its 24 h limit or dies, the driver stops its build within two
+minutes (the endpoint health check fails), the lane resubmits, and the flora resumes from its
+caches on the next job. The job itself exits after 30 minutes without a request so an orphaned
+allocation never holds an idle GPU; `tmux kill-session -t flopo-orix` cancels the job. The shared
+term-decision cache may be appended by both lanes; its loader skips a torn line. The ORIX lane
+state is shown by `tools/run_floras_full.sh --status` and logged in
+`local-corpora/run-logs/orix/lane.log`.
 
 ## Before starting
 

@@ -3,6 +3,8 @@
 # Usage:
 #   tools/build_flora.sh powo-fiq powo-cayman
 #   LIMIT=200 tools/build_flora.sh eflora-fna eflora-foc
+# Endpoint: LLM_BASE_URL, LLM_MODEL, LLM_KEY_FILE override the unimatrix defaults of the LLM stages
+# (used by the ORIX lane, tools/orix_qwen_lane.sh).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 export PYTHONPATH="${PYTHONPATH:-.}"
@@ -16,4 +18,9 @@ if [ "$#" -eq 0 ]; then
   exit 1
 fi
 
-"$PYTHON" -m flopo2.ingest.pipeline "$@" --workers "$WORKERS" --limit "$LIMIT"
+EXTRA=()
+[ -n "${LLM_BASE_URL:-}" ] && EXTRA+=(--base-url "$LLM_BASE_URL")
+[ -n "${LLM_MODEL:-}" ] && EXTRA+=(--model "$LLM_MODEL")
+[ -n "${LLM_KEY_FILE:-}" ] && EXTRA+=(--key-file "$LLM_KEY_FILE")
+
+"$PYTHON" -m flopo2.ingest.pipeline "$@" --workers "$WORKERS" --limit "$LIMIT" ${EXTRA[@]+"${EXTRA[@]}"}
