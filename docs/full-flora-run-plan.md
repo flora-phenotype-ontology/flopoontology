@@ -136,6 +136,12 @@ term-decision cache may be appended by both lanes; its loader skips a torn line.
 state is shown by `tools/run_floras_full.sh --status` and logged in
 `local-corpora/run-logs/orix/lane.log`.
 
+When the Slurm controller on ORIX stops answering (seen 2026-11-09 19:33, about an hour), `squeue`
+fails for every job; the lane then asks the job's vLLM server itself (`/health` from the login node)
+and keeps the tunnel and the build running while it answers, instead of treating the silence as the
+job's end. Submissions during the outage fail and are retried every 10 minutes; `sbatch`'s message is
+in the lane log.
+
 ## Before starting
 
 - Qwen window: agreed 2026-11-09 (weeks or months, at 4 workers).

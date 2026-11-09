@@ -33,9 +33,19 @@ open_tunnel() {  # ip port
 
 # "RUNNING node", "PENDING reason", "" (gone); exit 1 when the cluster could not be asked.
 job_state() {
-  local out; out=$(rssh "squeue -h -j $1 -o '%T %N %r' 2>/dev/null; echo END") || return 1
-  [[ $out == *END ]] || return 1
-  echo "${out%END}" | head -1
+  local out rc; out=$(rssh "squeue -h -j $1 -o '%T %N %r' 2>&1; echo \"END \$?\"") || return 1
+  [[ $out == *"END "* ]] || return 1
+  rc=${out##*END }; out=${out%END *}
+  if [[ $rc != 0 ]]; then
+    [[ $out == *"Invalid job id"* ]] && { echo ""; return 0; }   # finished long enough ago to be forgotten
+    return 2                                                     # controller unreachable: unknown, not ended
+  fi
+  echo "$out" | head -1
+}
+# Prints the serving host when the job's vLLM still answers /health (asked from the login node);
+# the fallback when the Slurm controller cannot be reached.
+endpoint_alive() {
+  rssh "cd $RDIR && read -r h p < state/$1.endpoint 2>/dev/null && curl -sf -m 8 http://\$h:\$p/health >/dev/null && echo \$h" 2>/dev/null
 }
 idle_gpus() {  # prints "<idle h100> <idle h200>" over the freecycle partitions
   rssh "scontrol show node -o" | "$PY" -c '
@@ -56,13 +66,16 @@ pick_type() {
   local h100 h200; read -r h100 h200 < <(idle_gpus) || { echo h100; return; }
   if (( ${h100:-0} > 0 )); then echo h100; elif (( ${h200:-0} > 0 )); then echo h200; else echo h100; fi
 }
-submit() {  # type -> job id
-  rssh "cd $RDIR && sbatch --parsable --partition=freecycle-$1 --gres=${GRES[$1]} qwen_flopo.sbatch" | cut -d';' -f1
+submit() {  # type -> job id (sbatch's complaint goes to the lane log)
+  local out; out=$(rssh "cd $RDIR && sbatch --parsable --partition=freecycle-$1 --gres=${GRES[$1]} qwen_flopo.sbatch" 2>&1) || true
+  if [[ $out =~ ^([0-9]+) ]]; then echo "${BASH_REMATCH[1]}"; else log "sbatch: ${out:-no answer}" >/dev/null; return 1; fi
 }
-node_ip() { rssh "scontrol show node -o $1" | sed -n 's/.*NodeAddr=\([^ ]*\).*/\1/p' | head -1; }
+# The login node resolves worker names (and ssh resolves the forward target there), so no scontrol call,
+# which hangs for minutes when the controller is down.
+node_ip() { local ip; ip=$(rssh "getent hosts $1" | awk '{print $1; exit}'); echo "${ip:-$1}"; }
 
 JOB=$(cat "$OD/job" 2>/dev/null || true); JOB_TYPE=$(cat "$OD/job.type" 2>/dev/null || true)
-DRIVER_PID="" RUN_SEEN=0 PEND_SEEN=0
+DRIVER_PID="" RUN_SEEN=0 PEND_SEEN=0 CTRL_WARNED=0
 finish() {
   close_tunnel
   if [[ -n ${DRIVER_PID:-} ]] && kill -0 "$DRIVER_PID" 2>/dev/null; then kill "$DRIVER_PID" 2>/dev/null; fi
@@ -85,7 +98,16 @@ while :; do
     fi
     sleep 60; continue
   fi
-  if ! st=$(job_state "$JOB"); then log "cannot query $ORIX; retrying in 2 min"; sleep 120; continue; fi
+  if ! st=$(job_state "$JOB"); then
+    if host=$(endpoint_alive "$JOB") && [[ -n $host ]]; then
+      (( CTRL_WARNED )) || log "Slurm on $ORIX does not answer, but job $JOB still serves on $host; carrying on"
+      CTRL_WARNED=1; st="RUNNING $host"
+    else
+      log "cannot query $ORIX; retrying in 2 min"; sleep 120; continue
+    fi
+  else
+    CTRL_WARNED=0
+  fi
   case "${st%% *}" in
     "")
       log "job $JOB ended"
