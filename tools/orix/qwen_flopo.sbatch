@@ -28,7 +28,7 @@ nvidia-smi --query-gpu=name,memory.total --format=csv
 
 VLLM_API_KEY="$(cat "$KEYF")" pixi run --manifest-path /mnt/data/u/hohndor/qwen-serve-cu129/pixi.toml \
   vllm serve Qwen/Qwen3.8-27B-FP8 --served-model-name qwen3.8-27b --host 0.0.0.0 --port "$PORT" \
-  --max-model-len 32768 --kv-cache-dtype fp8 --gpu-memory-utilization 0.92 \
+  --max-model-len 32768 --max-num-seqs 256 --kv-cache-dtype fp8 --gpu-memory-utilization 0.92 \
   --reasoning-parser qwen3 --speculative-config '{"method":"mtp","num_speculative_tokens":2}' \
   > "logs/vllm-$SLURM_JOB_ID.log" 2>&1 &
 VPID=$!
