@@ -105,12 +105,45 @@ def migrate_table(path: Path, mapping: dict[str, str]) -> int:
     return count
 
 
+CORPORA_SKIP = {"releases", "rdf"}   # published atlas releases and the RDF they were built from
+
+
+def migrate_local_corpora(mapping: dict[str, str], root: Path = ROOT / "local-corpora") -> dict[str, int]:
+    """Re-point bridge identifiers in every cache and derived file under ``local-corpora/``.
+
+    The pipelines' LLM caches (``llm-*.jsonl``, ``llm-term-decisions.jsonl``), per-flora rule tables and
+    annotated corpora keep the identifiers the model chose; after the bridges were obsoleted those
+    choices are still right under the PATO identifiers. Atlas releases are immutable and skipped.
+    """
+    report: dict[str, int] = {}
+    for path in sorted(root.rglob("*")):
+        if not path.is_file() or path.suffix not in {".jsonl", ".tsv", ".json"}:
+            continue
+        if CORPORA_SKIP & set(path.relative_to(root).parts[:-1]):
+            continue
+        data = path.read_bytes()
+        if not any(old.encode() in data or old.replace("_", ":", 1).encode() in data for old in mapping):
+            continue   # source tables and other files that never name a bridge (some are not UTF-8)
+        text, count = _replace_tokens(data.decode("utf-8"), mapping)
+        if count:
+            path.write_text(text, encoding="utf-8")
+            report[str(path.relative_to(ROOT))] = count
+    return report
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--mapping", type=Path, default=MAPPING)
     parser.add_argument("--release", type=Path, default=Path("ontology/flopo.owl"))
+    parser.add_argument("--local-corpora", action="store_true",
+                        help="only re-point the git-ignored caches and derived corpora under local-corpora/ "
+                             "(LLM decision caches, term rules, annotated corpora, dispositions)")
     args = parser.parse_args()
     mapping = load_mapping(args.mapping)
+    if args.local_corpora:
+        for path in sorted(migrate_local_corpora(mapping).items()):
+            print(f"{path[0]}\t{path[1]}")
+        return
     report = {"release_references": migrate_release(ROOT / args.release, mapping)}
     for module in sorted((ROOT / "ontology").glob("*.ttl")):
         if module.name in REGENERATED:

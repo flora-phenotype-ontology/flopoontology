@@ -246,6 +246,15 @@ def decide(item, examples, cands: Candidates, base_url, model, key) -> dict:
     return {"field": field, "word": word, "id": chosen, "match": match, "note": note}
 
 
+def _bridge_migration(path: Path = Path("config/flopo_pato_bridge_migration.tsv")) -> dict[str, str]:
+    """Retired provisional FLOPO bridge quality -> the PATO identifier that replaced it."""
+
+    if not path.exists():
+        return {}
+    with path.open(encoding="utf-8", newline="") as handle:
+        return {row["flopo_id"]: row["pato_id"] for row in csv.DictReader(handle, delimiter="\t")}
+
+
 def guardrail(field: str, word: str, chosen: str, match: str, cands: "Candidates") -> str:
     """Deterministic rejections of readings the review showed to be unsafe."""
 
@@ -306,9 +315,13 @@ def main(argv: list[str] | None = None) -> None:
 
     items = collect(args.dispositions)
     decisions: dict[tuple[str, str], dict] = {}
+    migrated = _bridge_migration()
     if args.cache.exists():
         for line in args.cache.open(encoding="utf-8"):
             row = json.loads(line)
+            # Decisions cached before a provisional FLOPO bridge quality was replaced by its PATO
+            # term (config/flopo_pato_bridge_migration.tsv) keep their meaning under the PATO id.
+            row["id"] = migrated.get(row.get("id", ""), row.get("id", ""))
             if row["match"] != "error":
                 decisions[(row["field"], row["word"])] = row
     todo = [item for item in items if item not in decisions]
@@ -325,7 +338,11 @@ def main(argv: list[str] | None = None) -> None:
     counts: Counter[str] = Counter()
     for (field, word), row in sorted(decisions.items()):
         counts[f"{field}:{row['match']}"] += 1
-        if not row["id"] or guardrail(field, word, row["id"], row["match"], cands):
+        if not row["id"] or row["id"] not in cands.tables[field]:
+            # Empty, or a cached choice of a term the catalogue no longer offers (obsoleted since).
+            counts[f"{field}:stale"] += bool(row["id"])
+            continue
+        if guardrail(field, word, row["id"], row["match"], cands):
             continue
         label = cands.tables[field][row["id"]][0]
         rule = dict.fromkeys(RULE_FIELDS, "")
