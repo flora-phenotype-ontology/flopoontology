@@ -16,6 +16,7 @@ import json
 import sys
 import threading
 import time
+import urllib.error
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
@@ -172,6 +173,10 @@ def _header(segment: dict, model: str, thinking: bool) -> dict:
     }
 
 
+# Seconds to wait after each failed attempt; the last entry is the final attempt's wait (unused).
+RETRY_PAUSES = (10, 30, 60, 120, 0)
+
+
 def transcribe_segment(
     segment: dict,
     *,
@@ -183,7 +188,7 @@ def transcribe_segment(
 ) -> dict:
     prompt = build_prompt(segment, flora_title=flora_title)
     last_error = ""
-    for attempt in range(3):
+    for attempt, pause in enumerate(RETRY_PAUSES):
         try:
             content, usage = call(
                 prompt, base_url=base_url, model=model, key=key, thinking=thinking, max_tokens=4000
@@ -194,7 +199,10 @@ def transcribe_segment(
             break
         except Exception as exc:  # noqa: BLE001
             last_error = f"{type(exc).__name__}: {exc}"
-            time.sleep(2 * (attempt + 1))
+            # Gateway errors (502/504 from the unimatrix proxy, 429) last longer than a parse slip:
+            # wait longer for those before trying again.
+            gateway = isinstance(exc, urllib.error.HTTPError) and exc.code in {429, 500, 502, 503, 504}
+            time.sleep(pause if gateway else min(pause, 2 * (attempt + 1)))
     else:
         return {**_header(segment, model, thinking), "error": last_error}
     return {**_header(segment, model, thinking), **record, "usage": usage}

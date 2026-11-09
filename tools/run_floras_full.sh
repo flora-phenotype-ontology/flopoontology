@@ -27,13 +27,15 @@ ORDER=(
   fdac nybg-naf eflora-fna kew-african eflora-foc wfo
 )
 
+segment_errors() { grep -c '"error"' "local-corpora/$1/raw/$1-qwen.jsonl" 2>/dev/null || echo 0; }
+
 log() { echo "== $(date -Is) $*" | tee -a "$LOGS/driver.log" >&2; }
 
 if [[ ${1:-} == --status ]]; then
   pgrep -f "flopo2.saudi.build|deploy_atlas.sh --stamp" >/dev/null && echo "atlas publish in progress"
   tail -1 "$LOGS/driver.log" 2>/dev/null
   for src in "${ORDER[@]}"; do
-    if [[ -f $DONE/$src ]]; then echo "done     $src  ($(cat "$DONE/$src"))"
+    if [[ -f $DONE/$src ]]; then echo "done     $src  ($(cat "$DONE/$src"); errored segments: $(segment_errors "$src"))"
     elif [[ -f $LOGS/$src.failed ]]; then echo "FAILED   $src"
     elif [[ -f $LOGS/$src.log ]]; then echo "running  $src  ($(tail -c 300 "$LOGS/$src.log" | tr '\n' ' ' | tail -c 160))"
     else echo "pending  $src"; fi
@@ -91,9 +93,18 @@ for src in "${ORDER[@]}"; do
   [[ -f $DONE/$src ]] && continue
   rm -f "$LOGS/$src.failed"
   ok=0
-  for attempt in 1 2 3; do
+  for attempt in 1 2 3 4; do
     log "$src attempt $attempt (WORKERS=$WORKERS)"
-    if tools/build_flora.sh "$src" >> "$LOGS/$src.log" 2>&1; then ok=1; break; fi
+    if tools/build_flora.sh "$src" >> "$LOGS/$src.log" 2>&1; then
+      # Segments whose transcription failed (gateway 502/504) stay in the cache as error rows and
+      # are retried by the next pass; rerun until none remain or the passes are used up.
+      errs=$(segment_errors "$src")
+      if [[ $errs == 0 ]]; then ok=1; break; fi
+      log "$src pass $attempt left $errs errored segments; retrying them in 5 min"
+      [[ $attempt == 4 ]] && { ok=1; log "$src keeps $errs errored segments (see $LOGS/$src.log)"; break; }
+      sleep 300
+      continue
+    fi
     log "$src attempt $attempt failed; waiting 10 min before retrying"
     sleep 600
   done
