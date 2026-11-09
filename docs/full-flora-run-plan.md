@@ -90,10 +90,17 @@ tail -f local-corpora/run-logs/driver.log  # one line per flora, attempt and atl
   time, retrying a failed flora twice (10 minutes apart) before moving on and marking it
   `local-corpora/run-logs/<source>.failed`. A finished flora is marked in
   `local-corpora/run-logs/done/`; remove the marker to run it again.
-- After each flora: `flopo2.saudi.build` (all sources) and `tools/deploy_atlas.sh --stamp
-  <time>-<source>` (tests, release, QLever index, staging checks, switch, live and public
-  checks, automatic rollback). Old atlas releases other than the live one, the previous one
-  and their bases are pruned to hold disk space (each release is about 1 GB).
+- After each flora: `flopo2.saudi.build` (all sources, about 30 minutes) and
+  `tools/deploy_atlas.sh --stamp <time>-<sources>` (tests, release, QLever index, staging
+  checks, switch, live and public checks, automatic rollback; about 10 minutes). The publish
+  runs in the background so the next flora starts at once; one publish at a time, and floras
+  that finish while one is running join the next. Old atlas releases other than the live one,
+  the previous one and their bases are pruned to hold disk space (each release is about 1 GB).
+- The caches and derived corpora under `local-corpora/` name ontology identifiers. After an
+  identifier migration (as for the PATO bridges on 2026-11-08) run
+  `tools/migrate_pato_bridges.py --local-corpora` and regenerate the annotated corpora
+  deterministically (`flora_annotate.run` per flora, the Saudi annotate steps of
+  `tools/build_saudi_flora.sh`), or the atlas build rejects the stale class-expression hashes.
 - The Qwen stages cache every answer in `local-corpora/<source>/raw/<source>-qwen.jsonl` and
   `llm-*.jsonl`, so a crash or a stop loses at most the in-flight batch. Killing the tmux
   session and starting it again resumes where it was.

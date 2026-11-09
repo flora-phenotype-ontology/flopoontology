@@ -30,6 +30,8 @@ ORDER=(
 log() { echo "== $(date -Is) $*" | tee -a "$LOGS/driver.log" >&2; }
 
 if [[ ${1:-} == --status ]]; then
+  pgrep -f "flopo2.saudi.build|deploy_atlas.sh --stamp" >/dev/null && echo "atlas publish in progress"
+  tail -1 "$LOGS/driver.log" 2>/dev/null
   for src in "${ORDER[@]}"; do
     if [[ -f $DONE/$src ]]; then echo "done     $src  ($(cat "$DONE/$src"))"
     elif [[ -f $LOGS/$src.failed ]]; then echo "FAILED   $src"
@@ -60,15 +62,28 @@ for d in sorted(rel.iterdir()):
 PYEOF
 }
 
-publish() {  # source
+publish() {  # label: one flora, or several joined with '+'
   local alog=$LOGS/atlas-$1.log stamp
-  stamp=$(date +%Y%m%d-%H%M)-$1
+  stamp=$(date +%Y%m%d-%H%M)-$(echo "$1" | tr '+' '-' | cut -c1-60)
   log "atlas build after $1 -> $alog"
   if ! "$PY" -m flopo2.saudi.build >> "$alog" 2>&1; then log "ATLAS BUILD FAILED after $1 (see $alog)"; return 1; fi
   log "atlas deploy $stamp"
   if ! tools/deploy_atlas.sh --stamp "$stamp" >> "$alog" 2>&1; then log "ATLAS DEPLOY FAILED after $1 (see $alog)"; return 1; fi
   log "atlas live: $stamp"
   prune_releases >> "$alog" 2>&1 || true
+}
+
+# The atlas rebuild and deployment take about 40 minutes; they run in the background so the next
+# flora's Qwen work starts at once. One publish at a time: floras that finish while a publish is
+# running are included in the next one.
+PUB_PID="" PENDING=()
+publish_pending() {
+  [[ ${#PENDING[@]} -gt 0 ]] || return 0
+  if [[ -n $PUB_PID ]] && kill -0 "$PUB_PID" 2>/dev/null; then return 0; fi
+  local label; label=$(IFS=+; echo "${PENDING[*]}")
+  publish "$label" &
+  PUB_PID=$!
+  PENDING=()
 }
 
 log "driver start: WORKERS=$WORKERS, ${#ORDER[@]} floras"
@@ -90,6 +105,10 @@ for src in "${ORDER[@]}"; do
   fi
   date -Is > "$DONE/$src"
   log "$src complete"
-  publish "$src" || true
+  PENDING+=("$src")
+  publish_pending
 done
+if [[ -n $PUB_PID ]]; then wait "$PUB_PID" || true; fi
+publish_pending
+if [[ -n $PUB_PID ]]; then wait "$PUB_PID" || true; fi
 log "driver finished; failed: $(ls "$LOGS"/*.failed 2>/dev/null | xargs -n1 basename 2>/dev/null | sed 's/.failed//' | tr '\n' ' ')"
