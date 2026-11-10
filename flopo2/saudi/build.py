@@ -24,6 +24,7 @@ import argparse
 import csv
 import hashlib
 import json
+import sys
 import re
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -746,8 +747,11 @@ class Builder:
             if rebuild_assertions or not assertions.exists() or assertions.stat().st_mtime < tagged.stat().st_mtime:
                 # Embed each annotation class's OWL definition: negation as ObjectComplementOf,
                 # numeric values as xsd:decimal ranges with UO units.
+                # N-Triples (valid Turtle, so the .ttl name stays): rdflib's Turtle writer is
+                # superlinear and took 21 min for 283 treatments against 5 s for N-Triples; it never
+                # finished eFlora of China (34k).
                 build_assertion_ontology(
-                    tagged, assertions, version="saudi-flora", output_format="turtle",
+                    tagged, assertions, version="saudi-flora", output_format="nt",
                     embed_annotation_classes=True,
                 )
             files[f"{key}/assertions"] = assertions
@@ -873,9 +877,29 @@ def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--sources", nargs="+", default=list(SOURCES))
     parser.add_argument("--rebuild-assertions", action="store_true")
+    parser.add_argument("--include-unfinished", action="store_true",
+                        help="also build sources whose full flora run has not completed")
     args = parser.parse_args(argv)
     available = [s for s in args.sources if SOURCES[s]["corpus"].exists()]
+    unfinished = [] if args.include_unfinished else _unfinished_flora_runs(available)
+    if unfinished:
+        print(f"leaving out floras whose full run is unfinished: {' '.join(unfinished)}", file=sys.stderr)
+    available = [s for s in available if s not in unfinished]
     print(json.dumps(Builder().build(available, args.rebuild_assertions), indent=1))
+
+
+RUN_LOGS = Path("local-corpora/run-logs")
+
+
+def _unfinished_flora_runs(sources: list[str]) -> list[str]:
+    """Sources the full flora run (tools/run_floras_full.sh) has started but not completed.
+
+    Their annotated corpus is a partial snapshot that the run keeps rewriting, and building its
+    assertion module can take hours (eFlora of China), so the atlas keeps their earlier state
+    out until the run marks them done. Sources the run has not touched keep their pilot corpus.
+    """
+
+    return [s for s in sources if (RUN_LOGS / f"{s}.log").exists() and not (RUN_LOGS / "done" / s).exists()]
 
 
 if __name__ == "__main__":

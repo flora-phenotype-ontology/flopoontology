@@ -305,3 +305,15 @@ def test_compound_habit_with_ocr_digit_and_transcribed_compound():
                   [_row("whole plant", "herbaceous subshrub", "herbaceous shrub")])
     merge_compound_habits(rec)
     assert rec["phenotypes"][0]["quality_en"] == "woody herb"
+
+
+def test_atlas_leaves_out_unfinished_flora_runs(tmp_path, monkeypatch):
+    import flopo2.saudi.build as build
+
+    logs = tmp_path / "run-logs"
+    (logs / "done").mkdir(parents=True)
+    (logs / "flora-a.log").write_text("running\n")      # started, not done: left out
+    (logs / "flora-b.log").write_text("finished\n")
+    (logs / "done" / "flora-b").write_text("2026-11-10\n")  # done: kept
+    monkeypatch.setattr(build, "RUN_LOGS", logs)
+    assert build._unfinished_flora_runs(["flora-a", "flora-b", "flora-c"]) == ["flora-a"]

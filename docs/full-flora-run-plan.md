@@ -106,6 +106,12 @@ tail -f local-corpora/run-logs/driver.log  # one line per flora, attempt and atl
   session and starting it again resumes where it was.
 - Transcriptions cut off at the output cap (long treatments) are retried with a larger cap
   (4k, 8k, 12k, 16k tokens) before a segment is recorded as errored.
+- The atlas build leaves out floras whose full run has started but not finished (a run log in
+  `local-corpora/run-logs/` without a `done/` marker; `--include-unfinished` overrides), so a
+  partial corpus never enters the website and never delays a publish. Assertion modules are written
+  as N-Triples under their `.ttl` names: rdflib's Turtle writer is superlinear (21 min against 5 s
+  for 283 treatments) and a publish that included the partial eFlora of China hung for 16 hours
+  on 2026-11-09/10.
 - One manual command still works for a single flora: `WORKERS=4 LIMIT=0 tools/build_flora.sh <source>`.
 - Watch `squeue`-free: the endpoint is a plain HTTP service, so check
   `curl -s unimatrix01.kaust.edu.sa:8000/v1/models` and the per-source log for 429/5xx.
