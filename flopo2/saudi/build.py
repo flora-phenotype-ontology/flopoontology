@@ -23,6 +23,7 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import filecmp
 import json
 import sys
 import re
@@ -130,6 +131,33 @@ def _number(value) -> Literal | None:
         return Literal(float(value), datatype=XSD.decimal)
     except (TypeError, ValueError):
         return None
+
+
+class _NTriplesSink:
+    """Write-only graph for the per-source index and places graphs: buffers ``add`` calls in a
+    small rdflib graph and appends it to an N-Triples file every ``chunk`` triples, so eFlora of
+    China's index never has to fit in memory at once (ws runs with strict overcommit)."""
+
+    def __init__(self, path: Path, chunk: int = 200_000) -> None:
+        self.path, self.chunk = path, chunk
+        self.partial = path.with_name(path.name + ".partial")
+        self.handle = self.partial.open("wb")
+        self.graph = Graph()
+
+    def add(self, triple) -> None:
+        self.graph.add(triple)
+        if len(self.graph) >= self.chunk:
+            self._flush()
+
+    def _flush(self) -> None:
+        self.handle.write(self.graph.serialize(format="nt", encoding="utf-8"))
+        self.graph = Graph()
+
+    def close(self) -> Path:
+        self._flush()
+        self.handle.close()
+        self.partial.replace(self.path)
+        return self.path
 
 
 class Builder:
@@ -733,16 +761,19 @@ class Builder:
             cfg = SOURCES[key]
             # Shared taxon IRIs: the assertion module uses record["taxon_iri"] as the taxon class.
             tagged = rdf / f"{key}-corpus-tagged.jsonl"
-            lines = []
-            with cfg["corpus"].open(encoding="utf-8") as src:
+            # Streamed through a temporary file: eFlora of China's corpus is 2.4 GB, and holding it
+            # in memory three times over (lines, joined text, old file) raised MemoryError.
+            fresh = tagged.with_name(tagged.name + ".new")
+            with cfg["corpus"].open(encoding="utf-8") as src, fresh.open("w", encoding="utf-8") as dst:
                 for line in src:
                     record = json.loads(line)
                     record["taxon_iri"] = str(self.taxon(record["taxon"], key))
-                    lines.append(json.dumps(record, ensure_ascii=False) + "\n")
-            content = "".join(lines)
+                    dst.write(json.dumps(record, ensure_ascii=False) + "\n")
             # Rewrite only on change: the assertion module (minutes to build) follows its mtime.
-            if not tagged.exists() or tagged.read_text(encoding="utf-8") != content:
-                tagged.write_text(content, encoding="utf-8")
+            if tagged.exists() and filecmp.cmp(fresh, tagged, shallow=False):
+                fresh.unlink()
+            else:
+                fresh.replace(tagged)
             assertions = rdf / f"{key}-assertions.ttl"
             if rebuild_assertions or not assertions.exists() or assertions.stat().st_mtime < tagged.stat().st_mtime:
                 # Embed each annotation class's OWL definition: negation as ObjectComplementOf,
@@ -756,19 +787,17 @@ class Builder:
                 )
             files[f"{key}/assertions"] = assertions
 
-            index = Graph()
+            index = _NTriplesSink(rdf / f"{key}-index.nt")
+            places = _NTriplesSink(rdf / f"{key}-places.nt")
             counts = self.index_corpus(key, cfg["corpus"], index)
-            places = Graph()
             if key == "ncvc":
                 counts["occurrences"] = self.ncvc_places(cfg, places)
                 counts["growth_traits"] = self.ncvc_extras(cfg, index)
             else:
                 counts["occurrences"] = self.collenette_extras(cfg, places, key=key)
             counts.update(_disposition_counts(cfg["dispositions"]))
-            for name, graph in ((f"{key}/index", index), (f"{key}/places", places)):
-                path = rdf / f"{name.replace('/', '-')}.nt"
-                graph.serialize(path, format="nt", encoding="utf-8")
-                files[name] = path
+            for name, sink in ((f"{key}/index", index), (f"{key}/places", places)):
+                files[name] = sink.close()
             self.summary[key] = dict(counts)
         merged = self.merged_graph()
         self.summary["merged_ranges"] = len(set(merged.subjects(RDF.type, FB.MergedTrait)))
@@ -882,21 +911,30 @@ def main(argv: list[str] | None = None) -> None:
     args = parser.parse_args(argv)
     available = [s for s in args.sources if SOURCES[s]["corpus"].exists()]
     unfinished = [] if args.include_unfinished else _unfinished_flora_runs(available)
-    if unfinished:
-        print(f"leaving out floras whose full run is unfinished: {' '.join(unfinished)}", file=sys.stderr)
-    available = [s for s in available if s not in unfinished]
+    for key in unfinished:
+        # Keep the state the atlas built last time: the tagged copy it saved (a JSONL corpus with
+        # taxon_iri added), not the live corpus the run is rewriting.
+        snapshot = RDF_DIR / f"{key}-corpus-tagged.jsonl"
+        if snapshot.exists():
+            SOURCES[key] = {**SOURCES[key], "corpus": snapshot}
+            print(f"{key}: full run unfinished; using the previous atlas snapshot {snapshot}", file=sys.stderr)
+        else:
+            available.remove(key)
+            print(f"{key}: full run unfinished and no previous snapshot; left out", file=sys.stderr)
     print(json.dumps(Builder().build(available, args.rebuild_assertions), indent=1))
 
 
 RUN_LOGS = Path("local-corpora/run-logs")
+RDF_DIR = OUT / "rdf"
 
 
 def _unfinished_flora_runs(sources: list[str]) -> list[str]:
     """Sources the full flora run (tools/run_floras_full.sh) has started but not completed.
 
     Their annotated corpus is a partial snapshot that the run keeps rewriting, and building its
-    assertion module can take hours (eFlora of China), so the atlas keeps their earlier state
-    out until the run marks them done. Sources the run has not touched keep their pilot corpus.
+    assertion module takes long (eFlora of China), so the atlas keeps the snapshot of their
+    earlier state until the run marks them done. Sources the run has not touched keep their
+    pilot corpus.
     """
 
     return [s for s in sources if (RUN_LOGS / f"{s}.log").exists() and not (RUN_LOGS / "done" / s).exists()]

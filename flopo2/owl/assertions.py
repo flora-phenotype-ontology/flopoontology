@@ -174,6 +174,9 @@ ANNOTATION_PROPERTIES = {
 }
 
 
+STREAM_CHUNK_TRIPLES = 200_000
+
+
 class _Nodes:
     """Deterministic blank-node allocator for reproducible source modules."""
 
@@ -1036,8 +1039,11 @@ def build_assertion_ontology(
     standalone-debugging option and must not be used as the released source-module design.
     """
 
-    input_bytes = Path(gated_jsonl).read_bytes()
-    module_digest = hashlib.sha256(input_bytes).hexdigest()[:20]
+    digest = hashlib.sha256()
+    with Path(gated_jsonl).open("rb") as raw:  # streamed: inputs reach 2.4 GB (eFlora of China)
+        for block in iter(lambda: raw.read(1 << 24), b""):
+            digest.update(block)
+    module_digest = digest.hexdigest()[:20]
     ontology_iri = URIRef(f"http://phenomebrowser.net/flopo/assertion-module/{module_digest}")
     graph = Graph()
     nodes = _Nodes()
@@ -1070,10 +1076,31 @@ def build_assertion_ontology(
     embedded_classes: set[str] = set()
     source_positions: Counter[tuple[str, str]] = Counter()
 
+    # N-Triples is line-based, so it is written in chunks instead of holding the whole module in
+    # one rdflib graph (eFlora of China: ~40 GB, beyond the commit limit on ws). Blank nodes come
+    # from one deterministic counter, so chunks never clash. A triple repeated in two chunks (a
+    # taxon's or class's rdf:type) is written twice, which RDF stores read as one.
+    streaming = (output_format or "").strip().lower().replace("_", "-") in {"nt", "ntriples", "n-triples"}
+    sink = None
+    written = 0
+    if streaming:
+        out_owl.parent.mkdir(parents=True, exist_ok=True)
+        partial = out_owl.with_name(out_owl.name + ".partial")
+        sink = partial.open("wb")
+
+    def flush(force: bool = False) -> None:
+        nonlocal graph, written
+        if sink is None or (not force and len(graph) < STREAM_CHUNK_TRIPLES):
+            return
+        written += len(graph)
+        sink.write(graph.serialize(format="nt", encoding="utf-8"))
+        graph = Graph()
+
     with Path(gated_jsonl).open(encoding="utf-8") as handle:
         for line in handle:
             if not line.strip():
                 continue
+            flush()
             record = json.loads(line)
             source_key = (str(record.get("source", "")), str(record.get("source_id", "")))
             record.setdefault("source_segment_index", source_positions[source_key])
@@ -1229,14 +1256,20 @@ def build_assertion_ontology(
                 counts["disjunctive_descriptions"] += int(disjunctive)
 
     out_owl.parent.mkdir(parents=True, exist_ok=True)
-    serialize_ontology(graph, out_owl, output_format)
+    if sink is not None:
+        flush(force=True)
+        sink.close()
+        partial.replace(out_owl)
+    else:
+        serialize_ontology(graph, out_owl, output_format)
+        written = len(graph)
     return {
         **dict(counts),
         "annotation_classes": len(annotation_classes),
         "reused_annotation_class_links": counts["fac_assertions"] - len(annotation_classes),
         "embedded_annotation_classes": len(embedded_classes),
         "ontology_iri": str(ontology_iri),
-        "triples": len(graph),
+        "triples": written,
         "out": str(out_owl),
     }
 

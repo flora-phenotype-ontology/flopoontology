@@ -141,8 +141,15 @@ if [[ $WEB_ONLY == 0 ]]; then
 log "QLever index"
 mkdir -p "$REL/index"
 files=(); for f in "$REL"/rdf/*.nq; do files+=(-f "rdf/$(basename "$f")"); done
+# Bounded memory: ws runs with strict overcommit (vm.overcommit_memory=2) next to other workloads,
+# and QLever's defaults (every hardware thread with a 10M-triple batch) failed with std::bad_alloc
+# once eFlora of China took the release to 24 GB of N-Quads (2026-11-10), even at 8 threads and
+# 2M-triple batches. 2 threads, 1M-triple batches and 1 GB of sort memory indexed eFlora of China's
+# 60M assertion triples in 6 min with 33 GB of commit.
+echo '{"num-triples-per-batch": 1000000}' > "$REL/index/settings.json"
 docker run --rm -u "$(id -u):$(id -g)" -v "$REL:/data" -w /data --entrypoint /qlever/qlever-index "$QLEVER_IMAGE" \
-  -i index/atlas "${files[@]}" -F nq > "$REL/index.log" 2>&1 || { tail -20 "$REL/index.log"; die "index build failed"; }
+  -i index/atlas "${files[@]}" -F nq -s index/settings.json -j "${QLEVER_INDEX_THREADS:-2}" \
+  -m "${QLEVER_INDEX_MEMORY:-1G}" > "$REL/index.log" 2>&1 || { tail -20 "$REL/index.log"; die "index build failed"; }
 log "QLever $COLOUR on port ${PORT[$COLOUR]}"
 start_qlever "$COLOUR" "$STAMP"
 fi

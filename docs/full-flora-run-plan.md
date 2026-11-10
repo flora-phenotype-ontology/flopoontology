@@ -106,12 +106,19 @@ tail -f local-corpora/run-logs/driver.log  # one line per flora, attempt and atl
   session and starting it again resumes where it was.
 - Transcriptions cut off at the output cap (long treatments) are retried with a larger cap
   (4k, 8k, 12k, 16k tokens) before a segment is recorded as errored.
-- The atlas build leaves out floras whose full run has started but not finished (a run log in
-  `local-corpora/run-logs/` without a `done/` marker; `--include-unfinished` overrides), so a
-  partial corpus never enters the website and never delays a publish. Assertion modules are written
+- For a flora whose full run has started but not finished (a run log in
+  `local-corpora/run-logs/` without a `done/` marker), the atlas build uses the snapshot it saved
+  last time (`local-corpora/saudi-flora/rdf/<source>-corpus-tagged.jsonl`) instead of the corpus
+  the run is rewriting, so the website keeps that flora's earlier state (dropping it fails the
+  deploy's coverage check, C6) until the run marks it done; `--include-unfinished` reads the live
+  corpus instead. Assertion modules are written
   as N-Triples under their `.ttl` names: rdflib's Turtle writer is superlinear (21 min against 5 s
   for 283 treatments) and a publish that included the partial eFlora of China hung for 16 hours
-  on 2026-11-09/10.
+  on 2026-11-09/10. The assertion modules and the per-source index and places graphs are streamed
+  to disk in chunks of 200,000 triples: ws runs with strict overcommit (`vm.overcommit_memory=2`)
+  beside other workloads, and eFlora of China held as one rdflib graph (about 40 GB) failed with
+  `MemoryError`. The QLever index is built with 2 threads, 1M-triple batches and 1 GB of sort memory
+  (`QLEVER_INDEX_THREADS`, `QLEVER_INDEX_MEMORY` override) for the same reason.
 - One manual command still works for a single flora: `WORKERS=4 LIMIT=0 tools/build_flora.sh <source>`.
 - Watch `squeue`-free: the endpoint is a plain HTTP service, so check
   `curl -s unimatrix01.kaust.edu.sa:8000/v1/models` and the per-source log for 429/5xx.
