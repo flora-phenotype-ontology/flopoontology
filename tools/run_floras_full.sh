@@ -4,14 +4,15 @@
 # (docs/full-flora-run-plan.md).
 #
 # Two lanes share one queue. LANE=unimatrix (default) uses the shared endpoint on unimatrix01 and
-# takes the smallest flora first; LANE=orix is started by tools/orix_qwen_lane.sh against a vLLM job
-# on an ORIX freecycle GPU and takes the largest flora first (WFO excluded until decided). A lane
+# takes the smallest flora first; the ORIX lane (tools/orix_flora_lane.py) runs the pipeline step by
+# step against a vLLM job on an ORIX freecycle GPU and takes the largest flora first. A lane
 # claims a flora in local-corpora/run-logs/claims/<source> while it works on it, so the lanes never
 # take the same flora; a claim whose holder process is gone counts as released.
 #
 #   tmux new -d -s flopo-floras 'tools/run_floras_full.sh'
 #   WORKERS=4 tools/run_floras_full.sh            # default: 4 concurrent Qwen requests
 #   tools/run_floras_full.sh --status             # what is done, running, failed, and the ORIX lane
+#   tools/run_floras_full.sh --publish-pending    # publish the queued floras now (waits)
 #
 # Endpoint: LLM_BASE_URL / LLM_MODEL / LLM_KEY_FILE (read by tools/build_flora.sh; default the
 # unimatrix endpoint). With HEALTH_URL set, a build is stopped when the endpoint has not answered
@@ -47,6 +48,8 @@ if [[ $LANE == orix ]]; then  # largest first; ORIX_SKIP (default wfo) is left t
   done
   ORDER=("${rev[@]}")
 fi
+# ONLY="a b": run just these floras (in this order), e.g. to finish one flora on another lane.
+if [[ -n ${ONLY:-} ]]; then read -ra ORDER <<< "$ONLY"; fi
 
 # Segments with no successful transcription yet (the cache is append-only: an error row is
 # superseded by a later good row for the same source_id).
@@ -150,6 +153,14 @@ publish_pending() {
   ) &
   PUB_PID=$!
 }
+
+# --publish-pending: publish what is queued (if no other lane holds the lock) and wait for it;
+# used by tools/orix_flora_lane.py when it completes a flora.
+if [[ ${1:-} == --publish-pending ]]; then
+  publish_pending
+  if [[ -n $PUB_PID ]]; then wait "$PUB_PID" || true; fi
+  exit 0
+fi
 
 ENDPOINT_DOWN=0
 endpoint_up() { [[ -z ${HEALTH_URL:-} ]] || curl -sf -m 10 "$HEALTH_URL" >/dev/null; }

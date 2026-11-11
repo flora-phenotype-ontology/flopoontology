@@ -4,7 +4,7 @@
 #   tools/build_flora.sh powo-fiq powo-cayman
 #   LIMIT=200 tools/build_flora.sh eflora-fna eflora-foc
 # Endpoint: LLM_BASE_URL, LLM_MODEL, LLM_KEY_FILE override the unimatrix defaults of the LLM stages
-# (used by the ORIX lane, tools/orix_qwen_lane.sh).
+# (another endpoint, e.g. for a manual run against an ORIX job).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 export PYTHONPATH="${PYTHONPATH:-.}"
