@@ -142,12 +142,15 @@ after its Qwen work was finished.
   step is next, 11: a deterministic one). Step markers in `local-corpora/<source>/derived/.pipeline-steps/`
   record the caches each step saw, so a rerun skips complete steps; `--redo` ignores them after
   ontology, lexicon or code changes.
-- The lane works on two floras at once, largest first (WFO excluded, `ORIX_SKIP`). Their
-  deterministic steps run on ws. Their Qwen steps (48 concurrent requests each) run against a vLLM
-  job (`tools/orix/qwen_flopo.sbatch`, Qwen3.8-27B-FP8 on one GPU, about four minutes to start,
-  per-job random key) through an SSH tunnel via the login node (`127.0.0.1:8200` on ws).
-- The job is submitted when a flora waits for a Qwen step and cancelled as soon as none does. While
-  one flora annotates on ws the other can use the GPU. The job also exits on its own after five
+- The lane works on up to ten floras at once, largest first (WFO excluded, `ORIX_SKIP`). Their
+  deterministic steps run on ws (three at a time). Their Qwen steps (64 concurrent requests each)
+  run against vLLM jobs (`tools/orix/qwen_flopo.sbatch`, Qwen3.8-27B-FP8, one GPU per job, about
+  four minutes to start, per-job random key), up to four at once (`--max-gpus`; freecycle sets no
+  per-user limit), each through its own SSH tunnel via the login node (`127.0.0.1:8200`, `8201`, …
+  on ws).
+- Each job serves up to two floras' Qwen steps (two measured 96-100 % on an H100). Jobs are
+  submitted as floras wait for Qwen steps (one per two) and cancelled as soon as they have nothing
+  to serve, so no GPU waits on an annotation pass. The job also exits on its own after five
   minutes without a request, and logs the GPU's utilization every 30 s to
   `logs/gpu-<job>.csv` on ORIX; the lane reports the mean in its log every 15 minutes.
 - When the job is preempted or dies, the Qwen steps in flight are stopped and resume from their
