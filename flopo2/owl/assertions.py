@@ -1079,7 +1079,7 @@ def build_assertion_ontology(
     # N-Triples is line-based, so it is written in chunks instead of holding the whole module in
     # one rdflib graph (eFlora of China: ~40 GB, beyond the commit limit on ws). Blank nodes come
     # from one deterministic counter, so chunks never clash. A triple repeated in two chunks (a
-    # taxon's or class's rdf:type) is written twice, which RDF stores read as one.
+    # taxon's or class's rdf:type) is removed afterwards with an external sort.
     streaming = (output_format or "").strip().lower().replace("_", "-") in {"nt", "ntriples", "n-triples"}
     sink = None
     written = 0
@@ -1257,8 +1257,13 @@ def build_assertion_ontology(
 
     out_owl.parent.mkdir(parents=True, exist_ok=True)
     if sink is not None:
+        chunks_written = written > 0
         flush(force=True)
         sink.close()
+        if chunks_written:  # more than one chunk: a triple may recur across chunks
+            from flopo2.owl.io import dedupe_ntriples
+            dedupe_ntriples(partial)
+            written = sum(1 for _ in partial.open("rb"))
         partial.replace(out_owl)
     else:
         serialize_ontology(graph, out_owl, output_format)

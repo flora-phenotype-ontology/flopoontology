@@ -37,6 +37,7 @@ from rdflib.namespace import DCTERMS, SKOS
 
 from flopo2.ingest.external import FLORA_SOURCES
 from flopo2.owl.annotation_class import annotation_class_iri
+from flopo2.owl.io import dedupe_ntriples
 from flopo2.owl.assertions import (
     HAS_PHENOTYPE,
     UNIT_IRIS,
@@ -143,6 +144,7 @@ class _NTriplesSink:
         self.partial = path.with_name(path.name + ".partial")
         self.handle = self.partial.open("wb")
         self.graph = Graph()
+        self.flushed = 0
 
     def add(self, triple) -> None:
         self.graph.add(triple)
@@ -152,10 +154,14 @@ class _NTriplesSink:
     def _flush(self) -> None:
         self.handle.write(self.graph.serialize(format="nt", encoding="utf-8"))
         self.graph = Graph()
+        self.flushed += 1
 
     def close(self) -> Path:
+        chunked = self.flushed
         self._flush()
         self.handle.close()
+        if chunked:  # a triple may recur across chunks
+            dedupe_ntriples(self.partial)
         self.partial.replace(self.path)
         return self.path
 

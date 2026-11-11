@@ -156,3 +156,23 @@ def parse_ontology(path: Path, owl_format: str | None = None) -> Graph:
             for imported_iri in imports:
                 graph.add((ontology, OWL.imports, URIRef(imported_iri)))
         return graph
+
+
+def dedupe_ntriples(path: Path, *, memory: str = "1G") -> None:
+    """Drop repeated lines of an N-Triples file in place with an external sort (bounded memory).
+
+    Streamed writers emit a triple again when it recurs in a later chunk (a taxon's or class's
+    rdf:type); SPARQL stores keep one copy, and the atlas staging check compares counts exactly.
+    Blank-node labels are fixed within a file, so sorting lines keeps the graph unchanged.
+    """
+
+    import os
+    import subprocess
+
+    path = Path(path)
+    tmp = path.with_name(path.name + ".sorted")
+    subprocess.run(
+        ["sort", "-u", "-S", memory, "--parallel=2", "-T", str(path.parent), "-o", str(tmp), str(path)],
+        check=True, env={**os.environ, "LC_ALL": "C"},
+    )
+    tmp.replace(path)
