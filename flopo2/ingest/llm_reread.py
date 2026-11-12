@@ -180,7 +180,7 @@ def main(argv: list[str] | None = None) -> None:
     args.out.parent.mkdir(parents=True, exist_ok=True)
     with args.out.open("a", encoding="utf-8") as sink, ThreadPoolExecutor(args.workers) as pool:
         for row in pool.map(lambda i: reread(i, base_url=args.base_url, model=args.model, key=key), todo):
-            sink.write(json.dumps(row, ensure_ascii=False) + "\n")
+            sink.write(json.dumps(row, ensure_ascii=False).encode("utf-8", "replace").decode("utf-8") + "\n")  # lone surrogates -> "?"
             sink.flush()
     print(f"{len(todo)} rows sent to {args.model}; {len(load(args.out))} cached answers")
 

@@ -334,7 +334,7 @@ def main(argv: list[str] | None = None) -> None:
     with args.cache.open("a", encoding="utf-8") as cache, ThreadPoolExecutor(args.workers) as pool:
         for row in pool.map(lambda it: decide(it, items[it], cands, args.base_url, args.model, key), todo):
             decisions[(row["field"], row["word"])] = row
-            cache.write(json.dumps(row, ensure_ascii=False) + "\n")
+            cache.write(json.dumps(row, ensure_ascii=False).encode("utf-8", "replace").decode("utf-8") + "\n")  # lone surrogates -> "?"
             cache.flush()
 
     rules = []

@@ -770,7 +770,18 @@ async function pendingPhrases(d) {
 }
 
 /* ---------------------------------------------------------------- router */
-async function route() {
+// Pages render one at a time, in order: a slow page that finishes after the reader has moved on
+// would otherwise overwrite the newer page (or fail on its vanished elements and show an error).
+// Navigations queued behind a slow page collapse into one render of the current address.
+let routing = Promise.resolve();
+let routeQueued = false;
+function route() {
+  if (routeQueued) return routing;
+  routeQueued = true;
+  routing = routing.then(() => { routeQueued = false; return renderRoute(); });
+  return routing;
+}
+async function renderRoute() {
   const [path, qs] = location.hash.replace(/^#/, "").split("?");
   const parts = (path || "/").split("/").filter(Boolean);
   const section = parts[0] || "overview";

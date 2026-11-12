@@ -45,7 +45,7 @@ RDIR = "/mnt/data/u/hohndor/flopo-qwen"
 GRES = {"h100": "gpu:nvidia_h100_80gb_hbm3:1", "h200": "gpu:nvidia_h200:1"}
 # Largest first (the unimatrix lane takes the smallest first; the lanes meet in the middle).
 ORDER = [
-    "eflora-foc", "kew-african", "eflora-fna", "nybg-naf", "fdac", "powo-neotropical", "eflora-other",
+    "eflora-foc", "kew-african", "eflora-fna", "nybg-naf", "fdac-genera", "fdac", "powo-neotropical", "eflora-other",
     "eflora-fop", "flora-zimbabwe", "flora-gabon", "flora-malesiana", "eflora-mfoc", "smithsonian-botany",
     "illinois-wildflowers", "flora-guianas", "feis-plants", "powo-ftea", "powo-fz", "usda-plants",
     "africa-tree-db", "plazi", "plants-tibet", "powo-ildis", "powo-kew", "powo-fwta", "phytokeys",

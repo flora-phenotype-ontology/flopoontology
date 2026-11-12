@@ -269,7 +269,10 @@ def run_transcription(
             record = future.result()
             errors += "error" in record
             with lock:
-                sink.write(json.dumps(record, ensure_ascii=False) + "\n")
+                # A source text with an undecodable byte carries it as a lone surrogate, which
+                # UTF-8 cannot encode; write it as "?" instead of losing the run.
+                line = json.dumps(record, ensure_ascii=False)
+                sink.write(line.encode("utf-8", "replace").decode("utf-8") + "\n")
                 sink.flush()
             if count % 25 == 0 or count == len(todo):
                 rate = count / max(time.time() - started, 1e-6)
