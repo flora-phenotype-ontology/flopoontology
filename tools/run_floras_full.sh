@@ -41,8 +41,8 @@ ORDER=(
   eflora-mfoc flora-malesiana flora-gabon flora-zimbabwe eflora-fop eflora-other powo-neotropical
   fdac nybg-naf eflora-fna kew-african eflora-foc wfo
 )
-if [[ $LANE == orix ]]; then  # largest first; ORIX_SKIP (default wfo) is left to a decision
-  skip=" ${ORIX_SKIP:-wfo} " rev=()
+if [[ $LANE == orix ]]; then  # largest first; ORIX_SKIP: floras to leave out
+  skip=" ${ORIX_SKIP:-} " rev=()
   for ((i = ${#ORDER[@]} - 1; i >= 0; i--)); do
     [[ $skip == *" ${ORDER[i]} "* ]] || rev+=("${ORDER[i]}")
   done

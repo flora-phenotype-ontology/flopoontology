@@ -50,7 +50,7 @@ ORDER = [
     "illinois-wildflowers", "flora-guianas", "feis-plants", "powo-ftea", "powo-fz", "usda-plants",
     "africa-tree-db", "plazi", "plants-tibet", "powo-ildis", "powo-kew", "powo-fwta", "phytokeys",
     "powo-fsom", "silvics-na", "powo-cayman", "korup-flora", "powo-cate", "powo-fiq", "powo-grassbase",
-    "eflora-fom", "eflora-andes", "powo-tong",
+    "eflora-fom", "eflora-andes", "powo-tong", "wfo",
 ]
 
 
@@ -486,7 +486,7 @@ def main() -> int:
                              "while some floras annotate)")
     parser.add_argument("--workers", type=int, default=64, help="concurrent requests per flora LLM step")
     parser.add_argument("--cpu-parallel", type=int, default=3, help="deterministic steps run at once on ws")
-    parser.add_argument("--skip", default=os.environ.get("ORIX_SKIP", "wfo"), help="floras this lane leaves alone")
+    parser.add_argument("--skip", default=os.environ.get("ORIX_SKIP", ""), help="floras this lane leaves alone")
     args = parser.parse_args()
     args.active = args.active or args.max_gpus * args.per_gpu + 2
     return Lane(args).run()
