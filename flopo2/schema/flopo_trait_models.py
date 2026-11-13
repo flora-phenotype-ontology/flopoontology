@@ -143,6 +143,36 @@ class QualitativeRelationInterpretation(str, Enum):
     temporal_transition = "temporal_transition"
 
 
+class ValueUnionScope(str, Enum):
+    """
+    Whether the alternatives of a one_of value share one attribute.
+    """
+    same_attribute = "same_attribute"
+    across_attributes = "across_attributes"
+
+
+class SpecimenConditionKind(str, Enum):
+    """
+    Condition of the specimen a statement is restricted to.
+    """
+    dried = "dried"
+    """
+    Dried or pressed herbarium material ("when dry", "in sicco", "drying black").
+    """
+    fresh = "fresh"
+    """
+    Fresh or living material, said in contrast to dried material ("when fresh").
+    """
+    moistened = "moistened"
+    """
+    Wetted or soaked material ("on wetting", "when moist").
+    """
+    preserved = "preserved"
+    """
+    Material in spirit or another preservative.
+    """
+
+
 class NegationScope(str, Enum):
     """
     Logical target of an explicit negative phenotype assertion.
@@ -337,6 +367,8 @@ class SourceStatement(ConfiguredBaseModel):
                        'ValueOperand',
                        'SeasonContext',
                        'RelationalTarget',
+                       'QualifiedWhole',
+                       'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
     end: int = Field(default=..., description="""Zero-based exclusive offset in the source segment.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SourceStatement',
@@ -344,6 +376,8 @@ class SourceStatement(ConfiguredBaseModel):
                        'ValueOperand',
                        'SeasonContext',
                        'RelationalTarget',
+                       'QualifiedWhole',
+                       'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
     document_start: Optional[int] = Field(default=None, description="""Zero-based inclusive offset in the source document, when available.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SourceStatement']} })
@@ -363,6 +397,8 @@ class UnresolvedTraitSpan(ConfiguredBaseModel):
                        'ValueOperand',
                        'SeasonContext',
                        'RelationalTarget',
+                       'QualifiedWhole',
+                       'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
     end: int = Field(default=..., description="""Zero-based exclusive character offset in the source segment.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SourceStatement',
@@ -370,6 +406,8 @@ class UnresolvedTraitSpan(ConfiguredBaseModel):
                        'ValueOperand',
                        'SeasonContext',
                        'RelationalTarget',
+                       'QualifiedWhole',
+                       'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
     surface_form: str = Field(default=..., description="""Exact source text selected by start and end.""", json_schema_extra = { "linkml_meta": {'domain_of': ['UnresolvedTraitSpan', 'TermMention']} })
@@ -427,6 +465,9 @@ class TraitAssertion(ConfiguredBaseModel):
     bearer_collection: Optional[bool] = Field(default=None, description="""The bearer is a collection of anatomical_entity parts (object aggregate and has_member some E): \"flowers in groups of 4-6\" is the amount 4-6 of such a collection of flowers. Part of the FAC signature when present.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
     bearer_collection_size: Optional[int] = Field(default=None, description="""The bearer is a collection with exactly this many members of the anatomical_entity class (2 for \"pairs of leaflets\"): object aggregate and has_member exactly n E. Part of the FAC signature when present.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
     towards: Optional[RelationalTarget] = Field(default=None, description="""The second term of a relational quality: \"style shorter than the corolla tube\" is the quality decreased length of the style towards (RO:0002503) the corolla tube. Compiled as has_quality some (Q and towards some E2); part of the FAC signature when present.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
+    bearer_whole: Optional[QualifiedWhole] = Field(default=None, description="""The bearer is part of a structure that itself has stated qualities: \"calyx of male flowers\" is calyx and part_of some (flower and has_quality some male). Part of the FAC signature. Not used together with bearer_container.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
+    specimen_condition: Optional[SpecimenCondition] = Field(default=None, description="""The statement holds of the specimen in a stated condition of preservation or treatment (\"black when dry\", \"when fresh\", \"on wetting\"), not of the living plant as such. An assertion with a specimen condition carries no phenotype_class_iri, is not compiled into a taxon axiom and is not compared for conflicts.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
+    value_union_scope: Optional[ValueUnionScope] = Field(default=ValueUnionScope.same_attribute, description="""For value_operator one_of: whether the alternatives are values of one attribute (same_attribute, the default and the primary pattern: \"white or pink\") or qualities under different attributes (across_attributes, the secondary pattern: \"woody or fleshy\"). The secondary pattern is allowed only when the primary cannot apply, and requires value_operands with the verbatim \"or\" between them.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion'], 'ifabsent': 'ValueUnionScope(same_attribute)'} })
     bearer_scope: Optional[BearerScope] = Field(default=None, description="""Provenance of a positional or sub-part restriction of the named organ, such as \"beneath\", \"à la face supérieure\", \"at the apex\" or \"stellate-\". The logical content lives in anatomical_entity (bearer substituted by a more specific PO part such as leaf lamina abaxial epidermis) or in part_restrictions; this record keeps the outer organ and the exact cue so the source statement can be verified. It never participates in the FAC signature.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
     qualitative_value_relation: Optional[QualitativeValueRelation] = Field(default=None, description="""A source-ordered relation between two grounded categorical values. This captures a qualitative continuum, explicit taxon-level variation, or a temporal transition without pretending that the endpoints form a finite OWL union. It is a structured annotation and is deliberately excluded from FAC and reusable FLOPO class materialization.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
     bearer_context_qualities: Optional[list[str]] = Field(default=None, description="""Additional PATO qualities that inhere in the same anatomical bearer and form part of the OWL phenotype class description, for example young or mature. These are conjunctive bearer qualities, not developmental-stage process classes or assertion modalities.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
@@ -437,6 +478,10 @@ class TraitAssertion(ConfiguredBaseModel):
     value_high: Optional[float] = Field(default=None, description="""Upper bound of a quantitative phenotype range (e.g. 7 in \"3-7 cm\").""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
     value_low_inclusive: Optional[bool] = Field(default=True, description="""Whether value_low is an inclusive bound. True (default) renders xsd:minInclusive; False renders xsd:minExclusive for a strict lower bound. Only meaningful when value_low is set.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion'], 'ifabsent': 'True'} })
     value_high_inclusive: Optional[bool] = Field(default=True, description="""Whether value_high is an inclusive bound. True (default) renders xsd:maxInclusive; False renders xsd:maxExclusive for a strict upper bound such as the French participial \"n'atteignant pas 0,5 mm\" (reaching less than 0.5 mm). Only meaningful when value_high is set. Distinct FAC identity from an otherwise identical inclusive bound.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion'], 'ifabsent': 'True'} })
+    value_min_extreme: Optional[float] = Field(default=None, description="""Rarely reached lower extreme printed in parentheses before the usual range (\"(2-)3-8 cm\": 2). The usual range stays in value_low/value_high; the extreme is an annotation of the assertion, never part of the FAC signature or of a class restriction. Must be smaller than value_low.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
+    value_max_extreme: Optional[float] = Field(default=None, description="""Rarely reached upper extreme printed in parentheses after the usual range (\"3-8(-11) cm\": 11). Same rules as value_min_extreme; must be larger than value_high.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
+    ratio_numerator: Optional[str] = Field(default=None, description="""For a measurement of PATO ratio (PATO:0001470) between two dimensions of the same bearer (\"2-3 times as long as wide\"): the PATO attribute in the numerator (length). Annotation of the assertion; the value is in value_low/value_high with unit \"ratio\".""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
+    ratio_denominator: Optional[str] = Field(default=None, description="""The PATO attribute in the denominator of the ratio (width).""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
     unit: Optional[str] = Field(default=None, description="""Unit for the quantitative phenotype value (Units of Measurement Ontology).""", json_schema_extra = { "linkml_meta": {'annotations': {'annotators': {'tag': 'annotators', 'value': 'sqlite:obo:uo'}},
          'domain_of': ['TraitAssertion']} })
     modifier: Optional[FrequencyModifier] = Field(default=None, description="""Deprecated combined hedge field retained for wire compatibility. New data must populate the orthogonal frequency, epistemic, value, and degree qualifier fields.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
@@ -473,7 +518,7 @@ class PartRestriction(ConfiguredBaseModel):
 
     property: PartRestrictionProperty = Field(default=..., description="""Relation from the assertion bearer to the typed part. The initial relational grammar permits only BFO:0000051 has part.""", json_schema_extra = { "linkml_meta": {'domain_of': ['PartRestriction']} })
     filler_class: str = Field(default=..., description="""PO class, or reviewed FLOPO-local anatomical support class, identifying the part. A pinned BSPO positional class (for example BSPO:0000073 apical region, BSPO:0000074 basal region, BSPO:0000006 anatomical margin) is allowed when PO has no part class for that organ; the has-part nesting makes it a region of the enclosing bearer.""", json_schema_extra = { "linkml_meta": {'domain_of': ['PartRestriction']} })
-    qualities: Optional[list[str]] = Field(default=None, description="""PATO or FLOPO quality classes borne by the typed part. May be empty only when nested part_restrictions are present (\"stellate-pubescent beneath\": abaxial epidermis has part trichome that is star shaped); the validator requires qualities or nested parts.""", json_schema_extra = { "linkml_meta": {'domain_of': ['PartRestriction']} })
+    qualities: Optional[list[str]] = Field(default=None, description="""PATO or FLOPO quality classes borne by the typed part. May be empty only when nested part_restrictions are present (\"stellate-pubescent beneath\": abaxial epidermis has part trichome that is star shaped); the validator requires qualities or nested parts.""", json_schema_extra = { "linkml_meta": {'domain_of': ['PartRestriction', 'QualifiedWhole']} })
     part_restrictions: Optional[list[PartRestriction]] = Field(default=None, description="""Nested typed parts of this part, maximum total depth two (bearer > part > part). Canonicalized and sorted like the top-level list; emitted in the FAC signature only when present, so every depth-one FAC identity is unchanged.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion', 'PartRestriction']} })
     part_text: Optional[str] = Field(default=None, description="""Exact source cue naming the part, e.g. \"hairs\", \"beneath\", \"stellate-\", \"au sommet\". Provenance only; never part of the FAC signature.""", json_schema_extra = { "linkml_meta": {'domain_of': ['PartRestriction']} })
     part_start: Optional[int] = Field(default=None, description="""Zero-based inclusive offset of part_text in the source segment.""", json_schema_extra = { "linkml_meta": {'domain_of': ['PartRestriction']} })
@@ -508,6 +553,8 @@ class ValueOperand(ConfiguredBaseModel):
                        'ValueOperand',
                        'SeasonContext',
                        'RelationalTarget',
+                       'QualifiedWhole',
+                       'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
     end: int = Field(default=..., description="""Zero-based exclusive offset of text in the source segment.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SourceStatement',
@@ -515,6 +562,8 @@ class ValueOperand(ConfiguredBaseModel):
                        'ValueOperand',
                        'SeasonContext',
                        'RelationalTarget',
+                       'QualifiedWhole',
+                       'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
     degree_qualifier: Optional[DegreeQualifier] = Field(default=DegreeQualifier.unmodified, description="""Degree cue applying to this operand only.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion', 'ValueOperand'],
@@ -563,6 +612,8 @@ class SeasonContext(ConfiguredBaseModel):
                        'ValueOperand',
                        'SeasonContext',
                        'RelationalTarget',
+                       'QualifiedWhole',
+                       'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
     end: Optional[int] = Field(default=None, description="""Exclusive offset of season_text in the source segment, when available.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SourceStatement',
@@ -570,6 +621,8 @@ class SeasonContext(ConfiguredBaseModel):
                        'ValueOperand',
                        'SeasonContext',
                        'RelationalTarget',
+                       'QualifiedWhole',
+                       'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
     start_month: Optional[int] = Field(default=None, description="""Calendar start month in the inclusive range 1 through 12.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SeasonContext']} })
@@ -593,6 +646,8 @@ class RelationalTarget(ConfiguredBaseModel):
                        'ValueOperand',
                        'SeasonContext',
                        'RelationalTarget',
+                       'QualifiedWhole',
+                       'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
     end: Optional[int] = Field(default=None, description="""Exclusive offset of target_text in the source segment, when available.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SourceStatement',
@@ -600,9 +655,70 @@ class RelationalTarget(ConfiguredBaseModel):
                        'ValueOperand',
                        'SeasonContext',
                        'RelationalTarget',
+                       'QualifiedWhole',
+                       'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
     comparison_text: Optional[str] = Field(default=None, description="""The comparison words of the source (\"slightly shorter than\"), for display.""", json_schema_extra = { "linkml_meta": {'domain_of': ['RelationalTarget']} })
+    ratio_low: Optional[float] = Field(default=None, description="""Lower bound of the stated ratio of the bearer's dimension to that of the target (\"2-3 times as long as the calyx\": 2; \"as long as\", \"equalling\": 1; \"half as long as\": 0.5).""", json_schema_extra = { "linkml_meta": {'domain_of': ['RelationalTarget']} })
+    ratio_high: Optional[float] = Field(default=None, description="""Upper bound of the stated ratio (3 in \"2-3 times as long as\").""", json_schema_extra = { "linkml_meta": {'domain_of': ['RelationalTarget']} })
+
+
+class QualifiedWhole(ConfiguredBaseModel):
+    """
+    The structure a bearer is part of, with the qualities stated of that structure (\"in male flowers\", \"of the sterile fronds\").
+    """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'http://phenomebrowser.net/flopo/flopo-trait'})
+
+    whole_term: str = Field(default=..., description="""PO or FLOPO-local class of the whole.""", json_schema_extra = { "linkml_meta": {'domain_of': ['QualifiedWhole']} })
+    qualities: list[str] = Field(default=..., description="""PATO or FLOPO value classes that inhere in the whole.""", json_schema_extra = { "linkml_meta": {'domain_of': ['PartRestriction', 'QualifiedWhole']} })
+    whole_text: str = Field(default=..., description="""Exact phrase naming the qualified whole, copied from the source statement.""", json_schema_extra = { "linkml_meta": {'domain_of': ['QualifiedWhole']} })
+    start: Optional[int] = Field(default=None, description="""Inclusive offset of whole_text in the source segment.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SourceStatement',
+                       'UnresolvedTraitSpan',
+                       'ValueOperand',
+                       'SeasonContext',
+                       'RelationalTarget',
+                       'QualifiedWhole',
+                       'SpecimenCondition',
+                       'DevelopmentalStageContext',
+                       'TermMention']} })
+    end: Optional[int] = Field(default=None, description="""Exclusive offset of whole_text in the source segment.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SourceStatement',
+                       'UnresolvedTraitSpan',
+                       'ValueOperand',
+                       'SeasonContext',
+                       'RelationalTarget',
+                       'QualifiedWhole',
+                       'SpecimenCondition',
+                       'DevelopmentalStageContext',
+                       'TermMention']} })
+
+
+class SpecimenCondition(ConfiguredBaseModel):
+    """
+    A condition of preservation or treatment of the specimen under which the statement holds.
+    """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'http://phenomebrowser.net/flopo/flopo-trait'})
+
+    condition: SpecimenConditionKind = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['SpecimenCondition']} })
+    condition_text: str = Field(default=..., description="""Exact cue copied from the source statement (\"when dry\", \"in sicco\").""", json_schema_extra = { "linkml_meta": {'domain_of': ['SpecimenCondition']} })
+    start: Optional[int] = Field(default=None, description="""Inclusive offset of condition_text in the source segment.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SourceStatement',
+                       'UnresolvedTraitSpan',
+                       'ValueOperand',
+                       'SeasonContext',
+                       'RelationalTarget',
+                       'QualifiedWhole',
+                       'SpecimenCondition',
+                       'DevelopmentalStageContext',
+                       'TermMention']} })
+    end: Optional[int] = Field(default=None, description="""Exclusive offset of condition_text in the source segment.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SourceStatement',
+                       'UnresolvedTraitSpan',
+                       'ValueOperand',
+                       'SeasonContext',
+                       'RelationalTarget',
+                       'QualifiedWhole',
+                       'SpecimenCondition',
+                       'DevelopmentalStageContext',
+                       'TermMention']} })
 
 
 class DevelopmentalStageContext(ConfiguredBaseModel):
@@ -618,6 +734,8 @@ class DevelopmentalStageContext(ConfiguredBaseModel):
                        'ValueOperand',
                        'SeasonContext',
                        'RelationalTarget',
+                       'QualifiedWhole',
+                       'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
     end: Optional[int] = Field(default=None, description="""Exclusive offset of stage_text in the source segment, when available.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SourceStatement',
@@ -625,6 +743,8 @@ class DevelopmentalStageContext(ConfiguredBaseModel):
                        'ValueOperand',
                        'SeasonContext',
                        'RelationalTarget',
+                       'QualifiedWhole',
+                       'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
     temporal_relation: Optional[DevelopmentalStageRelation] = Field(default=DevelopmentalStageRelation.present_during, description="""Relation used when compiling the stage restriction on the phenotype.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SeasonContext', 'DevelopmentalStageContext'],
@@ -643,6 +763,8 @@ class TermMention(ConfiguredBaseModel):
                        'ValueOperand',
                        'SeasonContext',
                        'RelationalTarget',
+                       'QualifiedWhole',
+                       'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
     end: int = Field(default=..., description="""Zero-based exclusive character offset of the mention in the source segment.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SourceStatement',
@@ -650,6 +772,8 @@ class TermMention(ConfiguredBaseModel):
                        'ValueOperand',
                        'SeasonContext',
                        'RelationalTarget',
+                       'QualifiedWhole',
+                       'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
     surface_form: str = Field(default=..., description="""Verbatim text covered by the mention span.""", json_schema_extra = { "linkml_meta": {'domain_of': ['UnresolvedTraitSpan', 'TermMention']} })
@@ -695,6 +819,8 @@ ValueOperand.model_rebuild()
 QualitativeValueRelation.model_rebuild()
 SeasonContext.model_rebuild()
 RelationalTarget.model_rebuild()
+QualifiedWhole.model_rebuild()
+SpecimenCondition.model_rebuild()
 DevelopmentalStageContext.model_rebuild()
 TermMention.model_rebuild()
 TermCandidate.model_rebuild()

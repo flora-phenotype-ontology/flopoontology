@@ -33,6 +33,7 @@ from __future__ import annotations
 import argparse
 import copy
 import csv
+from functools import lru_cache
 import json
 import re
 import sys
@@ -47,7 +48,7 @@ from flopo2.ingest import ncvc_guide
 from flopo2.ingest.colour_words import COLOUR_ATTRIBUTE, colour_value
 from flopo2.owl.annotation_class import ensure_annotation_class_iri
 from flopo2.verify import gates
-from flopo2.verify.data_model import validate_jsonl
+from flopo2.verify.data_model import load_union_pairs, nearest_shared_attribute, validate_jsonl
 
 EXTRACTOR = "claude_opus_transcription"
 ANNOTATION_EXTENSION_IRI = "http://phenomebrowser.net/flopo/annotation-extension"
@@ -67,6 +68,12 @@ _UNSUPPORTED_UPPER_RE = re.compile(
     r"\b(?:less than|under|below|reach(?:es|ing)?|exceed(?:s|ing)?|to)\b|<", re.IGNORECASE
 )
 _FREQUENCY_WORDS = {"usually", "often", "sometimes", "rarely", "mostly", "occasionally"}
+# "less than 1 mm", "<1 mm": the bound itself is excluded (value_high_inclusive false)
+_STRICT_UPPER_RE = re.compile(r"\b(?:less than|fewer than|under|below)\b|<", re.IGNORECASE)
+_NEGATED_UPPER_RE = re.compile(
+    r"\b(?:rarely|seldom|never|not|scarcely|hardly)\s+(?:less than|fewer than|under|below)\b", re.IGNORECASE
+)
+_STRICT_LOWER_RE = re.compile(r"\b(?:more than|over|above|exceeding)\b|>", re.IGNORECASE)
 
 
 from flopo2.extract.measurement import is_supported_count  # noqa: E402
@@ -170,59 +177,230 @@ COMPARISON_QUALITIES = {
     "larger": "PATO_0000586", "bigger": "PATO_0000586", "smaller": "PATO_0000587",
     "thicker": "PATO_0000591", "thinner": "PATO_0000592", "taller": "PATO_0000570",
 }
+_LEAD = (r"(?P<lead>(?:(?:slightly|somewhat|a\s+little|rather|much|far|distinctly|considerably|scarcely|"
+         r"hardly|barely|usually|often|mostly|generally|always|c\.|ca\.?|about|nearly|almost|approximately|"
+         r"more\s+or\s+less|±)\s+)*)")
+_ARTICLE = r"(?P<art>the\s+|its\s+|their\s+|that\s+of\s+(?:the\s+)?|those\s+of\s+(?:the\s+)?)?"
+_TARGET = r"(?P<target>[a-z][a-z' -]*)"
 _COMPARISON = re.compile(
-    r"^(?P<lead>(?:(?:slightly|somewhat|a\s+little|rather|much|far|distinctly|considerably|scarcely|"
-    r"hardly|barely|usually|often|mostly|generally|always|c\.|ca\.?|about|±)\s+)*)"
-    r"(?P<word>" + "|".join(COMPARISON_QUALITIES) + r")\s+(?P<than>than\s+)?"
-    r"(?:the\s+|its\s+|their\s+|that\s+of\s+(?:the\s+)?|those\s+of\s+(?:the\s+)?)?"
-    r"(?P<target>[a-z][a-z' -]*?)\s*$",
+    _LEAD + r"(?P<word>" + "|".join(COMPARISON_QUALITIES) + r")\s+(?P<than>than\s+)?" + _ARTICLE + _TARGET,
     re.IGNORECASE,
 )
 _COMPARATIVE_VERBS = {"exceeding", "exceeds", "exceed", "overtopping", "overtops", "surpassing"}
 
+# Attachment and position relative to another part: PATO's relational qualities, with the other
+# part through RO:0002503 towards (docs/odp/relation-to-another-part.md).
+RELATIONAL_QUALITIES = [
+    (r"adnate\s+to|fused\s+(?:to|with)|connate\s+(?:to|with)|united\s+(?:to|with)|joined\s+(?:to|with)|"
+     r"adherent\s+to|coherent\s+with", "PATO_0000642"),                                     # fused with
+    (r"inserted\s+(?:at|on|in|into|near|below|above)(?:\s+the\s+(?:base|apex|middle|mouth|throat|top|summit|margin)\s+of)?",
+     "PATO_0000624"),                                                                      # inserted into
+    (r"opposite(?:\s+to)?", "PATO_0001933"),                                               # opposite
+    (r"alternating\s+with|alternate\s+with", "PATO_0001932"),                              # alternate placement
+    (r"enclosed\s+(?:by|in|within)|included\s+in|surrounded\s+by|enveloped\s+(?:by|in)|"
+     r"hidden\s+(?:in|within)|concealed\s+(?:by|in|within)", "PATO_0005016"),              # surrounded by
+    (r"enclosing|surrounding|enveloping", "PATO_0001772"),                                 # surrounding
+    (r"attached\s+to", "PATO_0001667"),                                                    # attached to
+    (r"overlapping", "PATO_0001590"),                                                      # overlap with
+    (r"parallel\s+to", "PATO_0002272"),
+    (r"perpendicular\s+to", "PATO_0002434"),
+]
+_RELATIONAL = re.compile(
+    _LEAD + r"(?P<word>" + "|".join(f"(?:{p})" for p, _ in RELATIONAL_QUALITIES) + r")\s+" + _ARTICLE + _TARGET,
+    re.IGNORECASE,
+)
+# values that are relational when the source names the other part ("stamens opposite the petals")
+RELATIONAL_VALUES = {"PATO_0000642", "PATO_0000624", "PATO_0001933", "PATO_0001932", "PATO_0005016",
+                     "PATO_0001772", "PATO_0001667", "PATO_0001590", "PATO_0002272", "PATO_0002434",
+                     "FLOPO_0991129"}
 
-def comparison(res: "Resources", phenotype: dict, text: str, start: int, end: int, bearer: str) -> dict | None:
-    """Read "slightly shorter than the corolla tube" as a relational quality and its target.
+# Ratios (docs/odp/ratio-to-another-part.md, docs/odp/ratio-of-two-dimensions.md)
+_FRACTIONS = {"half": 0.5, "one-half": 0.5, "one half": 0.5, "a half": 0.5, "1/2": 0.5,
+              "one-third": 1 / 3, "one third": 1 / 3, "a third": 1 / 3, "1/3": 1 / 3,
+              "two-thirds": 2 / 3, "two thirds": 2 / 3, "two-third": 2 / 3, "two third": 2 / 3, "2/3": 2 / 3,
+              "one-quarter": 0.25, "one quarter": 0.25, "a quarter": 0.25, "one-fourth": 0.25, "1/4": 0.25,
+              "three-quarters": 0.75, "three quarters": 0.75, "three-fourths": 0.75, "3/4": 0.75,
+              "twice": 2.0, "double": 2.0, "thrice": 3.0}
+_DIMENSION = {"long": "PATO_0000122", "length": "PATO_0000122", "longer": "PATO_0000122", "shorter": "PATO_0000122",
+              "wide": "PATO_0000921", "broad": "PATO_0000921", "width": "PATO_0000921", "wider": "PATO_0000921",
+              "broader": "PATO_0000921", "narrower": "PATO_0000921",
+              "thick": "PATO_0000915", "thickness": "PATO_0000915", "tall": "PATO_0000119", "high": "PATO_0000119",
+              "height": "PATO_0000119"}
+_INCREASED = {"PATO_0000122": "PATO_0000573", "PATO_0000921": "PATO_0000600", "PATO_0000915": "PATO_0000591",
+              "PATO_0000119": "PATO_0000570"}
+_DECREASED = {"PATO_0000122": "PATO_0000574", "PATO_0000921": "PATO_0000599", "PATO_0000915": "PATO_0000592",
+              "PATO_0000119": "PATO_0000569"}
+RATIO_QUALITY = "PATO_0001470"
+_MULTIPLE = (r"(?:(?P<n>\d+(?:\.\d+)?)(?:\s*(?:-|–|to)\s*(?P<m>\d+(?:\.\d+)?))?\s*(?:times|x|×)\s+|"
+             r"(?P<f>" + "|".join(re.escape(k) for k in sorted(_FRACTIONS, key=len, reverse=True)) + r")\s+)")
+_RATIO = re.compile(
+    _LEAD + r"(?:" + _MULTIPLE + r"?(?:as\s+(?P<dim>long|wide|broad|thick|tall|high)\s+as|"
+    r"the\s+(?P<dimn>length|width|height|thickness)\s+of)|"
+    + _MULTIPLE.replace("<n>", "<n2>").replace("<m>", "<m2>").replace("<f>", "<f2>")
+    + r"(?P<cmp>longer|wider|broader)\s+than|(?P<eq>equall?ing|equals?\s+to|equal\s+in\s+length\s+to))\s+"
+    + _ARTICLE + _TARGET,
+    re.IGNORECASE,
+)
+_SELF_RATIO = re.compile(
+    _LEAD + _MULTIPLE + r"?(?:as\s+(?P<dim>long|wide|broad)\s+as|(?P<cmp>longer|wider|broader|shorter|narrower)\s+than)\s+"
+    r"(?P<other>long|wide|broad)\b",
+    re.IGNORECASE,
+)
 
-    Returns ``{pato_id, target_term, target_text, start, end, comparison_text, provenance}`` when
-    the quality is one comparative of :data:`COMPARISON_QUALITIES`, the part compared with
-    grounds to a PO or FLOPO class other than the bearer, and its name stands once in the clause
-    of the annotated span. "2-3 times as long as", "as long as" and comparisons with a
-    measurement are left alone.
+
+def _multiple(match: re.Match, n: str = "n", m: str = "m", f: str = "f") -> tuple[float, float] | None:
+    groups = match.groupdict()
+    if groups.get(n):
+        low = float(groups[n])
+        return low, float(groups[m]) if groups.get(m) else low
+    if groups.get(f):
+        value = _FRACTIONS[groups[f].lower()]
+        return value, value
+    return None
+
+
+def self_ratio(phenotype: dict, span_text: str) -> dict | None:
+    """"2-3 times as long as wide", "longer than broad": the ratio of two dimensions of the bearer.
+
+    Returns ``{numerator, denominator, low, high, low_inclusive, high_inclusive, text}``; a bare
+    comparative ("longer than wide") is a ratio above 1, the bound excluded.
     """
 
-    match = _COMPARISON.match(ncvc_guide._normalize(phenotype.get("quality_en")))
-    if not match:
+    for candidate in (ncvc_guide._normalize(phenotype.get("quality_en")), span_text):
+        match = _SELF_RATIO.search(candidate or "")
+        if not match or gates._has_real_disjunction(candidate):
+            continue
+        if re.search(r"[\d/]\s*$", candidate[:match.start()]):
+            continue  # "1 1/3-2 times as long as wide": a mixed number the pattern does not read
+        first = _DIMENSION[(match.group("dim") or match.group("cmp")).lower()]
+        other = _DIMENSION[match.group("other").lower()]
+        if first == other:
+            continue
+        multiple = _multiple(match)
+        out = {"numerator": first, "denominator": other, "low_inclusive": True, "high_inclusive": True,
+               "text": match.group(0).strip()}
+        if multiple and multiple[0] > multiple[1]:
+            continue
+        if multiple:
+            out.update({"low": multiple[0], "high": multiple[1]})
+        elif match.group("dim"):
+            out.update({"low": 1.0, "high": 1.0})  # as long as wide
+        elif match.group("cmp").lower() in {"shorter", "narrower"}:
+            out.update({"low": None, "high": 1.0, "high_inclusive": False})
+        else:
+            out.update({"low": 1.0, "high": None, "low_inclusive": False})
+        return out
+    return None
+
+
+def comparison(res: "Resources", phenotype: dict, text: str, start: int, end: int, bearer: str,
+               only: set[str] | None = None) -> dict | None:
+    """Read a relation of the bearer to another part: a relational quality and its target.
+
+    * comparison of a dimension: "slightly shorter than the corolla tube", "exceeding the bracts";
+    * attachment or position: "adnate to the corolla", "inserted at the base of the tube",
+      "opposite the petals" (:data:`RELATIONAL_QUALITIES`);
+    * equality and ratio: "as long as the sepals", "equalling the calyx", "2-3 times as long as
+      the calyx", "half as long as the tube" (``ratio_low``/``ratio_high``; the quality is the
+      dimension, increased or decreased when the ratio is above or below 1).
+
+    Returns ``{pato_id, target_term, target_text, start, end, comparison_text, provenance[,
+    ratio_low, ratio_high]}`` when the other part grounds to a PO or FLOPO class other than the
+    bearer and its name stands once in the clause of the annotated span. The relation is read
+    from the transcribed quality, else from the source span. ``only`` restricts the reading to
+    relations whose quality is in the set (a value that is already grounded).
+    """
+
+    for candidate, anchored in ((ncvc_guide._normalize(phenotype.get("quality_en")), True), (text[start:end], False)):
+        if not candidate or gates._has_real_disjunction(candidate):
+            continue
+        for pattern in (_RATIO, _RELATIONAL, _COMPARISON):
+            match = pattern.match(candidate) if anchored else pattern.search(candidate)
+            before = candidate[:match.start()] if match else ""
+            if not match or re.search(r"\b(?:not|no|never|nor)\s*$", before, re.IGNORECASE):
+                continue  # "not longer than the calyx" is another statement
+            if pattern is _RATIO and re.search(
+                r"(?:\b(?:times|half|quarters?|[a-z]+ths?|thirds?|one|two|three|four|five|six|seven|eight|nine|ten)|[\d/])\s*$",
+                before, re.IGNORECASE,
+            ):
+                continue  # a multiple the pattern did not read ("five sevenths as long as")
+            read = _relation_reading(pattern, match)
+            if read is None or (only is not None and read["pato_id"] not in only):
+                continue
+            found = _relation_target(res, match.group("target"), text, start, end, bearer)
+            if found is None:
+                continue
+            target, mention = found
+            lead = " ".join((match.group("lead") or "").split())
+            words = " ".join(candidate[match.start():match.start("target")].split())
+            words = re.sub(r"\s+(?:the|its|their)$", "", words)
+            out = {
+                "pato_id": read["pato_id"], "target_term": target, "target_text": text[mention[0]:mention[1]],
+                "start": mention[0], "end": mention[1], "comparison_text": words,
+                "provenance": f"relation: {words!r} -> {read['pato_id']} towards {target} ({text[mention[0]:mention[1]]!r})",
+            }
+            if read.get("ratio"):
+                out["ratio_low"], out["ratio_high"] = read["ratio"]
+            if re.search(r"\b(?:c\.|ca\.?|about|nearly|almost|approximately|more\s+or\s+less)|±", lead):
+                out["approximate"] = lead
+            return out
+    return None
+
+
+def _relation_reading(pattern: re.Pattern, match: re.Match) -> dict | None:
+    if pattern is _COMPARISON:
+        word = match.group("word").lower()
+        if not match.group("than") and word not in _COMPARATIVE_VERBS:
+            return None
+        return {"pato_id": COMPARISON_QUALITIES[word]}
+    if pattern is _RELATIONAL:
+        word = match.group("word")
+        if re.fullmatch(r"opposite|overlapping|enclosing|surrounding|enveloping", word, re.IGNORECASE) and not match.group("art"):
+            return None  # "opposite cauline leaves": the word describes those leaves
+        return next(({"pato_id": quality} for expr, quality in RELATIONAL_QUALITIES
+                     if re.fullmatch(expr, word, re.IGNORECASE)), None)
+    groups = match.groupdict()
+    if groups.get("eq"):
+        return {"pato_id": "PATO_0000122", "ratio": (1.0, 1.0)}
+    if groups.get("cmp"):
+        multiple = _multiple(match, "n2", "m2", "f2")
+        dimension = _DIMENSION[groups["cmp"].lower()]
+    else:
+        multiple = _multiple(match) or (1.0, 1.0)
+        dimension = _DIMENSION[(groups.get("dim") or groups.get("dimn")).lower()]
+    if multiple is None or multiple[0] <= 0 or multiple[0] > multiple[1]:
         return None
-    word = match.group("word").lower()
-    if not match.group("than") and word not in _COMPARATIVE_VERBS:
-        return None
-    phrase = match.group("target").strip(" -'")
-    if not phrase or re.search(r"\b(long|wide|broad|high|thick|times|mm|cm|m)\b", phrase):
+    quality = _INCREASED[dimension] if multiple[0] > 1 else _DECREASED[dimension] if multiple[1] < 1 else dimension
+    return {"pato_id": quality, "ratio": multiple}
+
+
+def _relation_target(res: "Resources", phrase: str, text: str, start: int, end: int, bearer: str):
+    """``(class, (start, end))`` of the other part: the longest leading words of ``phrase`` that
+    ground to a PO or FLOPO class other than the bearer and stand once in the clause."""
+
+    phrase = (phrase or "").strip(" -'")
+    if not phrase or re.match(r"(?:long|wide|broad|high|thick|times|mm|cm|m)\b", phrase):
         return None
     words = phrase.replace("-", " ").split()
-    candidates = [" ".join(words), " ".join([*words[:-1], _singular(words[-1])])]
-    target = ""
-    for candidate in dict.fromkeys(candidates):
-        target = ground_bearer(res, {"entity_en": candidate, "po_label": candidate})[0]
-        if target:
-            break
-    if not target or target == bearer:
-        return None
     left = max(text.rfind(c, 0, start) for c in ".;") + 1
     right = min([i for i in (text.find(c, end) for c in ".;") if i >= 0] or [len(text)])
-    named = re.compile(r"(?<![\w-])" + r"[\s-]+".join(map(re.escape, words)) + r"(?![\w-])", re.IGNORECASE)
-    found = [m for m in named.finditer(text, left, right) if m.start() >= start - 2]
-    if len(found) != 1 or gates._has_real_disjunction(text[min(start, found[0].start()):max(end, found[0].end())]):
-        return None
-    pato_id = COMPARISON_QUALITIES[word]
-    lead = " ".join((match.group("lead") or "").split())
-    comparison_text = " ".join(filter(None, [lead, word, "than" if match.group("than") else ""]))
-    return {
-        "pato_id": pato_id, "target_term": target, "target_text": text[found[0].start():found[0].end()],
-        "start": found[0].start(), "end": found[0].end(), "comparison_text": comparison_text,
-        "provenance": f"relation: {comparison_text!r} -> {pato_id} towards {target} ({text[found[0].start():found[0].end()]!r})",
-    }
+    for size in range(min(len(words), 4), 0, -1):
+        head = words[:size]
+        target = ""
+        for candidate in dict.fromkeys([" ".join(head), " ".join([*head[:-1], _singular(head[-1])])]):
+            target = ground_bearer(res, {"entity_en": candidate, "po_label": candidate})[0]
+            if target:
+                break
+        if not target:
+            continue
+        if target == bearer:
+            return None
+        named = re.compile(r"(?<![\w-])" + r"[\s-]+".join(map(re.escape, head)) + r"(?![\w-])", re.IGNORECASE)
+        found = [m for m in named.finditer(text, left, right) if m.start() >= start - 2]
+        if len(found) != 1 or gates._has_real_disjunction(text[min(start, found[0].start()):max(end, found[0].end())]):
+            return None
+        return target, (found[0].start(), found[0].end())
+    return None
 
 
 CONTEXT_WORDS = Path("config/flora_context_words.tsv")
@@ -312,6 +490,46 @@ def plan_bearer_scope(
                                    "part_text": cue_text, "part_start": cue_start, "part_end": cue_end}],
             "bearer_scope": {**scope, "scope_class": filler, "mode": "part_restriction"},
             "provenance": f"scope: {cue_text!r} -> {po_id} has_part ({filler} with {value}); top-level {top}"}, ""
+
+
+_WHOLE_PHRASE = re.compile(
+    r"^(?:(?:in|of|on|from)\s+)?(?:the\s+)?(?P<quality>[a-z-]+)\s+"
+    r"(?P<whole>flowers?|florets?|spikelets?|plants?|inflorescences?|fronds?|leaves|leaf|branches|branch|"
+    r"shoots?|stems?|catkins?|cones?|heads?|capitula|capitulum|individuals?)$",
+    re.IGNORECASE,
+)
+
+
+def whole_context(res: "Resources", word: str, text: str, start: int, end: int, bearer: str) -> dict | None:
+    """"in male flowers", "of the sterile fronds": the bearer is part of a whole with a stated
+    quality (docs/odp/part-of-qualified-whole.md). Returns the ``bearer_whole`` record when the
+    quality has a reviewed reading for that whole, the whole grounds to a class other than the
+    bearer, and the phrase stands once in the clause; else ``None``."""
+
+    match = _WHOLE_PHRASE.match(" ".join(word.split()))
+    if not match:
+        return None
+    noun = match.group("whole").lower()
+    noun = {"individuals": "plant", "individual": "plant", "capitula": "capitulum"}.get(noun, noun)
+    whole = ground_bearer(res, {"entity_en": _singular(noun), "po_label": _singular(noun)})[0]
+    if not whole or whole == bearer:
+        return None
+    quality = ""
+    for candidate in (getattr(res, "context_words", None) or {}).get(normalize_key(match.group("quality")), []):
+        constraint = candidate.get("bearer_constraint") or ""
+        if candidate["kind"] == "bearer_quality" and (not constraint or re.search(constraint, noun, re.IGNORECASE)):
+            quality = candidate["target"]
+            break
+    if not quality:
+        return None
+    left = max(text.rfind(c, 0, start) for c in ".;") + 1
+    right = min([i for i in (text.find(c, end) for c in ".;") if i >= 0] or [len(text)])
+    found = [m for m in re.finditer(r"(?<![\w-])" + re.escape(word.strip()) + r"(?![\w-])", text[left:right], re.IGNORECASE)]
+    if len(found) != 1:
+        return None
+    cue_start, cue_end = left + found[0].start(), left + found[0].end()
+    return {"whole_term": whole, "qualities": [quality], "whole_text": text[cue_start:cue_end],
+            "start": cue_start, "end": cue_end}
 
 
 def stage_context(res: "Resources", word: str, text: str, start: int, end: int, bearer_texts: list[str]):
@@ -465,6 +683,8 @@ def split_inline_alternatives(rec: dict) -> None:
                 or phenotype.get("value_high") is not None or qualifiers.get("alternatives")):
             continue
         quality = _PAREN_RE.sub("", str(phenotype.get("quality_en") or "")).strip()
+        if any(p.match(quality) for p in (_RELATIONAL, _RATIO, _SELF_RATIO)):
+            continue  # "adnate to the petals", "2 to 3 times as long as the calyx": "to" is no continuum
         parts = [p.strip(" ,;") for p in _INLINE_ALTERNATIVES.split(quality)]
         if len(parts) < 2 or not all(parts) or any(len(p.split()) > 3 for p in parts):
             continue
@@ -614,6 +834,68 @@ def normalize_counts(rec: dict) -> None:
         })
 
 
+COUNTED_PARTS = Path("config/flora_counted_parts.tsv")
+_COMPOUND_COUNT = re.compile(
+    r"^(?:(\d+|one|two|three|four|five|six|seven|eight|nine|ten|twelve)\s*(?:-|–|to)\s*)?"
+    r"(\d+|one|two|three|four|five|six|seven|eight|nine|ten|twelve)\s*-+\s*([a-z]+)$",
+    re.IGNORECASE,
+)
+
+
+@lru_cache(maxsize=1)
+def load_counted_parts(path: Path = COUNTED_PARTS) -> dict[str, dict[str, str]]:
+    if not path.exists():
+        return {}
+    with path.open(encoding="utf-8", newline="") as handle:
+        return {row["suffix"]: row for row in csv.DictReader(handle, delimiter="\t")}
+
+
+def counts_from_compounds(rec: dict, res: "Resources") -> None:
+    """"5-nerved", "3-5-foliolate", "three-flowered": a count of the part named in the word.
+
+    The word is split only when it has no term of its own ("3-lobed" is the quality trilobed when
+    a rule says so) and its ending is in the reviewed table ``config/flora_counted_parts.tsv``.
+    The counted part belongs to the row's entity (``count_container``); "3-jugate" counts pairs
+    of leaflets. The row then follows the count pattern of :func:`normalize_counts`.
+    """
+
+    table = load_counted_parts()
+    if not table:
+        return
+    number = lambda w: float(w) if w.isdigit() else float(_NUMBER_WORDS[w.lower()])  # noqa: E731
+    for phenotype in rec.get("phenotypes") or []:
+        if phenotype.get("merged_into") or phenotype.get("count_of"):
+            continue
+        if ncvc_guide._normalize(phenotype.get("unit")).lower() in LENGTH_UNITS:
+            continue
+        word = _PAREN_RE.sub("", ncvc_guide._normalize(phenotype.get("quality_en"))).strip().lower()
+        match = _COMPOUND_COUNT.match(word)
+        if match is None or match.group(3) not in table:
+            continue
+        if ground_phenotype(res, phenotype).kind == "assertion":
+            continue  # the word is a quality with a term
+        row = table[match.group(3)]
+        high = number(match.group(2))
+        low = number(match.group(1)) if match.group(1) else high
+        if low > high:
+            continue
+        entity = _PAREN_RE.sub("", ncvc_guide._normalize(phenotype.get("entity_en"))).strip()
+        part = row["part"]
+        specific = f"{entity} {part}" if entity and not entity.lower().endswith(part) else entity
+        counted, container = part, entity
+        if specific and ground_bearer(res, {"entity_en": specific, "po_label": specific})[0]:
+            counted, container = specific, ""  # PO names the part of this organ ("calyx lobe")
+        elif _singular(entity.lower()) == part or not entity:
+            container = ""
+        phenotype.update({
+            "count_of": counted, "count_container": container,
+            "count_collection_size": int(row["collection_size"]) if row.get("collection_size") else None,
+            "count_collection": False, "count_quality": phenotype.get("quality_en"),
+            "entity_en": counted, "po_label": counted, "quality_en": "amount", "pato_label": "amount",
+            "value_low": low, "value_high": high, "unit": "count", "count_from_compound": word,
+        })
+
+
 # "two-seeded", "four-petalled", "one-flowered": a count of the part named by the stem.  "-lobed"
 # and "-parted" are not here: "three-lobed" is the quality trilobed.
 _COUNT_COMPOUND = re.compile(
@@ -656,12 +938,32 @@ def alternatives_as_union(relation: dict, extras: list[dict]) -> dict | None:
         return None
     if not all(_OR_CONNECTOR.search(r["relation"]["connector_text"]) for r in relations):
         return None  # "pink and white" is both colours, not either
-    if any(r["relation"].get(f"{side}_operand") for r in relations for side in ("from", "to")):
+    qualified = [r["relation"][f"{side}_operand"] for r in relations for side in ("from", "to")
+                 if r["relation"].get(f"{side}_operand")]
+    if any((o.get("degree_qualifier") or "unmodified") != "unmodified" or (o.get("value_qualifier") or "exact") != "exact"
+           for o in qualified):
         return None  # a degree cue on one value ("pale yellow or white") stays a relation
+    if qualified and len(relations) > 1:
+        return None
     values = list(dict.fromkeys(v for r in relations for v in (r["relation"]["from_value"], r["relation"]["to_value"])))
     if len(values) < 2:
         return None
-    return {"pato_id": relation["pato_id"], "values": values,
+    operands = None
+    if qualified or relation.get("across"):
+        from flopo2.annotation.operands import make_operand
+
+        rel = relation["relation"]
+        second = rel.get("to_operand") or {}
+        operands = [
+            {"operand_index": 0, "value": rel["from_value"], "text": rel["from_text"], "start": rel["from_start"],
+             "end": rel["from_end"], "degree_qualifier": "unmodified", "value_qualifier": "exact",
+             "frequency_qualifier": "unspecified"},
+            {**{"operand_index": 1, "value": rel["to_value"], "text": rel["to_text"], "start": rel["to_start"],
+                "end": rel["to_end"], "degree_qualifier": "unmodified", "value_qualifier": "exact",
+                "frequency_qualifier": "unspecified"}, **second, "operand_index": 1},
+        ]
+    return {"pato_id": relation["pato_id"], "values": values, "operands": operands,
+            "across": bool(relation.get("across")),
             "start": min(r["relation"]["from_start"] for r in relations),
             "end": max(r["relation"]["to_end"] for r in relations)}
 
@@ -1124,6 +1426,8 @@ def ground_bearer(res: Resources, phenotype: dict) -> tuple[str, str, str]:
 # subopposite): the value itself, qualified as approximate, the reading RELATED colour words get.
 # A word with its own rule or term (subsessile, subacute, subglobose, submerged) never gets here.
 _SUB_PREFIX = re.compile(r"sub-?([a-z][a-z-]{3,})")
+_MORE_OR_LESS = re.compile(r"^(?:±|\+\s*/\s*-|\+-|more\s+or\s+less)\s*", re.IGNORECASE)
+_MORE_OR_LESS_CUE = r"(?:±|\+\s*/\s*-|\+-|more\s+or\s+less)"
 _NOT_SUB_VALUES = {"shrub", "shrubby", "tree", "species", "family", "genus"}
 
 
@@ -1131,6 +1435,17 @@ def ground_phenotype(res: Resources, phenotype: dict) -> Grounding:
     grounding = _ground_phenotype(res, phenotype)
     if grounding.kind == "unresolved" and grounding.reason == "no_ontology_term_for_quality":
         word = str(phenotype.get("quality_en") or "")
+        cue = _MORE_OR_LESS.match(word.strip())
+        if cue and word.strip()[cue.end():].strip():
+            # "± erect", "more or less glabrous": the value, qualified as approximate
+            rest = word.strip()[cue.end():].strip()
+            base = ground_phenotype(res, {**phenotype, "quality_en": rest, "pato_label": ""})
+            if base.kind == "assertion" and not base.negate:
+                if not base.approximate:
+                    base.approximate = cue.group(0).strip()
+                base.normalization_status = "proposed"
+                base.provenance.append(f"quality: {word.strip()!r} read as approximately {rest!r} ('±' cue)")
+                return base
         match = _SUB_PREFIX.fullmatch(normalize_key(word))
         if match and match.group(1) not in _NOT_SUB_VALUES:
             base = _ground_phenotype(res, {**phenotype, "quality_en": match.group(1), "pato_label": ""})
@@ -1305,6 +1620,8 @@ def normalize_bounds(
     if low is None and high is None:
         return None, None, "none", ""
     if high is not None:
+        if _NEGATED_UPPER_RE.search(cue_text):
+            return None, high, "upper", "upper_bound_cue_not_supported"  # "rarely less than 7 mm"
         if gates.UPPER_BOUND_EVIDENCE.search(cue_text):
             return None, high, "upper", ""
         if _UNSUPPORTED_UPPER_RE.search(cue_text):
@@ -1314,6 +1631,49 @@ def normalize_bounds(
         return low, None, "lower", ""
     return low, low, "single", ""
 
+
+_NUMBER = r"\d+(?:[.,]\d+)?"
+_DASH = r"[-–—]"
+_RANGE_WITH_EXTREMES = re.compile(
+    rf"(?:\(\s*({_NUMBER})\s*(?:{_DASH}\s*\)|\)\s*{_DASH})\s*)?"
+    rf"({_NUMBER})(?:\s*{_DASH}+\s*({_NUMBER}))?"
+    rf"\s*(?:\(\s*{_DASH}\s*({_NUMBER})\s*\))?"
+)
+
+
+def range_extremes(span_text: str, low: Any, high: Any) -> dict | None:
+    """Read "(2-)3-8(-11)": the usual range 3-8 with the rare extremes 2 and 11.
+
+    Returns ``{low, high, min_extreme, max_extreme, text}`` for the one printed range of the
+    span that has an extreme in parentheses and contains the transcribed bounds; ``None`` when
+    there is none, or more than one ("(6-)12(-26) x (19-)21-24(-42) mm" is decided by the
+    transcribed numbers). The transcriber often folds an extreme into the range ("3-6(-13)"
+    as 6-13); the printed usual range replaces it.
+    """
+
+    want = {v for v in (_num(low), _num(high)) if v is not None}
+    if not want:
+        return None
+    number = lambda g: None if g is None else float(g.replace(",", "."))  # noqa: E731
+    found = []
+    for match in _RANGE_WITH_EXTREMES.finditer(span_text):
+        if match.group(1) is None and match.group(4) is None:
+            continue
+        least, first, second, most = (number(match.group(i)) for i in (1, 2, 3, 4))
+        second = first if second is None else second
+        if first > second or (least is not None and least >= first) or (most is not None and most <= second):
+            continue
+        if want <= {v for v in (least, first, second, most) if v is not None}:
+            found.append({"low": None if _num(low) is None else first, "high": second,
+                          "min_extreme": least, "max_extreme": most, "text": match.group(0).strip()})
+    return found[0] if len(found) == 1 else None
+
+
+# "drying black", "black when dry": the dried specimen, not the living plant
+_DRIED_CUE = re.compile(
+    r"\b(?:drying|dries|when\s+dr(?:y|ied)|on\s+drying|after\s+drying|in\s+sicco|in\s+(?:the\s+)?dr(?:y|ied)\s+state)\b",
+    re.IGNORECASE,
+)
 
 # ---------------------------------------------------------------------------------------------
 # Record annotation
@@ -1467,6 +1827,7 @@ def _attribute_ancestors(res: "Resources", value: str) -> list[str]:
 
 # Attributes too general to relate two values: "spiny or hairy" share only morphology.
 _TOO_GENERAL_ATTRIBUTES = {"PATO_0000001", "PATO_0000051", "PATO_0001241"}
+QUALITY_ROOT = "PATO_0000001"  # top-level quality of a union across attributes
 # PATO has no habit attribute: the growth forms (herbaceous, ligneous, arborescent, frutescent,
 # suffrutescent) are related under morphology, as the FLOPO growth-form terms are placed.
 _MORPHOLOGY = "PATO_0000051"
@@ -1532,10 +1893,28 @@ def build_relation(
                 if not left or not right or left[0] == right[0]:
                     return None
                 common = [a for a in left[1] if a in right[1]]
+                across = False
                 if not common:
-                    return None
+                    nearest = nearest_shared_attribute([left[0], right[0]], res.attribute_ids)
+                    if nearest:
+                        common = [nearest]  # the values share an attribute after all: primary pattern
+                if not common:
+                    # Secondary pattern (docs/odp/alternatives-across-attributes.md): "woody or
+                    # fleshy". Only for a plain "or", and only because the two qualities share
+                    # no attribute: the same-attribute check above stays the rule.
+                    if interpretation != "taxon_level_alternatives" or not re.fullmatch(
+                        r"\s*,?\s*or\s+", connector.group(0), re.IGNORECASE
+                    ):
+                        return None
+                    decision = load_union_pairs().get(tuple(sorted((left[0], right[0]))))
+                    if decision == "reject" or normalize_key(alternatives[0]) in {"not", "otherwise", "absent", "none"}:
+                        return None
+                    if decision != "accept":
+                        return {"unreviewed_pair": "|".join(sorted((left[0], right[0])))}
+                    common, across = [QUALITY_ROOT], True
                 return {
                     "pato_id": common[0],
+                    "across": across,
                     "relation": {
                         "interpretation": interpretation,
                         "from_value": left[0],
@@ -1555,6 +1934,8 @@ def build_relation(
 
 
 _PREVIOUS_WORD = re.compile(r"([A-Za-z][A-Za-z-]*)\s+$")
+# "dioecious or rarely monoecious": the frequency belongs to the second alternative only
+_OPERAND_FREQUENCY_WORDS = {"rarely", "sometimes", "occasionally", "often", "usually", "mostly", "seldom"}
 
 
 def refine_endpoints(res: "Resources", attribute: str, relation: dict, text: str, bearer_texts: list[str]) -> dict:
@@ -1589,7 +1970,9 @@ def refine_endpoints(res: "Resources", attribute: str, relation: dict, text: str
         words = list(re.finditer(r"[A-Za-z][A-Za-z-]*", text[start:end]))
         cue_end = start
         for word in words:
-            if word.group(0).lower() not in DEGREE_CUES:
+            if word.group(0).lower() not in DEGREE_CUES and not (
+                side == "to" and word.group(0).lower() in _OPERAND_FREQUENCY_WORDS
+            ):
                 break
             cue_end = start + word.end()
         core = text[cue_end:end].strip()
@@ -1603,6 +1986,7 @@ def refine_endpoints(res: "Resources", attribute: str, relation: dict, text: str
                 index, rel[f"{side}_value"], text, start, end,
                 qualifier_start=start, qualifier_end=cue_end,
                 degree_qualifier=parsed["degree_qualifier"],
+                frequency_qualifier=parsed["frequency_qualifier"],
             )
     return rel
 
@@ -1792,7 +2176,7 @@ def _mark_approximate(assertion: dict, word: str, text: str) -> None:
     end = assertion.get("source_end") or len(text)
     # Search the text itself: lower-casing can change its length ("İ"), which shifts every offset.
     pattern = re.compile(re.escape(word), re.IGNORECASE)
-    found = pattern.search(text, start, end) or pattern.search(text, max(0, start - 40), end + 40)
+    found = pattern.search(text, start, end)  # a cue outside the statement is no evidence for it
     position = found.start() if found else -1
     if position < 0 or assertion.get("modality_start") is not None:
         return  # no locatable cue: keep the generalisation without an unsupported qualifier
@@ -1815,6 +2199,7 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
         measurements_from_quality(rec)
         split_inline_alternatives(rec)
         normalize_counts(rec)
+        counts_from_compounds(rec, res)
     segments = [seg.to_row() for seg in ncvc_guide.iter_segments_from_records([rec])]
     for seg in segments:
         seg.update(
@@ -1899,7 +2284,31 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
 
         reason = grounding.reason if grounding.kind == "unresolved" else ""
         towards = None
-        if reason == "no_ontology_term_for_quality" and grounding.po_id and res.relations and not has_value:
+        ratio = None
+        relational_gap = reason == "no_ontology_term_for_quality" or reason.startswith(
+            "no_ontology_term:comparison or relation"
+        )
+        if relational_gap and grounding.po_id and res.relations and not has_value:
+            ratio = self_ratio(phenotype, span_text)  # "2-3 times as long as wide"
+            if ratio is not None:
+                grounding = Grounding(
+                    "assertion", po_id=grounding.po_id, pato_id=RATIO_QUALITY,
+                    provenance=[*grounding.provenance,
+                                f"ratio: {ratio['text']!r} -> {ratio['numerator']} to {ratio['denominator']}"],
+                    normalization_status="proposed", rule_ids=list(grounding.rule_ids),
+                )
+                reason = ""
+        if not reason and not has_value and res.relations and grounding.kind == "assertion" and ratio is None and (
+            {grounding.pato_id, *grounding.value_terms} & RELATIONAL_VALUES
+        ):
+            # "stamens opposite the petals": the value has a term; the source names the other part
+            towards = comparison(res, phenotype, text, start, end, grounding.po_id,
+                                 only={"PATO_0000642"} if "FLOPO_0991129" in grounding.value_terms
+                                 else {grounding.pato_id, *grounding.value_terms})
+            if towards is not None:
+                towards.pop("pato_id")
+                grounding.provenance.append(towards.pop("provenance"))
+        if relational_gap and reason and grounding.po_id and res.relations and not has_value:
             # "style slightly shorter than the corolla tube": a relational quality and its target
             towards = comparison(res, phenotype, text, start, end, grounding.po_id)
             if towards is not None:
@@ -1929,7 +2338,14 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                 f"count: pairs, a collection of exactly {phenotype['count_collection_size']} {phenotype.get('count_of')}"
             )
         alternatives = [a for a in qualifiers.get("alternatives") or [] if str(a).strip()]
+        extremes = range_extremes(span_text, phenotype.get("value_low"), phenotype.get("value_high")) if has_value else None
+        if extremes is not None:
+            # the extreme is not an alternative value of the trait
+            outside = {extremes["min_extreme"], extremes["max_extreme"]}
+            alternatives = [a for a in alternatives
+                            if _num(re.sub(r"[^\d.,]", "", str(a)).replace(",", ".") or None) not in outside]
         low = high = None
+        strict_low = strict_high = False
         unit = ncvc_guide._normalize(phenotype.get("unit"))
         if not reason and alternatives and res.relations:
             # Alternatives the transcriber listed although none of them is in the source sentence
@@ -1946,7 +2362,7 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
             reason = "taxon_level_alternatives_or_continuum"
         if not reason and gates._has_real_disjunction(span_text):
             reason = "explicit_disjunction"
-        context = None
+        context = bearer_whole = None
         if not reason and str(qualifiers.get("stage") or "").strip():
             context = stage_context(
                 res, str(qualifiers["stage"]), text, start, end,
@@ -1972,7 +2388,9 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                     )
                     if scope_plan is None:
                         context = None
-            if context is None:
+            if context is None and not container_po:
+                bearer_whole = whole_context(res, str(qualifiers["stage"]), text, start, end, grounding.po_id)
+            if context is None and bearer_whole is None:
                 reason = "developmental_stage_context"
         if not reason and has_value:
             if unit not in LENGTH_UNITS and not is_supported_count(unit, grounding.pato_id):
@@ -1981,11 +2399,14 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                 reason = "numeric_quality_not_pato_attribute"
             else:
                 low, high, _bound, problem = normalize_bounds(
-                    phenotype.get("value_low"), phenotype.get("value_high"), span_text
+                    extremes["low"] if extremes else phenotype.get("value_low"),
+                    extremes["high"] if extremes else phenotype.get("value_high"), span_text
                 )
                 reason = problem
                 if not reason and low is None and high is None:
                     reason = "measurement_value_not_numeric"  # value_low "few", "many"
+                strict_high = _bound == "upper" and bool(_STRICT_UPPER_RE.search(span_text))
+                strict_low = _bound == "lower" and bool(_STRICT_LOWER_RE.search(span_text))
         negated = bool(qualifiers.get("negated")) and str(qualifiers.get("negated")).strip().lower() not in {
             "false", "0", "no", "none"
         }
@@ -2010,6 +2431,9 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
         if res.relations and not negated and not has_value and not str(phenotype.get("unit") or "").strip() \
                 and (compound or reason in {"taxon_level_alternatives_or_continuum", "explicit_disjunction"}):
             relation = build_relation(res, phenotype, text, start, end, grounding.po_id)
+            unreviewed_pair = ""
+            if relation is not None and relation.get("unreviewed_pair"):
+                unreviewed_pair, relation = relation["unreviewed_pair"], None
             answer = (res.llm_relations or {}).get((ncvc_guide._source_id(rec), index))
             bearer_texts = [phenotype.get("entity_en", ""), phenotype.get("po_label", "")]
             if relation is None:
@@ -2034,10 +2458,12 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                     res, relation["pato_id"], relation["relation"], text, bearer_texts
                 )
             if relation is not None:
-                reason = ""
+                held_reason, reason = reason, ""
                 rel = relation["relation"]
                 start, end = min(start, rel["from_start"]), max(end, rel["to_end"])
                 union = alternatives_as_union(relation, extra_relations)
+                if union is None and relation.get("across"):
+                    relation, reason = None, held_reason
                 if union is not None:
                     start, end = min(start, union["start"]), max(end, union["end"])
                     grounding.provenance.append(
@@ -2045,6 +2471,9 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                     )
                     relation, extra_relations = None, []
                 span_text = text[start:end]
+            elif unreviewed_pair:
+                # two qualities under different attributes, not yet reviewed as alternatives
+                reason = f"alternatives_across_attributes_unreviewed:{unreviewed_pair}"
 
         if reason:
             candidate = grounding.pato_id if grounding.pato_id in res.pato_catalog else ""
@@ -2089,8 +2518,26 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                 "raw_quality_text": ncvc_guide._normalize(phenotype.get("quality_en")),
             }
         )
+        if ratio is not None:
+            assertion.update({
+                "value_low": ratio["low"], "value_high": ratio["high"], "unit": "ratio",
+                "value_low_inclusive": ratio["low_inclusive"], "value_high_inclusive": ratio["high_inclusive"],
+                "ratio_numerator": ratio["numerator"], "ratio_denominator": ratio["denominator"],
+            })
         if has_value:
             assertion.update({"value_low": low, "value_high": high, "unit": unit})
+            if strict_high:
+                assertion["value_high_inclusive"] = False
+            if extremes is not None and low is not None and extremes["min_extreme"] is not None:
+                assertion["value_min_extreme"] = extremes["min_extreme"]
+            if extremes is not None and high is not None and extremes["max_extreme"] is not None:
+                assertion["value_max_extreme"] = extremes["max_extreme"]
+            if extremes is not None:
+                grounding.provenance.append(
+                    f"value: usual range and extremes read from {extremes['text']!r} (extremes in parentheses)"
+                )
+            if strict_low:
+                assertion["value_low_inclusive"] = False
         if container_po:
             assertion["bearer_container"] = container_po
         if phenotype.get("count_collection_size"):
@@ -2099,6 +2546,10 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
             assertion["bearer_collection"] = True
         if union is not None:
             assertion.update({"pato_id": union["pato_id"], "value_terms": union["values"], "value_operator": "one_of"})
+            if union.get("operands"):
+                assertion["value_operands"] = union["operands"]
+            if union.get("across"):
+                assertion["value_union_scope"] = "across_attributes"
         if relation is not None:
             assertion.update({"pato_id": relation["pato_id"], "value_terms": [],
                               "qualitative_value_relation": relation["relation"]})
@@ -2125,6 +2576,14 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                 }
             )
         cue = _modality(text, start, end, str(qualifiers.get("frequency") or ""))
+        own_frequency = [
+            o for o in [*(assertion.get("value_operands") or []),
+                        *[(assertion.get("qualitative_value_relation") or {}).get(f"{side}_operand") or {}
+                          for side in ("from", "to")]]
+            if (o.get("frequency_qualifier") or "unspecified") != "unspecified"
+        ]
+        if cue is not None and own_frequency:
+            cue = None  # "usually hairy or rarely glabrous": each alternative has its own frequency
         if cue is not None:
             assertion.update(
                 {
@@ -2136,11 +2595,30 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
             )
         if grounding.approximate:
             _mark_approximate(assertion, grounding.approximate, text)
+        elif not has_value and union is None and relation is None:
+            # "stem ± erect" transcribed as "erect": the cue stands before the value in the source
+            value_word = ncvc_guide._normalize(phenotype.get("quality_en"))
+            cue = value_word and re.search(
+                "(" + _MORE_OR_LESS_CUE + r")\s*" + re.escape(value_word), span_text, re.IGNORECASE
+            )
+            if cue:
+                _mark_approximate(assertion, cue.group(1), text)
+                if assertion.get("value_qualifier") == "approximately":
+                    grounding.provenance.append(f"quality: {cue.group(1)!r} before the value read as approximately")
         if towards is not None:
+            approximate_cue = towards.pop("approximate", "")
             assertion["towards"] = towards
+            if approximate_cue and not grounding.approximate:
+                _mark_approximate(assertion, approximate_cue.split()[-1], text)
             begin, finish = min(start, towards["start"]), max(end, towards["end"])
             if assertion.get("source_start") is not None:
                 assertion.update({"source_start": begin, "source_end": finish, "source_text": text[begin:finish]})
+        if bearer_whole is not None:
+            assertion["bearer_whole"] = bearer_whole
+            grounding.provenance.append(
+                f"context: {bearer_whole['whole_text']!r} -> part of {bearer_whole['whole_term']} "
+                f"with {', '.join(bearer_whole['qualities'])}"
+            )
         if context is not None:
             reading, cue_start, cue_end = context
             if reading["kind"] == "stage":
@@ -2158,12 +2636,24 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                 if assertion.get("source_start") is not None and assertion.get("source_end") is not None:
                     begin, finish = min(assertion["source_start"], cue_start), max(assertion["source_end"], cue_end)
                     assertion.update({"source_start": begin, "source_end": finish, "source_text": text[begin:finish]})
+            elif reading["kind"] == "specimen_condition":
+                assertion["specimen_condition"] = {
+                    "condition": reading["target"], "condition_text": text[cue_start:cue_end],
+                    "start": cue_start, "end": cue_end,
+                }
             else:
                 assertion["bearer_context_qualities"] = [reading["target"]]
             grounding.provenance.append(
                 f"context: {text[cue_start:cue_end]!r} -> {reading['kind']} {reading['target']} "
                 f"({reading['target_label']}; {CONTEXT_WORDS})"
             )
+        elif not has_value and (dried := _DRIED_CUE.search(span_text)):
+            # "drying black" without a stage qualifier in the transcription
+            assertion["specimen_condition"] = {
+                "condition": "dried", "condition_text": dried.group(0),
+                "start": start + dried.start(), "end": start + dried.end(),
+            }
+            grounding.provenance.append(f"context: {dried.group(0)!r} -> specimen_condition dried (cue in the source span)")
         provenance = [page_prov.format(row=index), f"anchor: {method}", *grounding.provenance]
         if ar_statement is not None:
             provenance.append(
@@ -2256,7 +2746,7 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                 "frequency_qualifier", "unspecified"
             ) != "unspecified" and not assertion.get("modality_text"):
                 assertion["frequency_qualifier"] = "unspecified"
-            if not assertion.get("qualitative_value_relation"):
+            if not assertion.get("qualitative_value_relation") and not assertion.get("specimen_condition"):
                 ensure_annotation_class_iri(assertion)
             disposition.assertion = assertion
             if not hold_code:

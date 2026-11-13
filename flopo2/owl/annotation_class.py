@@ -49,6 +49,7 @@ _UNIT_IRIS = {
     "nanometre": OBO + "UO_0000018",
     "count": OBO + "UO_0000189",
     "count unit": OBO + "UO_0000189",
+    "ratio": OBO + "UO_0000190",
 }
 
 _SEASON_IRIS = {
@@ -323,9 +324,9 @@ def annotation_class_signature(assertion: dict[str, Any]) -> dict[str, Any]:
         }
     )
     for context_quality in bearer_context_qualities:
-        if not context_quality.startswith(OBO + "PATO_"):
+        if not context_quality.startswith((OBO + "PATO_", OBO + "FLOPO_")):
             raise ValueError(
-                "bearer context quality must be a PATO class: "
+                "bearer context quality must be a PATO or FLOPO value class: "
                 f"{context_quality!r}"
             )
     primary_quality_terms = set(quality.get("terms", []))
@@ -410,6 +411,13 @@ def annotation_class_signature(assertion: dict[str, Any]) -> dict[str, Any]:
     # fruit") or a collection of n bearers ("pairs of leaflets").
     if assertion.get("bearer_container"):
         signature["bearer_container"] = canonical_iri(assertion["bearer_container"])
+    # Additive: a bearer that is part of a whole with stated qualities ("calyx of male flowers").
+    if assertion.get("bearer_whole"):
+        whole = assertion["bearer_whole"]
+        signature["bearer_whole"] = {
+            "whole": canonical_iri(whole["whole_term"]),
+            "qualities": sorted(canonical_iri(q) for q in whole.get("qualities") or []),
+        }
     # Additive: the second entity of a relational quality ("shorter than the corolla tube").
     if assertion.get("towards"):
         signature["towards"] = canonical_iri(assertion["towards"]["target_term"])

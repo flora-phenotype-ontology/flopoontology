@@ -100,7 +100,7 @@ def test_bearer_context_quality_rejects_non_pato_and_primary_duplicates():
 
     from flopo2.owl.annotation_class import annotation_class_iri
 
-    with pytest.raises(ValueError, match="must be a PATO class"):
+    with pytest.raises(ValueError, match="must be a PATO or FLOPO value class"):
         annotation_class_iri(
             {
                 "po_id": "PO_0009025",

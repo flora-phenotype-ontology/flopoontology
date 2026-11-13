@@ -269,6 +269,30 @@ classes:
           as has_quality some (Q and towards some E2); part of the FAC signature when present.
         inlined: true
         range: RelationalTarget
+      bearer_whole:
+        description: >-
+          The bearer is part of a structure that itself has stated qualities: "calyx of male
+          flowers" is calyx and part_of some (flower and has_quality some male). Part of the FAC
+          signature. Not used together with bearer_container.
+        inlined: true
+        range: QualifiedWhole
+      specimen_condition:
+        description: >-
+          The statement holds of the specimen in a stated condition of preservation or
+          treatment ("black when dry", "when fresh", "on wetting"), not of the living plant as
+          such. An assertion with a specimen condition carries no phenotype_class_iri, is not
+          compiled into a taxon axiom and is not compared for conflicts.
+        inlined: true
+        range: SpecimenCondition
+      value_union_scope:
+        description: >-
+          For value_operator one_of: whether the alternatives are values of one attribute
+          (same_attribute, the default and the primary pattern: "white or pink") or qualities
+          under different attributes (across_attributes, the secondary pattern: "woody or
+          fleshy"). The secondary pattern is allowed only when the primary cannot apply, and
+          requires value_operands with the verbatim "or" between them.
+        range: ValueUnionScope
+        ifabsent: "ValueUnionScope(same_attribute)"
       bearer_scope:
         description: >-
           Provenance of a positional or sub-part restriction of the named organ, such as
@@ -335,6 +359,25 @@ classes:
           set. Distinct FAC identity from an otherwise identical inclusive bound.
         range: boolean
         ifabsent: "True"
+      value_min_extreme:
+        description: >-
+          Rarely reached lower extreme printed in parentheses before the usual range ("(2-)3-8
+          cm": 2). The usual range stays in value_low/value_high; the extreme is an annotation of
+          the assertion, never part of the FAC signature or of a class restriction. Must be
+          smaller than value_low.
+        range: float
+      value_max_extreme:
+        description: >-
+          Rarely reached upper extreme printed in parentheses after the usual range ("3-8(-11)
+          cm": 11). Same rules as value_min_extreme; must be larger than value_high.
+        range: float
+      ratio_numerator:
+        description: >-
+          For a measurement of PATO ratio (PATO:0001470) between two dimensions of the same
+          bearer ("2-3 times as long as wide"): the PATO attribute in the numerator (length).
+          Annotation of the assertion; the value is in value_low/value_high with unit "ratio".
+      ratio_denominator:
+        description: The PATO attribute in the denominator of the ratio (width).
       unit:
         description: Unit for the quantitative phenotype value (Units of Measurement Ontology).
         annotations:
@@ -667,6 +710,53 @@ classes:
         description: Exclusive offset of target_text in the source segment, when available.
       comparison_text:
         description: The comparison words of the source ("slightly shorter than"), for display.
+      ratio_low:
+        description: >-
+          Lower bound of the stated ratio of the bearer's dimension to that of the target ("2-3
+          times as long as the calyx": 2; "as long as", "equalling": 1; "half as long as": 0.5).
+        range: float
+      ratio_high:
+        description: Upper bound of the stated ratio (3 in "2-3 times as long as").
+        range: float
+
+  QualifiedWhole:
+    description: >-
+      The structure a bearer is part of, with the qualities stated of that structure ("in male
+      flowers", "of the sterile fronds").
+    attributes:
+      whole_term:
+        required: true
+        description: PO or FLOPO-local class of the whole.
+      qualities:
+        required: true
+        multivalued: true
+        description: PATO or FLOPO value classes that inhere in the whole.
+      whole_text:
+        required: true
+        description: Exact phrase naming the qualified whole, copied from the source statement.
+      start:
+        range: integer
+        description: Inclusive offset of whole_text in the source segment.
+      end:
+        range: integer
+        description: Exclusive offset of whole_text in the source segment.
+
+  SpecimenCondition:
+    description: >-
+      A condition of preservation or treatment of the specimen under which the statement holds.
+    attributes:
+      condition:
+        required: true
+        range: SpecimenConditionKind
+      condition_text:
+        required: true
+        description: Exact cue copied from the source statement ("when dry", "in sicco").
+      start:
+        range: integer
+        description: Inclusive offset of condition_text in the source segment.
+      end:
+        range: integer
+        description: Exclusive offset of condition_text in the source segment.
 
   DevelopmentalStageContext:
     description: >-
@@ -794,6 +884,24 @@ enums:
       continuum:
       taxon_level_alternatives:
       temporal_transition:
+
+  ValueUnionScope:
+    description: Whether the alternatives of a one_of value share one attribute.
+    permissible_values:
+      same_attribute:
+      across_attributes:
+
+  SpecimenConditionKind:
+    description: Condition of the specimen a statement is restricted to.
+    permissible_values:
+      dried:
+        description: Dried or pressed herbarium material ("when dry", "in sicco", "drying black").
+      fresh:
+        description: Fresh or living material, said in contrast to dried material ("when fresh").
+      moistened:
+        description: Wetted or soaked material ("on wetting", "when moist").
+      preserved:
+        description: Material in spirit or another preservative.
 
   NegationScope:
     description: Logical target of an explicit negative phenotype assertion.

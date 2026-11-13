@@ -106,9 +106,9 @@ GROWTH_LABELS = {
 MONTHS = "January February March April May June July August September October November December".split()
 
 
-UNIT_LABELS = {"UO_0000008": "m", "UO_0000015": "cm", "UO_0000016": "mm", "UO_0000017": "µm", "UO_0000189": "count"}
-UNIT_FACTOR = {"UO_0000008": 1.0, "UO_0000015": 0.01, "UO_0000016": 0.001, "UO_0000017": 1e-6, "UO_0000189": 1.0}
-UO_NAMES = {"UO_0000008": "meter", "UO_0000015": "centimeter", "UO_0000016": "millimeter", "UO_0000017": "micrometer", "UO_0000189": "count unit"}
+UNIT_LABELS = {"UO_0000008": "m", "UO_0000015": "cm", "UO_0000016": "mm", "UO_0000017": "µm", "UO_0000189": "count", "UO_0000190": "ratio"}
+UNIT_FACTOR = {"UO_0000008": 1.0, "UO_0000015": 0.01, "UO_0000016": 0.001, "UO_0000017": 1e-6, "UO_0000189": 1.0, "UO_0000190": 1.0}
+UO_NAMES = {"UO_0000008": "meter", "UO_0000015": "centimeter", "UO_0000016": "millimeter", "UO_0000017": "micrometer", "UO_0000189": "count unit", "UO_0000190": "ratio"}
 
 
 def unit_uo(unit: str) -> str:
@@ -282,6 +282,12 @@ class Builder:
                 if operand.get("degree_qualifier", "unmodified") != "unmodified":
                     g.add((formal, prop, Literal(operand["degree_qualifier"])))
             self.used_terms.update({curie(relation["from_value"]), curie(relation["to_value"])})
+        if a.get("value_operator") == "one_of" and len(values) > 1:
+            # Every alternative is a value of the record, so "white or pink" is found under both
+            # (as the two ends of a continuum are); fb:valueOperator says they are alternatives.
+            for value in values[1:]:
+                g.add((formal, FB.quality, URIRef(iri(value))))
+            g.add((formal, FB.valueOperator, Literal("one_of")))
         self.used_terms.update({curie(bearer), curie(quality), curie(a.get("pato_id") or quality)})
         self.used_terms.update(curie(v) for v in values)  # every value of a union
         if a.get("bearer_container"):
@@ -311,6 +317,43 @@ class Builder:
             g.add((formal, FB.towards, URIRef(iri(target["target_term"]))))
             g.add((formal, FB.comparison, Literal(target.get("comparison_text", ""))))
             self.used_terms.add(curie(target["target_term"]))
+            for prop, field in ((FB.ratioLow, "ratio_low"), (FB.ratioHigh, "ratio_high")):
+                number = _number(target.get(field))  # "2-3 times as long as the calyx"
+                if number is not None:
+                    g.add((formal, prop, number))
+        # Patterns of docs/odp/: the shapes in docs/odp/shapes/ describe these triples.
+        whole = a.get("bearer_whole") or {}
+        if whole:  # "calyx of male flowers"
+            g.add((formal, FB.whole, URIRef(iri(whole["whole_term"]))))
+            g.add((formal, FB.wholeText, Literal(whole.get("whole_text", ""))))
+            for value in whole.get("qualities") or []:
+                g.add((formal, FB.wholeQuality, URIRef(iri(value))))
+        condition = a.get("specimen_condition") or {}
+        if condition:  # "black when dry"
+            g.add((formal, FB.specimenCondition, Literal(condition["condition"])))
+            g.add((formal, FB.conditionText, Literal(condition.get("condition_text", ""))))
+        if a.get("value_union_scope") == "across_attributes":  # "simple or branched"
+            g.add((formal, FB.unionScope, Literal("across_attributes")))
+        for operand in a.get("value_operands") or []:
+            if (operand.get("frequency_qualifier") or "unspecified") == "unspecified":
+                continue  # "dioecious or rarely monoecious": the frequency of one alternative
+            node = URIRef(f"{formal}/alternative/{int(operand['operand_index'])}")
+            g.add((formal, FB.alternative, node))
+            g.add((node, RDF.type, FB.Alternative))
+            g.add((node, FB.quality, URIRef(iri(operand["value"]))))
+            g.add((node, FB.frequency, Literal(operand["frequency_qualifier"])))
+            g.add((node, FB.text, Literal(operand.get("text", ""))))
+        for prop, field in ((FB.minExtreme, "value_min_extreme"), (FB.maxExtreme, "value_max_extreme")):
+            number = _number(a.get(field))  # "3-8(-11) cm"
+            if number is not None:
+                g.add((formal, prop, number))
+        for prop, field in ((FB.lowExclusive, "value_low_inclusive"), (FB.highExclusive, "value_high_inclusive")):
+            if a.get(field) is False:  # "less than 1 mm"
+                g.add((formal, prop, Literal(True)))
+        for prop, field in ((FB.ratioNumerator, "ratio_numerator"), (FB.ratioDenominator, "ratio_denominator")):
+            if a.get(field):  # "2-3 times as long as wide"
+                g.add((formal, prop, URIRef(iri(a[field]))))
+                self.used_terms.add(curie(a[field]))
         self.used_terms.update(curie(t) for t in _context_terms(a))
         if gate.get("flopo_iri"):
             g.add((formal, FB.flopoClass, URIRef(gate["flopo_iri"])))
@@ -331,7 +374,7 @@ class Builder:
             if uo:
                 self.used_terms.add(curie(uo))
             g.add((formal, FB.unitSymbol, Literal(a["unit"])))
-            if uo and (a.get("value_low") is not None or a.get("value_high") is not None):
+            if uo and not condition and (a.get("value_low") is not None or a.get("value_high") is not None):
                 # Counts per container or of pairs are other traits than counts of the bare part.
                 # So are measurements at a stage or of a state ("calyx 8 mm in fruit", "young leaves").
                 context = "|".join(str(a.get(k) or "") for k in ("bearer_container", "bearer_collection_size"))
@@ -358,7 +401,8 @@ class Builder:
                 # a quality stated of a stage or state ("glabrous when young") is not a conflict
                 # with another stated without it; like a frequency, it is not compared
                 "frequency": a.get("frequency_qualifier") not in (None, "", "unspecified", "always")
-                or bool(_context_terms(a)) or bool(a.get("part_restrictions")) or bool(a.get("towards")),
+                or bool(_context_terms(a)) or bool(a.get("part_restrictions")) or bool(a.get("towards"))
+                or bool(condition),
             })
         elif a.get("value_low") is not None or a.get("value_high") is not None:
             self.facts[str(taxon)].append({"record": formal, "source": source, "bearer": curie(bearer),
@@ -381,6 +425,8 @@ class Builder:
         contexts = [p.get("part_text", "") for p in parts]
         contexts += [s.get("stage_text", "") for s in a.get("developmental_stage_contexts") or []]
         contexts += [self.vocab.label(q) for q in a.get("bearer_context_qualities") or []]
+        contexts += [(a.get("bearer_whole") or {}).get("whole_text", ""),
+                     (a.get("specimen_condition") or {}).get("condition_text", "")]
         contexts = [c for c in contexts if c]
         return f"{label} ({', '.join(contexts)})" if contexts else label
 
@@ -393,11 +439,18 @@ class Builder:
             if low is not None and high is not None and float(low) != float(high):
                 value = f"{fmt(low)}–{fmt(high)}"
             elif low is None:
-                value = f"up to {fmt(high)}"
+                value = f"{'under' if a.get('value_high_inclusive') is False else 'up to'} {fmt(high)}"
             elif high is None:
-                value = f"at least {fmt(low)}"
+                value = f"{'over' if a.get('value_low_inclusive') is False else 'at least'} {fmt(low)}"
             else:
                 value = fmt(low)
+            if a.get("value_min_extreme") is not None:
+                value = f"({fmt(a['value_min_extreme'])}–){value}"
+            if a.get("value_max_extreme") is not None:
+                value = f"{value}(–{fmt(a['value_max_extreme'])})"
+            if a.get("ratio_numerator"):
+                return (f"{organ} {self.vocab.label(a['ratio_numerator'])} to "
+                        f"{self.vocab.label(a['ratio_denominator'])} ratio {value}")
             if unit_uo(a.get("unit", "")) == "UO_0000189":
                 what = (f"{organ} pair" if a.get("bearer_collection_size") == 2
                         else f"{organ} group size" if a.get("bearer_collection") else organ)
@@ -923,9 +976,10 @@ DESCRIPTIVE_WORDS = {
 def _context_terms(a: dict) -> list[str]:
     """Stage and bearer-state terms of an assertion (docs/annotation-context-patterns.md)."""
 
+    whole = a.get("bearer_whole") or {}
     return [str(s["stage_term"]) for s in a.get("developmental_stage_contexts") or []] + [
         str(q) for q in a.get("bearer_context_qualities") or []
-    ]
+    ] + ([str(whole["whole_term"]), *map(str, whole.get("qualities") or [])] if whole else [])
 
 
 def descriptive_word(quality: str, text: str) -> str:

@@ -324,8 +324,9 @@ def test_locate_span_prefers_unused_occurrence():
             None,
             1000,
             "less than 1000 ppm",
-            (None, 1000.0, "upper", "upper_bound_cue_not_supported"),
+            (None, 1000.0, "upper", ""),  # a strict upper bound since 2026-11-13
         ),
+        (None, 7, "rarely less than 7 mm", (None, 7.0, "upper", "upper_bound_cue_not_supported")),
         (1000, None, "> 1000 ppm", (1000.0, None, "lower", "")),
         (4, 2, "2-4 cm", (2.0, 4.0, "range", "")),
     ],

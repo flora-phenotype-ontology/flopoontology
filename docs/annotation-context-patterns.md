@@ -5,6 +5,14 @@ does not yet annotate, over the 38 external floras (4.9 M transcribed rows, 3.1 
 Counts are rows; the sub-pattern counts come from regular expressions over the transcribed
 phrase and are estimates.
 
+> **Update of 2026-11-13 (evening).** The patterns listed as open below are implemented and
+> documented one by one in [`docs/odp/`](odp/README.md): "±" and upper-bound cues, counts in a
+> word, series members with a FLOPO value, ranges with extremes, specimen condition, alternatives
+> across attributes (as a secondary pattern with a reviewed pair table), an alternative with its
+> own frequency, attachment relations, equality and ratios, and parts of a qualified whole. Still
+> open: upper / lower / inner / outer members of a series (no value classes yet), "before" and
+> "after" a stage, counts at a position, and kind F of the stage qualifier.
+
 ## What is already represented
 
 | Source wording | Representation |

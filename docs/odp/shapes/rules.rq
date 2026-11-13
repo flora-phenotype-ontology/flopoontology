@@ -1,0 +1,67 @@
+# Rules of the annotation design patterns that compare two values of one record. Each query
+# selects the records that BREAK the rule named in its "# rule:" line; an empty result is a pass.
+# Queries are separated by a line of dashes. Run by tools/validate_annotation_patterns.py.
+
+# rule: extreme_outside_usual_range (docs/odp/05-range-with-extremes.md)
+PREFIX fb: <http://phenomebrowser.net/flopo/browse#>
+SELECT ?record WHERE {
+  { ?record fb:minExtreme ?extreme ; fb:low ?bound . FILTER(?extreme >= ?bound) }
+  UNION { ?record fb:maxExtreme ?extreme ; fb:high ?bound . FILTER(?extreme <= ?bound) }
+  UNION { ?record fb:minExtreme ?extreme . FILTER NOT EXISTS { ?record fb:low ?bound } }
+}
+----------
+# rule: range_low_not_above_high (docs/odp/05-range-with-extremes.md)
+PREFIX fb: <http://phenomebrowser.net/flopo/browse#>
+SELECT ?record WHERE { ?record fb:low ?low ; fb:high ?high . FILTER(?low > ?high) }
+----------
+# rule: specimen_condition_without_phenotype_class (docs/odp/06-specimen-condition.md)
+PREFIX fb: <http://phenomebrowser.net/flopo/browse#>
+SELECT ?record WHERE { ?record fb:specimenCondition ?condition ; fb:phenotypeClass ?class }
+----------
+# rule: alternative_is_a_value_of_its_record (docs/odp/08-alternative-with-frequency.md)
+PREFIX fb: <http://phenomebrowser.net/flopo/browse#>
+SELECT ?record WHERE {
+  ?record fb:alternative ?alternative . ?alternative fb:quality ?value .
+  FILTER NOT EXISTS { ?record fb:quality ?value }
+}
+----------
+# rule: relation_target_is_not_the_bearer (docs/odp/09-relation-to-another-part.md)
+PREFIX fb: <http://phenomebrowser.net/flopo/browse#>
+SELECT ?record WHERE { ?record fb:towards ?part ; fb:bearer ?part }
+----------
+# rule: ratio_bounds_ordered_and_positive (docs/odp/10-ratio-to-another-part.md)
+PREFIX fb: <http://phenomebrowser.net/flopo/browse#>
+SELECT ?record WHERE {
+  ?record fb:ratioLow ?low ; fb:ratioHigh ?high . FILTER(?low > ?high || ?low <= 0)
+}
+----------
+# rule: ratio_quality_agrees_with_ratio (docs/odp/10-ratio-to-another-part.md)
+# above 1: an increased dimension; below 1: a decreased one; spanning 1: the dimension itself
+PREFIX fb: <http://phenomebrowser.net/flopo/browse#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+SELECT ?record WHERE {
+  ?record fb:ratioLow ?low ; fb:ratioHigh ?high ; fb:quality ?quality .
+  VALUES (?quality ?kind) {
+    (obo:PATO_0000573 "increased") (obo:PATO_0000600 "increased") (obo:PATO_0000591 "increased") (obo:PATO_0000570 "increased")
+    (obo:PATO_0000574 "decreased") (obo:PATO_0000599 "decreased") (obo:PATO_0000592 "decreased") (obo:PATO_0000569 "decreased")
+    (obo:PATO_0000122 "same") (obo:PATO_0000921 "same") (obo:PATO_0000915 "same") (obo:PATO_0000119 "same")
+  }
+  FILTER( (?kind = "increased" && ?low <= 1) || (?kind = "decreased" && ?high >= 1)
+       || (?kind = "same" && (?low > 1 || ?high < 1)) )
+}
+----------
+# rule: ratio_of_two_different_dimensions (docs/odp/11-ratio-of-two-dimensions.md)
+PREFIX fb: <http://phenomebrowser.net/flopo/browse#>
+SELECT ?record WHERE { ?record fb:ratioNumerator ?dimension ; fb:ratioDenominator ?dimension }
+----------
+# rule: whole_is_not_the_bearer (docs/odp/12-part-of-qualified-whole.md)
+PREFIX fb: <http://phenomebrowser.net/flopo/browse#>
+SELECT ?record WHERE { ?record fb:whole ?part ; fb:bearer ?part }
+----------
+# rule: count_is_a_whole_number (docs/odp/03-count-of-parts.md)
+PREFIX fb: <http://phenomebrowser.net/flopo/browse#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+SELECT ?record WHERE {
+  ?record fb:unit obo:UO_0000189 . { ?record fb:low ?n } UNION { ?record fb:high ?n }
+  FILTER(?n < 0 || FLOOR(?n) != ?n)
+}

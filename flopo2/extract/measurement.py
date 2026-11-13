@@ -230,13 +230,17 @@ _SUPPORTED_LENGTH_UNITS = frozenset(_UNIT_NORMALIZATION) | {
 # 'count unit').
 COUNT_QUALITY = "PATO_0000070"
 COUNT_UNITS = {"count", "count unit", "uo:0000189", "uo_0000189"}
+RATIO_UNIT = "ratio"  # UO:0000190
+RATIO_QUALITY = "PATO_0001470"
 
 
 def is_supported_count(unit: object, pato_id: object) -> bool:
     """Return whether ``unit`` is the count unit of a count (PATO amount) measurement."""
 
-    return (isinstance(unit, str) and unit.strip().lower() in COUNT_UNITS
-            and str(pato_id or "").replace(":", "_") == COUNT_QUALITY)
+    quality = str(pato_id or "").replace(":", "_")
+    if isinstance(unit, str) and unit.strip().lower() == RATIO_UNIT and quality == RATIO_QUALITY:
+        return True  # a dimensionless ratio of two dimensions ("2-3 times as long as wide")
+    return isinstance(unit, str) and unit.strip().lower() in COUNT_UNITS and quality == COUNT_QUALITY
 
 
 def is_supported_length_unit(unit: object) -> bool:

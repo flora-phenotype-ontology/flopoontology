@@ -90,6 +90,7 @@ UNIT_IRIS = {
     "nanometre": "UO_0000018",
     "count": "UO_0000189",
     "count unit": "UO_0000189",
+    "ratio": "UO_0000190",
 }
 
 SEASON_TERMS = {
@@ -422,8 +423,8 @@ def _bearer_context_quality_restrictions(
     seen: set[str] = set()
     for value in assertion.get("bearer_context_qualities", []) or []:
         normalized = str(value or "").strip().replace(":", "_")
-        if not normalized.startswith("PATO_"):
-            raise ValueError(f"bearer context quality must be a PATO class: {value!r}")
+        if not normalized.startswith(("PATO_", "FLOPO_")):
+            raise ValueError(f"bearer context quality must be a PATO or FLOPO value class: {value!r}")
         if normalized in primary:
             raise ValueError(
                 "bearer context quality duplicates the primary categorical quality: "
@@ -602,6 +603,12 @@ def _bearer_classes(graph: Graph, nodes: _Nodes, assertion: dict, po: URIRef) ->
     has_member exactly 2 leaflet); either one part_of some container ("seeds per fruit")."""
 
     size = assertion.get("bearer_collection_size")
+    if size or assertion.get("bearer_collection"):
+        # Declared here: without the declaration OWLAPI cannot type the cardinality restriction
+        # and reads the whole bearer as an error class (found with KM, 2026-11-13).
+        graph.add((HAS_MEMBER, RDF.type, OWL.ObjectProperty))
+    if assertion.get("bearer_container") or assertion.get("bearer_whole"):
+        graph.add((PART_OF, RDF.type, OWL.ObjectProperty))
     if size:
         restriction = nodes.new("memberCardinality")
         graph.add((restriction, RDF.type, OWL.Restriction))
@@ -622,6 +629,19 @@ def _bearer_classes(graph: Graph, nodes: _Nodes, assertion: dict, po: URIRef) ->
     if container is not None:
         graph.add((container, RDF.type, OWL.Class))
         classes.append(_some(graph, nodes, PART_OF, container))
+    whole = assertion.get("bearer_whole")
+    if whole:
+        # "calyx of male flowers": calyx and part_of some (flower and has_quality some male)
+        term = _curie_iri(whole.get("whole_term"))
+        qualities = [_curie_iri(q) for q in whole.get("qualities") or []]
+        if term is None or not qualities or any(q is None for q in qualities):
+            raise ValueError(f"invalid qualified whole: {whole!r}")
+        graph.add((term, RDF.type, OWL.Class))
+        members = [term]
+        for quality in qualities:
+            graph.add((quality, RDF.type, OWL.Class))
+            members.append(_some(graph, nodes, HAS_QUALITY, quality))
+        classes.append(_some(graph, nodes, PART_OF, _intersection(graph, nodes, members)))
     return classes
 
 
@@ -754,8 +774,8 @@ def _taxon_class(graph: Graph, record: dict) -> URIRef | None:
 
 
 def _strict(assertion: dict, unqualified_as_universal: bool) -> bool:
-    if assertion.get("qualitative_value_relation"):
-        return False
+    if assertion.get("qualitative_value_relation") or assertion.get("specimen_condition"):
+        return False  # "black when dry" is not a claim about the living plant
     # Entailing degree operands keep strict eligibility; operand-level frequency or
     # approximation makes the claim qualified (schema extension E2).
     if not operands_fac_representable(assertion) or operands_make_qualified(assertion):
@@ -1141,7 +1161,9 @@ def build_assertion_ontology(
                         "the OWL phenotype expression"
                     )
                 qualitative_relation = bool(assertion.get("qualitative_value_relation"))
-                structured_operands = not operands_fac_representable(assertion)
+                structured_operands = not operands_fac_representable(assertion) or bool(
+                    assertion.get("specimen_condition")
+                )
                 description: URIRef | None = None
                 if qualitative_relation or structured_operands:
                     if assertion.get("phenotype_class_iri"):

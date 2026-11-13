@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+from functools import lru_cache
 import json
 import math
 import re
@@ -198,6 +199,207 @@ def _covers_evidence(
     return "omitted"
 
 
+_OR_BETWEEN = re.compile(r"^\s*,?\s*(?:or|ou)\s+$", re.IGNORECASE)
+_PAREN_NUMBER = re.compile(r"\(\s*[-–—]?\s*(\d+(?:[.,]\d+)?)\s*[-–—]?\s*\)")
+RATIO_QUALITY = "PATO_0001470"
+QUALITY_ROOT = "PATO_0000001"
+
+
+def _span_ok(text: str, value: str, start: int | None, end: int | None) -> bool:
+    if start is None or end is None:
+        return bool(value) and value in text
+    return 0 <= start <= end <= len(text) and text[start:end] == value
+
+
+def pattern_issues(
+    parsed: TraitAssertion, text: str, po_ids: set[str], pato_ids: set[str],
+    flopo_ids: set[str], attribute_ids: set[str],
+) -> list[tuple[str, str]]:
+    """Validation rules of the annotation design patterns (docs/odp/). Each rule is named in the
+    pattern document that states it; the codes are the rule identifiers used there."""
+
+    out: list[tuple[str, str]] = []
+    norm = lambda v: str(v).replace(":", "_")  # noqa: E731
+    known_part = lambda t: (PO_ID.fullmatch(t) and (not po_ids or t in po_ids)) or (  # noqa: E731
+        FLOPO_ID.fullmatch(t) and (not flopo_ids or t in flopo_ids))
+    known_value = lambda t: (PATO_ID.fullmatch(t) and (not pato_ids or t in pato_ids)) or (  # noqa: E731
+        FLOPO_ID.fullmatch(t) and (not flopo_ids or t in flopo_ids))
+
+    # --- range with extremes (docs/odp/range-with-extremes.md)
+    for name, extreme, bound, wrong in (
+        ("min", parsed.value_min_extreme, parsed.value_low, lambda e, b: e >= b),
+        ("max", parsed.value_max_extreme, parsed.value_high, lambda e, b: e <= b),
+    ):
+        if extreme is None:
+            continue
+        if bound is None:
+            out.append(("extreme_without_usual_bound", name))
+        elif wrong(extreme, bound):
+            out.append(("extreme_not_outside_usual_range", f"{name} {extreme:g} against {bound:g}"))
+        printed = {float(m.group(1).replace(",", ".")) for m in _PAREN_NUMBER.finditer(parsed.source_text or "")}
+        if float(extreme) not in printed:
+            out.append(("extreme_not_in_parentheses_in_source", f"{extreme:g}"))
+
+    # --- specimen condition (docs/odp/specimen-condition.md)
+    condition = parsed.specimen_condition
+    if condition is not None:
+        if not _span_ok(text, condition.condition_text, condition.start, condition.end):
+            out.append(("specimen_condition_text_not_verbatim", repr(condition.condition_text)))
+        if parsed.phenotype_class_iri:
+            out.append(("specimen_condition_with_phenotype_class", parsed.phenotype_class_iri))
+
+    # --- alternatives across attributes (docs/odp/alternatives-across-attributes.md)
+    scope = getattr(parsed.value_union_scope, "value", parsed.value_union_scope) or "same_attribute"
+    operator = getattr(parsed.value_operator, "value", parsed.value_operator)
+    if scope == "across_attributes":
+        operands = sorted(parsed.value_operands or [], key=lambda o: o.operand_index)
+        values = [norm(v) for v in parsed.value_terms or []]
+        if operator != "one_of" or len(values) < 2:
+            out.append(("across_attributes_not_a_union", str(operator)))
+        if norm(parsed.quality) != QUALITY_ROOT:
+            out.append(("across_attributes_top_level_not_quality", parsed.quality))
+        if [norm(o.value) for o in operands] != values:
+            out.append(("across_attributes_operands_do_not_match_values", repr(values)))
+        for left, right in zip(operands, operands[1:]):
+            between = text[left.end:right.start] if left.end <= right.start <= len(text) else ""
+            head = text[right.start:right.end]
+            if not _OR_BETWEEN.match(between) and not (between.strip() in {"", ","} and re.match(r"\s*or\s", head)):
+                out.append(("across_attributes_without_or", repr(text[left.start:right.end])))
+        shared = shared_attributes(values, attribute_ids)
+        if shared:
+            out.append(("across_attributes_but_values_share_attribute", ",".join(sorted(shared))))
+        pairs = load_union_pairs()
+        for index, first in enumerate(values):
+            for second in values[index + 1:]:
+                if pairs.get(tuple(sorted((first, second)))) != "accept":
+                    out.append(("across_attributes_pair_not_reviewed", f"{first}|{second}"))
+    elif norm(parsed.quality) == QUALITY_ROOT and operator == "one_of":
+        out.append(("union_under_quality_root_without_scope", parsed.quality))
+
+    # --- part of a qualified whole (docs/odp/part-of-qualified-whole.md)
+    whole = parsed.bearer_whole
+    if whole is not None:
+        term = norm(whole.whole_term)
+        if not known_part(term):
+            out.append(("unknown_whole_term", whole.whole_term))
+        if term == norm(parsed.anatomical_entity):
+            out.append(("whole_is_the_bearer", whole.whole_term))
+        for quality in whole.qualities or []:
+            if not known_value(norm(quality)):
+                out.append(("unknown_whole_quality", quality))
+        if not _span_ok(text, whole.whole_text, whole.start, whole.end):
+            out.append(("whole_text_not_verbatim", repr(whole.whole_text)))
+        if parsed.bearer_container:
+            out.append(("whole_with_bearer_container", parsed.bearer_container))
+
+    # --- ratios (docs/odp/comparison-with-another-part.md, docs/odp/ratio-of-two-dimensions.md)
+    target = parsed.towards
+    if target is not None and (target.ratio_low is not None or target.ratio_high is not None):
+        low, high = target.ratio_low, target.ratio_high
+        if low is None or high is None or low <= 0 or low > high:
+            out.append(("invalid_ratio_bounds", f"{low}-{high}"))
+    if parsed.ratio_numerator or parsed.ratio_denominator:
+        if not (parsed.ratio_numerator and parsed.ratio_denominator):
+            out.append(("ratio_needs_both_dimensions", repr((parsed.ratio_numerator, parsed.ratio_denominator))))
+        elif norm(parsed.ratio_numerator) == norm(parsed.ratio_denominator):
+            out.append(("ratio_of_one_dimension", parsed.ratio_numerator))
+        for dimension in (parsed.ratio_numerator, parsed.ratio_denominator):
+            if dimension and attribute_ids and norm(dimension) not in attribute_ids:
+                out.append(("ratio_dimension_not_attribute", dimension))
+        if norm(parsed.quality) != RATIO_QUALITY:
+            out.append(("ratio_dimensions_without_ratio_quality", parsed.quality))
+        if parsed.value_low is None and parsed.value_high is None:
+            out.append(("ratio_without_value", ""))
+    return out
+
+
+@lru_cache(maxsize=1)
+def _attribute_parents() -> tuple[dict[str, list[str]], dict[str, str]]:
+    """PATO is_a parents, and the PATO parent of each FLOPO value (for shared_attributes)."""
+
+    parents: dict[str, list[str]] = {}
+    current = ""
+    obo = Path("ont/quality.obo")
+    if obo.exists():
+        for line in obo.read_text(encoding="utf-8").splitlines():
+            if line.startswith("id: "):
+                current = line[4:].strip().replace(":", "_")
+            elif line.startswith("is_a: ") and current:
+                parents.setdefault(current, []).append(line[6:].split("!")[0].strip().replace(":", "_"))
+    flopo: dict[str, str] = {}
+    for table in (Path("config/flopo_flora_value_terms.tsv"), Path("config/flopo_colour_backbone_terms.tsv")):
+        if table.exists():
+            with table.open(encoding="utf-8", newline="") as handle:
+                for row in csv.reader(handle, delimiter="\t"):
+                    if len(row) > 2 and row[0].startswith("FLOPO:") and row[2].startswith("PATO:"):
+                        flopo[row[0].replace(":", "_")] = row[2].replace(":", "_")
+    return parents, flopo
+
+
+# as flopo2.ingest.ncvc_annotate._TOO_GENERAL_ATTRIBUTES: "spiny or hairy" share only morphology
+_GENERAL_ATTRIBUTES = {"PATO_0000001", "PATO_0000051", "PATO_0001241"}
+
+
+def shared_attributes(values: list[str], attribute_ids: set[str] | None = None) -> set[str]:
+    """Attribute-slim PATO ancestors common to all values, the most general ones excluded: when
+    there is one, the same-attribute union is the pattern to use."""
+
+    parents, flopo = _attribute_parents()
+
+    def ancestors(value: str) -> set[str] | None:
+        start = "PATO_0000014" if value.startswith("FLOPO_0988") else flopo.get(value, value)
+        if not start.startswith("PATO_") or (start not in parents and start != QUALITY_ROOT):
+            return None  # not placed: do not claim a shared attribute
+        seen, frontier = set(), [start]
+        while frontier:
+            node = frontier.pop()
+            if node not in seen:
+                seen.add(node)
+                frontier += parents.get(node, [])
+        return seen
+
+    sets = [ancestors(v) for v in values]
+    if not sets or any(s is None for s in sets):
+        return set()
+    common = set.intersection(*sets) - _GENERAL_ATTRIBUTES
+    return common & attribute_ids if attribute_ids else common
+
+
+def nearest_shared_attribute(values: list[str], attribute_ids: set[str]) -> str:
+    """The most specific attribute-slim PATO ancestor common to all values, or ""."""
+
+    shared = shared_attributes(values, attribute_ids)
+    if not shared:
+        return ""
+    parents, _ = _attribute_parents()
+
+    def depth(term: str) -> int:
+        seen, frontier = set(), [term]
+        while frontier:
+            node = frontier.pop()
+            if node not in seen:
+                seen.add(node)
+                frontier += parents.get(node, [])
+        return len(seen)
+
+    return max(sorted(shared), key=depth)
+
+
+UNION_PAIRS = Path("config/flora_union_pairs.tsv")
+
+
+@lru_cache(maxsize=1)
+def load_union_pairs(path: Path = UNION_PAIRS) -> dict[tuple[str, str], str]:
+    """Reviewed pairs of qualities under different attributes that a flora states as
+    alternatives ("simple or branched"): ``{(value_a, value_b) sorted: accept | reject}``."""
+
+    if not path.exists():
+        return {}
+    with path.open(encoding="utf-8", newline="") as handle:
+        return {tuple(sorted((row["value_a"], row["value_b"]))): row["decision"]
+                for row in csv.DictReader(handle, delimiter="\t")}
+
+
 def _pydantic_assertion(assertion: dict[str, Any]) -> TraitAssertion:
     values = assertion.get("value_terms", assertion.get("value_term_ids", []))
     payload = {
@@ -217,6 +419,13 @@ def _pydantic_assertion(assertion: dict[str, Any]) -> TraitAssertion:
         "value_operands": assertion.get("value_operands") or None,
         "bearer_scope": assertion.get("bearer_scope") or None,
         "towards": assertion.get("towards") or None,
+        "bearer_whole": assertion.get("bearer_whole") or None,
+        "specimen_condition": assertion.get("specimen_condition") or None,
+        "value_union_scope": assertion.get("value_union_scope") or "same_attribute",
+        "value_min_extreme": assertion.get("value_min_extreme"),
+        "value_max_extreme": assertion.get("value_max_extreme"),
+        "ratio_numerator": _optional(assertion.get("ratio_numerator")),
+        "ratio_denominator": _optional(assertion.get("ratio_denominator")),
         "bearer_container": _optional(assertion.get("bearer_container")),
         "bearer_collection": assertion.get("bearer_collection"),
         "bearer_collection_size": assertion.get("bearer_collection_size"),
@@ -1027,6 +1236,8 @@ def _validate_assertion(
         elif target.target_text not in text:
             _add(issues, line_number, "relational_target_text_not_verbatim",
                  repr(target.target_text), assertion_number)
+    for code, message in pattern_issues(parsed, text, po_ids, pato_ids, flopo_bearer_ids, attribute_pato_ids):
+        _add(issues, line_number, code, message, assertion_number)
     stage_context_count = len(parsed.developmental_stage_contexts or [])
     if (
         parsed.developmental_stage_operator in {"one_of", "all_of"}
@@ -1140,6 +1351,8 @@ def _validate_assertion(
         parsed.value_operator in {"one_of", "all_of"}
         and attribute_pato_ids
         and parsed.quality not in attribute_pato_ids
+        # the secondary union pattern has the quality root as its top level (pattern_issues)
+        and getattr(parsed.value_union_scope, "value", parsed.value_union_scope) != "across_attributes"
     ):
         _add(
             issues,
@@ -1206,7 +1419,11 @@ def _validate_assertion(
     }
     for value in context_qualities:
         normalized = str(value).replace(":", "_")
-        if not PATO_ID.fullmatch(value):
+        if FLOPO_ID.fullmatch(str(value)):
+            # a reviewed FLOPO value of the bearer ("basal leaves", "cauline leaves")
+            if flopo_bearer_ids and normalized not in flopo_bearer_ids:
+                _add(issues, line_number, "unknown_bearer_context_quality", value, assertion_number)
+        elif not PATO_ID.fullmatch(value):
             _add(
                 issues,
                 line_number,

@@ -1,0 +1,135 @@
+# ShEx shapes for the RDF side of the FLOPO annotation design patterns (docs/odp/).
+#
+# The shapes describe trait records of the atlas index graph (flopo2.saudi.build, namespace fb:).
+# One shape per pattern; every pattern shape includes <TraitRecord>. Shapes are open: a record
+# may carry the triples of several patterns ("basal leaves (2-)3-8 cm long when dry").
+# What ShEx cannot state (comparisons between two values of a record) is in
+# docs/odp/shapes/rules.rq and run by tools/validate_annotation_patterns.py.
+
+PREFIX fb:   <http://phenomebrowser.net/flopo/browse#>
+PREFIX obo:  <http://purl.obolibrary.org/obo/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+BASE <http://phenomebrowser.net/flopo/shapes/>
+
+# --- every trait record ---------------------------------------------------------------------
+<TraitRecord> {
+  a [fb:TraitRecord] ;
+  fb:taxon IRI ;
+  fb:source IRI ;
+  fb:bearer IRI /^http:\/\/purl\.obolibrary\.org\/obo\/(PO|FLOPO)_[0-9]+$/ ;
+  fb:quality IRI /^http:\/\/purl\.obolibrary\.org\/obo\/(PATO|FLOPO)_[0-9]+$/ + ;
+  fb:status LITERAL ;
+  fb:negated xsd:boolean ;
+  fb:text LITERAL ;
+  rdfs:label LITERAL
+}
+
+# --- 1. approximate value: "± erect", "suborbicular" ----------------------------------------
+<ApproximateValue> @<TraitRecord> AND {
+  fb:qualifier ["approximately" "nearly" "almost" "sub"]
+}
+
+# --- 2. bounded measurement: "to 8 m", "less than 1 mm", "more than 5 cm" ---------------------
+<BoundedMeasurement> @<TraitRecord> AND {
+  ( fb:high xsd:decimal ; fb:low . {0} ; fb:highExclusive [true] ?
+  | fb:low xsd:decimal ; fb:high . {0} ; fb:lowExclusive [true] ? ) ;
+  fb:unit IRI /^http:\/\/purl\.obolibrary\.org\/obo\/UO_[0-9]+$/ ;
+  fb:unitSymbol LITERAL
+}
+
+# --- 3. count of parts: "5-nerved", "3-5-foliolate", "stamens 10" ----------------------------
+<CountOfParts> @<TraitRecord> AND {
+  fb:quality [obo:PATO_0000070] ;              # amount
+  fb:unit [obo:UO_0000189] ;                   # count unit
+  fb:low xsd:decimal ? ;
+  fb:high xsd:decimal ? ;
+  fb:container IRI /^http:\/\/purl\.obolibrary\.org\/obo\/(PO|FLOPO)_[0-9]+$/ ? ;
+  fb:collectionSize xsd:integer ?
+}
+
+# --- 4. state or series position of the bearer: "basal leaves", "young stems" ----------------
+<BearerState> @<TraitRecord> AND {
+  fb:bearerState IRI /^http:\/\/purl\.obolibrary\.org\/obo\/(PATO|FLOPO)_[0-9]+$/ +
+}
+
+# --- 5. range with extremes: "(2-)3-8(-11) cm" ------------------------------------------------
+<RangeWithExtremes> @<TraitRecord> AND {
+  fb:low xsd:decimal ? ;
+  fb:high xsd:decimal ;
+  fb:unit IRI /^http:\/\/purl\.obolibrary\.org\/obo\/UO_[0-9]+$/ ;
+  fb:minExtreme xsd:decimal ? ;
+  fb:maxExtreme xsd:decimal ?
+} AND ( { fb:minExtreme . } OR { fb:maxExtreme . } )   # at least one extreme
+
+# --- 6. specimen condition: "black when dry" -------------------------------------------------
+<SpecimenCondition> @<TraitRecord> AND {
+  fb:specimenCondition ["dried" "fresh" "moistened" "preserved"] ;
+  fb:conditionText LITERAL ;
+  fb:phenotypeClass . {0}                      # never linked to a phenotype class
+}
+
+# --- 7a. alternatives of one attribute (primary): "white or pink" ----------------------------
+<AlternativesOfOneAttribute> @<TraitRecord> AND {
+  fb:valueOperator ["one_of"] ;
+  fb:quality IRI {2,} ;
+  fb:attribute [obo:~ - obo:PATO_0000001] ;    # a shared attribute below the root
+  fb:unionScope . {0}
+}
+
+# --- 7b. alternatives across attributes (secondary): "simple or branched" --------------------
+<AlternativesAcrossAttributes> @<TraitRecord> AND {
+  fb:valueOperator ["one_of"] ;
+  fb:quality IRI {2,} ;
+  fb:attribute [obo:PATO_0000001] ;            # quality: no attribute is shared
+  fb:unionScope ["across_attributes"]
+}
+
+# --- 8. alternative with its own frequency: "dioecious or rarely monoecious" -----------------
+<AlternativeWithFrequency> @<TraitRecord> AND {
+  fb:valueOperator ["one_of"] ;
+  fb:quality IRI {2,} ;
+  fb:alternative @<Alternative> + ;
+  fb:frequency . {0}                           # the frequency is of one alternative only
+}
+<Alternative> {
+  a [fb:Alternative] ;
+  fb:quality IRI /^http:\/\/purl\.obolibrary\.org\/obo\/(PATO|FLOPO)_[0-9]+$/ ;
+  fb:frequency ["usually" "often" "sometimes" "occasionally" "rarely" "never" "universal"] ;
+  fb:text LITERAL
+}
+
+# --- 9. relation to another part: "shorter than the corolla tube", "adnate to the petals" ----
+<RelationToAnotherPart> @<TraitRecord> AND {
+  fb:towards IRI /^http:\/\/purl\.obolibrary\.org\/obo\/(PO|FLOPO)_[0-9]+$/ ;
+  fb:comparison LITERAL
+}
+
+# --- 10. equality and ratio to another part: "as long as the sepals", "2-3 times as long as" -
+<RatioToAnotherPart> @<RelationToAnotherPart> AND {
+  fb:ratioLow xsd:decimal ;
+  fb:ratioHigh xsd:decimal ;
+  fb:quality [ obo:PATO_0000122 obo:PATO_0000573 obo:PATO_0000574     # length, increased, decreased
+               obo:PATO_0000921 obo:PATO_0000600 obo:PATO_0000599     # width
+               obo:PATO_0000915 obo:PATO_0000591 obo:PATO_0000592     # thickness
+               obo:PATO_0000119 obo:PATO_0000570 obo:PATO_0000569 ]   # height
+}
+
+# --- 11. ratio of two dimensions of the bearer: "2-3 times as long as wide" ------------------
+<RatioOfTwoDimensions> @<TraitRecord> AND {
+  fb:quality [obo:PATO_0001470] ;              # ratio
+  fb:unit [obo:UO_0000190] ;                   # ratio (dimensionless)
+  fb:ratioNumerator IRI /^http:\/\/purl\.obolibrary\.org\/obo\/PATO_[0-9]+$/ ;
+  fb:ratioDenominator IRI /^http:\/\/purl\.obolibrary\.org\/obo\/PATO_[0-9]+$/ ;
+  fb:low xsd:decimal ? ;
+  fb:high xsd:decimal ? ;
+  fb:towards . {0}
+}
+
+# --- 12. part of a qualified whole: "calyx of male flowers" ----------------------------------
+<PartOfQualifiedWhole> @<TraitRecord> AND {
+  fb:whole IRI /^http:\/\/purl\.obolibrary\.org\/obo\/(PO|FLOPO)_[0-9]+$/ ;
+  fb:wholeQuality IRI /^http:\/\/purl\.obolibrary\.org\/obo\/(PATO|FLOPO)_[0-9]+$/ + ;
+  fb:wholeText LITERAL ;
+  fb:container . {0}
+}

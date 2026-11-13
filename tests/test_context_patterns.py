@@ -71,7 +71,9 @@ def test_comparison_with_another_part(res):
     assert text[found["start"]:found["end"]] == found["target_text"] == "stamens"
     assert found["comparison_text"] == "slightly shorter than"
     # no second part, a measurement, or the bearer itself: no comparison
-    assert na.comparison(res, {"quality_en": "shorter"}, text, 6, 39, "PO_0009074") is None
+    # the second part is read from the source span when the transcribed quality lacks it
+    assert na.comparison(res, {"quality_en": "shorter"}, text, 6, 39, "PO_0009074")["target_term"] == "PO_0009029"
+    assert na.comparison(res, {"quality_en": "shorter"}, "Style shorter, glabrous.", 6, 13, "PO_0009074") is None
     assert na.comparison(res, {"quality_en": "longer than 5 mm"}, "Style longer than 5 mm.", 6, 22, "PO_0009074") is None
     assert na.comparison(res, {"quality_en": "shorter than the style"}, "Style shorter than the style.", 6, 28, "PO_0009074") is None
 

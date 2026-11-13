@@ -70,7 +70,12 @@ _FR_BOUND_VERB = (
 UPPER_BOUND_EVIDENCE = re.compile(
     r"(?<!\w)(?:up\s+to|at\s+most|no\s+more\s+than|"
     r"not\s+(?:more\s+than|exceeding|over|longer\s+than|surpassing)|"
-    r"maximum|max\.?|hasta)(?!\w)|"
+    r"maximum|max\.?|hasta|less\s+than|fewer\s+than|under|below|"
+    r"(?:rarely|seldom|scarcely|hardly|never)\s+(?:exceeding|exceeds?|more\s+than|over|above|reaching)|"
+    r"reaching|attaining)(?!\w)|[<≤]|"
+    # "to c. 2 m", "to about 8 m"
+    r"(?<=[A-Za-z,;(]\s)to\s+(?:c\.|ca\.?|about|approximately|nearly|almost)\s*(?=\d)|"
+    r"^to\s+(?:c\.|ca\.?|about|approximately|nearly|almost)\s*(?=\d)|"
     # Field-guide idiom "stems to 1 m long" / "a shrub to 2 m": a bare "to" before a number with
     # no number before it is an upper bound ("5 to 10 mm" is a range and keeps both bounds).
     r"(?<=[A-Za-z,;(]\s)to\s+(?=\d)|^to\s+(?=\d)|"
@@ -667,6 +672,8 @@ def check_assertion(
         operator in {"one_of", "all_of"}
         and attribute_pato_ids
         and assertion.get("pato_id", "") not in attribute_pato_ids
+        # the reviewed secondary union ("simple or branched") has the quality root on top
+        and assertion.get("value_union_scope") != "across_attributes"
     ):
         reasons.append("logical_value_top_level_not_attribute")
         score -= 0.4
