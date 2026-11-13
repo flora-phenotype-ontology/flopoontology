@@ -107,6 +107,10 @@ class Vocabulary:
         for table in (self.po, self.pato):
             if c in table:
                 return table[c].name
+        if c.startswith("BSPO:"):  # pinned spatial regions of the positional scope ("at the base")
+            from flopo2.annotation.positional import load_bspo_labels
+
+            return load_bspo_labels().get(c.replace(":", "_"), c)
         return self.flopo.get(c, ("", ""))[0] or c
 
     def _ancestors(self, table: dict[str, OboTerm], start: str, part_of: bool) -> list[str]:

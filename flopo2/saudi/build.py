@@ -289,6 +289,29 @@ class Builder:
             self.used_terms.add(curie(a["bearer_container"]))
         if a.get("bearer_collection_size"):
             g.add((formal, FB.collectionSize, Literal(int(a["bearer_collection_size"]))))
+        # Contexts (docs/annotation-context-patterns.md): the stage at which, the state in which,
+        # and the part of the stated organ in which the quality is found.
+        for stage in a.get("developmental_stage_contexts") or []:
+            g.add((formal, FB.stage, URIRef(iri(stage["stage_term"]))))
+            g.add((formal, FB.stageText, Literal(stage.get("stage_text", ""))))
+        for state in a.get("bearer_context_qualities") or []:
+            g.add((formal, FB.bearerState, URIRef(iri(state))))
+        scope = a.get("bearer_scope") or {}
+        if scope:
+            g.add((formal, FB.statedBearer, URIRef(iri(scope["outer_bearer"]))))
+            g.add((formal, FB.scope, URIRef(iri(scope["scope_class"]))))
+            g.add((formal, FB.scopeText, Literal(scope.get("scope_text", ""))))
+            self.used_terms.update({curie(scope["outer_bearer"]), curie(scope["scope_class"])})
+        for part in a.get("part_restrictions") or []:
+            for value in part.get("qualities") or []:
+                g.add((formal, FB.partQuality, URIRef(iri(value))))
+                self.used_terms.add(curie(value))
+        target = a.get("towards") or {}
+        if target:  # "shorter than the corolla tube"
+            g.add((formal, FB.towards, URIRef(iri(target["target_term"]))))
+            g.add((formal, FB.comparison, Literal(target.get("comparison_text", ""))))
+            self.used_terms.add(curie(target["target_term"]))
+        self.used_terms.update(curie(t) for t in _context_terms(a))
         if gate.get("flopo_iri"):
             g.add((formal, FB.flopoClass, URIRef(gate["flopo_iri"])))
             self.used_terms.add(curie(gate["flopo_iri"]))
@@ -310,8 +333,10 @@ class Builder:
             g.add((formal, FB.unitSymbol, Literal(a["unit"])))
             if uo and (a.get("value_low") is not None or a.get("value_high") is not None):
                 # Counts per container or of pairs are other traits than counts of the bare part.
+                # So are measurements at a stage or of a state ("calyx 8 mm in fruit", "young leaves").
                 context = "|".join(str(a.get(k) or "") for k in ("bearer_container", "bearer_collection_size"))
-                key_bearer = bearer if context == "|" else f"{bearer}|{context}"
+                context += "|" + ",".join(_context_terms(a))
+                key_bearer = bearer if context == "||" else f"{bearer}|{context}"
                 self.numeric.setdefault((str(taxon), key_bearer, a["pato_id"]), []).append(
                     {"record": formal, "source": source, "low": a.get("value_low"),
                      "high": a.get("value_high"), "uo": uo}
@@ -330,13 +355,36 @@ class Builder:
             self.facts[str(taxon)].append({
                 "record": formal, "source": source, "bearer": curie(bearer), "quality": curie(quality),
                 "negated": bool(a.get("negated")), "absence": a.get("negation_scope") == "absence",
-                "frequency": a.get("frequency_qualifier") not in (None, "", "unspecified", "always"),
+                # a quality stated of a stage or state ("glabrous when young") is not a conflict
+                # with another stated without it; like a frequency, it is not compared
+                "frequency": a.get("frequency_qualifier") not in (None, "", "unspecified", "always")
+                or bool(_context_terms(a)) or bool(a.get("part_restrictions")) or bool(a.get("towards")),
             })
         elif a.get("value_low") is not None or a.get("value_high") is not None:
             self.facts[str(taxon)].append({"record": formal, "source": source, "bearer": curie(bearer),
                                            "quality": "", "negated": False, "absence": False, "frequency": False})
 
     def _label(self, a: dict, bearer: str, quality: str) -> str:
+        parts = a.get("part_restrictions") or []
+        if parts and (parts[0].get("qualities") or []):
+            # "filaments white at base": the value is stated of a region of the organ; the
+            # top-level quality is only its attribute
+            value = parts[0]["qualities"][0]
+            label = (f"{self.vocab.label(bearer)} "
+                     f"{descriptive_word(curie(value), a.get('source_text', '')) or self.vocab.label(value)}")
+        elif a.get("towards"):
+            target = a["towards"]
+            label = (f"{self.vocab.label(bearer)} {target.get('comparison_text') or self.vocab.label(quality)} "
+                     f"{self.vocab.label(target['target_term'])}")
+        else:
+            label = self._plain_label(a, bearer, quality)
+        contexts = [p.get("part_text", "") for p in parts]
+        contexts += [s.get("stage_text", "") for s in a.get("developmental_stage_contexts") or []]
+        contexts += [self.vocab.label(q) for q in a.get("bearer_context_qualities") or []]
+        contexts = [c for c in contexts if c]
+        return f"{label} ({', '.join(contexts)})" if contexts else label
+
+    def _plain_label(self, a: dict, bearer: str, quality: str) -> str:
         organ = self.vocab.label(bearer)
         text = a.get("source_text", "")
         if a.get("value_low") is not None or a.get("value_high") is not None:
@@ -870,6 +918,14 @@ DESCRIPTIVE_WORDS = {
     "PATO:0000947": ("elliptic", "elliptical", "oval"),
     "PATO:0001320": ("pubescent", "downy"),
 }
+
+
+def _context_terms(a: dict) -> list[str]:
+    """Stage and bearer-state terms of an assertion (docs/annotation-context-patterns.md)."""
+
+    return [str(s["stage_term"]) for s in a.get("developmental_stage_contexts") or []] + [
+        str(q) for q in a.get("bearer_context_qualities") or []
+    ]
 
 
 def descriptive_word(quality: str, text: str) -> str:

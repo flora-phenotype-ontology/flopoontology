@@ -320,6 +320,24 @@ def _unit_iri(unit: object) -> URIRef:
     return URIRef(OBO + curie)
 
 
+TOWARDS = URIRef(OBO + "RO_0002503")
+
+
+def _towards(graph: Graph, nodes: _Nodes, assertion: dict, quality: URIRef):
+    """A relational quality with its second entity: ``Q and towards some E2`` ("shorter than the
+    corolla tube": decreased length towards corolla tube). The quality alone without one."""
+
+    target = assertion.get("towards")
+    if not target:
+        return quality
+    term = _curie_iri(target.get("target_term"))
+    if term is None or not str(term).startswith((OBO + "PO_", OBO + "FLOPO_")):
+        raise ValueError(f"the target of a relational quality must be a PO or FLOPO class: {target!r}")
+    graph.add((term, RDF.type, OWL.Class))
+    graph.add((TOWARDS, RDF.type, OWL.ObjectProperty))
+    return _intersection(graph, nodes, [quality, _some(graph, nodes, TOWARDS, term)])
+
+
 def _quality_restrictions(
     graph: Graph,
     nodes: _Nodes,
@@ -366,7 +384,7 @@ def _quality_restrictions(
 
     if not value_iris:
         graph.add((pato, RDF.type, OWL.Class))
-        return [_some(graph, nodes, HAS_QUALITY, pato)], False, disjunctive
+        return [_some(graph, nodes, HAS_QUALITY, _towards(graph, nodes, assertion, pato))], False, disjunctive
     for value in value_iris:
         graph.add((value, RDF.type, OWL.Class))
     if operator == "one_of":
@@ -377,7 +395,7 @@ def _quality_restrictions(
         return [_some(graph, nodes, HAS_QUALITY, value) for value in value_iris], False, False
     if len(value_iris) != 1:
         raise ValueError("atomic phenotype value must contain exactly one value term")
-    return [_some(graph, nodes, HAS_QUALITY, value_iris[0])], False, False
+    return [_some(graph, nodes, HAS_QUALITY, _towards(graph, nodes, assertion, value_iris[0]))], False, False
 
 
 def _bearer_context_quality_restrictions(

@@ -410,6 +410,9 @@ def annotation_class_signature(assertion: dict[str, Any]) -> dict[str, Any]:
     # fruit") or a collection of n bearers ("pairs of leaflets").
     if assertion.get("bearer_container"):
         signature["bearer_container"] = canonical_iri(assertion["bearer_container"])
+    # Additive: the second entity of a relational quality ("shorter than the corolla tube").
+    if assertion.get("towards"):
+        signature["towards"] = canonical_iri(assertion["towards"]["target_term"])
     if assertion.get("bearer_collection") and not assertion.get("bearer_collection_size"):
         signature["bearer_collection"] = True
     if assertion.get("bearer_collection_size"):

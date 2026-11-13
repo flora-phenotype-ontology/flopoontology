@@ -26,7 +26,7 @@ qualifier holds six different things:
 | A | growth stage of the part, or its state | 117,944 | in fruit, at anthesis; when young, at maturity | `developmental_stage_contexts` (a PO stage, `present_during`) for stages; `bearer_context_qualities` (a PATO quality of the same bearer: young, mature, old) for states | **implemented 2026-11-13** (`config/flora_context_words.tsv`) |
 | A2 | other stage wording | 22,266 | after flowering, in the second year, soon | as A; needs more table rows, and `before`/`after` relations to a stage (the model has `present_during` only) | table to extend |
 | B | sex or morph of the flower | 8,092 | male, pistillate, in short-styled flowers | on a flower, inflorescence or plant: `bearer_context_qualities` (PATO male/female) — implemented with A. On a part ("calyx of male flowers"): the part is `part_of` a flower that has the quality — needs slot 1 below | partly implemented |
-| C | place on the part | 104,448 | above, beneath, at the base, inside, on the veins | the quality inheres in a part of the bearer — slot 1 below | designed |
+| C | place on the part | 104,448 | above, beneath, at the base, inside, on the veins | the quality inheres in a part of the bearer — slot 1 below | **implemented 2026-11-13** for the reviewed surfaces and regions |
 | D | which member of a series | 51,763 | basal, cauline, inner, outer, upper | a position quality of the bearer itself: `bearer_context_qualities` with the FLOPO position values (basal FLOPO:0991002, cauline FLOPO:0991117, ...); the slot accepts PATO classes only and must accept FLOPO values | designed |
 | E | condition of the specimen | 20,217 | when dry, in sicco, when fresh | not a quality of the living plant: an annotation-level qualifier — slot 2 below | designed |
 | F | other | 67,914 | mixed: taxon names of varieties, habitats, free text | to be sampled | open |
@@ -35,24 +35,30 @@ A reading is used only when the context word stands, once, in the clause of the 
 its offsets are stored as the cue (`stage_text`, `start`, `end`), so the data-model gate can check
 it against the source.
 
-### Slot 1: `bearer_part` (kinds B on parts, and C)
+### Slot 1: the part of the bearer (kind C) — implemented 2026-11-13
 
-"Leaves glabrous beneath" says that the abaxial surface of the leaf is glabrous. The annotation
-keeps the stated bearer and adds the part in which the quality inheres:
+"Leaves glabrous beneath" says that the abaxial surface of the leaf is glabrous. The model had the
+slot already (`bearer_scope` and `part_restrictions`, schema extension E3, curator decision of
+2026-09-18: *PO first, then pinned BSPO, never free text*; `flopo2.annotation.positional`); the
+flora annotator did not use it. `plan_bearer_scope` now applies those rules to the reviewed
+context words (kinds `surface` and `region` of `config/flora_context_words.tsv`):
 
-```json
-{"po_id": "PO_0025034", "pato_id": "PATO_0000453",
- "bearer_part": {"part_term": "PO_0000049", "relation": "part_of",
-                 "part_text": "beneath", "start": 31, "end": 38}}
-```
+- a **surface** of a dorsiventral organ is PO's epidermis class of that side and replaces the
+  bearer (leaf lamina abaxial epidermis PO:0000049; `bearer_scope.mode = substituted_bearer`),
+  for colours, hairs and smooth/rough only; "inside"/"outside" only on single perianth members
+  and bracts;
+- a **region** is PO's apex, base or margin class of the organ where PO has one (leaf apex,
+  petal base, stem base);
+- otherwise the organ stays the bearer and the value is stated of a pinned BSPO region of it
+  (apical, basal, proximal, distal region, margin) as a `part_restrictions` filler; the
+  top-level quality is the value itself only when the part entails it for the organ (hairs at
+  the base: the organ is hairy), else its attribute ("filaments white at base": the stamen
+  filament has a colour, and a basal region that is white).
 
-OWL: `has_part some (PartClass and part_of some Bearer and has_characteristic some Quality)`,
-the pattern of the existing "leaflet apex" classes. The part classes are PO where PO has them
-(leaf lamina abaxial epidermis, leaf apex, leaf base, leaf margin) and otherwise the generic
-FLOPO parts already in the PO request (plant organ apex FLOPO:0985023, plant organ base
-FLOPO:0985024); abaxial side, adaxial side, inner surface, outer surface and margin of an
-arbitrary organ need five more generic classes. For kind B on a part the same slot is read the
-other way round: the bearer is `part_of some (flower and has_characteristic some male)`.
+"above"/"below" are a side of a leaf and the upper/lower part of a stem; the table tells them
+apart by the bearer. A cue across an alternative ("involute or expanded at the base") is left
+alone. Kind B on a part ("calyx of male flowers") still needs a bearer that is part of a
+qualified whole and is open.
 
 ### Slot 2: `specimen_condition` (kind E)
 
@@ -84,24 +90,25 @@ four reasons.
 | spacing | 598 | "leaves 1-2.5 cm apart" | a measurement of PATO distance (PATO:0000040) `towards` the same kind of part |
 | ratio | 329 | "2-3 times as long as wide" | a measurement with unit "ratio" and, when two parts are compared, slot 3 |
 
-### Slot 3: `towards`
+### Slot 3: `towards` — implemented 2026-11-13 for comparisons of a dimension
 
-PATO's relational qualities take their second term through RO:0002503 *towards*, which FLOPO
-already declares.
+PATO's relative qualities take their second term through RO:0002503 *towards*.
 
 ```json
 {"po_id": "PO_0009074", "pato_id": "PATO_0000574",
- "towards": {"term": "FLOPO_0985018", "text": "corolla tube", "start": 40, "end": 52},
- "degree_qualifier": "slightly"}
+ "towards": {"target_term": "PO_0009029", "target_text": "stamens", "start": 32, "end": 39,
+             "comparison_text": "slightly shorter than"}}
 ```
 
 OWL: `has_part some (style and has_characteristic some (decreased length and towards some
-'corolla tube'))`. The comparison words map to PATO: shorter than → decreased length
-(PATO:0000574), longer than / exceeding → increased length (PATO:0000573), equalling → PATO has
-no "same length as" (to request, or FLOPO-local); adnate to → fused with (PATO:0000642), inserted
-at → inserted into (PATO:0000624), opposite → PATO:0001933. The transcription re-read
-(`flopo2.ingest.llm_reread`) already separates these rows (`relation_to_another_part`); it has to
-return the second part as well.
+stamen))`; the target is part of the annotation-class signature. `comparison()` reads
+"shorter / longer / broader / wider / narrower / larger / smaller / thicker / thinner / taller
+than X" and "exceeding / overtopping X" when X grounds to a PO or FLOPO class other than the
+bearer and stands once in the clause. Open: "as long as", "equalling" (PATO has no "same length
+as"), ratios ("2-3 times as long as"), and attachment or position ("adnate to", "inserted at",
+"opposite"), which use the same slot with fused with (PATO:0000642), inserted into
+(PATO:0000624) and opposite (PATO:0001933). The transcription re-read separates many of these rows
+(`relation_to_another_part`) without naming the second part; it has to return it.
 
 ## 4. Counts (39,762 rows)
 

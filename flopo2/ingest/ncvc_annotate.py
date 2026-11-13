@@ -160,33 +160,171 @@ def enable_atlas_options(res: "Resources") -> None:
     res.context_words = load_context_words()
 
 
+# Comparisons with another part (docs/annotation-context-patterns.md). PATO's relative qualities
+# take the part compared with through RO:0002503 towards.
+COMPARISON_QUALITIES = {
+    "shorter": "PATO_0000574", "longer": "PATO_0000573", "exceeding": "PATO_0000573",
+    "exceeds": "PATO_0000573", "exceed": "PATO_0000573", "overtopping": "PATO_0000573",
+    "overtops": "PATO_0000573", "surpassing": "PATO_0000573",
+    "broader": "PATO_0000600", "wider": "PATO_0000600", "narrower": "PATO_0000599",
+    "larger": "PATO_0000586", "bigger": "PATO_0000586", "smaller": "PATO_0000587",
+    "thicker": "PATO_0000591", "thinner": "PATO_0000592", "taller": "PATO_0000570",
+}
+_COMPARISON = re.compile(
+    r"^(?P<lead>(?:(?:slightly|somewhat|a\s+little|rather|much|far|distinctly|considerably|scarcely|"
+    r"hardly|barely|usually|often|mostly|generally|always|c\.|ca\.?|about|±)\s+)*)"
+    r"(?P<word>" + "|".join(COMPARISON_QUALITIES) + r")\s+(?P<than>than\s+)?"
+    r"(?:the\s+|its\s+|their\s+|that\s+of\s+(?:the\s+)?|those\s+of\s+(?:the\s+)?)?"
+    r"(?P<target>[a-z][a-z' -]*?)\s*$",
+    re.IGNORECASE,
+)
+_COMPARATIVE_VERBS = {"exceeding", "exceeds", "exceed", "overtopping", "overtops", "surpassing"}
+
+
+def comparison(res: "Resources", phenotype: dict, text: str, start: int, end: int, bearer: str) -> dict | None:
+    """Read "slightly shorter than the corolla tube" as a relational quality and its target.
+
+    Returns ``{pato_id, target_term, target_text, start, end, comparison_text, provenance}`` when
+    the quality is one comparative of :data:`COMPARISON_QUALITIES`, the part compared with
+    grounds to a PO or FLOPO class other than the bearer, and its name stands once in the clause
+    of the annotated span. "2-3 times as long as", "as long as" and comparisons with a
+    measurement are left alone.
+    """
+
+    match = _COMPARISON.match(ncvc_guide._normalize(phenotype.get("quality_en")))
+    if not match:
+        return None
+    word = match.group("word").lower()
+    if not match.group("than") and word not in _COMPARATIVE_VERBS:
+        return None
+    phrase = match.group("target").strip(" -'")
+    if not phrase or re.search(r"\b(long|wide|broad|high|thick|times|mm|cm|m)\b", phrase):
+        return None
+    words = phrase.replace("-", " ").split()
+    candidates = [" ".join(words), " ".join([*words[:-1], _singular(words[-1])])]
+    target = ""
+    for candidate in dict.fromkeys(candidates):
+        target = ground_bearer(res, {"entity_en": candidate, "po_label": candidate})[0]
+        if target:
+            break
+    if not target or target == bearer:
+        return None
+    left = max(text.rfind(c, 0, start) for c in ".;") + 1
+    right = min([i for i in (text.find(c, end) for c in ".;") if i >= 0] or [len(text)])
+    named = re.compile(r"(?<![\w-])" + r"[\s-]+".join(map(re.escape, words)) + r"(?![\w-])", re.IGNORECASE)
+    found = [m for m in named.finditer(text, left, right) if m.start() >= start - 2]
+    if len(found) != 1 or gates._has_real_disjunction(text[min(start, found[0].start()):max(end, found[0].end())]):
+        return None
+    pato_id = COMPARISON_QUALITIES[word]
+    lead = " ".join((match.group("lead") or "").split())
+    comparison_text = " ".join(filter(None, [lead, word, "than" if match.group("than") else ""]))
+    return {
+        "pato_id": pato_id, "target_term": target, "target_text": text[found[0].start():found[0].end()],
+        "start": found[0].start(), "end": found[0].end(), "comparison_text": comparison_text,
+        "provenance": f"relation: {comparison_text!r} -> {pato_id} towards {target} ({text[found[0].start():found[0].end()]!r})",
+    }
+
+
 CONTEXT_WORDS = Path("config/flora_context_words.tsv")
 
 
-def load_context_words(path: Path = CONTEXT_WORDS) -> dict[str, dict[str, str]]:
+def load_context_words(path: Path = CONTEXT_WORDS) -> dict[str, list[dict[str, str]]]:
     """Reviewed readings of the transcriber's ``stage`` qualifier (docs/annotation-context-patterns.md).
 
     The qualifier mixes several kinds of context. Two have a place in the annotation model:
     ``stage`` words name a PO development stage during which the quality is present
     (``developmental_stage_contexts``: "in fruit", "at anthesis"), and ``bearer_quality`` words
     name a PATO quality of the same bearer (``bearer_context_qualities``: "when young", "male").
+    ``surface`` and ``region`` words name the part of the bearer in which the quality inheres
+    ("beneath", "inside"; "at the base", "above" on a stem): they are compiled by
+    :func:`plan_bearer_scope` with the approved positional design
+    (:mod:`flopo2.annotation.positional`). A word may have several readings, told apart by the
+    bearer; the first whose ``bearer_constraint`` holds is used.
     """
 
     if not path.exists():
         return {}
     with path.open(encoding="utf-8", newline="") as handle:
-        return {normalize_key(row["word"]): row for row in csv.DictReader(handle, delimiter="\t")}
+        readings: dict[str, list[dict[str, str]]] = {}
+        for row in csv.DictReader(handle, delimiter="\t"):
+            readings.setdefault(normalize_key(row["word"]), []).append(row)
+        return readings
+
+
+def plan_bearer_scope(
+    res: "Resources", po_id: str, pato_id: str, value_terms: list[str], numeric: bool,
+    kind: str, key: str, cue_text: str, cue_start: int, cue_end: int,
+) -> tuple[dict | None, str]:
+    """Compile "glabrous beneath" / "hairy at the base": ``(assertion updates, "")`` or
+    ``(None, why not)``.
+
+    The rules are those approved on 2026-09-18 for the positional scope (PO first, then pinned
+    BSPO, never free text; ``flopo2.verify.recover_claude_missing_bearer._apply_scope``):
+
+    * a surface of a dorsiventral organ is PO's epidermis class of that side, which replaces the
+      bearer (``bearer_scope.mode = substituted_bearer``); only colours, hairs and smooth/rough;
+    * a region is PO's apex, base or margin class of the organ when PO has one (same mode);
+    * otherwise the organ stays the bearer and the value is stated of a pinned BSPO region of it
+      (``part_restrictions``); the top-level quality is then the value itself only when the part
+      entails it for the organ (hairs at the base: the organ is hairy), else its attribute.
+    """
+
+    from flopo2.annotation.positional import (
+        BSPO_DISTAL_REGION, BSPO_PROXIMAL_REGION, po_scope_within, surface_scope,
+    )
+    from flopo2.verify import recover_claude_missing_bearer as scope_rules
+
+    if numeric:
+        return None, "scoped_measurement"
+    if len(value_terms) > 1:
+        return None, "scoped_union"
+    value = (value_terms or [pato_id])[0]
+    family = scope_rules._value_family(value)
+    if not family:
+        attributes = set(_attribute_ancestors(res, value)) | {pato_id}
+        family = next((f for f, a in scope_rules.FAMILY_ATTRIBUTE.items() if a in attributes), "")
+    scope = {"outer_bearer": po_id, "scope_text": cue_text, "scope_start": cue_start, "scope_end": cue_end}
+    if kind == "surface":
+        if family not in scope_rules.SURFACE_VALUE_FAMILIES | {"texture"}:
+            return None, f"surface_scope_value_family:{family or 'other'}"
+        mapped = surface_scope(po_id, key, cue_start, cue_end)
+        if mapped is None or mapped.scope_class not in res.po_catalog:
+            return None, f"surface_scope_unmapped_bearer:{po_id}"
+        return {"po_id": mapped.scope_class,
+                "bearer_scope": {**scope, "scope_class": mapped.scope_class, "mode": mapped.mode},
+                "provenance": f"scope: {cue_text!r} -> the {mapped.side} side of {po_id}: {mapped.scope_class}"}, ""
+    if family not in {"colour", "pilosity", "texture", "shape"}:
+        return None, f"region_scope_value_family:{family or 'other'}"
+    region_class = scope_rules.REGION_PARTS.get(po_id, {}).get(key)
+    if region_class is not None:
+        if region_class not in res.po_catalog | res.flopo_catalog or not po_scope_within(region_class, po_id):
+            return None, "region_scope_unknown_class"
+        return {"po_id": region_class,
+                "bearer_scope": {**scope, "scope_class": region_class, "mode": "substituted_bearer"},
+                "provenance": f"scope: {cue_text!r} -> the {key} of {po_id}: {region_class}"}, ""
+    regions = {**scope_rules.BSPO_REGIONS, "distal": BSPO_DISTAL_REGION, "proximal": BSPO_PROXIMAL_REGION}
+    if family == "shape" or po_id in scope_rules._NO_BSPO_REGION or not po_id.startswith("PO_"):
+        return None, f"region_scope_no_reviewed_part:{po_id}:{key}"
+    filler = regions[key]
+    top = pato_id if not value_terms and value in scope_rules.HAIR_PRESENCE_VALUES else scope_rules.FAMILY_ATTRIBUTE[family]
+    return {"pato_id": top, "value_terms": [],
+            "part_restrictions": [{"property": "BFO_0000051", "filler_class": filler, "qualities": [value],
+                                   "part_text": cue_text, "part_start": cue_start, "part_end": cue_end}],
+            "bearer_scope": {**scope, "scope_class": filler, "mode": "part_restriction"},
+            "provenance": f"scope: {cue_text!r} -> {po_id} has_part ({filler} with {value}); top-level {top}"}, ""
 
 
 def stage_context(res: "Resources", word: str, text: str, start: int, end: int, bearer_texts: list[str]):
     """``(reading, cue_start, cue_end)`` for a stage qualifier that has a reviewed reading and
     stands, verbatim, in the clause of the annotated span; else ``None``."""
 
-    reading = (getattr(res, "context_words", None) or {}).get(normalize_key(word))
+    reading = None
+    for candidate in (getattr(res, "context_words", None) or {}).get(normalize_key(word), []):
+        constraint = candidate.get("bearer_constraint") or ""
+        if not constraint or any(re.search(constraint, t or "", re.IGNORECASE) for t in bearer_texts):
+            reading = candidate
+            break
     if reading is None:
-        return None
-    constraint = reading.get("bearer_constraint") or ""
-    if constraint and not any(re.search(constraint, t or "", re.IGNORECASE) for t in bearer_texts):
         return None
     left = max(text.rfind(c, 0, start) for c in ".;") + 1
     right = min([i for i in (text.find(c, end) for c in ".;") if i >= 0] or [len(text)])
@@ -1759,6 +1897,17 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
         span_text = text[start:end]
 
         reason = grounding.reason if grounding.kind == "unresolved" else ""
+        towards = None
+        if reason == "no_ontology_term_for_quality" and grounding.po_id and res.relations and not has_value:
+            # "style slightly shorter than the corolla tube": a relational quality and its target
+            towards = comparison(res, phenotype, text, start, end, grounding.po_id)
+            if towards is not None:
+                grounding = Grounding(
+                    "assertion", po_id=grounding.po_id, pato_id=towards.pop("pato_id"),
+                    provenance=[*grounding.provenance, towards.pop("provenance")],
+                    normalization_status="proposed", rule_ids=list(grounding.rule_ids),
+                )
+                reason = ""
         if reason in {"no_ontology_term_for_quality", "missing_or_unsupported_bearer"} and phenotype.get("reread_reason"):
             reason = phenotype["reread_reason"]
         container_po = ""
@@ -1806,6 +1955,22 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                 grounding.pato_id, *grounding.value_terms
             }:
                 context = None  # the context word is the quality itself
+            scope_plan = None
+            if context is not None and context[0]["kind"] in {"surface", "region"}:
+                if container_po or grounding.pato_id == PATO_PRESENT or grounding.negate or gates._has_real_disjunction(
+                    text[min(start, context[1]):max(end, context[2])]
+                ):
+                    # a counted part has its container; "hairs present beneath" is another statement;
+                    # "involute or expanded at the base": which alternative the cue belongs to is open
+                    context = None
+                else:
+                    scope_plan, _why = plan_bearer_scope(
+                        res, grounding.po_id, grounding.pato_id, list(grounding.value_terms),
+                        has_value, context[0]["kind"], context[0]["target"],
+                        text[context[1]:context[2]], context[1], context[2],
+                    )
+                    if scope_plan is None:
+                        context = None
             if context is None:
                 reason = "developmental_stage_context"
         if not reason and has_value:
@@ -1968,6 +2133,11 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
             )
         if grounding.approximate:
             _mark_approximate(assertion, grounding.approximate, text)
+        if towards is not None:
+            assertion["towards"] = towards
+            begin, finish = min(start, towards["start"]), max(end, towards["end"])
+            if assertion.get("source_start") is not None:
+                assertion.update({"source_start": begin, "source_end": finish, "source_text": text[begin:finish]})
         if context is not None:
             reading, cue_start, cue_end = context
             if reading["kind"] == "stage":
@@ -1975,6 +2145,16 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                     "stage_term": reading["target"], "temporal_relation": "present_during",
                     "stage_text": text[cue_start:cue_end], "start": cue_start, "end": cue_end,
                 }]
+            elif reading["kind"] in {"surface", "region"}:
+                grounding.provenance.append(scope_plan.pop("provenance"))
+                assertion.update(scope_plan)
+                grounding.po_id = assertion["po_id"]
+                if "pato_id" in scope_plan:
+                    grounding.pato_id, grounding.value_terms = scope_plan["pato_id"], scope_plan["value_terms"]
+                # the retained evidence covers the positional cue
+                if assertion.get("source_start") is not None and assertion.get("source_end") is not None:
+                    begin, finish = min(assertion["source_start"], cue_start), max(assertion["source_end"], cue_end)
+                    assertion.update({"source_start": begin, "source_end": finish, "source_text": text[begin:finish]})
             else:
                 assertion["bearer_context_qualities"] = [reading["target"]]
             grounding.provenance.append(

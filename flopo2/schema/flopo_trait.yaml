@@ -262,6 +262,13 @@ classes:
           class (2 for "pairs of leaflets"): object aggregate and has_member exactly n E. Part of
           the FAC signature when present.
         range: integer
+      towards:
+        description: >-
+          The second term of a relational quality: "style shorter than the corolla tube" is the
+          quality decreased length of the style towards (RO:0002503) the corolla tube. Compiled
+          as has_quality some (Q and towards some E2); part of the FAC signature when present.
+        inlined: true
+        range: RelationalTarget
       bearer_scope:
         description: >-
           Provenance of a positional or sub-part restriction of the named organ, such as
@@ -640,6 +647,26 @@ classes:
         range: SeasonRelation
         ifabsent: "SeasonRelation(present_during)"
         description: Relation used when compiling the seasonal class restriction.
+
+  RelationalTarget:
+    description: >-
+      The entity a relational quality is directed at, with the phrase that names it in the
+      source ("shorter than the corolla tube": corolla tube).
+    attributes:
+      target_term:
+        required: true
+        description: PO or FLOPO-local class of the second entity.
+      target_text:
+        required: true
+        description: Exact phrase naming the second entity, copied from the source statement.
+      start:
+        range: integer
+        description: Inclusive offset of target_text in the source segment, when available.
+      end:
+        range: integer
+        description: Exclusive offset of target_text in the source segment, when available.
+      comparison_text:
+        description: The comparison words of the source ("slightly shorter than"), for display.
 
   DevelopmentalStageContext:
     description: >-

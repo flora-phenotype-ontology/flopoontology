@@ -216,6 +216,7 @@ def _pydantic_assertion(assertion: dict[str, Any]) -> TraitAssertion:
         "value_terms": values or None,
         "value_operands": assertion.get("value_operands") or None,
         "bearer_scope": assertion.get("bearer_scope") or None,
+        "towards": assertion.get("towards") or None,
         "bearer_container": _optional(assertion.get("bearer_container")),
         "bearer_collection": assertion.get("bearer_collection"),
         "bearer_collection_size": assertion.get("bearer_collection_size"),
@@ -1005,6 +1006,27 @@ def _validate_assertion(
                 repr(context.stage_text),
                 assertion_number,
             )
+    target = parsed.towards
+    if target is not None:
+        # "shorter than the corolla tube": the second entity of a relational quality
+        target_term = target.target_term.replace(":", "_")
+        known = (PO_ID.fullmatch(target_term) and (not po_ids or target_term in po_ids)) or (
+            FLOPO_ID.fullmatch(target_term) and (not flopo_bearer_ids or target_term in flopo_bearer_ids)
+        )
+        if not known:
+            _add(issues, line_number, "unknown_relational_target", target.target_term, assertion_number)
+        if target.start is not None or target.end is not None:
+            if (
+                target.start is None
+                or target.end is None
+                or not 0 <= target.start <= target.end <= len(text)
+                or text[target.start:target.end] != target.target_text
+            ):
+                _add(issues, line_number, "relational_target_span_not_verbatim",
+                     repr(target.target_text), assertion_number)
+        elif target.target_text not in text:
+            _add(issues, line_number, "relational_target_text_not_verbatim",
+                 repr(target.target_text), assertion_number)
     stage_context_count = len(parsed.developmental_stage_contexts or [])
     if (
         parsed.developmental_stage_operator in {"one_of", "all_of"}
