@@ -344,70 +344,113 @@ def graph_count_differences(expected: dict[str, int], actual: dict[str, int]) ->
             for g in sorted(expected.keys() | actual.keys()) if expected.get(g, 0) != actual.get(g, 0)]
 
 
-def _parity_without_reference(qlever: str, queries: Path, report: Report, skipped: str) -> None:
-    """C9a and C10 on QLever alone; the checks that need the reference store are warnings."""
-
-    report.add("C8", "OWL class expressions are complete (QLever = Oxigraph)", "warn", skipped)
-    slow, very_slow, errors = [], [], []
-    entries = [json.loads(line) for line in queries.read_text().splitlines() if line.strip()]
-    selects = [e for e in entries if not re.match(r"^\s*(PREFIX[^\n]*\n\s*)*(DESCRIBE|CONSTRUCT)", e["query"], re.I)]
-    for entry in selects:
-        try:
-            _, seconds = select(qlever, entry["query"])
-        except Exception as exc:  # noqa: BLE001
-            errors.append(f"{entry['page']}: {str(exc)[:160]}")
-            continue
-        if seconds > 5:
-            very_slow.append(f"{seconds:.1f}s {entry['page']}")
-        elif seconds > 2:
-            slow.append(f"{seconds:.1f}s {entry['page']}")
-    report.check("C9a", "every browser query runs on QLever", not errors, "; ".join(errors[:3]) or f"{len(selects)} queries")
-    report.add("C9b", "same number of result rows as Oxigraph", "warn", skipped)
-    report.add("C9c", "same values as Oxigraph (SAMPLE() may pick other labels)", "warn", skipped)
-    report.check("C10", "browser queries answer within 2 s (fail above 5 s)", not slow and not very_slow,
-                 "; ".join((very_slow + slow)[:5]) or "all within 2 s", warn=not very_slow)
-    report.add("C11", "DESCRIBE returns the same triples as the development server", "warn", skipped)
+PARITY_MAX_TRIPLES = int(os.environ.get("ATLAS_PARITY_MAX_TRIPLES", 30_000_000))
+PARITY_SAMPLE_TRIPLES = int(os.environ.get("ATLAS_PARITY_SAMPLE_TRIPLES", 12_000_000))
 
 
-def parity(release: Path, qlever: str, queries: Path, report: Report) -> None:
+def make_parity_sample(release: Path, out: Path, budget: int = PARITY_SAMPLE_TRIPLES) -> bool:
+    """Write a cut-down copy of a release for the reference comparisons; False if none is needed.
+
+    The reference of C8, C9b, C9c and C11 is an in-memory Oxigraph store, which does not fit
+    beside QLever once a release passes ATLAS_PARITY_MAX_TRIPLES (a 241 M triple release ran out
+    of memory once and took 17 h the next time). Those checks ask whether QLever and Oxigraph
+    answer alike on the same files, so they run on a sample instead: every graph is in it, the
+    small ones whole and each larger one cut to an equal share of what is left of the budget
+    (its first lines; N-Quads has one statement per line). The sample has its own release.json
+    and gets its own QLever index (tools/deploy_atlas.sh).
+    """
+
+    meta = _meta(release)
+    if sum(int(g["triples"]) for g in meta["graphs"]) <= PARITY_MAX_TRIPLES:
+        return False
+    (out / "rdf").mkdir(parents=True, exist_ok=True)
+    graphs = sorted(meta["graphs"], key=lambda g: int(g["triples"]))
+    left, sampled = budget, []
+    for i, graph in enumerate(graphs):
+        take = min(int(graph["triples"]), max(left // (len(graphs) - i), 0))
+        src, dst = release / graph["file"], out / graph["file"]
+        with src.open("rb") as fin, dst.open("wb") as fout:
+            for n, line in enumerate(fin):
+                if n >= take:
+                    break
+                fout.write(line)
+        left -= take
+        sampled.append({**graph, "triples": take, "full_triples": int(graph["triples"])})
+        sampled[-1].pop("sha256", None)
+    (out / "release.json").write_text(json.dumps(
+        {**meta, "stamp": meta["stamp"] + "-parity-sample", "triples": budget - left,
+         "graphs": sorted(sampled, key=lambda g: g["file"])}, indent=1) + "\n")
+    return True
+
+
+def parity(release: Path, qlever: str, queries: Path, report: Report,
+           sample: Path | None = None, sample_qlever: str | None = None) -> None:
+    """C7, C9a and C10 on the release's QLever; C8, C9b, C9c and C11 against the Oxigraph reference.
+
+    The reference holds the release itself, or (``sample`` with its own QLever endpoint
+    ``sample_qlever``) the cut-down copy from :func:`make_parity_sample`; a release too large
+    for the reference and given no sample gets warnings for the reference checks.
+    """
+
     meta = _meta(release)
     graphs = {r["g"]: int(r["n"]) for r in rows(select(qlever, "SELECT ?g (COUNT(*) AS ?n) WHERE { GRAPH ?g { ?s ?p ?o } } GROUP BY ?g")[0])}
     drift = graph_count_differences({g["graph"]: g["triples"] for g in meta["graphs"]}, graphs)
     report.check("C7", "QLever triple count per graph equals release.json", not drift,
                  "; ".join(drift) or f"{sum(graphs.values())} triples in {len(graphs)} graphs")
 
-    # The reference is an in-memory Oxigraph store of the whole release. Above
-    # ATLAS_PARITY_MAX_TRIPLES it does not fit beside QLever on the host (a 241 M triple release
-    # ran out of memory once and took 17 h the next time), so the comparisons against it (C8, C9b,
-    # C9c, C11) are skipped with a warning; C7, C9a and C10 still run against QLever.
     total = sum(int(g["triples"]) for g in meta["graphs"])
-    limit = int(os.environ.get("ATLAS_PARITY_MAX_TRIPLES", 30_000_000))
+    ref_release, ref_qlever, scope = release, qlever, ""
+    if total > PARITY_MAX_TRIPLES:
+        ref_release, ref_qlever = sample, sample_qlever
+        if sample is not None:
+            smeta = _meta(sample)
+            scope = f" (on a sample of {smeta['triples']} of {total} triples, all {len(smeta['graphs'])} graphs)"
+            got = {r["g"]: int(r["n"]) for r in rows(select(ref_qlever, "SELECT ?g (COUNT(*) AS ?n) WHERE { GRAPH ?g { ?s ?p ?o } } GROUP BY ?g")[0])}
+            sdrift = graph_count_differences({g["graph"]: g["triples"] for g in smeta["graphs"]}, got)
+            report.check("C7s", "the sample's QLever holds the sample", not sdrift,
+                         "; ".join(sdrift[:5]) or f"{sum(got.values())} triples in {len(got)} graphs")
+    skipped = f"skipped: {total} triples exceed the in-memory reference limit of {PARITY_MAX_TRIPLES} and no sample was given"
     store = None
-    if total <= limit:
+    if ref_release is not None:
         started = time.time()
-        store = _load_reference(release)
-        print(f"reference Oxigraph store loaded in {time.time() - started:.0f}s", file=sys.stderr)
-    skipped = f"skipped: {total} triples exceed the in-memory reference limit of {limit}"
+        store = _load_reference(ref_release)
+        print(f"reference Oxigraph store loaded in {time.time() - started:.0f}s{scope}", file=sys.stderr)
 
     if store is None:
-        return _parity_without_reference(qlever, queries, report, skipped)
-    owl_query = ("SELECT ?p (COUNT(*) AS ?n) WHERE { ?s ?p ?o VALUES ?p { "
-                 + " ".join(f"<http://www.w3.org/{'2002/07/' if n.startswith('owl') else '1999/02/'}{n}>" for n in OWL_NODES)
-                 + " } } GROUP BY ?p")
-    same, diff, _ = compare(select(qlever, owl_query)[0], _reference_select(store, owl_query)[0])
-    report.check("C8", "OWL class expressions are complete (QLever = Oxigraph)", same and not diff,
-                 "equal counts of intersectionOf, unionOf, complementOf, restrictions and list cells"
-                 if same and not diff else "counts differ")
+        report.add("C8", "OWL class expressions are complete (QLever = Oxigraph)", "warn", skipped)
+    else:
+        owl_query = ("SELECT ?p (COUNT(*) AS ?n) WHERE { ?s ?p ?o VALUES ?p { "
+                     + " ".join(f"<http://www.w3.org/{'2002/07/' if n.startswith('owl') else '1999/02/'}{n}>" for n in OWL_NODES)
+                     + " } } GROUP BY ?p")
+        same, diff, _ = compare(select(ref_qlever, owl_query)[0], _reference_select(store, owl_query)[0])
+        report.check("C8", "OWL class expressions are complete (QLever = Oxigraph)", same and not diff,
+                     ("equal counts of intersectionOf, unionOf, complementOf, restrictions and list cells"
+                      if same and not diff else "counts differ") + scope)
 
     mismatched, value_diffs, slow, very_slow, errors = [], [], [], [], []
-    cells = diff_cells = 0
+    cells = diff_cells = nonempty = full_nonempty = 0
     entries = [json.loads(line) for line in queries.read_text().splitlines() if line.strip()]
     selects = [e for e in entries if not re.match(r"^\s*(PREFIX[^\n]*\n\s*)*(DESCRIBE|CONSTRUCT)", e["query"], re.I)]
+    # The crawled taxon pages are mostly about taxa outside a sample, where both engines would
+    # return nothing; ask the same queries about the sample's best-described taxa instead.
+    swap: dict[str, str] = {}
+    if store is not None and ref_qlever != qlever:
+        taxon_iri = re.compile(re.escape(f"<{DATA_NS}taxon/") + r"[^>]+>")
+        crawled = sorted({m for e in selects for m in taxon_iri.findall(e["query"])})
+        best = _reference_select(store, f"SELECT ?t (COUNT(?r) AS ?n) WHERE {{ ?r a <{FB}TraitRecord> ; <{FB}taxon> ?t }} "
+                                        f"GROUP BY ?t ORDER BY DESC(?n) ?t LIMIT {max(len(crawled), 1)}")[0]
+        swap = dict(zip(crawled, (f"<{b['t']['value']}>" for b in best["results"]["bindings"])))
     for entry in selects:
         q = entry["query"]
         try:
             qa, seconds = select(qlever, q)
-            ref, _ = _reference_select(store, q)
+            full_nonempty += bool(qa.get("results", {}).get("bindings"))
+            if store is not None:
+                if ref_qlever != qlever:
+                    for old, new in swap.items():
+                        q = q.replace(old, new)
+                    qa, _ = select(ref_qlever, q)
+                ref, _ = _reference_select(store, q)
         except Exception as exc:  # noqa: BLE001
             errors.append(f"{entry['page']}: {str(exc)[:160]}")
             continue
@@ -415,43 +458,57 @@ def parity(release: Path, qlever: str, queries: Path, report: Report) -> None:
             very_slow.append(f"{seconds:.1f}s {entry['page']}")
         elif seconds > 2:
             slow.append(f"{seconds:.1f}s {entry['page']}")
+        if store is None:
+            continue
+        nonempty += bool(ref.get("results", {}).get("bindings"))
         arbitrary = bool(re.search(r"\bLIMIT\s+\d+", q, re.I)) and not re.search(r"\bORDER\s+BY\b", q, re.I)
-        same, diff, total = compare(qa, ref, rows_only=arbitrary)
-        cells += total
+        same, diff, n_cells = compare(qa, ref, rows_only=arbitrary)
+        cells += n_cells
         diff_cells += diff
         if not same:
             mismatched.append(f"{entry['page']}: {len(qa['results']['bindings']) if 'results' in qa else '?'} vs "
                               f"{len(ref['results']['bindings']) if 'results' in ref else '?'} rows | {q[-160:]!r}")
         elif diff:
-            value_diffs.append(f"{entry['page']}: {diff}/{total} cells")
+            value_diffs.append(f"{entry['page']}: {diff}/{n_cells} cells")
     report.check("C9a", "every browser query runs on QLever", not errors, "; ".join(errors[:3]) or f"{len(selects)} queries")
-    report.check("C9b", "same number of result rows as Oxigraph", not mismatched, "; ".join(mismatched[:3]) or "all equal")
-    share = diff_cells / cells if cells else 0
-    report.check("C9c", "same values as Oxigraph (SAMPLE() may pick other labels)", share < 0.01 and not value_diffs,
-                 f"{diff_cells}/{cells} cells differ ({share:.2%}); " + "; ".join(value_diffs[:3]), warn=share < 0.05)
+    if store is None:
+        report.add("C9b", "same number of result rows as Oxigraph", "warn", skipped)
+        report.add("C9c", "same values as Oxigraph (SAMPLE() may pick other labels)", "warn", skipped)
+    else:
+        # Two empty answers compare equal without showing much: on a sample, at least half
+        # of the queries that return rows on the release must return rows there too.
+        answered = f"{nonempty} of the {full_nonempty} queries with rows on the release returned rows" + scope
+        report.check("C9b", "same number of result rows as Oxigraph", not mismatched and nonempty * 2 >= full_nonempty,
+                     "; ".join(mismatched[:3]) or f"all equal; {answered}")
+        share = diff_cells / cells if cells else 0
+        report.check("C9c", "same values as Oxigraph (SAMPLE() may pick other labels)", share < 0.01 and not value_diffs,
+                     f"{diff_cells}/{cells} cells differ ({share:.2%}); " + "; ".join(value_diffs[:3]), warn=share < 0.05)
     report.check("C10", "browser queries answer within 2 s (fail above 5 s)", not slow and not very_slow,
                  "; ".join((very_slow + slow)[:5]) or "all within 2 s", warn=not very_slow)
+    if store is None:
+        report.add("C11", "DESCRIBE returns the same triples as the development server", "warn", skipped)
+        return
 
     from rdflib import Graph
     from rdflib.compare import isomorphic
 
     from flopo2.saudi.server import Handler
 
-    sample = rows(select(qlever, f"""SELECT ?x WHERE {{
+    described = rows(select(ref_qlever, f"""SELECT ?x WHERE {{
         {{ SELECT ?x WHERE {{ ?x <http://www.w3.org/2002/07/owl#equivalentClass> ?e FILTER(STRSTARTS(STR(?x), "{DATA_NS}")) }} LIMIT 20 }}
         UNION {{ SELECT ?x WHERE {{ ?x a <{FB}TraitRecord> }} LIMIT 10 }}
         UNION {{ SELECT ?x WHERE {{ ?x a <{FB}Taxon> }} LIMIT 10 }} }}""")[0])
     fake = types.SimpleNamespace(store=store)
     differing = []
-    for r in sample:
-        status, _h, body, _s = http(qlever + "?" + urllib.parse.urlencode({"query": f"DESCRIBE <{r['x']}>"}),
+    for r in described:
+        status, _h, body, _s = http(ref_qlever + "?" + urllib.parse.urlencode({"query": f"DESCRIBE <{r['x']}>"}),
                                     headers={"Accept": "application/n-triples"})
         got = _canonical(Graph().parse(data=body.decode(), format="nt") if status == 200 else Graph())
         want = _canonical(Graph().parse(data=Handler._describe(fake, r["x"]).decode(), format="turtle"))
         if not isomorphic(got, want):
             differing.append(f"{r['x']} ({len(got)} vs {len(want)} triples)")
-    report.check("C11", "DESCRIBE returns the same triples as the development server", bool(sample) and not differing,
-                 "; ".join(differing[:3]) or f"{len(sample)} resources")
+    report.check("C11", "DESCRIBE returns the same triples as the development server", bool(described) and not differing,
+                 "; ".join(differing[:3]) or f"{len(described)} resources{scope}")
 
 
 # ------------------------------------------------------------------------ smoke
@@ -536,6 +593,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("release", type=Path)
     p.add_argument("--qlever", required=True)
     p.add_argument("--queries", type=Path, required=True)
+    p.add_argument("--sample", type=Path, help="cut-down release for the reference checks (parity-sample)")
+    p.add_argument("--sample-qlever", help="QLever endpoint holding the sample")
+    p = sub.add_parser("parity-sample", help="write the cut-down release; exit 0 if written, 3 if the release needs none")
+    p.add_argument("release", type=Path)
+    p.add_argument("--out", type=Path, required=True)
     p = sub.add_parser("smoke")
     p.add_argument("base")
     p.add_argument("--release", type=Path)
@@ -544,6 +606,8 @@ def main(argv: list[str] | None = None) -> int:
     for p in sub.choices.values():
         p.add_argument("--report", type=Path)
     args = parser.parse_args(argv)
+    if args.command == "parity-sample":
+        return 0 if make_parity_sample(args.release, args.out) else 3
     release = getattr(args, "release", None)
     path = args.report or (release / "checks.json" if release else None)
     report = Report(path, getattr(args, "stage", args.command) if args.command == "smoke" else args.command)
@@ -552,7 +616,7 @@ def main(argv: list[str] | None = None) -> int:
     elif args.command == "crawl":
         crawl(args.base, args.out, report)
     elif args.command == "parity":
-        parity(args.release, args.qlever, args.queries, report)
+        parity(args.release, args.qlever, args.queries, report, args.sample, args.sample_qlever)
     else:
         smoke(args.base, args.release, report, expect_release=not args.any_release)
     return report.finish()

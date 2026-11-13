@@ -170,8 +170,37 @@ reload_nginx
 log "staging checks"
 checks smoke "$STAGING_URL" --release "$REL" --stage staging || die "staging checks failed; live is unchanged"
 checks crawl "$STAGING_URL" --out "$REL/queries.jsonl" --release "$REL" || die "browser checks failed; live is unchanged"
-checks parity "$REL" --qlever "http://127.0.0.1:${PORT[$COLOUR]}/" --queries "$REL/queries.jsonl" \
-  || die "parity checks failed; live is unchanged"
+# A release too large for the in-memory reference store is compared on a cut-down copy with its
+# own QLever (tools.atlas_checks.make_parity_sample); the copy is removed afterwards.
+SAMPLE=$REL/parity-sample SAMPLE_NAME=flopo-atlas-qlever-parity SAMPLE_PORT=${PARITY_PORT:-7003} sample_args=() rc=0
+rm -rf "$SAMPLE"
+"$PY" -m tools.atlas_checks parity-sample "$REL" --out "$SAMPLE" || rc=$?
+drop_sample() { docker rm -f "$SAMPLE_NAME" >/dev/null 2>&1 || true; rm -rf "$SAMPLE"; }
+if [[ $rc == 0 ]]; then
+  log "parity sample: index and QLever on port $SAMPLE_PORT"
+  mkdir -p "$SAMPLE/index"
+  files=(); for f in "$SAMPLE"/rdf/*.nq; do [[ -s $f ]] && files+=(-f "rdf/$(basename "$f")"); done
+  echo '{"num-triples-per-batch": 1000000}' > "$SAMPLE/index/settings.json"
+  docker run --rm -u "$(id -u):$(id -g)" -v "$SAMPLE:/data" -w /data --entrypoint /qlever/qlever-index "$QLEVER_IMAGE" \
+    -i index/atlas "${files[@]}" -F nq -s index/settings.json -j 2 -m 1G > "$SAMPLE/index.log" 2>&1 \
+    || { tail -20 "$SAMPLE/index.log"; drop_sample; die "parity sample: index build failed"; }
+  docker rm -f "$SAMPLE_NAME" >/dev/null 2>&1 || true
+  docker run -d --name "$SAMPLE_NAME" -u "$(id -u):$(id -g)" -p "127.0.0.1:$SAMPLE_PORT:$SAMPLE_PORT" \
+    -v "$SAMPLE/index:/data" -w /data --entrypoint /qlever/qlever-server "$QLEVER_IMAGE" \
+    -i atlas -p "$SAMPLE_PORT" -j 4 -m 4G -c 1G -s 60s >/dev/null
+  for _ in $(seq 120); do
+    curl -sf "http://127.0.0.1:$SAMPLE_PORT/?query=ASK%7B%3Fs%20%3Fp%20%3Fo%7D" -H 'Accept: application/sparql-results+json' \
+      | grep -q true && break
+    sleep 1
+  done
+  sample_args=(--sample "$SAMPLE" --sample-qlever "http://127.0.0.1:$SAMPLE_PORT/")
+elif [[ $rc != 3 ]]; then
+  drop_sample; die "parity sample could not be written"
+fi
+rc=0
+checks parity "$REL" --qlever "http://127.0.0.1:${PORT[$COLOUR]}/" --queries "$REL/queries.jsonl" "${sample_args[@]}" || rc=$?
+drop_sample
+[[ $rc == 0 ]] || die "parity checks failed; live is unchanged"
 
 # Stage 3: switch.
 log "switch live to $STAMP ($COLOUR)"

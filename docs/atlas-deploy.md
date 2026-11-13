@@ -94,6 +94,16 @@ name an aggregate after a variable of its body. The first deployment found five 
 The reference for C8, C9 and C11 is an in-memory Oxigraph store loaded from the release's own
 N-Quads, so both engines read identical data.
 
+A release above `ATLAS_PARITY_MAX_TRIPLES` (30 M) does not fit in that store beside QLever: at
+241 M triples it ran out of memory once and took 17 h the next time. For such a release the deploy
+writes a cut-down copy (`tools.atlas_checks parity-sample`: every graph, the small ones whole, each
+larger one cut to an equal share of `ATLAS_PARITY_SAMPLE_TRIPLES`, 12 M), indexes it with a second
+QLever on port 7003 and runs C8, C9b, C9c and C11 on that pair; C7, C9a and C10 still run on the
+release's own endpoint. Queries about a crawled taxon are asked about the sample's best-described
+taxa instead, and C9b fails if fewer than half of the queries that return rows on the release
+return rows on the sample. C7s checks that the sample's QLever holds the sample. This takes about
+four minutes; the copy and its QLever are removed afterwards.
+
 ## Monitoring
 
 `tools/deploy_atlas.sh --monitor` runs C13–C17 against the live and public addresses. It appends

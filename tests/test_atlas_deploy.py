@@ -39,3 +39,30 @@ def test_graph_counts_allow_empty_graphs_but_detect_data_loss_and_unexpected_dat
     assert graph_count_differences(expected, {}) == ["http://g/traits 23 -> 0"]
     assert graph_count_differences(expected, {"http://g/traits": 22}) == ["http://g/traits 23 -> 22"]
     assert graph_count_differences(expected, {"http://g/traits": 23, "http://g/extra": 1}) == ["http://g/extra 0 -> 1"]
+
+
+def test_parity_sample_keeps_every_graph_and_cuts_only_the_large_ones(tmp_path, monkeypatch):
+    import json
+
+    from tools import atlas_checks
+
+    release = tmp_path / "rel"
+    (release / "rdf").mkdir(parents=True)
+    sizes = {"a": 3, "b": 40, "c": 100}
+    graphs = []
+    for name, n in sizes.items():
+        (release / f"rdf/{name}.nq").write_text("".join(f"<s{i}> <p> <o> <http://g/{name}> .\n" for i in range(n)))
+        graphs.append({"graph": f"http://g/{name}", "file": f"rdf/{name}.nq", "triples": n, "sha256": "x"})
+    (release / "release.json").write_text(json.dumps({"stamp": "t", "triples": 143, "graphs": graphs}))
+
+    monkeypatch.setattr(atlas_checks, "PARITY_MAX_TRIPLES", 1000)
+    assert not atlas_checks.make_parity_sample(release, tmp_path / "none", budget=50)
+
+    monkeypatch.setattr(atlas_checks, "PARITY_MAX_TRIPLES", 100)
+    out = tmp_path / "sample"
+    assert atlas_checks.make_parity_sample(release, out, budget=50)
+    meta = json.loads((out / "release.json").read_text())
+    got = {g["graph"].rsplit("/", 1)[-1]: g["triples"] for g in meta["graphs"]}
+    assert got == {"a": 3, "b": 23, "c": 24} and meta["triples"] == 50
+    for name, n in got.items():
+        assert len((out / f"rdf/{name}.nq").read_text().splitlines()) == n
