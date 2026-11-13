@@ -360,6 +360,11 @@ def build_module(
     graph.bind("rdf", RDF)
     graph.bind("rdfs", RDFS)
     graph.add((MODULE, RDF.type, OWL.Ontology))
+    # A cardinality restriction on an undeclared property cannot be typed: OWLAPI reads the
+    # "exactly N leaflets" of the bi- and trifoliolate leaf classes as an error class (found
+    # 2026-11-13 in every release since 2026-07-31).
+    graph.add((HAS_COMPONENT, RDF.type, OWL.ObjectProperty))
+    graph.add((HAS_COMPONENT, RDFS.label, Literal("has component", lang="en")))
     graph.add((MODULE, OWL.imports, PATO))
     graph.add((MODULE, OWL.imports, PO))
     graph.add((MODULE, OWL.imports, GO_MODULE))

@@ -16,7 +16,12 @@ obo:FLOPO_0022142 a owl:Class ;
     oboInOwl:hasRelatedSynonym "herb"@en,
         "herbs"@en ;
     rdfs:subClassOf obo:FLOPO_0900032 ;
-    owl:equivalentClass [ ] .
+    owl:equivalentClass [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000051 ;
+            owl:someValuesFrom [ a owl:Class ;
+                    owl:intersectionOf ( obo:PO_0000003 [ a owl:Restriction ;
+                                owl:onProperty obo:RO_0000053 ;
+                                owl:someValuesFrom obo:PATO_0002352 ] ) ] ] .
 
 obo:FLOPO_0900033 a owl:Class ;
     rdfs:label "whole plant arborescent"@en ;
@@ -48,7 +53,18 @@ obo:FLOPO_0900035 a owl:Class ;
     dcterms:modified "2026-09-18"^^xsd:date ;
     dcterms:source <https://tncvasconcelos.github.io/papers/Sperottoetal2020_climbers.pdf> ;
     oboInOwl:hasExactSynonym "liana"@en ;
-    rdfs:subClassOf [ ],
+    rdfs:subClassOf [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000051 ;
+            owl:someValuesFrom [ a owl:Class ;
+                    owl:intersectionOf ( obo:PO_0025029 [ a owl:Restriction ;
+                                owl:onProperty obo:RO_0000053 ;
+                                owl:someValuesFrom obo:PATO_0002348 ] ) ] ],
+        [ a owl:Restriction ;
+            owl:onProperty obo:BFO_0000051 ;
+            owl:someValuesFrom [ a owl:Class ;
+                    owl:intersectionOf ( obo:PO_0025029 [ a owl:Restriction ;
+                                owl:onProperty obo:RO_0000053 ;
+                                owl:someValuesFrom obo:PATO_0002348 ] ) ] ],
         [ a owl:Restriction ;
             owl:onProperty obo:BFO_0000051 ;
             owl:someValuesFrom [ a owl:Class ;
@@ -469,6 +485,9 @@ obo:FLOPO_0985037 a owl:Class ;
         "sprawling"@en,
         "trailing"@en ;
     rdfs:subClassOf obo:FLOPO_0900032 .
+
+obo:RO_0002180 a owl:ObjectProperty ;
+    rdfs:label "has component"@en .
 
 obo:flopo-botanical-extension-2.owl a owl:Ontology ;
     rdfs:label "FLOPO botanical extension module 2"@en ;

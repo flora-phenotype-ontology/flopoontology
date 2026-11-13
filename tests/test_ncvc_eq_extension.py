@@ -133,6 +133,9 @@ def _canonical_shape(signature: str) -> str:
     return signature
 
 
+BLOCKED_AFTER_FREEZE = {"EQ|PO_0000282|PATO_0104357", "EQ|PO_0000282|PATO_0104358"}
+
+
 def test_proposal_is_current_for_the_annotated_corpus(spec):
     """The frozen spec's 292 accepted rows have since been released for real (their FLOPO ids are
     live), so ``propose()`` -- which only considers still-*unlinked* EQ signatures -- correctly
@@ -192,7 +195,13 @@ def test_proposal_is_current_for_the_annotated_corpus(spec):
     # 2026-10-14 the live class of that phenotype uses the plane ovate, so the run no longer links
     # to it and re-proposes the signature (as a duplicate of the live class).
     repointed = {s for s in fresh if _canonical_shape(s) != s and _canonical_shape(s) in live_signatures}
-    assert set(fresh) - repointed == {canonical[s] for s in still_open}
+    # Pairs blocked after the freeze. PATO 2026-10-01 released lanate and sericeous, so "woolly
+    # hairs" and "silky hairs" became PO x PATO pairs on the trichome; the EQ review of 2026-11-08
+    # had rejected both there (they are qualities of the indumentum: FLOPO:0993018 indumentum
+    # lanate), and config/valid_combinations.tsv blocks the pairs since 2026-11-13.
+    blocked_later = {s for s in fresh if s in BLOCKED_AFTER_FREEZE}
+    assert all(fresh[s]["decision"] == "exclude" and "blocked" in fresh[s]["reason"] for s in blocked_later)
+    assert set(fresh) - repointed - blocked_later == {canonical[s] for s in still_open}
     assert all(fresh[s]["decision"] == "exclude" for s in repointed)
     # Fields derived from a live label (parent, *_label, label, definition, reason) can
     # legitimately drift for an "exclude" row too: e.g. FLOPO_0980092 "silvery" is one of the 78

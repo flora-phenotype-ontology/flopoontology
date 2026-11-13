@@ -206,15 +206,49 @@ def _class_snippet(text: str, class_iri: str) -> str:
     return "\n".join(snippets)
 
 
+RELEASE_BLOCK_BEGIN = "<!-- BEGIN GENERATED FLOPO BOTANICAL EXTENSION 2 -->"
+RELEASE_BLOCK_END = "<!-- END GENERATED FLOPO BOTANICAL EXTENSION 2 -->"
+
+
 def _released_classes(release_path: Path, class_iris: list[str]) -> Graph:
     """Parse only the named class elements; the release is too large to parse per build."""
 
     text = release_path.read_text(encoding="utf-8")
     header_end = text.find(">", text.find("<rdf:RDF")) + 1
     header = text[:header_end]
-    body = "\n".join(_class_snippet(text, class_iri) for class_iri in class_iris)
+    # On a release that already embeds this module, copy the classes from the module's own block:
+    # elsewhere the release adds what other modules and the final passes say about them (growth-form
+    # axioms, the asserted inferred hierarchy, trait annotations), which is not this module's.
+    begin, end = text.find(RELEASE_BLOCK_BEGIN), text.find(RELEASE_BLOCK_END)
+    own = text[begin:end] if 0 <= begin < end else ""
+
+    def scope(class_iri: str) -> str:
+        return own if f'rdf:about="{class_iri}">' in own else text
+
+    body = "\n".join(_class_snippet(scope(class_iri), class_iri) for class_iri in class_iris)
+    # Releases since 2026-10 write class expressions as separate top-level elements named by
+    # rdf:nodeID. Follow those references, or an expression is copied as an empty node: the
+    # 2026-11-08 release lost the definition of 'whole plant herbaceous' that way.
+    seen: set[str] = set()
+    pending = set(re.findall(r'rdf:nodeID="([^"]+)"', body))
+    while pending:
+        node = pending.pop()
+        seen.add(node)
+        match = re.search(
+            rf'<(owl:Class|owl:Restriction|rdf:Description) rdf:nodeID="{re.escape(node)}">.*?</\1>',
+            text, re.DOTALL,
+        )
+        if match:
+            body += "\n" + match.group(0)
+            pending |= set(re.findall(r'rdf:nodeID="([^"]+)"', match.group(0))) - seen
     graph = Graph()
     graph.parse(data=f"{header}\n{body}\n</rdf:RDF>\n", format="xml")
+    # A reference whose node the release no longer has says nothing; drop it.
+    for subject, predicate, obj in list(graph):
+        if isinstance(obj, BNode) and (obj, None, None) not in graph:
+            graph.remove((subject, predicate, obj))
+        elif str(obj).startswith("http://org.semanticweb.owlapi/error#"):
+            graph.remove((subject, predicate, obj))  # the reasoner's placeholder for such a node
     return graph
 
 
@@ -317,6 +351,12 @@ def build_module(
     )
     graph.add((TOWARDS, RDF.type, OWL.ObjectProperty))
     graph.add((TOWARDS, RDFS.label, Literal("towards", lang="en")))
+    # RO:0002180 'has component' carries the "exactly N leaflets" restrictions of the first
+    # botanical module, which never declared it; undeclared, OWLAPI reads those restrictions as
+    # error classes. Declared here because this module can be rebuilt on a finished release.
+    has_component = URIRef(OBO + "RO_0002180")
+    graph.add((has_component, RDF.type, OWL.ObjectProperty))
+    graph.add((has_component, RDFS.label, Literal("has component", lang="en")))
 
     # Copy released classes that are revised in place, with every triple they carry.
     revised_iris = [str(OBO + curie) for curie in IN_PLACE.values()]
@@ -324,6 +364,12 @@ def build_module(
     for triple in released:
         graph.add(triple)
     modified_existing = {URIRef(value) for value in revised_iris}
+    # 'whole plant herbaceous' is defined by its EQ (whole plant, PATO herbaceous); restore it when
+    # the release being rebuilt has lost it (2026-11-08).
+    herb = URIRef(OBO + IN_PLACE["FLOPO-CAND:herb"])
+    if (herb, OWL.equivalentClass, None) not in graph:
+        graph.add((herb, OWL.equivalentClass, _entity_with_quality(
+            graph, URIRef(OBO + "PO_0000003"), URIRef(OBO + "PATO_0002352"), "herb")))
 
     def annotate(key: str, cls: URIRef, *, new: bool, note: str) -> None:
         row = proposals[key]

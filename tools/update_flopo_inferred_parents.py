@@ -46,6 +46,11 @@ def inferred_additions(release: Path, inferred: Path) -> dict[str, list[str]]:
         if (cls, OWL.deprecated, Literal(True)) in asserted_graph:
             continue
         direct = {o for o in inferred_graph.objects(cls, RDFS.subClassOf) if isinstance(o, URIRef) and o != OWL.Thing}
+        broken = sorted(str(o) for o in direct if str(o).startswith("http://org.semanticweb.owlapi/error#"))
+        if broken:
+            # OWLAPI's placeholder for an expression it could not read (a reference to a blank node
+            # the file does not define). The 2026-11-08 release asserted three of them.
+            raise ValueError(f"{cls}: the classified release has an unreadable class expression ({broken[0]})")
         have = {o for o in asserted_graph.objects(cls, RDFS.subClassOf) if isinstance(o, URIRef)}
         missing = sorted(str(o) for o in direct - have)
         if missing:

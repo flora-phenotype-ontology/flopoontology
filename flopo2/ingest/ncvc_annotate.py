@@ -157,6 +157,43 @@ def enable_atlas_options(res: "Resources") -> None:
     from flopo2.ingest.llm_reread import load as load_rereads
 
     res.rereads = load_rereads()
+    res.context_words = load_context_words()
+
+
+CONTEXT_WORDS = Path("config/flora_context_words.tsv")
+
+
+def load_context_words(path: Path = CONTEXT_WORDS) -> dict[str, dict[str, str]]:
+    """Reviewed readings of the transcriber's ``stage`` qualifier (docs/annotation-context-patterns.md).
+
+    The qualifier mixes several kinds of context. Two have a place in the annotation model:
+    ``stage`` words name a PO development stage during which the quality is present
+    (``developmental_stage_contexts``: "in fruit", "at anthesis"), and ``bearer_quality`` words
+    name a PATO quality of the same bearer (``bearer_context_qualities``: "when young", "male").
+    """
+
+    if not path.exists():
+        return {}
+    with path.open(encoding="utf-8", newline="") as handle:
+        return {normalize_key(row["word"]): row for row in csv.DictReader(handle, delimiter="\t")}
+
+
+def stage_context(res: "Resources", word: str, text: str, start: int, end: int, bearer_texts: list[str]):
+    """``(reading, cue_start, cue_end)`` for a stage qualifier that has a reviewed reading and
+    stands, verbatim, in the clause of the annotated span; else ``None``."""
+
+    reading = (getattr(res, "context_words", None) or {}).get(normalize_key(word))
+    if reading is None:
+        return None
+    constraint = reading.get("bearer_constraint") or ""
+    if constraint and not any(re.search(constraint, t or "", re.IGNORECASE) for t in bearer_texts):
+        return None
+    left = max(text.rfind(c, 0, start) for c in ".;") + 1
+    right = min([i for i in (text.find(c, end) for c in ".;") if i >= 0] or [len(text)])
+    found = [m for m in re.finditer(r"(?<![\w-])" + re.escape(word.strip()) + r"(?![\w-])", text[left:right], re.IGNORECASE)]
+    if len(found) != 1:
+        return None  # absent, or ambiguous between two statements of the clause
+    return reading, left + found[0].start(), left + found[0].end()
 
 
 # Compound habit words name one habit.  The transcriptions split "herbaceous shrub" into a herb row
@@ -590,6 +627,7 @@ class Resources:
     llm_relations: dict | None = None  # (source_id, row) -> flopo2.ingest.llm_relations answer
     llm_relation_chains: dict | None = None  # same key -> answer splitting 3+ values
     rereads: dict | None = None  # same key -> flopo2.ingest.llm_reread answer
+    context_words: dict | None = None  # reviewed readings of the stage qualifier (CONTEXT_WORDS)
 
     def rule_for(self, field_name: str, key: str, bearer_texts: Iterable[str]):
         bearer_texts = list(bearer_texts)
@@ -943,7 +981,31 @@ def ground_bearer(res: Resources, phenotype: dict) -> tuple[str, str, str]:
     return "", "", ""
 
 
+# "sub-" before a value word means "almost, not quite" (suborbicular, subentire, subequal,
+# subopposite): the value itself, qualified as approximate, the reading RELATED colour words get.
+# A word with its own rule or term (subsessile, subacute, subglobose, submerged) never gets here.
+_SUB_PREFIX = re.compile(r"sub-?([a-z][a-z-]{3,})")
+_NOT_SUB_VALUES = {"shrub", "shrubby", "tree", "species", "family", "genus"}
+
+
 def ground_phenotype(res: Resources, phenotype: dict) -> Grounding:
+    grounding = _ground_phenotype(res, phenotype)
+    if grounding.kind == "unresolved" and grounding.reason == "no_ontology_term_for_quality":
+        word = str(phenotype.get("quality_en") or "")
+        match = _SUB_PREFIX.fullmatch(normalize_key(word))
+        if match and match.group(1) not in _NOT_SUB_VALUES:
+            base = _ground_phenotype(res, {**phenotype, "quality_en": match.group(1), "pato_label": ""})
+            if base.kind == "assertion" and not base.negate and not base.approximate:
+                base.approximate = word.strip()
+                base.normalization_status = "proposed"
+                base.provenance.append(
+                    f"quality: {word.strip()!r} read as approximately {match.group(1)!r} ('sub-' pattern)"
+                )
+                return base
+    return grounding
+
+
+def _ground_phenotype(res: Resources, phenotype: dict) -> Grounding:
     po_id, bearer_prov, bearer_rule = ground_bearer(res, phenotype)
     provenance = [bearer_prov] if bearer_prov else []
     rule_ids = [bearer_rule] if bearer_rule else []
@@ -1733,8 +1795,18 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
             reason = "taxon_level_alternatives_or_continuum"
         if not reason and gates._has_real_disjunction(span_text):
             reason = "explicit_disjunction"
+        context = None
         if not reason and str(qualifiers.get("stage") or "").strip():
-            reason = "developmental_stage_context"
+            context = stage_context(
+                res, str(qualifiers["stage"]), text, start, end,
+                [phenotype.get("entity_en", ""), phenotype.get("po_label", ""), res.po_labels.get(grounding.po_id, "")],
+            )
+            if context is not None and context[0]["kind"] == "bearer_quality" and context[0]["target"] in {
+                grounding.pato_id, *grounding.value_terms
+            }:
+                context = None  # the context word is the quality itself
+            if context is None:
+                reason = "developmental_stage_context"
         if not reason and has_value:
             if unit not in LENGTH_UNITS and not is_supported_count(unit, grounding.pato_id):
                 reason = "count_or_non_length_measurement" if unit else "measurement_missing_unit"
@@ -1895,6 +1967,19 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
             )
         if grounding.approximate:
             _mark_approximate(assertion, grounding.approximate, text)
+        if context is not None:
+            reading, cue_start, cue_end = context
+            if reading["kind"] == "stage":
+                assertion["developmental_stage_contexts"] = [{
+                    "stage_term": reading["target"], "temporal_relation": "present_during",
+                    "stage_text": text[cue_start:cue_end], "start": cue_start, "end": cue_end,
+                }]
+            else:
+                assertion["bearer_context_qualities"] = [reading["target"]]
+            grounding.provenance.append(
+                f"context: {text[cue_start:cue_end]!r} -> {reading['kind']} {reading['target']} "
+                f"({reading['target_label']}; {CONTEXT_WORDS})"
+            )
         provenance = [page_prov.format(row=index), f"anchor: {method}", *grounding.provenance]
         if ar_statement is not None:
             provenance.append(

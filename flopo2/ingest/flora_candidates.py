@@ -89,6 +89,22 @@ _NON_BEARER_NOISE = {
 }
 
 
+REJECTED_BEARERS = Path("config/flora_rejected_bearer_words.tsv")
+
+
+def _rejected_bearer_words(path: Path = REJECTED_BEARERS) -> set[str]:
+    """Words reviewed and rejected as bearer candidates: generic parts that need their organ
+    ("segment", "margin") and words that are not plant structures ("ratio", "per node")."""
+
+    if not path.exists():
+        return set()
+    with path.open(encoding="utf-8", newline="") as handle:
+        return {row["word"].strip().lower() for row in csv.DictReader(handle, delimiter="\t")}
+
+
+_NON_BEARER_NOISE |= _rejected_bearer_words()
+
+
 def suggest_pato_parent(word: str) -> tuple[str, str]:
     """Return a heuristic (PATO ID, label) parent for a novel botanical quality word."""
     w = word.lower().strip()

@@ -46,6 +46,17 @@ EXPECTED = {
 }
 
 
+def _proposed() -> dict[str, dict[str, str]]:
+    """Classes added in the flora candidate review of 2026-11-13 (drafted by AI review)."""
+
+    allocations = load_allocations(REGISTRY)
+    return {
+        allocations[row["proposal_key"]]: row
+        for row in _tsv(SPEC)
+        if row["action"] == "new_flopo_local" and "flora candidate review" in row["note"]
+    }
+
+
 def _tsv(path: Path) -> list[dict[str, str]]:
     with path.open(encoding="utf-8", newline="") as handle:
         return list(csv.DictReader(handle, delimiter="\t"))
@@ -65,7 +76,7 @@ def _some(graph: Graph, cls: URIRef, prop: URIRef) -> set:
 
 def test_registry_block_is_reserved_and_disjoint_from_every_other_allocation():
     allocations = load_allocations(REGISTRY)
-    assert sorted(allocations.values()) == sorted(EXPECTED)
+    assert sorted(allocations.values()) == sorted(set(EXPECTED) | set(_proposed()))
     ours = set(allocations.values())
     for path in sorted((ROOT / "config").glob("*registry*.tsv")):
         # flopo_id_registry.tsv is the release-wide index of every released FLOPO class, so it
@@ -94,7 +105,7 @@ def test_classes_are_provisional_po_parented_and_carry_provenance():
     graph = _module()
     live = live_po_ids(PO_OBO)
     declared = {str(cls) for cls in graph.subjects(RDF.type, OWL.Class)}
-    assert declared == {OBO + flopo_id for flopo_id in EXPECTED}
+    assert declared == {OBO + flopo_id for flopo_id in set(EXPECTED) | set(_proposed())}
     for flopo_id, (label, parent, part_of) in EXPECTED.items():
         cls = URIRef(OBO + flopo_id)
         assert (cls, RDFS.label, Literal(label, lang="en")) in graph
@@ -109,6 +120,22 @@ def test_classes_are_provisional_po_parented_and_carry_provenance():
         assert part_of in live
         languages = {lit.language for lit in graph.objects(cls, OIO.hasExactSynonym)}
         assert languages == {"en", "fr"}
+    proposed = _proposed()
+    assert proposed and not set(proposed) & set(EXPECTED)
+    for flopo_id, row in proposed.items():
+        cls = URIRef(OBO + flopo_id)
+        assert (cls, RDFS.label, Literal(row["label"], lang="en")) in graph
+        assert str(next(graph.objects(cls, IAO_DEFINITION))).startswith(("A ", "An "))
+        note = str(next(graph.objects(cls, IAO_EDITOR_NOTE)))
+        assert "provisional flopo bearer; po submission pending" in note.lower()
+        # curator decision 2026-11-13: these carry the same curator provenance as the first seven
+        assert "Curator-approved" in note
+        assert (cls, DCTERMS.contributor, CONTRIBUTOR) in graph
+        parents = [p for p in graph.objects(cls, RDFS.subClassOf) if isinstance(p, URIRef)]
+        assert len(parents) == 1
+        parent = str(parents[0]).removeprefix(OBO)
+        assert parent in live or parent in proposed or parent in EXPECTED
+        assert {str(f).removeprefix(OBO) for f in _some(graph, cls, PART_OF)} <= live | set(proposed)
     indumentum = URIRef(OBO + "FLOPO_0986003")
     assert _some(graph, indumentum, HAS_PART) == {URIRef(OBO + "PO_0000282")}
 
@@ -210,10 +237,10 @@ def test_release_update_embeds_module_once_and_is_idempotent(tmp_path):
 ''',
         encoding="utf-8",
     )
-    assert update_release(release, MODULE_PATH, "2026-09-18") == len(EXPECTED)
+    assert update_release(release, MODULE_PATH, "2026-09-18") == len(EXPECTED) + len(_proposed())
     first = release.read_text(encoding="utf-8")
     assert first.count(BEGIN_MARKER) == 1
     assert "flopo-anatomy-support-extension.owl" not in first
     assert "flopo/releases/2026-09-18/flopo.owl" in first
-    assert update_release(release, MODULE_PATH, "2026-09-18") == len(EXPECTED)
+    assert update_release(release, MODULE_PATH, "2026-09-18") == len(EXPECTED) + len(_proposed())
     assert release.read_text(encoding="utf-8") == first

@@ -57,7 +57,8 @@ NEGATION_EVIDENCE = re.compile(
     r"d[ée]pourvu(?:e|es|s)?|absent(?:e|es|s)?|ausentes?)(?!\w)|"
     r"\b(?:unbranched|unarmed|unlobed|unstalked|unwinged|unawned|unspotted|"
     r"unmarked|unridged|unveined|unhairy|unscented|"
-    r"(?:leaf|spine|thorn|hair|scent|stem|wing|petal|prickle|awn|stalk)less)\b",
+    r"indehiscent|ebracteate|muticous|"
+    r"(?:leaf|spine|thorn|hair|scent|stem|wing|petal|prickle|awn|stalk|vein|blade)less)\b",
     re.IGNORECASE,
 )
 # Finite (``ne dépasse pas``) as well as participial (``ne dépassant pas``) French comparators are
