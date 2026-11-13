@@ -6,6 +6,13 @@ charset utf-8;
 absolute_redirect off;
 add_header X-Atlas-Release $atlas_release always;
 
+# The taxon list is three query results of 12-17 MB each; compressed they are about a tenth.
+gzip on;
+gzip_proxied any;
+gzip_min_length 1024;
+gzip_types application/sparql-results+json application/json application/javascript text/css text/csv
+           text/tab-separated-values text/turtle application/n-triples;
+
 location = / {
     try_files /index.html =404;
     add_header X-Atlas-Release $atlas_release always;

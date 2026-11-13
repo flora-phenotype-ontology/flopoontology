@@ -2,6 +2,9 @@
 # Deploy the FLOPO Trait Atlas on ws with a QLever endpoint (docs/atlas-deploy.md).
 #
 #   tools/deploy_atlas.sh [--stamp S] [--skip-tests] [--web-only]   stage, check, switch, check live
+#   tools/deploy_atlas.sh --stamp S --resume             a staged release whose checks failed for a
+#                                                        reason outside it: rerun staging, browser
+#                                                        and parity checks, then switch
 #   tools/deploy_atlas.sh --rollback                     make the previous release live again
 #   tools/deploy_atlas.sh --monitor                      check the live site (for cron)
 #   tools/deploy_atlas.sh --status                       show what is live
@@ -105,12 +108,13 @@ case "${1:-}" in
     exit $status ;;
 esac
 
-STAMP=$(date +%Y%m%d-%H%M) SKIP_TESTS=0 WEB_ONLY=0
+STAMP=$(date +%Y%m%d-%H%M) SKIP_TESTS=0 WEB_ONLY=0 RESUME=0
 while [[ $# -gt 0 ]]; do
   case $1 in
     --stamp) STAMP=$2; shift 2 ;;
     --skip-tests) SKIP_TESTS=1; shift ;;
     --web-only) WEB_ONLY=1; shift ;;
+    --resume) RESUME=1; shift ;;
     *) die "unknown option $1" ;;
   esac
 done
@@ -121,6 +125,12 @@ if [[ $WEB_ONLY == 1 ]]; then
   COLOUR=$LIVE_COLOUR
 fi
 
+if [[ $RESUME == 1 ]]; then
+  grep -q "atlas_release $STAMP;" "$STATE/staging.conf" 2>/dev/null || die "--resume: $STAMP is not the staged release"
+  curl -sf "http://127.0.0.1:${PORT[$COLOUR]}/?query=ASK%7B%3Fs%20%3Fp%20%3Fo%7D" -H 'Accept: application/sparql-results+json' \
+    | grep -q true || die "--resume: QLever $COLOUR is not answering"
+  log "resuming the staged release $STAMP ($COLOUR)"
+else
 # Stage 1: build and pre-flight.
 if [[ $SKIP_TESTS == 0 ]]; then
   log "C1 tests"
@@ -153,6 +163,7 @@ docker run --rm -u "$(id -u):$(id -g)" -v "$REL:/data" -w /data --entrypoint /ql
 log "QLever $COLOUR on port ${PORT[$COLOUR]}"
 start_qlever "$COLOUR" "$STAMP"
 fi
+fi  # not --resume
 write_conf staging "$STAMP" "$COLOUR"
 [[ -f $STATE/live.conf ]] || write_conf live "$STAMP" "$COLOUR"   # first deployment: nothing live yet
 reload_nginx

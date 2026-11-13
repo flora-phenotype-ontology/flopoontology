@@ -15,6 +15,7 @@ import argparse
 import hashlib
 import csv
 import json
+import os
 import random
 import re
 import sys
@@ -343,6 +344,31 @@ def graph_count_differences(expected: dict[str, int], actual: dict[str, int]) ->
             for g in sorted(expected.keys() | actual.keys()) if expected.get(g, 0) != actual.get(g, 0)]
 
 
+def _parity_without_reference(qlever: str, queries: Path, report: Report, skipped: str) -> None:
+    """C9a and C10 on QLever alone; the checks that need the reference store are warnings."""
+
+    report.add("C8", "OWL class expressions are complete (QLever = Oxigraph)", "warn", skipped)
+    slow, very_slow, errors = [], [], []
+    entries = [json.loads(line) for line in queries.read_text().splitlines() if line.strip()]
+    selects = [e for e in entries if not re.match(r"^\s*(PREFIX[^\n]*\n\s*)*(DESCRIBE|CONSTRUCT)", e["query"], re.I)]
+    for entry in selects:
+        try:
+            _, seconds = select(qlever, entry["query"])
+        except Exception as exc:  # noqa: BLE001
+            errors.append(f"{entry['page']}: {str(exc)[:160]}")
+            continue
+        if seconds > 5:
+            very_slow.append(f"{seconds:.1f}s {entry['page']}")
+        elif seconds > 2:
+            slow.append(f"{seconds:.1f}s {entry['page']}")
+    report.check("C9a", "every browser query runs on QLever", not errors, "; ".join(errors[:3]) or f"{len(selects)} queries")
+    report.add("C9b", "same number of result rows as Oxigraph", "warn", skipped)
+    report.add("C9c", "same values as Oxigraph (SAMPLE() may pick other labels)", "warn", skipped)
+    report.check("C10", "browser queries answer within 2 s (fail above 5 s)", not slow and not very_slow,
+                 "; ".join((very_slow + slow)[:5]) or "all within 2 s", warn=not very_slow)
+    report.add("C11", "DESCRIBE returns the same triples as the development server", "warn", skipped)
+
+
 def parity(release: Path, qlever: str, queries: Path, report: Report) -> None:
     meta = _meta(release)
     graphs = {r["g"]: int(r["n"]) for r in rows(select(qlever, "SELECT ?g (COUNT(*) AS ?n) WHERE { GRAPH ?g { ?s ?p ?o } } GROUP BY ?g")[0])}
@@ -350,10 +376,21 @@ def parity(release: Path, qlever: str, queries: Path, report: Report) -> None:
     report.check("C7", "QLever triple count per graph equals release.json", not drift,
                  "; ".join(drift) or f"{sum(graphs.values())} triples in {len(graphs)} graphs")
 
-    started = time.time()
-    store = _load_reference(release)
-    print(f"reference Oxigraph store loaded in {time.time() - started:.0f}s", file=sys.stderr)
+    # The reference is an in-memory Oxigraph store of the whole release. Above
+    # ATLAS_PARITY_MAX_TRIPLES it does not fit beside QLever on the host (a 241 M triple release
+    # ran out of memory once and took 17 h the next time), so the comparisons against it (C8, C9b,
+    # C9c, C11) are skipped with a warning; C7, C9a and C10 still run against QLever.
+    total = sum(int(g["triples"]) for g in meta["graphs"])
+    limit = int(os.environ.get("ATLAS_PARITY_MAX_TRIPLES", 30_000_000))
+    store = None
+    if total <= limit:
+        started = time.time()
+        store = _load_reference(release)
+        print(f"reference Oxigraph store loaded in {time.time() - started:.0f}s", file=sys.stderr)
+    skipped = f"skipped: {total} triples exceed the in-memory reference limit of {limit}"
 
+    if store is None:
+        return _parity_without_reference(qlever, queries, report, skipped)
     owl_query = ("SELECT ?p (COUNT(*) AS ?n) WHERE { ?s ?p ?o VALUES ?p { "
                  + " ".join(f"<http://www.w3.org/{'2002/07/' if n.startswith('owl') else '1999/02/'}{n}>" for n in OWL_NODES)
                  + " } } GROUP BY ?p")
