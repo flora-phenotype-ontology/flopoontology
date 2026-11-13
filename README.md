@@ -106,7 +106,7 @@ not a claim that the public release has passed the complete Dashboard.
 
 ### 2026-11-13
 
-28,146 FLOPO classes (1,306 deprecated identifiers retained); every earlier identifier
+28,153 FLOPO classes (1,306 deprecated identifiers retained); every earlier identifier
 preserved; ELK finds no unsatisfiable classes.
 
 - Corrects five class definitions that OWL tools could not read. FLOPO:0022142 'whole plant
@@ -121,8 +121,9 @@ preserved; ELK finds no unsatisfiable classes.
   included, adnate, superior and inferior ovary, dehiscent and its kinds, pinnatisect,
   introrse, …), each beneath the closest PATO class, with a PATO-style definition and a note
   on its PATO siblings. Candidates for submission to PATO.
-- 49 FLOPO-local anatomy classes FLOPO:0986007–0986055 beneath PO (spathe, gynostemium,
-  pollinium, indusium, pseudobulb, style branch, calyx tube, floral disc, cupule, ochrea, …),
+- 56 FLOPO-local anatomy classes FLOPO:0986007–0986062 beneath PO (spathe, gynostemium,
+  pollinium, indusium, pseudobulb, style branch, calyx tube, floral disc, cupule, ochrea, …;
+  and seven generic parts of an organ such as its abaxial side and distal portion),
   provisional until PO has them.
 - Review by Claude Fable 5.2 (AI) at the curator's instruction; every decision is in
   `curation/flopo-flora-candidate-review-2026-11-13.tsv`.

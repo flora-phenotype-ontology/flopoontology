@@ -1651,9 +1651,10 @@ def _mark_approximate(assertion: dict, word: str, text: str) -> None:
 
     start = assertion.get("source_start") or 0
     end = assertion.get("source_end") or len(text)
-    position = text.lower().find(word.lower(), start, end)
-    if position < 0:
-        position = text.lower().find(word.lower(), max(0, start - 40), end + 40)
+    # Search the text itself: lower-casing can change its length ("İ"), which shifts every offset.
+    pattern = re.compile(re.escape(word), re.IGNORECASE)
+    found = pattern.search(text, start, end) or pattern.search(text, max(0, start - 40), end + 40)
+    position = found.start() if found else -1
     if position < 0 or assertion.get("modality_start") is not None:
         return  # no locatable cue: keep the generalisation without an unsupported qualifier
     assertion["value_qualifier"] = "approximately"
