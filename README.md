@@ -104,6 +104,29 @@ the three matching assets, run the full gate without this option, then update
 staging option for updates to `master`. The staging result is
 not a claim that the public release has passed the complete Dashboard.
 
+### 2026-11-13
+
+28,146 FLOPO classes (1,306 deprecated identifiers retained); every earlier identifier
+preserved; ELK finds no unsatisfiable classes.
+
+- Corrects five class definitions that OWL tools could not read. FLOPO:0022142 'whole plant
+  herbaceous' had lost its definition and FLOPO:0900035 'whole plant lianescent' had an empty
+  superclass in 2026-11-08; the "exactly N leaflets" restrictions of FLOPO:0900067 and
+  FLOPO:0980426 (tri- and bifoliolate leaf) used RO:0002180 without declaring it, in every
+  release since 2026-07-31. OWLAPI read them as `http://org.semanticweb.owlapi/error#` classes,
+  three of which 2026-11-08 asserts as superclasses. `tests/test_flopo_release_integrity.py`
+  now guards against all three defects.
+- 110 FLOPO flora values FLOPO:0991101–0991210 from the review of the quality words that 36
+  parsed floras use and PATO lacks (unequal, urceolate, peltate, sheathing, climbing, cauline,
+  included, adnate, superior and inferior ovary, dehiscent and its kinds, pinnatisect,
+  introrse, …), each beneath the closest PATO class, with a PATO-style definition and a note
+  on its PATO siblings. Candidates for submission to PATO.
+- 49 FLOPO-local anatomy classes FLOPO:0986007–0986055 beneath PO (spathe, gynostemium,
+  pollinium, indusium, pseudobulb, style branch, calyx tube, floral disc, cupule, ochrea, …),
+  provisional until PO has them.
+- Review by Claude Fable 5.2 (AI) at the curator's instruction; every decision is in
+  `curation/flopo-flora-candidate-review-2026-11-13.tsv`.
+
 ### 2026-11-08
 
 27,987 FLOPO classes (1,306 deprecated identifiers retained); every earlier identifier
