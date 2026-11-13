@@ -54,6 +54,7 @@ def reannotate(source: str) -> dict:
         "unresolved_before": before.get("unresolved_spans"),
         "data_model_errors": errors,
         "unsatisfiable_classes": class_check.get("unsatisfiable"),
+        "taxon_contradictions": class_check.get("taxon_contradictions"),
         "class_check": class_check,
         "candidates": candidates,
     }
@@ -77,7 +78,8 @@ def main(argv: list[str] | None = None) -> None:
             line = (f"{source}: assertions {result['assertions_before']} -> {result['assertions']}, "
                     f"unresolved {result['unresolved_before']} -> {result['unresolved_spans']}, "
                     f"data-model errors {result['data_model_errors']}, "
-                    f"unsatisfiable classes {result['unsatisfiable_classes']}, {result['elapsed_s']:.0f} s")
+                    f"unsatisfiable classes {result['unsatisfiable_classes']}, "
+                    f"taxa with a contradiction {result['taxon_contradictions']}, {result['elapsed_s']:.0f} s")
         except Exception as exc:  # noqa: BLE001  (one flora must not stop the others)
             line = f"{source}: FAILED {type(exc).__name__}: {exc}"
         with (LOGS / "reannotate.log").open("a", encoding="utf-8") as handle:

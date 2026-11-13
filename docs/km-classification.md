@@ -94,6 +94,32 @@ Ways forward, in order of cost:
   FLOPO:0991095), not PATO's process quality. Four unsatisfiable classes remain in that flora
   (*frequency* and *discontinuous* stated of a part).
 
+## One taxon at a time (2026-11-13, evening)
+
+Asked the other way round: not "classify the flora" but "is this taxon consistent", one taxon at
+a time. The taxon is the conjunction of its accepted annotation classes; the input of one test is
+the part of the ontologies those classes depend on (syntactic locality module, type BOT, OWLAPI),
+and the reasoner tests the conjunction (`tools/TaxonConsistency.java`; with
+`FLOPO_TAXON_MODULES=<dir>` it also writes each test as an `.ofn` file, class `urn:flopo:taxon`).
+
+| Per taxon, Moss Flora of China | Axioms in the cut | HermiT 1.4 | KM 0.3.46 | KM 1.6.2 |
+|---|---:|---|---|---|
+| with FLOPO's precomposed classes | 22,600 to 32,700 | 8 s to more than 60 s (32 of the first 44 taxa over 60 s) | | |
+| without them | 5,400 to 10,900 (mean 8,400) | mean 19 s, up to 87 s | no result in 5 min, or "selected CB mechanism did not reach its complete fixpoint" after 3 min 25 s | no result in 3 min 20 s, or the same message after 1 min 45 s |
+
+FLOPO's precomposed classes are left out because a name for an expression cannot make a taxon
+inconsistent. What remains is the upward closure of the taxon's terms in PO and PATO, and it is
+the same few thousand axioms for every taxon. So a single taxon is not a small problem: KM does
+not finish one (PO and PATO alone take it 0.45 s; a taxon's fifteen classes on top do not end),
+and HermiT would need days for the 36 floras.
+
+**What is used instead** is a taxon check inside the ELK run of the flora
+(`flopo2/verify/annotation_class_check.py`, 43 s for the moss flora): absences are rewritten to
+a disjointness that ELK reads, and each taxon with an absence gets one class. On the moss flora
+it checks 139 taxa and reports 12 with a contradiction, mostly a wrong absence ("bladeless
+sheaths" read as "leaf lamina absent" beside "blades brown-green"). It covers "absent against
+described"; alternatives, numbers and negated qualities stay outside, as for ELK in general.
+
 ## Reproducing
 
 The inputs and outputs are in `~/tmp/flopo-pat/km/` on ws (not in the repository):

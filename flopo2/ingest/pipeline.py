@@ -192,6 +192,7 @@ def run_flora_pipeline(
     except Exception as exc:  # noqa: BLE001  (the check must not lose a finished flora)
         class_check = {"unsatisfiable": None, "note": f"failed: {type(exc).__name__}: {exc}"}
     print(f"[{source}] Stage 7a: annotation classes unsatisfiable={class_check.get('unsatisfiable')} "
+          f"taxa with a contradiction={class_check.get('taxon_contradictions')} "
           f"{class_check.get('note', '')}", flush=True)
 
     # Stage 7b: Validate against the gated trait data model
@@ -216,6 +217,7 @@ def run_flora_pipeline(
         "unresolved_spans": summary.get("unresolved_spans", 0),
         "data_model_errors": n_errors,
         "unsatisfiable_classes": class_check.get("unsatisfiable"),
+        "taxon_contradictions": class_check.get("taxon_contradictions"),
         "class_check": class_check,
         "candidates": cand_summary,
     }
