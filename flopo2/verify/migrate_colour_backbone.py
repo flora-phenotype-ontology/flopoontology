@@ -49,6 +49,7 @@ MIGRATION = Path("config/flopo_colour_backbone_migration.tsv")
 REGISTRY = Path("config/flopo_id_registry.tsv")
 SUPERSEDED_STATUSES = {"flopo_obsolete", "pato_withdrawn"}
 PROVENANCE_PREFIX = "colour_backbone_migration:"
+COLLAPSED_PREFIX = "alternatives_collapsed:"
 COLOUR_ATTRIBUTE = "PATO_0000014"  # PATO color
 NON_ENTAILING = {"approximately", "nearly", "almost", "sub"}
 
@@ -322,6 +323,11 @@ class Migrator:
         terms = a["value_terms"]
         if len(terms) == 1:
             a["value_operator"] = "atomic"
+            # "scarlet or sealing-wax red": both alternatives are one class of the backbone. The
+            # data-model gate reads this line to accept the "or" left in the source text.
+            a.setdefault("mapping_provenance", []).append(
+                f"{COLLAPSED_PREFIX} the alternatives of the source are one class, {terms[0]}"
+            )
         operands = a.get("value_operands") or []
         if operands:
             kept: dict[str, dict[str, Any]] = {}

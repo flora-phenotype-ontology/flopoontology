@@ -1109,7 +1109,8 @@ def ground_bearer(res: Resources, phenotype: dict) -> tuple[str, str, str]:
             return ids[0], f"bearer: exact PO label/EXACT synonym {key!r} -> {ids[0]}", ""
     for value in (phenotype.get("po_label"), phenotype.get("entity_en")):
         rule = res.rule_for("bearer", normalize_key(value), [])
-        if rule:
+        # a rule proposed from the lexicon may name a class PO has since made obsolete
+        if rule and (rule.po_id in res.po_catalog or rule.po_id in res.flopo_catalog):
             return (
                 rule.po_id,
                 f"bearer: reviewed rule {rule.rule_id} {normalize_key(value)!r} -> {rule.po_id} "
@@ -1983,6 +1984,8 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                     phenotype.get("value_low"), phenotype.get("value_high"), span_text
                 )
                 reason = problem
+                if not reason and low is None and high is None:
+                    reason = "measurement_value_not_numeric"  # value_low "few", "many"
         negated = bool(qualifiers.get("negated")) and str(qualifiers.get("negated")).strip().lower() not in {
             "false", "0", "no", "none"
         }

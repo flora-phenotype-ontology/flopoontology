@@ -1158,6 +1158,9 @@ def _validate_assertion(
         parsed.value_operator == "atomic"
         # A qualitative value relation is the representation of "X or Y" / "X to Y".
         and not parsed.qualitative_value_relation
+        # two alternatives that ground to one class ("scarlet or sealing-wax red"), recorded by
+        # flopo2.verify.migrate_colour_backbone
+        and not any(str(p).startswith("alternatives_collapsed:") for p in (parsed.mapping_provenance or ()))
         and _has_real_disjunction(source_context)
         and (
             _has_real_disjunction(parsed.source_text)
