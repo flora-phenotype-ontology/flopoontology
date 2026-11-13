@@ -46,6 +46,10 @@ the index, where they are queried.
 | ShEx shapes | the triples of a record of each pattern | `shapes/flopo-annotation-patterns.shex` |
 | SPARQL rules | comparisons between two values of one record | `shapes/rules.rq` |
 
+A fourth check works on the OWL side: `flopo2.verify.annotation_class_check` classifies the
+annotation classes of each flora with ELK, together with FLOPO, PO and PATO, and sets
+statements whose class is contradictory to review (`<source>-unsatisfiable.tsv`).
+
 The data-model rules run on every record in the pipeline gate (`validate_jsonl`). The RDF side is
 checked on a sample of records per pattern:
 

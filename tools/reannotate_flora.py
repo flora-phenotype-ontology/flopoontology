@@ -25,6 +25,7 @@ LOGS = Path("local-corpora/run-logs")
 
 def reannotate(source: str) -> dict:
     from flopo2.ingest import flora_annotate, flora_candidates
+    from flopo2.verify import annotation_class_check
     from flopo2.verify.data_model import validate_jsonl
 
     started = time.time()
@@ -35,6 +36,10 @@ def reannotate(source: str) -> dict:
     if summary_path.exists():
         before = json.loads(summary_path.read_text(encoding="utf-8"))
     summary = flora_annotate.run(source, corpus / "raw" / f"{source}-qwen.jsonl", derived)
+    try:  # ELK check of the annotation classes (flopo2.verify.annotation_class_check)
+        class_check = annotation_class_check.check(source, derived / f"{source}-annotated.jsonl", derived)
+    except Exception as exc:  # noqa: BLE001
+        class_check = {"unsatisfiable": None, "note": f"failed: {type(exc).__name__}: {exc}"}
     errors = int(validate_jsonl(derived / f"{source}-annotated.jsonl", stage="gated").get("errors", 0))
     candidates = flora_candidates.extract_for_source(source, derived)
     result = {
@@ -48,6 +53,8 @@ def reannotate(source: str) -> dict:
         "unresolved_spans": summary.get("unresolved_spans", 0),
         "unresolved_before": before.get("unresolved_spans"),
         "data_model_errors": errors,
+        "unsatisfiable_classes": class_check.get("unsatisfiable"),
+        "class_check": class_check,
         "candidates": candidates,
     }
     steps = derived / ".pipeline-steps"
@@ -69,7 +76,8 @@ def main(argv: list[str] | None = None) -> None:
             result = reannotate(source)
             line = (f"{source}: assertions {result['assertions_before']} -> {result['assertions']}, "
                     f"unresolved {result['unresolved_before']} -> {result['unresolved_spans']}, "
-                    f"data-model errors {result['data_model_errors']}, {result['elapsed_s']:.0f} s")
+                    f"data-model errors {result['data_model_errors']}, "
+                    f"unsatisfiable classes {result['unsatisfiable_classes']}, {result['elapsed_s']:.0f} s")
         except Exception as exc:  # noqa: BLE001  (one flora must not stop the others)
             line = f"{source}: FAILED {type(exc).__name__}: {exc}"
         with (LOGS / "reannotate.log").open("a", encoding="utf-8") as handle:

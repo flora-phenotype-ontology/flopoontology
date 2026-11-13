@@ -184,6 +184,16 @@ def run_flora_pipeline(
     if steps == "llm":  # validation and candidate staging are deterministic
         return {"source": source, "status": "needs-cpu", "next_step": "candidates"}
 
+    # Stage 7a: ELK check of the annotation classes; contradictory ones are set to review
+    from flopo2.verify import annotation_class_check
+
+    try:
+        class_check = annotation_class_check.check(source, annotated_path, derived_dir)
+    except Exception as exc:  # noqa: BLE001  (the check must not lose a finished flora)
+        class_check = {"unsatisfiable": None, "note": f"failed: {type(exc).__name__}: {exc}"}
+    print(f"[{source}] Stage 7a: annotation classes unsatisfiable={class_check.get('unsatisfiable')} "
+          f"{class_check.get('note', '')}", flush=True)
+
     # Stage 7b: Validate against the gated trait data model
     val_report = validate_jsonl(annotated_path, stage="gated")
     n_errors = int(val_report.get("errors", 0))
@@ -205,6 +215,8 @@ def run_flora_pipeline(
         "assertions": summary.get("assertions", 0),
         "unresolved_spans": summary.get("unresolved_spans", 0),
         "data_model_errors": n_errors,
+        "unsatisfiable_classes": class_check.get("unsatisfiable"),
+        "class_check": class_check,
         "candidates": cand_summary,
     }
     result_path.write_text(json.dumps(result, default=str) + "\n", encoding="utf-8")

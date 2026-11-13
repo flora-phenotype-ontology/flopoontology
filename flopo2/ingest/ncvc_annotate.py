@@ -142,6 +142,9 @@ PATO_PUBERTY, PATO_BOTANICAL_PUBESCENCE = "PATO_0000455", "PATO_0001320"
 PATO_LABEL_TRAPS = {
     "ovate", "broadly ovate", "narrowly ovate", "ovoid", "broadly ovoid", "oval", "broadly oval",
     "ellipsoid", "ellipsoidal", "pubescent", "downy", "finely downy", "softly downy",
+    # PATO 'acute' is a quality of processes (a short course); the shape of an apex has its own
+    # FLOPO value. Found by the ELK check of annotation classes, 2026-11-13.
+    "acute", "subacute",
 }
 
 
@@ -1491,9 +1494,11 @@ def _ground_phenotype(res: Resources, phenotype: dict) -> Grounding:
     pato_label = ncvc_guide._normalize(phenotype.get("pato_label")).lower()
     ids = res.pato_lexicon.get(pato_label, []) if pato_label else []
     quality_key = normalize_key(phenotype.get("quality_en"))
-    if res.rules_over_pato_label and quality_key in PATO_LABEL_TRAPS and res.rule_for(
+    label_trap = bool(res.rules_over_pato_label and pato_label in PATO_LABEL_TRAPS
+                      and res.rule_for("quality", pato_label, bearer_texts))
+    if label_trap or (res.rules_over_pato_label and quality_key in PATO_LABEL_TRAPS and res.rule_for(
         "quality", quality_key, bearer_texts
-    ):
+    )):
         ids = []
     if len(ids) == 1:
         pato_id = ids[0]
@@ -1507,6 +1512,10 @@ def _ground_phenotype(res: Resources, phenotype: dict) -> Grounding:
     if not pato_id:
         key = normalize_key(phenotype.get("quality_en"))
         rule = res.rule_for("quality", key, bearer_texts)
+        if rule is None and label_trap:
+            # "broadly acute" transcribed with the label "acute": the reviewed rule for the label
+            key = pato_label
+            rule = res.rule_for("quality", key, bearer_texts)
         if rule is None:
             direct = res.pato_lexicon.get(key, [])
             if len(direct) == 1:

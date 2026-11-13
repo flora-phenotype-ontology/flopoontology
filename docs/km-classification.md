@@ -79,6 +79,21 @@ Ways forward, in order of cost:
    the atlas as inferred superclasses of the annotation classes.
 4. Re-run the trial on the release once KM completes almost-Horn inputs of this size.
 
+## Follow-up of 2026-11-13
+
+* Decision: FLOPO stays with ELK for now.
+* Finding 4 is a defect of v0.3.46 only: per the KM developers, KM 1.6.2 does not miss these
+  subsumptions, but it still times out on the inputs above.
+* Way forward 2 is done: `flopo2.verify.annotation_class_check` runs ELK over the release
+  closure plus the annotation classes of a flora as stage 7a of `flopo2.ingest.pipeline` and in
+  `tools/reannotate_flora.py`. Unsatisfiable classes are listed in
+  `<source>-unsatisfiable.tsv`; their assertions are set to review with the reason
+  `unsatisfiable_annotation_class`. On Moss Flora of China the check takes about 2.5 minutes.
+* The 17 "acute" classes of finding 5 were a grounding error and are fixed: "acute" and
+  "subacute" on a plant part now take the reviewed FLOPO values (acute (sensu botany)
+  FLOPO:0991095), not PATO's process quality. Four unsatisfiable classes remain in that flora
+  (*frequency* and *discontinuous* stated of a part).
+
 ## Reproducing
 
 The inputs and outputs are in `~/tmp/flopo-pat/km/` on ws (not in the repository):
