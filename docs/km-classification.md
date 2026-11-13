@@ -90,5 +90,6 @@ with `prepare.py`, `build_tbox.py` and `compare.py`.
     km classify t-plain-union.ofn > km-t-plain-union.json
     python compare.py elk-t-plain-union.owl km-t-plain-union.json small-kinds.json
 
-Explicit multi-worker routes (`production_all8`, `cb_absorb8`) were also tried on input A; see
-the note at the end of this file.
+Explicit multi-worker routes on input A gave no result either: `production_all8` was stopped
+after 25 minutes (8.4 GB; the engine used one core), and `cb_absorb8` ended by itself after
+3 min 13 s with a non-zero exit status and no classification.
