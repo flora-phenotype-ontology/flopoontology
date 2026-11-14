@@ -382,7 +382,8 @@ class Builder:
                 key_bearer = bearer if context == "||" else f"{bearer}|{context}"
                 self.numeric.setdefault((str(taxon), key_bearer, a["pato_id"]), []).append(
                     {"record": formal, "source": source, "low": a.get("value_low"),
-                     "high": a.get("value_high"), "uo": uo}
+                     "high": a.get("value_high"), "uo": uo,
+                     "context": {k: a[k] for k in _MERGE_CONTEXT if a.get(k)}}
                 )
         if a.get("value_qualifier") not in (None, "", "exact"):
             g.add((formal, FB.qualifier, Literal(a["value_qualifier"])))
@@ -712,8 +713,7 @@ class Builder:
         for (taxon_iri, key_bearer, attribute), members in sorted(self.numeric.items()):
             if len(members) < 2:
                 continue
-            bearer, _, context = key_bearer.partition("|")
-            container, _, size = context.partition("|")
+            bearer = key_bearer.partition("|")[0]
             units = Counter(m["uo"] for m in members)
             uo = units.most_common(1)[0][0]
             factor = {m["uo"]: UNIT_FACTOR[m["uo"]] / UNIT_FACTOR[uo] for m in members}
@@ -728,10 +728,9 @@ class Builder:
                 "value_low": low, "value_high": high, "value_low_inclusive": True,
                 "value_high_inclusive": True, "unit": UNIT_LABELS[uo], "negated": False,
             }
-            if container:
-                assertion["bearer_container"] = container
-            if size:
-                assertion["bearer_collection_size"] = int(size)
+            # the members share the context (it is part of the key): container, pair size,
+            # stage, state of the bearer, qualified whole
+            assertion.update(members[0]["context"])
             fac = URIRef(annotation_class_iri(assertion))
             expression, _numeric, _seasonal, _disjunctive = _phenotype_expression(g, nodes, assertion, attributes)
             g.add((fac, RDF.type, OWL.Class))
@@ -971,6 +970,10 @@ DESCRIPTIVE_WORDS = {
     "PATO:0000947": ("elliptic", "elliptical", "oval"),
     "PATO:0001320": ("pubescent", "downy"),
 }
+
+
+_MERGE_CONTEXT = ("bearer_container", "bearer_collection_size", "developmental_stage_contexts",
+                  "developmental_stage_operator", "bearer_context_qualities", "bearer_whole")
 
 
 def _context_terms(a: dict) -> list[str]:
