@@ -1921,6 +1921,10 @@ def build_relation(
                     if decision != "accept":
                         return {"unreviewed_pair": "|".join(sorted((left[0], right[0])))}
                     common, across = [QUALITY_ROOT], True
+                if not text[from_end:to_start]:
+                    # "whitishstramineous": two words run together in the source (a lost line
+                    # break); a relation needs the connector that states it
+                    return None
                 return {
                     "pato_id": common[0],
                     "across": across,
