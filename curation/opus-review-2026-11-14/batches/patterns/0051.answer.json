@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P02040",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Let a hyphenated continuum (linear-lanceolate, elliptic-lanceolate: linear PATO:0001199 / lanceolate PATO:0001877 / elliptic PATO:0000947) be one choice inside a one_of union, so that the 'A, B or C' list of shapes resolves.",
+  "reason": "All values have terms and both the continuum and the union exist. Only the nesting of a continuum inside a union is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02041",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Resolve 'each bearing N X' to the subject of the clause ('Inflorescences', PO:0009049) as bearer_container; add 'each bearing' as a count cue.",
+  "reason": "This is a plain count of flowers per inflorescence. The container stands in the same sentence and is pointed to by 'each'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02042",
+  "decision": "new_pattern",
+  "target": "open-ended maximum",
+  "fix": "'to more than N' says that the largest stems go past N. Record the maximum as open (value_max_extreme_low = 35 cm, strict) in RDF only. Give no OWL data range, because 'length > 35 cm' would be a false claim about every stem. Use length PATO:0000122 for stems.",
+  "reason": "This is neither an upper nor a lower bound of the usual range. Pattern 02 would turn it into a false claim about every stem.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02043",
+  "decision": "new_pattern",
+  "target": "measured extent of a quality",
+  "fix": "The bearer (filament) gets exserted PATO:0000623 in OWL. The length by which it projects (4-6 mm) is a measurement record linked to that quality: length of the exserted portion, towards the perianth. It stays in RDF only.",
+  "reason": "The number measures how far the quality reaches, not a dimension of the filament (the filament is 1.6 cm long).",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02044",
+  "decision": "new_pattern",
+  "target": "qualitative count",
+  "fix": "The bearer is the counted part (flower) with its container, and the quality is amount PATO:0000070. Hold the count word (few / several / many / numerous) as a qualitative count value in RDF. In OWL state only the presence of the part, not a data range or 'increased amount' (that is relative to a normal state).",
+  "reason": "Pattern 03 holds non-numeric counts on purpose (measurement_value_not_numeric). No term for 'numerous' fits the count model.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02045",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Ground 'inner perichaetial leaves' to perichaetal bract PO:0030030, and 'stem-leaves' (hyphenated) to the vegetative leaf of the moss. Read 'much' as a degree cue; this gives decreased length PATO:0000574 towards the stem leaf.",
+  "reason": "The second term of the comparison is in the text. Neither moss leaf phrase was grounded.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02046",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept '±' (as already for 'c.') between 'to' and the number. This gives an inclusive upper bound of 2 mm, with value_qualifier approximately (pattern 01). The bearer is the stipe of the fruiting perianth (stalk PO:0025066).",
+  "reason": "'to ± N' combines two implemented cues; the parser knows 'to c.' but not 'to ±'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02047",
+  "decision": "transcription_error",
+  "target": "trichome PO:0000282 of the calyx, length PATO:0000122",
+  "fix": "Rule: in 'hairs N mm' the hairs are the bearer (trichome, part of the calyx as container) and the number is their length, not a quality 'hairs' of the calyx. Add the same rule for 'hairs to N mm'.",
+  "reason": "The 1-2 mm is the length of the hairs; 'hairs' is not a quality of the calyx.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02048",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "In 'L × W' pairs, accept a bound cue before the second dimension ('4-10 × to 1.7 cm'): the length range is 4-10 cm and the width an inclusive upper bound of 1.7 cm.",
+  "reason": "This is a supported cue in a position the parser does not expect.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02049",
+  "decision": "missing_term",
+  "target": "logical definition of FLOPO_0985032 'whole plant vine phenotype' (whole plant PO:0000003 and has characteristic climbing FLOPO:0991108)",
+  "fix": "Give the vine phenotype class an EQ signature, with 'vine' as a habit noun on whole plant. 'Woody' has no term in the quality lexicon or FLOPO value terms, so annotate 'woody vines' as climbing for now.",
+  "reason": "The class exists but has no EQ signature, and the value class climbing already exists.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02050",
+  "decision": "transcription_error",
+  "target": "trichome PO:0000282 of the leaf lamina abaxial epidermis, length PATO:0000122",
+  "fix": "Same rule as for 'hairs N mm' in P02047: the trichome is the bearer, with the lower surface as container (slot 1), and 0.1 mm is its length.",
+  "reason": "The number is the length of the hairs, not a quality 'hairs' of the leaf blade.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02051",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "Hypotrachyna is a lichen. Isidia and soredia are lichen thallus structures outside PO and FLOPO anatomy.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02052",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation)",
+  "fix": "Read the privative prefix 'e-' (eglandular, ebracteate, epapillose) as a negation cue inside the word: glandular PATO:0002117 with negated = true, and the prefix offsets as cue.",
+  "reason": "Negation is implemented, but the gate wants the cue in the source span and does not recognise the prefix.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02053",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "This is a union of entire / serrate. Keep 'sparsely and irregularly' as degree qualifiers in RDF. Let the region cue 'apically' (slot 1, apical region) apply to the serrate choice only, instead of leaving any cue that crosses the alternative unresolved.",
+  "reason": "Both values have terms. The degree words and the region cue that applies to one choice block the union.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02054",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept 'to ±' as an approximate inclusive upper bound (1 cm) of petiole length.",
+  "reason": "Same as P02046.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02055",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read 'rarely reach more than N' (like 'seldom exceeding', listed in annotation-context-patterns section 5) as the usual inclusive upper bound. Use the metric value in brackets (46 cm). Ground 'short shoots' to a short shoot class if PO has one, else branch.",
+  "reason": "The doc already treats 'seldom exceeding' as an upper bound. This is the same wording, but the gate treats it as a negated bound.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02056",
+  "decision": "new_pattern",
+  "target": "values per alternative form",
+  "fix": "Each choice of the shape continuum (narrowly linear / narrowly elliptic) gets its own measurement records, joined to that choice in RDF. In OWL, only the bound over all forms (length ≤ 9 cm, width ≤ 8 mm) goes on the bearer.",
+  "reason": "The bracketed dimensions hold only for one shape. As a plain bound, 'width ≤ 1 mm' would contradict the elliptic forms (8 mm).",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02057",
+  "decision": "new_pattern",
+  "target": "degree of division",
+  "fix": "Read 'N×-lobed / -parted' as a division quality (lobed PATO:0001979 / split PATO:0001786) plus how many times the part is divided (1-2), kept in RDF only. In OWL, the union undivided PATO:0002034 or lobed or split. The bearer disjunction 'leaflets or segments' becomes leaflet PO:0020049 or a leaf lobe.",
+  "reason": "'1-2×' counts how many times the part is divided, not parts. Neither pattern 03 nor the alternatives cover it.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02058",
+  "decision": "missing_term",
+  "target": "logical definition of FLOPO_0985031 'whole plant climbing phenotype' (whole plant PO:0000003 and has characteristic climbing FLOPO:0991108)",
+  "fix": "Give the climber phenotype class its EQ signature, and map the habit noun 'climber' to whole plant + climbing.",
+  "reason": "The class exists without an EQ signature, and the value class exists.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02059",
+  "decision": "new_pattern",
+  "target": "qualitative count",
+  "fix": "Few to many is a continuum of two count words. Record both in RDF as qualitative count values of fronds. In OWL, only the presence of the frond.",
+  "reason": "This is a non-numeric count; together the two words say little more than 'present'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02060",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md (plain measurement)",
+  "fix": "Map 'N mm thick' to the attribute thickness PATO:0000915 (diameter PATO:0001334 for terete organs such as rhizomes), not to the value 'thick'.",
+  "reason": "A number before 'thick' gives the attribute, but the annotator kept the value word.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02061",
+  "decision": "missing_term",
+  "target": "logical definition of FLOPO_0985031 'whole plant climbing phenotype' (whole plant PO:0000003 and has characteristic climbing FLOPO:0991108)",
+  "fix": "Same as P02058. 'Vigorous' is not a phenotype and is dropped.",
+  "reason": "The class exists without an EQ signature.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02062",
+  "decision": "existing_pattern",
+  "target": "docs/odp/01-approximate-value.md",
+  "fix": "Send 'sub-' + term to the approximate-value pattern: stipitate FLOPO:0991065 with value_qualifier approximately and 'sub' as cue. It is not a measurement, so the missing unit does not apply.",
+  "reason": "It was wrongly sent to the measurement path; the term and the 'sub-' cue both exist.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02063",
+  "decision": "transcription_error",
+  "target": "bearer: upper lip of the corolla; quality: 2 lobes",
+  "fix": "Transcribe the entity as the upper lip of the corolla, not corolla, and the quality as bilobed / a count of 2 lobes (counted part 'lobed' → lobe). The corolla lip needs a FLOPO anatomy class, because PO has none.",
+  "reason": "The transcribed quality holds the bearer phrase 'upper lip'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02064",
+  "decision": "new_pattern",
+  "target": "measured extent of a quality",
+  "fix": "The corolla gets split PATO:0001786 (dorsally, region slot 1: the back) in OWL. The distance of the end of the split from the base (0.6-2 mm) is a measurement record linked to that quality, in RDF only.",
+  "reason": "The number places the end of the split; it is not a dimension of the corolla.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02065",
+  "decision": "new_pattern",
+  "target": "open-ended maximum",
+  "fix": "Same as P02042: whole plant height PATO:0000119, with an open maximum of more than 40 cm in RDF and no OWL data range.",
+  "reason": "'to more than' says the tallest plants go past 40 cm, not that all do.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02066",
+  "decision": "new_pattern",
+  "target": "position of greatest width",
+  "fix": "The bearer is the wing of the samara (part of samara fruit PO:0030099), not the fruit. Record the region of greatest width (distal of the middle, a BSPO region) as a part_restriction holding increased width, or in RDF only. Here it backs up the already stated obovate outline.",
+  "reason": "No pattern says where a part is broadest, and the transcribed bearer 'fruit' is wrong (it is the wing).",
+  "confidence": "low"
+ },
+ {
+  "id": "P02067",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md (plain measurement)",
+  "fix": "Map 'N mm thick' to thickness PATO:0000915 (or diameter PATO:0001334) of the leafy twig (branch, in the state 'leafy').",
+  "reason": "Same as P02060.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02068",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "Secondary veins, amount PATO:0000070, 15-22, with container the leaf blade, plus a bearer_part (slot 1) for one side of the midvein. In OWL, the counted veins are part of a lateral half of the lamina; 'on each side' means the count holds for both halves.",
+  "reason": "It is listed as still open in annotation-context-patterns and held as count_per_position in pattern 03.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02069",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read a bracketed '(to N mm)' after '-petiolate' as an upper bound of petiole length (PO petiole, PATO:0000122). Use as container the basal and proximal leaves, with the position values basal FLOPO:0991002 / proximal (pattern 04).",
+  "reason": "The cue 'to' is supported; it is missed in brackets and after an adjective with a different bearer.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02070",
+  "decision": "new_pattern",
+  "target": "qualitative count",
+  "fix": "Same as P02044: flowers (in the male inflorescence) with a qualitative count value 'numerous' in RDF only.",
+  "reason": "This is a non-numeric count.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02071",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation)",
+  "fix": "Add 'wanting' (and 'lacking') as absence cues, giving the terminal leaflet as absent (negated presence) with frequency_qualifier 'often'. The bearer is the terminal leaflet (leaflet PO:0020049 with a terminal position).",
+  "reason": "Negation and frequency are implemented. Only the cue word is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02072",
+  "decision": "new_pattern",
+  "target": "qualitative count",
+  "fix": "Same as P02044: stamen with a qualitative count value 'many'.",
+  "reason": "This is a non-numeric count.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02073",
+  "decision": "missing_term",
+  "target": "logical definition of FLOPO_0985031 / 0985032 (whole plant PO:0000003 and has characteristic climbing FLOPO:0991108)",
+  "fix": "Map the habit noun 'liane' / 'liana' (French and English) to whole plant + climbing. 'Woody' has no term in the quality lexicon or FLOPO value terms, so annotate climbing for now.",
+  "reason": "Same habit class without an EQ signature. A liana is a woody climber.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02074",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Annotate only the bracketed bound: whole plant height ≤ 28 cm. Drop 'Taller than the type variety', which compares with another taxon.",
+  "reason": "The comparison with another taxon is not a phenotype, but the bracketed bound is.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02075",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md (continuum)",
+  "fix": "Treat 'opposite' in leaf arrangement as the value PATO:0001933 without a second term (it is in relational_slim). Allow the continuum opposite → decussate PATO:0001953, of which decussate is a kind.",
+  "reason": "Both terms exist. 'Opposite' is blocked because it is treated as a relation that needs a second term.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02076",
+  "decision": "missing_term",
+  "target": "logical definition of FLOPO_0985031 'whole plant climbing phenotype' (whole plant PO:0000003 and has characteristic climbing FLOPO:0991108)",
+  "fix": "Once the habit class has its EQ signature, use the union climbing FLOPO:0991108 or prostrate PATO:0000631 ('trailer') on whole plant. 'Perennial' is a separate statement.",
+  "reason": "The class exists without an EQ signature.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02077",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1, region)",
+  "fix": "Read 'apex' as a region cue (petal + apical region), not as a stage. The value is mucronate FLOPO:0991054.",
+  "reason": "There is no stage in the text. The region slot is implemented, but the row was sent to the stage path.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02078",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1, region)",
+  "fix": "Read 'at base' as a region cue (the pedicel's basal region), and map 'articulated' (with no second term) to jointed FLOPO:0991154.",
+  "reason": "There is no stage in the text. The region and the value both exist.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02079",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept 'to ±' and apply the bound to both dimensions of 'L × W': length ≤ 10 mm, width ≤ 5 mm, approximate. The bearer is the scale-like leaf (scale leaf PO:0006003) of the flowering stems.",
+  "reason": "This is a supported cue in a combination the parser does not handle.",
+  "confidence": "high"
+ }
+]

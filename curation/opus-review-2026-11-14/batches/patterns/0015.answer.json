@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P00600",
+  "decision": "transcription_error",
+  "target": "seed coat; negated spongy PATO:0001480",
+  "fix": "Transcribe as seed coat PO:0009088 with quality spongy PATO:0001480, negated (absence rule 9 of the playbook): 'lacking spongy tissue' says the coat has no spongy layer, which is 'not spongy'. 'lacking' is not a comparison and has no second term.",
+  "reason": "The quality 'lacking' was taken as a relational word; the statement is a negated texture of the seed coat, and 'sclerenchymatous' in the same clause supports it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00601",
+  "decision": "existing_pattern",
+  "target": "config/flopo_flora_value_terms.tsv FLOPO:0991108 climbing",
+  "fix": "Add a reviewed rule twining -> FLOPO:0991108 climbing (its definition already includes twining round a support) with bearer stem PO:0009047, which is in its bearer list; do not route 'twining' to the FLOPO whole-plant class without an EQ signature. The transcribed bearer should be stem, not whole plant.",
+  "reason": "An existing value term covers twining; the rule picks a class without an EQ signature and the bearer is wrong.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00602",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add 'reaches' (and 'reach', 'attains') to the inclusive upper-bound cues beside 'reaching'; whole plant height <= 38 m.",
+  "reason": "Plain upper bound; only the verb form of the cue is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00603",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "Count pattern 03 with an extra position slot: bearer lateral vein, container leaf, amount 7-8 count, position 'each side of' the leaf midvein PO:0020139. OWL: has part some ((vein and part of some leaf) and has characteristic some (amount ...)) only if the per-side count is kept in RDF (fb:perPosition obo:PO_0020139, fb:positionText 'each side of midrib'), since the per-side number is not the number per leaf.",
+  "reason": "Listed as open in annotation-context-patterns.md section 4; no pattern file covers it.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00604",
+  "decision": "new_pattern",
+  "target": "indefinite count",
+  "fix": "Amount of the counted part (disk floret, container capitulum) with a non-numeric value 'numerous' kept in RDF (fb:countValue 'numerous', cue) and no data range in OWL beyond presence of the part; optionally a reviewed lower bound (e.g. > 10) only where the flora's glossary defines it.",
+  "reason": "Pattern 03 holds 'few'/'many' as non-numeric; there is no representation for an indefinite count, and PATO increased amount is relative to a normal and wrong here.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00605",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "As P00603: bearer lateral vein of the leaf, amount 7-8, position each side of the costa (leaf midvein PO:0020139) in RDF; 'nerve' should ground to vein.",
+  "reason": "Count per side of the midrib; open pattern.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00606",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Bearer should be the upper calyx lobes (calyx lobe, with the series member 'upper' when available), target the calyx tube; add a grounding rule that 'the tube' inside a calyx description is the calyx tube. Quality increased length PATO:0000573 towards calyx tube.",
+  "reason": "Comparison pattern 09 applies; the second term 'tube' was not grounded and the bearer was transcribed as sepal.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00607",
+  "decision": "transcription_error",
+  "target": "intramarginal vein, arched",
+  "fix": "The quality 'arched' belongs to an intramarginal vein formed sometimes by the lateral veins, not to the leaf. Re-transcribe as presence of an intramarginal vein with frequency 'sometimes' and shape arched; if no term for intramarginal vein grounds, hold.",
+  "reason": "The bearer 'leaf' does not match the text; the disjunction 'all or upper' is about which veins join, not alternative values of the leaf.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00608",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept 'to ±' / 'to c.' before the number as an inclusive upper bound with value_qualifier approximately (pattern 01). Branch height <= 5 cm; the clause is the second alternative of a habit (prostrate ... or erect), so pattern 07 for the alternative frame.",
+  "reason": "Upper bound with '±' between cue and number; the cue parser does not skip the approximation mark.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00609",
+  "decision": "new_pattern",
+  "target": "depth of division",
+  "fix": "Bearer the perianth of the female bud, quality the split quality (cleft/lobed), and the depth as a fraction of the bearer's length: value 0.67, unit ratio, value_qualifier approximately, kept in RDF like pattern 11. OWL states only the split quality; the depth stays RDF.",
+  "reason": "'cleft c. 2/3' gives how deep the division goes; no pattern covers a depth fraction, and the bearer 'flower' should be the bud perianth.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00610",
+  "decision": "existing_pattern",
+  "target": "config/flopo_flora_value_terms.tsv FLOPO:0991108 climbing",
+  "fix": "Map 'liana' (habit) to whole plant + FLOPO:0991108 climbing, which lists 'liana' among its bearer words, instead of the lianescent FLOPO class without an EQ signature; optionally also ligneous, since a liana is a woody climber.",
+  "reason": "A value term with an EQ form exists; the normalization picks the class without a signature.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00611",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Apply merge_compound_habits ('woody herb' = subshrub) before splitting the disjunction, then two unions on the whole plant: (annual or perennial) and (subshrub or shrub); growth forms share an attribute by playbook rule 4.",
+  "reason": "Union of habits is covered; the compound habit was split into 'woody' as one alternative.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00612",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Normalize 'N -veined' (space before the hyphen, GrassBase style) to 'N-veined' before the compound split; vein count 3, container palea.",
+  "reason": "'veined' is in flora_counted_parts.tsv; the spacing stops the split.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00613",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Split '5-7-lobed' (no term of its own) into the amount 5-7 of leaf lobe, container leaf blade; leave 'to c. 3/4 deep' to the depth-of-division pattern and 'unlobed in juvenile stages' to the stage pattern.",
+  "reason": "'lobed' is in the counted-parts table; the trailing depth phrase blocked the split.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00614",
+  "decision": "missing_term",
+  "target": "trap (Utricularia bladder) and its mouth",
+  "fix": "PO has no term for the bladder trap of Utricularia or its mouth (entrance); with them the statement is mouth of trap, position lateral (PATO:0001193 lateral to, towards the trap's stalk). Hold until anatomy terms exist.",
+  "reason": "The structure is a position of a part of a part; the bearer terms are missing.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00615",
+  "decision": "new_pattern",
+  "target": "indefinite count",
+  "fix": "As P00604: amount of seed, container capsule, non-numeric value 'nombreuses' = numerous in RDF.",
+  "reason": "Indefinite count in French; no pattern.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00616",
+  "decision": "existing_pattern",
+  "target": "docs/odp/06-specimen-condition.md",
+  "fix": "Add or check the row 'in sicco' = dry, kind specimen condition, in config/flora_context_words.tsv so it is not read as a growth stage; leaflet rugulose with specimen_condition dry, 'minutely' as degree.",
+  "reason": "Specimen condition is a pattern; the context word went to the stage route.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00617",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Split '4-lobed' on a calyx into the amount 4 of calyx lobe (PO's part of the organ, no container needed), unless a reviewed term for four-lobed exists.",
+  "reason": "'lobed' is in the counted-parts table; the split did not run.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00618",
+  "decision": "missing_term",
+  "target": "outer / inner: position of a member in a whorl or series",
+  "fix": "Add FLOPO position values outer and inner (series members) for bearer_context_qualities; then pattern 09: outer sepal has decreased length PATO:0000574 towards sepal with inner.",
+  "reason": "Listed as open in annotation-context-patterns.md: inner/outer members have no value classes; the comparison itself is pattern 09.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00619",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground the container 'umbellule' (the ultimate umbel of a compound umbel) to umbel inflorescence PO:0030129 by a reviewed rule; flower amount 2-4 per umbellule.",
+  "reason": "'flowered' is in the counted-parts table; only the container failed to ground.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00620",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "Read the elliptic 'basal ..., cauline ...' after 'Leaves' as basal leaf (FLOPO:0991002 basal as bearer context) with length 10-30 cm and width 1.2-4 cm; '(–5)' via pattern 05. It needs the context slot to accept FLOPO values.",
+  "reason": "'basal leaves' is pattern 04 (kind D), routed to stage because the noun was dropped.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00621",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "As P00603: bearer leaf margin tooth of the peduncle leaves, amount 1-10, position 'per side' (of the leaf) in RDF.",
+  "reason": "Count per side; open pattern.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00622",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add cues 'covered in/with/by' -> surrounded by PATO:0005016 towards scale leaf PO:0006003 (synonym cataphyll); 'brown fibrous remnants' are qualities of the target, held or annotated separately.",
+  "reason": "An enclosure relation to another part; the cue is not in the table.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00623",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Union of obtuse and acute for the bract, the second with value_qualifier approximately: treat the '-ish' suffix (acutish) as an approximation cue, like 'sub-' in pattern 01.",
+  "reason": "Both patterns exist; 'acutish' has no rule, so the alternative is left unresolved.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00624",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "A maximum for the tetraploid race under the best growing conditions, set against the diploid race; not a statement about the taxon as a whole.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00625",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Map 'liana' to FLOPO:0991108 climbing (as P00610) and 'straggling' to climbing/scrambling too; the union liana or straggling shrub becomes whole plant climbing, and (ligneous or shrub).",
+  "reason": "Climbing has an EQ form; the liana rule picks the class without a signature.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00626",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (temporal transition)",
+  "fix": "Read 'withering' as a transition of the stipule to shriveled PATO:0002460 (qualitative_value_relation, as for 'becoming'); do not map it to marcescent, which also says the stipule is not shed.",
+  "reason": "A process word that names a later state; the transition pattern covers it.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00627",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Limit the disjunction scope to 'leathery or woody' (union of texture values); 'ellipsoidal' is firm and is prolate by playbook rule 7.",
+  "reason": "The disjunction was applied to the whole clause.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00628",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add 'restricted to', 'crowded at' as position cues -> inserted into PATO:0000624 towards branch apex PO:0028004 (branch tip); 'mostly' as frequency.",
+  "reason": "A position relative to another part; the cue and the target 'apices of branches' were not read.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00629",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "Flower amount 1-2 with position the leaf axil PO:0025224 in RDF; the playbook says per-axil counts are not parthood.",
+  "reason": "Count per axil; open pattern.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00630",
+  "decision": "new_pattern",
+  "target": "indefinite count",
+  "fix": "As P00604: ovule amount with the value '∞' (numerous, indefinite) in RDF, container ovary.",
+  "reason": "'∞' is an indefinite count; no numeric range.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00631",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Pairs as a collection of two (playbook: bearer_collection_size): amount 5-7 of (object aggregate and has member exactly 2 sorus); the container 'segment' needs a reviewed grounding (fern pinna lobe or pinnule) or the row stays held.",
+  "reason": "Pairs per container is covered; only 'segment' does not ground.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00632",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "Amount 1 of rows of sori (or the arrangement uniseriate) with position each side of the midrib/costa PO:0030072 or PO:0020139 in RDF.",
+  "reason": "Count per side of the midrib; open pattern.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00633",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read '(to 2 mm. long)' as an inclusive upper bound on bracteole length, also inside parentheses; drop the elliptic comparison 'shorter' (the second term is the bract of the sentence before), or add it by pattern 09 if the bract grounds.",
+  "reason": "Plain upper bound; the parenthesis and the bare 'shorter' blocked it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00634",
+  "decision": "new_pattern",
+  "target": "comparison with an implied second term",
+  "fix": "Bearer: the abaxial side of the leaf lamina (the substituted epidermis from the 'beneath' surface word); relational colour quality (lighter/higher brightness) towards the opposite side, which is implied by the surface word. OWL: has part some (abaxial epidermis and has characteristic some (Q and towards some adaxial epidermis)); the cue 'paler beneath' in RDF.",
+  "reason": "The second term is not written but is fixed by the surface word; pattern 09 needs a written target.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00635",
+  "decision": "transcription_error",
+  "target": "thickness PATO:0000915",
+  "fix": "'N mm thick' after a number is the attribute thickness PATO:0000915 (2-3 mm), not the value 'thick'; add the rule to the measurement path.",
+  "reason": "The value word was taken in place of the attribute of the measurement.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00636",
+  "decision": "existing_pattern",
+  "target": "docs/odp/08-alternative-with-frequency.md",
+  "fix": "Map 'liane' to FLOPO:0991108 climbing on the whole plant (as P00610); union tree / shrub / climbing with 'parfois' (sometimes) as the frequency of the last alternative.",
+  "reason": "Climbing has an EQ form; the alternative with its own frequency is pattern 08.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00637",
+  "decision": "transcription_error",
+  "target": "leaf; container branch PO:0025073",
+  "fix": "Entity should be leaf, counted 3-5, container the ultimate branch (branch PO:0025073, synonym branchlet); then pattern 03.",
+  "reason": "The entity 'per ultimate branch' is the container phrase, not the counted part.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00638",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Read 'or more' after a range as an open maximum extreme: flower amount 3-10, container raceme, value_max_extreme open; the class uses 3-10.",
+  "reason": "Not a disjunction of values but an open extreme of a count range.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00639",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "As P00603: main lateral vein of the leaflet, amount ± 7 (approximately, pattern 01), position each side of the midrib in RDF.",
+  "reason": "Count per side; open pattern.",
+  "confidence": "high"
+ }
+]

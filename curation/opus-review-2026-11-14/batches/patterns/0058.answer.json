@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P02320",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read 'to over X' as a strict lower bound (value_low 1 mm, exclusive), not as an upper bound: 'to' before a lower-bound cue ('over', 'at least', 'more than') must not trigger upper_bound_cue_not_supported. Bearer peristome tooth PO:0030043, quality length.",
+  "reason": "The teeth reach more than 1 mm; only the lower bound is given.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02321",
+  "decision": "transcription_error",
+  "target": "pedicel PO:0030112 + length",
+  "fix": "Entity pedicel PO:0030112, quality length PATO:0000122, 1-3 mm with max extreme 10 mm (pattern 05); 'pedicel length' is not a quality and flower is not the bearer.",
+  "reason": "The transcriber folded the organ into the quality and put the flower as bearer.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02322",
+  "decision": "existing_pattern",
+  "target": "docs/odp/08-alternative-with-frequency.md",
+  "fix": "Accept a parenthetical '(occasionally Y ...)' after a value as the alternative with its own frequency; at least annotate spikelet + ovate as the usual value and keep the parenthetical (narrowly oblong, fewer-flowered) as a separate, frequency-marked statement.",
+  "reason": "The main value is plain ovate; the parenthetical is an occasional variant, not a continuum.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02323",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "The 'N-veined' split (veined -> vein in config/flora_counted_parts.tsv) was not applied because the row carried the number without unit; run the split on such rows: bearer leaf lamina vein PO:0020138, container leaf lamina PO:0020039 (submerged leaf), amount 3, unit count.",
+  "reason": "A count in a word, covered by pattern 03.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02324",
+  "decision": "new_pattern",
+  "target": "count-at-position",
+  "fix": "Count of gland (amount, 2-4, unit count) with container leaf lamina PO:0020039 and a position slot for the place on the container (leaf lamina margin PO:0025009, 'each' = per margin). OWL: has part some (gland and part of some 'leaf lamina margin' and has characteristic some (amount and has magnitude some xsd:decimal[>=2,<=4])); RDF keeps fb:container, fb:position and the cue 'along each margin'.",
+  "reason": "Listed as open in docs/annotation-context-patterns.md (count at a position); pattern 03 holds it as count_per_position.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02325",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'dividing tardily if at all' is a hedged process of the old sheath with no firm state; neither 'splitting' nor 'not splitting' is asserted.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02326",
+  "decision": "new_pattern",
+  "target": "spacing-between-members",
+  "fix": "Measurement of distance PATO:0000040 on the bearer (frond, PO:0009025) towards the same kind of part, 1-2 cm. OWL: has part some (frond and has characteristic some (distance and towards some frond and has magnitude some xsd:decimal[>=1,<=2])); RDF fb:towards the same class, so the SPARQL rule relation_target_is_not_the_bearer needs an exception for spacing.",
+  "reason": "Spacing is described in docs/annotation-context-patterns.md section 3 but has no odp pattern or implementation.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02327",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add 'paired' to config/flora_counted_parts.tsv with collection_size 2 (as 'jugate'), the part taken from the preceding noun: bearer secondary leaf vein PO:0020140, container leaf lamina PO:0020039, 5-6 pairs; '5- or 6-' is a range of two whole numbers.",
+  "reason": "A count of pairs in a word; only the table row is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02328",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Ground 'liana' by rule to whole plant PO:0000003 + climbing FLOPO:0991108 (woody as a second statement), instead of the FLOPO phenotype class without EQ; 'to at least 20 m' is an inclusive lower bound of height.",
+  "reason": "A liana is a woody climber; existing terms suffice, and the height is a lower bound.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02329",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Resolve 'each' to the subject of the clause ('primary branches' of the panicle) and ground it to second order inflorescence axis PO:0006321 (synonym primary inflorescence branch) as container; spikelet PO:0009051 amount 5-12, frequency 'usually'.",
+  "reason": "The container is stated, through 'each', but was not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02330",
+  "decision": "transcription_error",
+  "target": "leaflet base + rounded",
+  "fix": "No stage in the clause; 'base' is a region, not a stage: bearer leaflet PO:0020049 with basal region (slot 1, BSPO basal region), quality rounded.",
+  "reason": "The developmental_stage_context reason is spurious; the transcriber put the region in the stage qualifier.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02331",
+  "decision": "transcription_error",
+  "target": "seed + thickness PATO:0000915",
+  "fix": "Quality thickness PATO:0000915 (attribute), 1 mm; a grounding rule '<number> <unit> thick' -> thickness would release all such rows.",
+  "reason": "'thick' was grounded as a value, not the attribute that takes a number.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02332",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "End the scope of 'or' at 'and': 'ciliate' is outside the union and is annotated alone on leaf lamina margin PO:0025009; the union is between the two kinds of dentate margin.",
+  "reason": "The disjunction concerns the teeth only; 'ciliate' is a firm statement.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02333",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Apply the 'ribbed -> rib' split with the container from the clause subject: branch PO:0025073 (synonym branchlet), bearer state 'current year' (young); amount 2, unit count.",
+  "reason": "A count in a word; the container (branchlets) was not taken from the clause.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02334",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "A reviewed table of vague count words (numerous, many, several, nombreux): ground by rule to PATO:0002118 multiple on the counted part, with its container (here seed PO:0009010, container fruit/capsule), and no number.",
+  "reason": "Not a missing term: 'multiple' (more than two copies) is safe; pattern 03 now holds non-numeric counts.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02335",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Vague count word table: several -> PATO:0002118 multiple on seed PO:0009010, container the capsule.",
+  "reason": "As P02334; 'several' means more than two.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02336",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'N pairs per X' as a count with collection_size 2; ground 'segment' in a fern lamina to the pinna lobe / ultimate segment (leaflet PO:0020049 or a FLOPO segment class) as container; sorus amount 2-3 pairs.",
+  "reason": "The container 'segment' is not grounded; the structure is pattern 03.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02337",
+  "decision": "transcription_error",
+  "target": "stamen + unequal FLOPO:0991101",
+  "fix": "Annotate stamen PO:0009029 + unequal FLOPO:0991101 without a number; 'stamens 10' is a separate count (amount 10).",
+  "reason": "The count 10 was attached to the size row.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02338",
+  "decision": "existing_pattern",
+  "target": "docs/odp/12-part-of-qualified-whole.md",
+  "fix": "Add the signs '♂' and '♀' to config/flora_context_words.tsv as male PATO:0000384 / female PATO:0000383; the disc is part of a male flower (pattern 12); 'obconique' -> obconical PATO:0002347.",
+  "reason": "The stage qualifier is the flower sex given by the sign; the description belongs to the male flowers.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02339",
+  "decision": "missing_term",
+  "target": "medial: position of a member in the middle part of a series along its axis (leaves in the middle of the shoot)",
+  "fix": "A FLOPO position value 'medial' beside basal FLOPO:0991002 and the proposed upper/lower values; context row 'largest medial' on leaf (pattern 04); leaf lamina length 40-85 mm, width 8-25 mm.",
+  "reason": "Which member of a series (kind D); pattern 04 lists the missing position values as open.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02340",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "French 'ou' as the connector and 'dessus' as the apex region: ovary with conical PATO:0002021 or flattened PATO:0002254 apex, region outside the receptacle.",
+  "reason": "Two shape values of one attribute; the union pattern applies once the French cue and region are read.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02341",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Add dm (decimetre) to LENGTH_UNITS in flopo2/ingest/ncvc_annotate.py (it is supported in flopo2/extract/measurement.py); height 2-15 dm (min extreme 1), and the second range is width/spread 2-25 dm (max extreme 30).",
+  "reason": "Only the unit blocks it; dm is a length unit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02342",
+  "decision": "new_pattern",
+  "target": "spacing-between-members",
+  "fix": "Distance PATO:0000040 of leaflet/pinnule PO:0020049 towards the same class, 1.5-2 cm, with bearer state basal FLOPO:0991002 ('basal ones'); same representation as P02326.",
+  "reason": "Spacing between like parts; the transcribed quality '1.5-2 cm apart' is the raw phrase.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02343",
+  "decision": "transcription_error",
+  "target": "root + ligneous PATO:0002348",
+  "fix": "Not negated: the cue 'non-' belongs to 'non-tuberiferous'. Root PO:0009005 + ligneous PATO:0002348, approximately ('-escent', pattern 01).",
+  "reason": "The negation of the next word was carried over to 'lignescent'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02344",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Vague count word in a count word: 'many-flowered' -> flower PO:0009046 multiple PATO:0002118, container inflorescence (panicle).",
+  "reason": "As P02334; 'flowered' is in the counted-parts table, 'many' needs the vague-count rule.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02345",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Vague count rule: leaf multiple PATO:0002118 on the whole plant; 'in a dense rosette' is a separate arrangement statement.",
+  "reason": "As P02334.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02346",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Vague count rule with the French word 'nombreuses': leaflet PO:0020049 multiple PATO:0002118, container leaf.",
+  "reason": "As P02334.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02347",
+  "decision": "transcription_error",
+  "target": "corolla + white PATO:0000323",
+  "fix": "Corolla PO:0009059 + white PATO:0000323 without a value; the numbers 7-8 x 6-9 mm belong to a separate size row.",
+  "reason": "A measurement was attached to the colour statement.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02348",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (section 5, processes as presence of a part)",
+  "fix": "Grounding rule suckering -> whole plant has part sucker (root-borne shoot system PO:0004544 or shoot-borne PO:0004545; the text does not say which, so use their common shoot-system parent) with presence, frequency 'sometimes'.",
+  "reason": "A process stated as the presence of suckers; no new term needed.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02349",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "When the subject is rachis/peduncle, take the inflorescence PO:0009049 as container of 'flowered'; 'several to 20' is an inclusive upper bound 20 (pattern 02) with 'several' as lower (multiple).",
+  "reason": "The container was not grounded from the rachis; the count is otherwise covered.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02350",
+  "decision": "transcription_error",
+  "target": "stipe + thickness PATO:0000915",
+  "fix": "Quality thickness PATO:0000915, 0.9-1.5 mm, on the stipe of the sterile frond (bearer state sterile PATO:0000956, pattern 12); same rule as P02331.",
+  "reason": "'thick' was grounded as a value instead of the attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02351",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read 'to at least X' as an inclusive lower bound (stem length >= 15 cm); 'to' must not force the upper-bound reading when followed by 'at least'.",
+  "reason": "A lower-bound cue preceded by 'to'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02352",
+  "decision": "missing_term",
+  "target": "lateral: position of a member at the side of a series (the lateral sepals of an orchid flower)",
+  "fix": "FLOPO position value 'lateral' (open in pattern 04) as bearer state of sepal PO:0009031; then 07a union spreading PATO:0104356 or reflexed PATO:0104353, with 'almost' as approximately on the second operand.",
+  "reason": "'laterals' needs the missing position value; the union itself is of one attribute.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02353",
+  "decision": "existing_pattern",
+  "target": "plain measurement (LENGTH_UNITS in flopo2/ingest/ncvc_annotate.py)",
+  "fix": "Add inch ('in.') and line ('lin.') as length units, and read the OCR fraction '23/4' as 2 3/4 only when it gives an ascending range; else hold.",
+  "reason": "Unit not supported and an OCR-mangled fraction; the statement is a plain leaf lamina length.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02354",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read a chain of ascending numbers '1-3-5' as the set of counts: leaflet amount low 1 high 5, container leaf, with the listed values kept in RDF.",
+  "reason": "A count with listed alternatives, not a continuum of qualities.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02355",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Vague count rule: leaf multiple PATO:0002118 on the plant, frequency 'usually'.",
+  "reason": "As P02334.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02356",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Grounding rule 'long acuminate' -> acuminate PATO:0002228 with the degree in RDF; an alternative of a value and its own degree collapses to the value: tepal PO:0009033 apex acuminate.",
+  "reason": "Both alternatives are acuminate; no new term is needed.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02357",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Vague count rule: stem PO:0009047 multiple PATO:0002118 on the whole plant.",
+  "reason": "As P02334.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02358",
+  "decision": "transcription_error",
+  "target": "leaf sheath + elliptic PATO:0000947",
+  "fix": "Leaf sheath PO:0020104 + elliptic PATO:0000947 without a value; '1 dm long' is a separate length row (needs dm, see P02341).",
+  "reason": "The length was attached to the shape row.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02359",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "A comparative colour with a surface cue and no 'than' compares the two surfaces of the same leaf: grounding rule to discolorous FLOPO:0991070 on the leaf lamina (or abaxial epidermis lighter towards the adaxial one once a lighter-colour term exists).",
+  "reason": "The second term is implicit, the upper surface; the existing discolorous value covers it without a new term.",
+  "confidence": "medium"
+ }
+]

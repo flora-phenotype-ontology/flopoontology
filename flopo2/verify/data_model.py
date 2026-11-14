@@ -115,6 +115,23 @@ def _load_attribute_ids(path: Path) -> set[str]:
         }
 
 
+def _own_disjunction(parsed) -> bool:
+    """An "or" in the statement's words that the assertion does not account for: "4 or 5" is
+    its range 4-5, "or nearly so" its approximation cue (flopo2.verify.gates)."""
+
+    from flopo2.verify.gates import unexplained_disjunction
+
+    qualifier = getattr(parsed.value_qualifier, "value", parsed.value_qualifier)
+    cue = (parsed.modality_text or "") if qualifier == "approximately" else ""
+    return unexplained_disjunction(parsed.source_text, parsed.value_low, parsed.value_high, cue)
+
+
+def _gate_disjunction(source_text: str) -> bool:
+    from flopo2.verify.gates import _has_real_disjunction as lenient
+
+    return lenient(source_text)
+
+
 def _has_real_disjunction(source_text: str) -> bool:
     source_text = re.sub(
         r"\bmore\s+or\s+less\b|\bplus\s+ou\s+moins\b",
@@ -239,6 +256,28 @@ def pattern_issues(
         printed = {float(m.group(1).replace(",", ".")) for m in _PAREN_NUMBER.finditer(parsed.source_text or "")}
         if float(extreme) not in printed:
             out.append(("extreme_not_in_parentheses_in_source", f"{extreme:g}"))
+
+    # --- indefinite count (docs/odp/13-indefinite-count.md)
+    word = parsed.count_word
+    if word is not None:
+        if not _span_ok(text, word.count_text, word.start, word.end):
+            out.append(("count_word_text_not_verbatim", repr(word.count_text)))
+        if norm(parsed.quality) != "PATO_0000467" or parsed.negated:
+            out.append(("count_word_without_presence", str(parsed.quality)))
+        if parsed.value_low is not None or parsed.value_high is not None:
+            out.append(("count_word_with_number", f"{parsed.value_low}-{parsed.value_high}"))
+
+    # --- count at a position (docs/odp/14-count-at-a-position.md)
+    position = parsed.count_position
+    if position is not None:
+        if not _span_ok(text, position.position_text, position.start, position.end):
+            out.append(("count_position_text_not_verbatim", repr(position.position_text)))
+        if norm(parsed.quality) != "PATO_0000070" or (parsed.value_low is None and parsed.value_high is None):
+            out.append(("count_position_without_count", str(parsed.quality)))
+        if parsed.phenotype_class_iri:
+            out.append(("count_position_with_phenotype_class", parsed.phenotype_class_iri))
+        if position.landmark_term and not known_part(norm(position.landmark_term)):
+            out.append(("count_position_landmark_unknown", str(position.landmark_term)))
 
     # --- specimen condition (docs/odp/specimen-condition.md)
     condition = parsed.specimen_condition
@@ -421,6 +460,8 @@ def _pydantic_assertion(assertion: dict[str, Any]) -> TraitAssertion:
         "towards": assertion.get("towards") or None,
         "bearer_whole": assertion.get("bearer_whole") or None,
         "specimen_condition": assertion.get("specimen_condition") or None,
+        "count_word": assertion.get("count_word") or None,
+        "count_position": assertion.get("count_position") or None,
         "value_union_scope": assertion.get("value_union_scope") or "same_attribute",
         "value_min_extreme": assertion.get("value_min_extreme"),
         "value_max_extreme": assertion.get("value_max_extreme"),
@@ -1374,9 +1415,9 @@ def _validate_assertion(
         # two alternatives that ground to one class ("scarlet or sealing-wax red"), recorded by
         # flopo2.verify.migrate_colour_backbone
         and not any(str(p).startswith("alternatives_collapsed:") for p in (parsed.mapping_provenance or ()))
-        and _has_real_disjunction(source_context)
+        and _gate_disjunction(source_context)
         and (
-            _has_real_disjunction(parsed.source_text)
+            _own_disjunction(parsed)
             or (
                 gate_status_hint == "accepted"
                 and not _clause_disjunction_is_off_topic(source_context, parsed.quality)
@@ -1388,7 +1429,7 @@ def _validate_assertion(
             line_number,
             (
                 "atomic_source_contains_disjunction"
-                if _has_real_disjunction(parsed.source_text)
+                if _own_disjunction(parsed)
                 else "accepted_atomic_clause_contains_disjunction"
             ),
             repr(source_context),

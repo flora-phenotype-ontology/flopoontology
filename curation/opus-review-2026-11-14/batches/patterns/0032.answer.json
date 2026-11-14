@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P01280",
+  "decision": "existing_pattern",
+  "target": "plain EQ; lexical rule like C354 (lianescent → FLOPO:0991108 climbing)",
+  "fix": "Give the FLOPO phenotype class 'climber' the signature whole plant + FLOPO:0991108 climbing, or add the rule 'climber' → climbing on whole plant|plant|habit. 'Woody' is a separate statement.",
+  "reason": "FLOPO:0991108 climbing already exists for this habit; only the noun form 'climber' lacks a mapping.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01281",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add 'to ±' as an upper-bound cue combined with the approximation of pattern 01, and 'the longest to' as an upper bound over the members. The bearer is the spike (PO:0030117 spike inflorescence) part of the inflorescence, not the inflorescence itself; '× 1.5 cm' is the width bound.",
+  "reason": "An upper bound over a set of like parts ('the longest'), with an approximation sign the cue list does not know.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01282",
+  "decision": "new_pattern",
+  "target": "distance to another part",
+  "fix": "Slots: bearer (lobe sinus of the pinna, or the pinna with a sinus part), quality PATO:0000040 distance, numeric range and unit, target (costa / pinna midrib) with its cue. OWL: has_part some (pinna and has_part some (sinus and has_characteristic some (distance and towards some costa))); the numbers as data range and in RDF.",
+  "reason": "Lobing depth is given as the distance of the sinuses from the costa; patterns 09/10 cover comparisons and ratios, not a measured distance to another part.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01283",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "Slots: counted part (lateral vein; note PO:0020140 secondary leaf vein means veinlet, so a FLOPO/PO lateral-vein class is needed), count range, 'per' position = one side of the leaf midvein PO:0020139. OWL keeps leaf lamina has_part some lateral vein; the count per side is RDF only (the total is not simply twice the per-side count).",
+  "reason": "Listed as open in annotation-context-patterns.md §4 (count at a position).",
+  "confidence": "high"
+ },
+ {
+  "id": "P01284",
+  "decision": "transcription_error",
+  "target": "trichome PO:0000282 part of fruit; quality length PATO:0000122",
+  "fix": "Entity: trichome part_of fruit (pattern 12 for the whole), quality length 0.4-0.6 mm; 'erect' and 'glandular' are further values of the trichome.",
+  "reason": "The measurement is the length of the hairs on the pod, not a quality 'hairs' of the fruit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01285",
+  "decision": "existing_pattern",
+  "target": "plain EQ; lexical rule like C354 (lianescent → FLOPO:0991108 climbing)",
+  "fix": "Map 'liane'/'liana' on the whole plant to FLOPO:0991108 climbing (give the FLOPO phenotype class 'liana' that EQ signature).",
+  "reason": "A liana is a woody climber; the climbing value exists.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01286",
+  "decision": "existing_pattern",
+  "target": "plain EQ; lexical rule like C354 (climber → FLOPO:0991108 climbing)",
+  "fix": "Map 'climber' to climbing on whole plant; 'normally' as frequency cue (usually); 'with tendrils' is presence of tendril; the 'occasionally a shrub' alternative is pattern 08.",
+  "reason": "Same habit term as P01280; the term exists.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01287",
+  "decision": "existing_pattern",
+  "target": "presence EQ: FLOPO_0980431 plant latex + PATO_0000467 present (FLOPO_0989041)",
+  "fix": "Add 'milky sap' (and 'latex', 'sap milky') as synonyms of FLOPO_0980431 plant latex so that 'present' grounds to the existing latex-present phenotype.",
+  "reason": "Not a process: the presence of latex, already modelled and allowed in valid_combinations.tsv.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01288",
+  "decision": "existing_pattern",
+  "target": "docs/odp/06-specimen-condition.md",
+  "fix": "Add French rows 'à l'état sec' (and 'virant au … à l'état sec' as 'drying …') to flora_context_words.tsv kind specimen_condition; 'souvent' as frequency cue (often).",
+  "reason": "'Turning dark green when dry' is the dried-specimen colour, pattern 06; only the French cue is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01289",
+  "decision": "new_pattern",
+  "target": "relation to like parts",
+  "fix": "Pattern 09 with the target the same class as the bearer when the second term is omitted: sorus has_characteristic some (in contact with PATO:0001961 and towards some sorus). Cue 'contiguous'; no target text needed.",
+  "reason": "'Contiguous' sori touch one another; the second term is the other sori, so it is not a missing second term (C246 rejected only a stand-alone term).",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01290",
+  "decision": "existing_pattern",
+  "target": "docs/odp/08-alternative-with-frequency.md",
+  "fix": "Add the French frequency cue 'parfois' (sometimes) and read 'verticillées' as PATO:0001951 whorled; operands opposite PATO opposite and whorled with frequency 'sometimes'.",
+  "reason": "'Opposite or sometimes whorled' is an alternative with its own frequency; transcribing only 'opposite' loses the second operand.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01291",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add 'lengthening to' (with '±', pattern 01) as an upper-bound cue; 'in fruit' is already a stage row (PO_0001002), so the record is pedicel length ≤ ~2 cm present_during fruit development stage, separate from the 5-10 mm record at anthesis.",
+  "reason": "An upper bound at a later stage; the stage table covers 'in fruit', the cue list lacks 'lengthening to'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01292",
+  "decision": "existing_pattern",
+  "target": "plain EQ; lexical rule like C355 (scrambling → FLOPO:0991108 climbing)",
+  "fix": "Map 'twining' on stem|shoot|plant to FLOPO:0991108 climbing as a related synonym (the climbing definition names twining); give the FLOPO phenotype class that EQ signature.",
+  "reason": "Twining is a way of climbing; a rule is better than a new subclass.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01293",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation; rule C363 indehiscent = not dehiscent FLOPO:0991149)",
+  "fix": "Let the negation gate accept a prefix inside the value word ('in-', 'un-') as the cue, with offsets inside the token, for negated_value rules; add the French forms 'indéhiscent(e)(s)' to rule C363.",
+  "reason": "The rule exists; the gate rejects it because the negation is part of the word, not a separate cue.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01294",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "Do not annotate; 'inconnus' means not known, not absent or present.",
+  "reason": "A statement about the state of knowledge, not a phenotype; the transcribed 'present' is wrong.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01295",
+  "decision": "missing_term",
+  "target": "latrorse: an orientation quality (PATO:0000133) of an anther opening towards the sides, neither towards nor away from the centre of the flower",
+  "fix": "Add as sibling of FLOPO:0991164 introrse and FLOPO:0991165 extrorse; bearer anther PO:0009066 (not stamen); 'dehiscing latrorsely' → latrorse.",
+  "reason": "Not a process but the direction of dehiscence; introrse/extrorse exist, latrorse does not.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01296",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "comparison() must share 'than X' across coordinated comparatives ('longer, narrower than medial') and resolve the elliptic target 'medial' to 'medial laminal cells'. Both bearer and target need moss leaf-cell classes (juxtacostal, medial laminal cell) that PO lacks; until FLOPO anatomy has them it stays open.",
+  "reason": "The second term is in the text; the blockers are the shared 'than' and the grounding of moss cell regions.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01297",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "Counted part lateral vein, count 3-6, per one side of the leaf midvein PO:0020139; OWL presence only, the count per side in RDF. 'subpalmate' is a separate venation value.",
+  "reason": "Same construction as P01283.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01298",
+  "decision": "transcription_error",
+  "target": "trichome PO:0000282 part of ovary; quality length PATO:0000122",
+  "fix": "Entity: trichome part_of ovary, length 1 mm; dense, woolly, pale brown are further values of the hairs (or the ovary's hairiness).",
+  "reason": "'1 mm' is the hair length, not a quality 'hairs' of the ovary.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01299",
+  "decision": "existing_pattern",
+  "target": "plain EQ; lexical rule like C354 (lianescent → FLOPO:0991108 climbing)",
+  "fix": "Map 'liane' on the whole plant to FLOPO:0991108 climbing; 'atteignant 15-25 m' is a separate length/height record.",
+  "reason": "Same as P01285.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01300",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "When a colour is given for one surface and 'paler/darker' for the other ('deep green above, paler beneath'), read the omitted target as the opposite surface: the leaf lamina is FLOPO:0991070 discolorous, and the abaxial epidermis PO:0000049 has decreased brightness towards the adaxial epidermis PO:0000050.",
+  "reason": "The second term is implied by the paired surface cue; C241 rejected only 'paler' as a stand-alone term.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01301",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read an indefinite count 'many/numerous' as PATO:0002118 multiple of the counted part (capitulum part of the synflorescence) with no numeric bounds.",
+  "reason": "An existing PATO value covers 'more than one'; no number is needed.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01302",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Add the French cue 'faisant les … de la longueur de' and fractions ('2/3 ou 3/4' → ratio 0.67-0.75); quality decreased length PATO:0000574 towards spikelet (the glume is part of the spikelet, which is allowed as a target).",
+  "reason": "A length ratio to another part, pattern 10; only the French wording and fractions are missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01303",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (continuum; flora_context_words.tsv)",
+  "fix": "Add 'in outline' to flora_context_words.tsv as a shape-outline word that adds no stage (kind outline, no slot), so the continuum linear-lanceolate is annotated on the leaf lamina; check the stage cue is not taken from 'at first' of the previous clause.",
+  "reason": "'In outline' is not a stage; the continuum pattern covers 'linear-lanceolate'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01304",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1, surface)",
+  "fix": "Split the clause at the second surface cue ('abaxially … , adaxially …') so each cue stands once; allow gland-dotted (glandular / punctate) among the qualities substituted to the adaxial epidermis PO:0000050; the bearer is the leaf lamina, not the leaf.",
+  "reason": "A surface (kind C) context, not a stage; two surface cues in one clause and a quality outside the surface list block it.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01305",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation; rule C363 indehiscent = not dehiscent FLOPO:0991149)",
+  "fix": "As P01293: accept the prefix inside the word as the negation cue and add the French form to C363.",
+  "reason": "Same construction as P01293.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01306",
+  "decision": "transcription_error",
+  "target": "trichome PO:0000282 part of fruit; quality length PATO:0000122",
+  "fix": "Entity: trichome part_of fruit, length 0.1-0.5 mm with max extreme 1 mm (pattern 05); 'grey-brown or rusty' is the hair colour.",
+  "reason": "The measurement is the hair length, not a quality 'hairs' of the fruit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01307",
+  "decision": "existing_pattern",
+  "target": "docs/odp/08-alternative-with-frequency.md",
+  "fix": "Read a comma list of same-attribute values ending in 'rarely X' as one_of (attenuate, rounded, obtuse, subcordate with frequency rarely); the bearer is the base region (leaf lamina base PO:0008019 by slot 1), not the leaf.",
+  "reason": "Alternatives with a frequency, written as a comma list without 'or'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01308",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "The counted unit is a row (series) of sori, count 1, per side of the costa (pinna/segment midvein). RDF: count of rows with 'per' position; OWL: sorus part_of the segment only. Not an amount of sori.",
+  "reason": "A count at a position, here of rows, not of sori; this pattern is still open.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01309",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Bearer spikelet rachilla PO:0009080 (not spikelet); 'visible' → PATO:0002425 exposed; 'entre les fleurs' as position between spikelet florets PO:0009082 (towards slot); 'à maturité' is a stage row.",
+  "reason": "The rachilla is exposed between the florets: a relation of one part to others, with the wrong entity transcribed.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01310",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "Counted part lateral vein ('nerves'), count 10-12, per one side of the midrib PO:0020139 (implied); RDF count per side, OWL presence only.",
+  "reason": "Same construction as P01283; here the side is implied.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01311",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (continuum) and slot 1 (region)",
+  "fix": "Read 'broadly X' as X with a degree qualifier, so 'cuneate to broadly cuneate' is cuneate on leaf lamina base PO:0008019 (region 'base'), not a continuum between two terms.",
+  "reason": "One value with a degree, not two different values; the existing value and region rules suffice.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01312",
+  "decision": "missing_term",
+  "target": "medial (of sori): a position quality (PATO:0000140) of a sorus placed about midway between the costa and the margin",
+  "fix": "Add a FLOPO position value next to FLOPO:0991208 marginal (fern sorus series costal / medial / inframarginal / marginal); bearer sorus PO:0025359.",
+  "reason": "A sorus position, not a measurement; PATO 'medial' terms are anatomical-axis relations, not this.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01313",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Accept 'N-M lobed' with a space as well as 'N-M-lobed' (count of lobe PO:0025517 via flora_counted_parts 'lobed'); 'deeply' as degree of lobing on PATO:0001979 lobed.",
+  "reason": "A count in the word; only the spacing variant is missed.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01314",
+  "decision": "existing_pattern",
+  "target": "plain EQ; lexical rule like C354 (lianescent → FLOPO:0991108 climbing)",
+  "fix": "Map 'liane' on the whole plant to FLOPO:0991108 climbing.",
+  "reason": "Same as P01285.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01315",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md (with 12-part-of-qualified-whole.md)",
+  "fix": "Ground the container 'partial umbel/umbellet' to PO:0030129 umbel inflorescence part_of PO:0030130 compound umbel inflorescence; then '8-20-flowered' is a count of flowers ('flowered' → flower is already in the table).",
+  "reason": "Count pattern applies; only the container lacks a grounding row.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01316",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation)",
+  "fix": "Read the count '0' after a part noun ('petals 0') as the negation cue: petal absent (negated presence), cue '0'.",
+  "reason": "An absence written as a zero count; negation exists, the cue does not.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01317",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'N or M' of whole numbers in a count as the range N-M (value_low 2, value_high 3) rather than as a disjunction; 'remote' maps to FLOPO:0991189 distant.",
+  "reason": "A count range written with 'or'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01318",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add 'to ±' as an upper-bound cue combined with the approximation of pattern 01 (value_high 3 m, approximately).",
+  "reason": "Upper bound with '±'; the cue list lacks the combination.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01319",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add 'leaved → leaf' to config/flora_counted_parts.tsv and ground the container 'flowering branch(es)' to PO:0025082 reproductive shoot system (or branch PO:0025073 at flowering stage).",
+  "reason": "A count in the word with an ungrounded container; both are table rows.",
+  "confidence": "medium"
+ }
+]

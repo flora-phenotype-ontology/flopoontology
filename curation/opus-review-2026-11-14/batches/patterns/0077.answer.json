@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P03080",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read 'to more than N' as a strict lower bound: the 'more than' cue wins and the leading 'to' is filler. Stem length > 1 m.",
+  "reason": "A one-sided bound whose two cue words appear together; the pattern covers 'more than'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03081",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add a rule for 'many-'/'few-' + counted-part suffix (flowered → flower): bearer flower, container inflorescence (PO:0009049), quality PATO:0000470 increased amount instead of a number. Same reading as earlier rules such as tall → increased height (C183).",
+  "reason": "A count word with a non-numeric value; the counted-part table already has 'flowered'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03082",
+  "decision": "new_pattern",
+  "target": "count_at_position",
+  "fix": "Count of the part (vitta, which needs a FLOPO class because PO has none) with container fruit/mericarp and a bearer_part slot for the place (commissural face), alongside the furrow count '3-5 in each furrow'. OWL: has part some ((vitta and part of some (commissural region and part of some fruit)) and has characteristic some (amount and has magnitude some xsd:decimal[>=6,<=10])); RDF keeps the position cue.",
+  "reason": "Listed as open ('counts at a position', count_per_position held); the container is a face of the fruit, not an organ.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03083",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md (numeric measurement)",
+  "fix": "Add a grounding rule: 'N unit thick' after a number is the attribute PATO:0000915 thickness, not a value. Petiole thickness 2-4 mm.",
+  "reason": "'thick' with a measurement names the attribute; the annotator took it as a value.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03084",
+  "decision": "transcription_error",
+  "target": "entity vein, quality amount (PATO:0000070), container achene/fruit",
+  "fix": "Re-transcribe as a count of veins ≈8 (value_qualifier approximately, cue 'ca.'), with the achene from the sentence as container (pattern 03 with 01).",
+  "reason": "The quality slot holds the whole phrase 'veins ca. 8' and the entity is the container, not the counted part.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03085",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Add 'Arbre:' (and 'Arbuste:', 'Liane:' headers) to config/flora_context_words.tsv as a habit header that grounds the bearer to whole plant (PO:0000003, synonym tree), not as a stage. Then the height is 5-10 m with extremes 2 and 14.",
+  "reason": "The habit header was misread as a developmental stage; the measurement is a range with extremes.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03086",
+  "decision": "new_pattern",
+  "target": "projection_beyond_another_part",
+  "fix": "The bearer is the free distal region of the leaf rachis (BSPO distal region part of PO:0020055) beyond the last leaflet insertion, with length 1-3 mm. 'towards leaflet' and the cue 'beyond the lateral leaflets' are kept in RDF. The same construction covers 'exserted 2 mm beyond the corolla'.",
+  "reason": "Pattern 09 explicitly does not read comparisons with a measurement; the value measures the overshoot, not the rachis.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03087",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Read '1-3 (rarely 4 or 5)' as usual range 1-3 with value_max_extreme 5 and frequency 'rarely' on the extreme. Ground container 'flowering branches' to shoot axis/branch for the count of flowers (pattern 03).",
+  "reason": "A range with a rare extreme in parentheses, not a taxon-level alternative.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03088",
+  "decision": "missing_term",
+  "target": "middle: FLOPO position value for a member of a series lying between the outer and the inner members (phyllaries, tepals)",
+  "fix": "Add with the planned upper/lower/inner/outer series values (kind D, bearer_context_qualities). Cut the clause at the comma so 'oblong or obovate-oblong' does not block the width statement (1.5-2 mm on phyllary/bract).",
+  "reason": "The width is plain; the blockers are 'middle ones' (series member, no value classes yet) and a disjunction from a neighbouring phrase.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03089",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add French comparison cues ('plus court que', 'plus long que', 'plus large que', 'dépassant'). Staminal tube: decreased length (PATO:0000574) towards petal (PO:0009032).",
+  "reason": "The comparison is covered, but only English cue words are read.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03090",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add the trailing cues 'or less' (inclusive upper bound) and 'or more' (inclusive lower bound), and keep them out of the disjunction check. Seed length ≤ 0.5 mm.",
+  "reason": "'or less' is a bound, not an alternative.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03091",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add a container rule: 'segments' of a fern lamina ground to pinnule/leaf lobe. Count of teeth 2-3 in those segments. 'upper' stays unused until series values exist.",
+  "reason": "A count with an ungrounded fern 'segment' container.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03092",
+  "decision": "new_pattern",
+  "target": "degree_qualifier",
+  "fix": "The value with a value_qualifier for degree (scarcely/slightly/somewhat/very, after the degree modifiers of Endara et al.) and its cue, stored in RDF. 'scarcely' and 'slightly' put no class in OWL, because 'scarcely stiff' is neither stiff nor its negation; stronger degrees keep the value class.",
+  "reason": "'scarcely' is a degree hedge, not a negation cue; no pattern handles degree apart from 'approximately'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03093",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add a container rule: 'disk scale(s)' → flower nectary (PO:0009056). Then '2-parted' gives 2 lobes ('parted' is already in config/flora_counted_parts.tsv).",
+  "reason": "The counted-part split works; only the container fails to ground.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03094",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Read 'to as long as X' as an upper bound of the ratio (≤ 1) of awn length towards caryopsis (fruit). Drop the vague lower end 'minute'.",
+  "reason": "Pattern 02 sends bounds relative to another part to pattern 10; the upper-bound cue here is relational.",
+  "confidence": "low"
+ },
+ {
+  "id": "P03095",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation)",
+  "fix": "Add a lexicon row: 'inerme(s)'/'unarmed' are lexical negations whose cue is the word itself, giving spine and prickle absent (negated presence) on the bearer.",
+  "reason": "The negation lies in the word, so the gate finds no separate negation cue in the span.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03096",
+  "decision": "existing_pattern",
+  "target": "docs/odp/06-specimen-condition.md",
+  "fix": "Treat 'broken off' as a condition of the specimen: leaf apex PATO:0001444 broken with frequency 'most', RDF only and not in OWL. The underlying fragile leaf tips of Campylopus could later be a separate value.",
+  "reason": "This describes the state of the specimens examined, not a stable quality of the living plant.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03097",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add a container rule: 'scales' of a Carex/Cyperaceae spike → bract (pistillate scale). Then 3 veins, container bract.",
+  "reason": "'3-nerved' is split correctly, but 'scales' does not ground.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03098",
+  "decision": "existing_pattern",
+  "target": "docs/odp/12-part-of-qualified-whole.md",
+  "fix": "Read the 'Infructescences:' header as the whole: peduncle part_of infructescence (or fruiting stage, kind A in config/flora_context_words.tsv). Peduncle length ≈1.5 cm.",
+  "reason": "The section header supplies the stage; this case is already supported.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03099",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Same rule as P03081: 'many'/'numerous' after a counted part → PATO:0000470 increased amount, bearer bract, container cyme/inflorescence.",
+  "reason": "A non-numeric count; the bearer and structure are clear.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03100",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add a counted-parts row 'verticillate' → the bearer itself, collection_size N (like 'jugate'). Leaf PATO:0001951 whorled, with whorls of 6 leaves.",
+  "reason": "A count inside a compound word; 'verticillate' is missing from the table.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03101",
+  "decision": "transcription_error",
+  "target": "entity trichome (hair/scale) on leaf abaxial surface, quality length",
+  "fix": "Re-transcribe: bearer trichome with container leaf lamina abaxial surface, length < 0.1 mm (pattern 02); scattered, light brown and scale-like as separate statements of the hairs.",
+  "reason": "The measured part is the hair, not the leaf; 'hairs' was put in the quality slot.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03102",
+  "decision": "missing_term",
+  "target": "climbing shrub: EQ signature whole plant (PO:0000003, synonym shrub) has_characteristic climbing (FLOPO:0991108)",
+  "fix": "Give the habit class this signature, or add a phrase rule like C354/C355 (lianescent, scrambling → climbing).",
+  "reason": "The habit phenotype is clear, but its FLOPO class has no entity-quality signature.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03103",
+  "decision": "transcription_error",
+  "target": "entity trichome on stem, quality length",
+  "fix": "Re-transcribe: trichome with container stem, length 0.2-0.3 mm. 'sparsely to densely' is a separate continuum of hair density on the stem.",
+  "reason": "The measurement belongs to the hairs, not the stem.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03104",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add the French cue 'dépassant (peu)'. Petal: increased length (PATO:0000573) towards sepal, with 'peu' kept as the degree word in comparison_text.",
+  "reason": "A comparison already covered by pattern 09; only French cues are missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03105",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'unknown' means the organ has not been seen, not that it is absent: there is no phenotype.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03106",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept '(to ± N)' as an inclusive upper bound with value_qualifier approximately (pattern 01). Count of spines ≤ ~12, container modified (sterile) flower; drop 'several'.",
+  "reason": "The combined cue 'to ±' is not in the bound cue list.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03107",
+  "decision": "new_pattern",
+  "target": "relation_among_like_parts",
+  "fix": "A relational quality whose second term is the bearer's own class (neighbouring members): pinnule has_characteristic (in contact with PATO:0001961 and towards some pinnule). The SPARQL rule relation_target_is_not_the_bearer must exempt this pattern. The same pattern covers 'leaves overlapping', 'contiguous', 'distant'.",
+  "reason": "The earlier review rejected 'contiguous' for lacking a second term, but in this text the second term is the other pinnules of the same series.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03108",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add a container rule: 'umbellule' → inflorescence (partial umbel). Flowers 2 with extremes 1 and 3 (pattern 05) inside the compound word.",
+  "reason": "Count and extremes are covered; the container term is not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03109",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1, surface)",
+  "fix": "End the clause at the comma so 'glabrous or nearly so above' does not count as an alternative. 'beneath' → leaf lamina abaxial epidermis (PO:0000049), tomentose; read the prefix 'pale-' as the hair colour and 'densely' as degree.",
+  "reason": "No alternative belongs to this statement; the surface slot already covers 'beneath'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03110",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'moderately numerous' has no number and the degree word cancels 'increased amount'; 'interprimary vein' also has no term.",
+  "confidence": "low"
+ },
+ {
+  "id": "P03111",
+  "decision": "missing_term",
+  "target": "liana/liane: EQ signature whole plant (PO:0000003, synonym liana) has_characteristic climbing (FLOPO:0991108)",
+  "fix": "Give the liana habit class this signature, or add a phrase rule like C354. Woodiness has no PATO term and stays in the label.",
+  "reason": "Same as P03102: the habit class has no entity-quality signature.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03112",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add a row 'ending at / reaching (the) margin' → in contact with (PATO:0001961) towards leaf lamina margin. Bearer vein.",
+  "reason": "An attachment/position relation with a named second part; the cue is missing from the table.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03113",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept 'ca. to N' as well as 'to ca. N': inclusive upper bound with value_qualifier approximately. Spine length ≤ ~1 mm, container bract.",
+  "reason": "The pattern lists 'to c. 2 m'; only the reversed word order fails.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03114",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'can grow to an average of' mixes a maximum and a mean in loose prose; the value cannot be read safely as a bound or a mean.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03115",
+  "decision": "missing_term",
+  "target": "withered: dried up and shrunken at the given stage (rule to PATO:0002460 shriveled)",
+  "fix": "Add a rule withered → PATO:0002460 shriveled. The rest is already available: basal (FLOPO:0991002, kind D), at anthesis (kind A stage), usually (frequency).",
+  "reason": "It is a state at a stage, not a process; only the value word lacks a mapping.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03116",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Read 'tube-calyx ratio N' as the ratio of corolla tube length towards calyx length, 4.8-5.1, unit ratio; the same for 'tube-lobes ratio'.",
+  "reason": "A ratio to another part, written as a label instead of 'N times as long as'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03117",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept 'to ± N' as an inclusive upper bound with approximately. Whole plant diameter ≤ ~50 cm.",
+  "reason": "Same cue gap as P03106.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03118",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Let the compound-word split accept parenthesised extremes: lobes 5-7 with max extreme 9 (pattern 05), container leaf blade.",
+  "reason": "A count in a word with extremes; there is no missing unit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03119",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md (numeric measurement)",
+  "fix": "Same rule as P03083: 'N mm thick' → PATO:0000915 thickness. Fruit (capsule) thickness ≈7 mm, with approximately from 'about'.",
+  "reason": "'thick' with a number is the attribute.",
+  "confidence": "high"
+ }
+]

@@ -1,0 +1,448 @@
+[
+ {
+  "word": "sporocarp",
+  "decision": "new_class",
+  "target": "",
+  "label": "sporocarp",
+  "parent": "is_a PO_0025001 cardinal organ part; part_of PO_0009026 sporophyll",
+  "definition": "A hard, bean- or nut-like structure of the heterosporous water ferns (Marsileaceae, Salviniaceae), derived from a modified leaf segment, that encloses the sori (PO:0025359) and their sporangia.",
+  "synonyms": [
+   "sporocarps",
+   "sporocarpe"
+  ],
+  "reason": "A real, diagnostic structure (Marsilea, Pilularia, Azolla, Salvinia) with no PO class. The examples (hairy, sulcate, underground or below stem level, ovate in lateral view) are Marsilea sporocarps. 274 statements in 8 floras. Not the fungal fruit body. Propose to PO upstream.",
+  "confidence": "medium"
+ },
+ {
+  "word": "stipule lobe",
+  "decision": "new_class",
+  "target": "",
+  "label": "stipule lobe",
+  "parent": "is_a PO_0025001 cardinal organ part; part_of PO_0020041 stipule",
+  "definition": "A free lobe, segment or fimbria of a divided stipule (PO:0020041).",
+  "synonyms": [
+   "stipule lobes",
+   "stipule segment",
+   "stipule segments",
+   "stipular lobe",
+   "lobe of stipule"
+  ],
+  "reason": "Divided and fimbriate stipules are diagnostic (Rubiaceae, Euphorbiaceae, Rosaceae), and floras describe both the number and the shape of the lobes (triangular, lanceolate, linear to filiform). The lobe counts could come from flora_counted_parts ('-fid/-partite' gives a lobe count), but the shapes need a class. A stipule is not a phyllome, so phyllome lamina lobe (PO_0025514) does not apply. This follows the FLOPO 'X lobe' classes (calyx lobe FLOPO_0986005, corona lobe FLOPO_0986035). 115 statements here plus 40 under 'stipule segment'. Could be proposed to PO.",
+  "confidence": "medium"
+ },
+ {
+  "word": "nectary scale",
+  "decision": "rule:bearer",
+  "target": "flower nectary (PO_0009056)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "nectary scales",
+   "nectar scale",
+   "nectar scales",
+   "squamule nectarifère",
+   "squamules nectarifères",
+   "écaille nectarifère"
+  ],
+  "reason": "Narrower: the nectariferous scales at the base of the carpels (Crassulaceae and similar) are floral nectaries. The examples give counts (5 per flower), shapes and hairiness. Note that 'squamule' is a synonym of inflorescence bract in the PO lexicon, so 'squamules nectarifères' must not fall through to that class.",
+  "confidence": "medium"
+ },
+ {
+  "word": "anther appendage",
+  "decision": "rule:bearer",
+  "target": "connective (PO_0009068)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "anther appendages",
+   "apical appendage of anther",
+   "connective appendage",
+   "appendice de l'anthère"
+  ],
+  "reason": "Narrower: in most floras the anther appendage is an extension of the connective (the apical appendages of Asteraceae, Violaceae, Melastomataceae). The examples (ovate, rounded, truncate, erose, purple) describe these apical appendages. The basal 'tails' of Asteraceae anthers are not connective tissue; where the context says 'basal' or 'tail', ground to anther (PO_0009066) instead.",
+  "confidence": "medium"
+ },
+ {
+  "word": "perianth part",
+  "decision": "rule:bearer",
+  "target": "tepal (PO_0009033)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "perianth parts",
+   "perianth segment",
+   "perianth segments",
+   "pièce du périanthe",
+   "pièces du périanthe",
+   "perianth member"
+  ],
+  "reason": "Close to exact: a perianth part is one member of an undifferentiated perianth, which is what PO calls a tepal. Counts ('Perianth 5', '4-5-mères') are tepal amount. Where calyx and corolla are distinct, the context word (sepal, petal) wins. Note: in some floras 'perianth segment' means a lobe of a fused perianth; that is perianth lobe (FLOPO_0986004).",
+  "confidence": "medium"
+ },
+ {
+  "word": "fig",
+  "decision": "rule:bearer",
+  "target": "capitulum inflorescence (PO_0030121)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "figs",
+   "syconium",
+   "syconia",
+   "figue"
+  ],
+  "reason": "Narrower: a fig is the syconium of Ficus, and PO lists it under capitulum inflorescence through the NARROW synonym 'hypanthodium'. This follows the previous decision on 'ostiole'. The examples ('figs in pairs', 'axillary', 'solitary') describe how the syconia are placed. When the context is ripe fruit, infructescence (PO_0006342) is the better class. A syconium class should be proposed to PO together with the ostiole.",
+  "confidence": "medium"
+ },
+ {
+  "word": "foliole",
+  "decision": "rule:bearer",
+  "target": "leaflet (PO_0020049)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "folioles",
+   "foliole",
+   "foliolum"
+  ],
+  "reason": "Exact: French 'foliole' means leaflet. The '-foliolate' counts are already handled by config/flora_counted_parts.tsv (foliolate gives leaflet amount); this adds the French noun ('à 11–19 folioles').",
+  "confidence": "high"
+ },
+ {
+  "word": "spreading",
+  "decision": "not_a_part",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A quality (orientation), not a structure. The examples are 'spreading pinnae', 'spreading branches' and 'spreading rootstock': the bearer is the noun that follows and 'spreading' is its quality.",
+  "confidence": "high"
+ },
+ {
+  "word": "marginal vein",
+  "decision": "rule:bearer_part",
+  "target": "leaf lamina vein (PO_0020138) with bearer quality marginal (FLOPO_0991208), pattern 04",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "marginal veins",
+   "nervure marginale",
+   "nervures marginales"
+  ],
+  "reason": "A vein running along or at the very edge of the blade. FLOPO_0991208 marginal already lists vascular bundle (PO_0005020) and leaf among its bearers. It is not the same as the intramarginal vein (PO_0025520), which runs just inside the margin. Where a flora clearly means an intramarginal vein (Myrtaceae), that class applies instead.",
+  "confidence": "medium"
+ },
+ {
+  "word": "infloresupinate",
+  "decision": "not_a_part",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A fragment: 'inflorescence' cut and run together with another token. The statements (axis pilose, spike flexuous, ebracteate) belong to inflorescence (PO_0009049). Fix the tokenizer, as for 'inflores'.",
+  "confidence": "high"
+ },
+ {
+  "word": "bloom",
+  "decision": "rule:bearer",
+  "target": "epicuticular wax (PO_0025388)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "waxy bloom",
+   "pruina",
+   "pruine"
+  ],
+  "reason": "Close to exact: a bloom is the whitish or bluish film of epicuticular wax on fruits and stems. All statements are 'present'. A better rendering of 'with bloom' may be the organ + glaucous (PATO_0104277), as 'pruinose' was mapped in the previous review; the wax class keeps the structure where the organ is not given.",
+  "confidence": "medium"
+ },
+ {
+  "word": "infloresin",
+  "decision": "not_a_part",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A fragment of 'inflorescence' (and 'inflorescences', French 'inflorescence') cut by the tokenizer. The values (dense, lax, showy, Heads, Panicules) belong to inflorescence (PO_0009049).",
+  "confidence": "high"
+ },
+ {
+  "word": "fascicles",
+  "decision": "rule:bearer",
+  "target": "flower fascicle (PO_0025323)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "fascicle",
+   "floral fascicle",
+   "fascicule",
+   "fascicules"
+  ],
+  "reason": "Narrower, for flower and inflorescence context only. All examples here are 'flowers in fascicles' or 'inflorescences fascicles'. The previous review rejected the bare 'fascicle' because the whole was not given (leaf, branch and Sphagnum branch fascicles exist), so keep the rule limited to flower/inflorescence context. 'Flowers in fascicles' can also be rendered as flower + fascicled (FLOPO_0991098).",
+  "confidence": "medium"
+ },
+ {
+  "word": "mucronate",
+  "decision": "not_a_part",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A quality. The examples are the noun 'mucro' ('tipped by a mucro 1-2 mm long'), which has no PO class; 'with a mucro' should be read as the organ described + mucronate (FLOPO_0991054). The length of the mucro is a length of the organ's apex.",
+  "confidence": "high"
+ },
+ {
+  "word": "leaf cell",
+  "decision": "rule:bearer_part",
+  "target": "plant cell (PO_0009002) as part of non-vascular leaf (PO_0025075; synonym phyllid), pattern 12; the region (distal, median, basal) from context",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "leaf cells",
+   "laminal cells",
+   "lamina cells",
+   "median laminal cells",
+   "distal laminal cells"
+  ],
+  "reason": "Moss leaf descriptions (quadrate, rectangular, papillose laminal cells), 2054 statements. This follows the previous decisions on 'marginal cell' and 'basal cell': a cell in a part, expressed with existing classes. In vascular plants (rarely meant here) the whole would be leaf (PO_0025034).",
+  "confidence": "high"
+ },
+ {
+  "word": "endostome segment",
+  "decision": "rule:bearer",
+  "target": "peristome tooth (PO_0030043)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "endostome segments",
+   "segments of the endostome",
+   "inner peristome segment"
+  ],
+  "reason": "Narrower: PO defines a peristome tooth as a single lobe of a peristome, which takes in the segments of the inner peristome (endostome) as well as the exostome teeth. Being inner vs outer could be added as a position. PO has no endostome or exostome class; if moss floras need the inner/outer split often, propose 'endostome' and 'exostome' to PO.",
+  "confidence": "medium"
+ },
+ {
+  "word": "exothecial cell",
+  "decision": "rule:bearer_part",
+  "target": "plant cell (PO_0009002) as part of exothecium (PO_0030073; synonym sporangium epidermis), pattern 12",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "exothecial cells",
+   "exothecium cells",
+   "cells of the exothecium"
+  ],
+  "reason": "The cells of the capsule wall epidermis in mosses (quadrate, hexagonal, thick-walled). A cell in an existing part, as for leaf cells.",
+  "confidence": "high"
+ },
+ {
+  "word": "sporophyte",
+  "decision": "rule:bearer",
+  "target": "whole plant (PO_0000003)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "sporophytes",
+   "sporophyte"
+  ],
+  "reason": "Exact as a lexicon synonym: PO made the old sporophyte class obsolete and lists 'sporophyte' as a synonym of whole plant. Most statements are moss sporophytes 'not seen' or 'absent'. Statements such as 'immersed', 'terminal' or 'erect' are about the moss capsule and seta and are better grounded to sporangium (PO_0025094) when the context allows.",
+  "confidence": "medium"
+ },
+ {
+  "word": "spatheole",
+  "decision": "rule:bearer",
+  "target": "inflorescence bract (PO_0009054)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "spatheoles",
+   "spathéole",
+   "spathéoles"
+  ],
+  "reason": "Narrower: in Andropogoneae grasses a spatheole is the small spathe-like leaf sheath that wraps each raceme pair. PO lists 'spathe' as a synonym of inflorescence bract. The FLOPO spathe (FLOPO_0986007) is the large spathe of aroids and palms, so it is not used here.",
+  "confidence": "medium"
+ },
+ {
+  "word": "lower lip",
+  "decision": "new_class",
+  "target": "",
+  "label": "corolla lip",
+  "parent": "is_a PO_0025001 cardinal organ part; part_of PO_0025581 fused corolla",
+  "definition": "One of the two lip-like divisions of a bilabiate fused corolla (PO:0025581), formed by the fused distal parts of two or three corolla lobes, the upper lip on the adaxial side and the lower lip on the abaxial side.",
+  "synonyms": [
+   "lip",
+   "lower lip",
+   "upper lip",
+   "lèvre",
+   "lèvre inférieure",
+   "lèvre supérieure"
+  ],
+  "reason": "A standard structure of Lamiaceae, Acanthaceae, Scrophulariaceae, Lentibulariaceae and similar families, described in its own right (3-lobed, bearded, boat-shaped, emarginate). A single corolla lobe (FLOPO_0986006) is not the right bearer. Lower/upper is a position on this class. The calyx lips of a bilabiate calyx go to calyx lobe (FLOPO_0986005) by context, and the orchid lip is the labellum, not this class. Propose to PO upstream.",
+  "confidence": "medium"
+ },
+ {
+  "word": "collective vein",
+  "decision": "rule:bearer",
+  "target": "leaf lamina intramarginal vein (PO_0025520)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "collective veins",
+   "collecting vein",
+   "collecting veins",
+   "nervure collectrice"
+  ],
+  "reason": "Narrower: in floras of Myrtaceae and Melastomataceae, the vein into which the lateral veins run along the margin is called the collective or collecting vein, and it is the intramarginal vein. The examples ('collective veins 3', 'arising from near the base') fit Syzygium and similar genera, which have one or two such veins.",
+  "confidence": "medium"
+ },
+ {
+  "word": "pseudumbel",
+  "decision": "rule:bearer",
+  "target": "inflorescence (PO_0009049) with value umbelliform (FLOPO_0991031)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "pseudumbels",
+   "pseudo-umbel",
+   "pseudo-umbels",
+   "pseudo-ombelle"
+  ],
+  "reason": "Narrower; a spelling of 'pseudo-umbel', which the previous review mapped this way. Not umbel inflorescence (PO_0030129).",
+  "confidence": "high"
+ },
+ {
+  "word": "rachillae",
+  "decision": "rule:bearer",
+  "target": "higher order inflorescence axis (PO_0009081)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "rachilla",
+   "rhachillae",
+   "rachilles"
+  ],
+  "reason": "Narrower: the counts ('rachillae 40-70', 'male rachillae 2-8', '180-193') are palm (Arecaceae) inflorescences, where rachillae are the last-order flower-bearing branches (PO synonym 'inflorescence branch'). In Poaceae or Cyperaceae context the word means spikelet rachilla (PO_0009080), and the context should override.",
+  "confidence": "medium"
+ },
+ {
+  "word": "stipule segment",
+  "decision": "rule:bearer",
+  "target": "stipule lobe (proposed new class, see 'stipule lobe')",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "stipule segments",
+   "stipular segment"
+  ],
+  "reason": "Exact synonym of the proposed stipule lobe class: the free filiform or subulate divisions of a divided stipule (Rubiaceae, Euphorbiaceae).",
+  "confidence": "medium"
+ },
+ {
+  "word": "gametophyte",
+  "decision": "rule:bearer",
+  "target": "whole plant (PO_0000003)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "gametophytes",
+   "prothallus",
+   "prothallium"
+  ],
+  "reason": "Exact as a lexicon synonym of whole plant (fern and moss gametophytes: filamentous, cordiform, branched). In seed context ('female gametophyte tissue ruminate' in cycads and gymnosperms) use megagametophyte (PO_0025279) instead.",
+  "confidence": "medium"
+ },
+ {
+  "word": "corolla throat",
+  "decision": "new_class",
+  "target": "",
+  "label": "corolla throat",
+  "parent": "is_a PO_0025001 cardinal organ part; part_of PO_0025581 fused corolla",
+  "definition": "The region of a fused corolla (PO:0025581) where the tube widens into the limb, including the opening of the tube.",
+  "synonyms": [
+   "throat",
+   "throat of corolla",
+   "gorge",
+   "gorge de la corolle"
+  ],
+  "reason": "Widely used in sympetalous families (width, hairs, colour marks, campanulate throat). It is neither apex, base nor margin, so the region patterns cannot express it, and FLOPO has corolla limb (FLOPO_0986012) but no throat. A bare 'throat' is often of the corolla but may be of a calyx or perianth tube; ground it by context. Propose to PO upstream.",
+  "confidence": "medium"
+ },
+ {
+  "word": "lateral spike",
+  "decision": "rule:bearer_part",
+  "target": "spike inflorescence (PO_0030117) with position lateral, pattern 04 (add a 'lateral' context word next to 'terminal' PATO_0002476)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "lateral spikes",
+   "épis latéraux"
+  ],
+  "reason": "Carex and grass spikes counted by position ('lateral spikes 2-4'). config/flora_context_words.tsv already has 'terminal' for spike and leaflet but has no 'lateral'. PATO has 'lateral to' (PATO_0001193, synonym 'lateral'), which is relational. A non-relational 'lateral' position value may be needed beside terminal.",
+  "confidence": "medium"
+ },
+ {
+  "word": "longitudinal ridge",
+  "decision": "rule:bearer_part",
+  "target": "the organ described (fruit, seed, stem, from context) with a ridge count, as for 'ribbed' in config/flora_counted_parts.tsv",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "longitudinal ridges",
+   "crête longitudinale",
+   "crêtes longitudinales",
+   "rides longitudinales"
+  ],
+  "reason": "Every statement counts ridges ('with 3(-5) longitudinal ridges') on an organ given in the context. The previous review treated 'ribbed' as a rib count on the described organ; do the same here. No generic ridge class is needed.",
+  "confidence": "medium"
+ },
+ {
+  "word": "lateral leaflet",
+  "decision": "rule:bearer_part",
+  "target": "leaflet (PO_0020049) with position lateral, pattern 04 (as 'terminal' PATO_0002476 is for leaflets)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "lateral leaflets",
+   "foliole latérale",
+   "folioles latérales"
+  ],
+  "reason": "Narrower: the side leaflets of a compound leaf, as opposed to the terminal one. 'terminal' is already a context word for leaflet; 'lateral' needs the same entry (see 'lateral spike').",
+  "confidence": "high"
+ },
+ {
+  "word": "gland present",
+  "decision": "not_a_part",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A fragment: the bearer 'gland' run together with the quality 'present'. The structure is portion of secretory tissue (PO_0005656, synonym gland); leaf and petiole glands near the petiole base are extrafloral nectary (PO_0009057, synonym petiolar gland). Fix the split.",
+  "confidence": "high"
+ }
+]

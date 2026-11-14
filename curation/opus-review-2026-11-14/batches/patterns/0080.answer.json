@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P03200",
+  "decision": "new_pattern",
+  "target": "comparison between regions of one bearer",
+  "fix": "The second term is the other side of the same bract, named in the clause just before ('black above, paler below'). Annotate the bract's abaxial surface (from the 'below' context row) with a lighter colour 'towards' the adaxial surface of the same bract, which is filled in from the paired context word. Keep 'paler' and the paired cue in RDF.",
+  "reason": "The 2026-11-13 review rejected 'paler' because no second term was stated. Here the second term can be recovered without guessing: it is the opposite surface of the same organ, which the paired 'above … below' wording names.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03201",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Accept 'can be' as a cue for alternatives. Map 'lean over to one side' to an existing orientation value (nodding or declinate) with a rule, so that 'erect, ascending, or lean over' becomes one union. 'ascending' is already FLOPO.",
+  "reason": "A three-way list of growth orientations for one inflorescence: the plain union pattern. Only one value lacks a rule.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03202",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'ribbed' is already a row of config/flora_counted_parts.tsv (rib). Send 'N-ribbed' to the counted-parts split before the unit check, and make sure 'rib' grounds to a PO or FLOPO class, with stipule as the container.",
+  "reason": "'2-ribbed' is a count in a word, not a measurement without a unit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03203",
+  "decision": "transcription_error",
+  "target": "bearer trichome (PO:0000282) part of stem; quality length",
+  "fix": "Re-transcribe with 'hairs' as the bearer (trichome, part of the twig) and length as the quality. Then pattern 02 applies: 'less than 0.1 mm' is a strict upper bound.",
+  "reason": "'hairs' is the part being measured, not a quality.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03204",
+  "decision": "new_pattern",
+  "target": "part present at a position",
+  "fix": "Stem has_part some (root and attached_to some node), with 'often' as the frequency qualifier in RDF. Slots: bearer (stem), present part (adventitious root), position (node), frequency. 'creeping' (FLOPO:0991009) is annotated separately.",
+  "reason": "'rooting at the nodes' states that a part is present at a place. The context-patterns doc lists this under processes but no file in docs/odp covers it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03205",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add the French endings 'lobé/lobée/lobés/lobées' (→ lobe) to config/flora_counted_parts.tsv, and let the split accept a trailing extreme '(4)' as in pattern 05. Fruit is the container.",
+  "reason": "'2-3(4)-lobés' is a count of fruit lobes in one word. The ending is French, so the English table misses it.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03206",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Split '2–3-lobed' into a count of lobes. Keep 'shallowly' as a degree word in RDF instead of letting it block the split. Ground 'segments' to the leaf-blade segment from the organ of the sentence (blade palmately 3-parted).",
+  "reason": "A count in a word, with a degree adverb and a segment named earlier in the sentence.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03207",
+  "decision": "missing_term",
+  "target": "numerous / many (of a counted part: more than two)",
+  "fix": "Add a rule: 'numerous', 'many', 'many-flowered', 'très nombreux' → PATO:0002118 multiple (present in more than two copies) on the counted part, with the container from the sentence (here the spike).",
+  "reason": "Counts without a number are held because they are not numeric. PATO 'multiple' is a true, if weak, existing term, so no new class is needed.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03208",
+  "decision": "missing_term",
+  "target": "numerous / many (of a counted part: more than two)",
+  "fix": "Same rule as P03207: 'très nombreux' → PATO:0002118 multiple on ovule, with ovary or locule as the container. Keep 'très' in RDF.",
+  "reason": "Same construction as P03207, in French.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03209",
+  "decision": "missing_term",
+  "target": "numerous / many (of a counted part: more than two)",
+  "fix": "Same rule as P03207. The bearer should be the capitulum rather than the generic inflorescence, and the count is per plant.",
+  "reason": "Same construction as P03207.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03210",
+  "decision": "new_pattern",
+  "target": "gradient along the axis",
+  "fix": "Slots: the series (petiole scales), the attribute (size), its direction (decreasing), the axis direction (proximal to distal) and the manner ('abruptly'). OWL: petiole has_part scales with a distal region whose scales have decreased size towards the scales of the proximal region. The direction and manner stay in RDF.",
+  "reason": "The quality changes along the bearer. This is not a process and no pattern covers it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03211",
+  "decision": "new_pattern",
+  "target": "union of conjunctions",
+  "fix": "A one_of whose operands are each a conjunction of statements about the same bearer: (two arms and long) or (single and to mid leaf) or (two arms and short). OWL: costa and (has_characteristic some A1 and has_characteristic some B1) or (...). The transcription must keep 'double' in the third operand.",
+  "reason": "Pattern 07 joins single values or single statements, not combinations of them. The transcribed 'short' alone also loses 'double'.",
+  "confidence": "low"
+ },
+ {
+  "id": "P03212",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (kind A stage; config/flora_context_words.tsv)",
+  "fix": "Add the context rows 'at nutlet maturity' and 'at fruit maturity' → stage PO:0025502 fruit ripening stage. Do not read them as the glume being mature (PATO mature): the maturity is that of the fruit.",
+  "reason": "A growth-stage context of a kind already implemented. Only the table row is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03213",
+  "decision": "missing_term",
+  "target": "distinct (of pinnae: free from one another along the rachis, not confluent)",
+  "fix": "Add pinna (and pinnule) to the bearer list of rule C177 (distinct → FLOPO:0991068 free). 'along rachis' is a place word, not the second term of a relation.",
+  "reason": "The word already has a reviewed rule, but pinna is not among its bearers.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03214",
+  "decision": "missing_term",
+  "target": "upper (position quality: member of a series nearer the apex)",
+  "fix": "Add the FLOPO position values that pattern 04 says are still missing (upper, lower, inner, outer, lateral). Then 'upper leaflets' is leaflet + bearer_context_quality upper, and 'broadly obovate' is annotated as usual.",
+  "reason": "Pattern 04 covers the construction but has no term for 'upper' yet.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03215",
+  "decision": "transcription_error",
+  "target": "quality width (PATO:0000921)",
+  "fix": "Re-transcribe with quality width, value 7-12 cm, on the inflorescence.",
+  "reason": "'broad' after a number is the dimension word, so the quality is width, not a shape value.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03216",
+  "decision": "missing_term",
+  "target": "adaxial pad of cells (a group of enlarged or swollen cells on the adaxial side of a moss costa, as in Pottiaceae)",
+  "fix": "Add a FLOPO anatomy class (part of costa PO:0030072). Then annotate its absence with the existing negation pattern.",
+  "reason": "The structure is a plain absence of a part. The part has no term; nothing is being compared.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03217",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Re-join the split alternative 'ascending or divaricate': ascending and divaricate are both FLOPO values. Read 'Fruiting' as the stage 'in fruit' (PO:0001002).",
+  "reason": "Both values have terms. The statement was cut at 'or' and so lost its first value.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03218",
+  "decision": "missing_term",
+  "target": "umbellule (partial umbel: one of the secondary umbels of a compound umbel)",
+  "fix": "Add a FLOPO anatomy class or a PO synonym for umbellule. Then '10–15-flowered' is a count of flowers with umbellule as the container (pattern 03).",
+  "reason": "The count pattern applies, but the container does not ground.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03219",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Read '(0.5–)3–7.5(–9) dm' as stem length with extremes. Add decimetre (dm) to the unit table if it is missing.",
+  "reason": "A range with extremes on a length. The given reason (count or non-length measurement) is wrong.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03220",
+  "decision": "missing_term",
+  "target": "umbellule (partial umbel: one of the secondary umbels of a compound umbel)",
+  "fix": "Same as P03218: once 'umbellules' grounds, '4–7-flowered' is a count of flowers with umbellule as the container.",
+  "reason": "Same construction as P03218.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03221",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add the upper-bound cue 'grows to', parse numbers written in words ('twenty') and add the foot unit. The result is an inclusive upper bound on whole-plant height.",
+  "reason": "An upper bound whose cue, number word and unit the parser does not know.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03222",
+  "decision": "missing_term",
+  "target": "quadripinnate (4-pinnate: four times pinnately divided)",
+  "fix": "Add a sibling of tripinnate (FLOPO:0991159, synonym 3-pinnate). Read '3–4-pinnate' as a continuum or union of tripinnate and quadripinnate. 'Lower' is the series-member position still open in pattern 04.",
+  "reason": "'pinnate' is a degree of division, not a counted part. Only the 4-pinnate value is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03223",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept 'to ±' as an inclusive upper bound with value_qualifier 'approximately' (pattern 01). Make the bearer the wing (PO) of the calyx segment, not the sepal, with width as the quality.",
+  "reason": "Bounded and approximate are both implemented, but not when the two cues come together. The bearer is also a part of the transcribed one.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03224",
+  "decision": "new_pattern",
+  "target": "gradient along the axis",
+  "fix": "Floral bracts become smaller towards the apex: the uppermost bract has decreased size towards the lowest bract, which is measured (4.5 × 1.5 cm). Slots: series, attribute, direction, end members.",
+  "reason": "The second term is the lowest member of the same series, named in the clause before. Pattern 09 needs a different part named after 'than'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03225",
+  "decision": "existing_pattern",
+  "target": "docs/odp/06-specimen-condition.md",
+  "fix": "Add the French row 'à l'état frais' → fresh to config/flora_context_words.tsv, applying only to the following measurements. Annotate '3–3,5 cm de long' as receptacle length (implicitly dried material).",
+  "reason": "Not a growth stage. The fresh measurement that follows is a specimen condition, and its cue was carried over to this measurement.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03226",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Split '3–5-lobed' into a count of lobes of the blade. Keep 'moderately to deeply' as a lobing-depth continuum, or as degree words in RDF, instead of letting it block the split.",
+  "reason": "A count in a word with a degree phrase in front, as in P03206.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03227",
+  "decision": "transcription_error",
+  "target": "bearer peduncle (not pedicel)",
+  "fix": "Re-transcribe with peduncle as the bearer. Then pattern 10 gives a length ratio of 2–3.5 towards the spike, with 'fruiting' as the stage of the target.",
+  "reason": "The text says 'Peduncles', not pedicels. The ratio pattern itself exists.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03228",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'Legumes unknown' says the fruit was not seen. It is missing data, not a phenotype, and not an absence.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03229",
+  "decision": "transcription_error",
+  "target": "bearer trichome (PO:0000282) on petiole; quality length",
+  "fix": "Re-transcribe the longer hairs as bearer trichome with length up to 4 mm (pattern 02), separately from the 1–2 mm hairs. Keep 'somewhat fewer' as a frequency in RDF.",
+  "reason": "'hairs' is the measured part, not the quality.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03230",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Split the statement into 'thickened' (accrescent FLOPO or increased thickness) and pedicel length up to 3.5 cm (inclusive upper bound). Read 'in fruit' as the stage (PO:0001002) from the context table.",
+  "reason": "'elongated up to 3.5 cm' is a length with an upper bound plus a stage, not a non-PATO numeric quality.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03231",
+  "decision": "missing_term",
+  "target": "numerous / many (of a counted part: more than two)",
+  "fix": "Same rule as P03207: 'many flowered' → flower, PATO:0002118 multiple, with the spike as container. Keep 'densely' in RDF.",
+  "reason": "Same construction as P03207.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03232",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Read fractions 'x/y distance to midrib' as a ratio (1/3–7/8) of the depth of leaf sinus PO:0025384 towards the midrib, i.e. the half-blade width from margin to midrib. Unit 'ratio'.",
+  "reason": "The depth is given relative to another part. Pattern 10 covers ratios but does not yet read fractions.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03233",
+  "decision": "new_pattern",
+  "target": "part present at a position",
+  "fix": "Rachis apex has_part root, and gives rise to a plantlet: proliferous by the tip. Slots: bearer (rachis), present part (root/plantlet), position (apex). Same representation as P03204.",
+  "reason": "The presence of roots and plantlets at a place on the bearer. Not a process of the taxon to be left out.",
+  "confidence": "low"
+ },
+ {
+  "id": "P03234",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Treat 'narrowly' as a modifier of ovate (or reduce 'ovate or narrowly ovate' to ovate). The bearer is the sepal of male flowers (pattern 12).",
+  "reason": "Both alternatives are ovate, so a plain value union or reduction applies.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03235",
+  "decision": "missing_term",
+  "target": "numerous / many (of a counted part: more than two)",
+  "fix": "Same rule as P03207: 'many flowered' → flower, PATO:0002118 multiple, with the inflorescence as container.",
+  "reason": "Same construction as P03207.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03236",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "Read 'mature' (already a context row → PATO mature) before the bearer; in Malpighiaceae the bearer is better the mericarp (PO). Add a rule 'prickly' → PATO:0001365 spiny so that 'pubescent and prickly' is annotated.",
+  "reason": "The context word exists and was missed. 'prickly' has no rule.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03237",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "A union of two hair states of the panicle branch: (pilose, hairs long and scattered) or (hairs only in the axils). Add 'confined to the axils' as a region context row so that the second operand gets a bearer part.",
+  "reason": "An alternative between hair distributions. The second option needs a region row that the context table lacks.",
+  "confidence": "low"
+ },
+ {
+  "id": "P03238",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "A count with a place: vitta, amount 1, container mericarp, bearer part the furrow between the ribs; 2 in the lateral ones; 'several' on the commissure. OWL: has_part some (vitta and part_of some (furrow and part_of some mericarp)) with the amount. 'oil-tube/vitta' also needs a term.",
+  "reason": "The context-patterns doc lists counts at a position as still open. 'solitary' here is a count per interval, not the FLOPO value 'solitary'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03239",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "Count of secondary veins with container leaf blade and bearer part one side of the midrib, range 4–7 with extreme 9 (pattern 05). OWL: has_part some (vein and part_of some (lamina side)) with amount in [4,7]; RDF keeps 'per side'.",
+  "reason": "This is exactly the open 'count_per_position' case named in pattern 03.",
+  "confidence": "high"
+ }
+]

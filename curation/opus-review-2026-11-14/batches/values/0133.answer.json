@@ -1,0 +1,340 @@
+[
+ {
+  "word": "trunked",
+  "decision": "rule:entity_presence",
+  "target": "trunk (FLOPO_0985025) present",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "'With well-developed trunks' and 'forms a small trunk' say that the plant has a trunk. FLOPO_0985025 trunk exists as a bearer class.",
+  "confidence": "high"
+ },
+ {
+  "word": "tube color",
+  "decision": "rule:bearer",
+  "target": "staminal tube (FLOPO_0986013)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "In 'stamen: tube dark maroon' the tube is the staminal tube, and the colour is a separate quality of it. 'tube color' is a part plus an attribute, not a value.",
+  "confidence": "medium"
+ },
+ {
+  "word": "tuberous-thickened",
+  "decision": "rule:flopo_value",
+  "target": "tuberous (FLOPO:0991109)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Tuberous-thickened means thickened and swollen like a tuber, which is exactly the definition of FLOPO:0991109. 'Basally' and 'below' are handled by the bearer-region slot.",
+  "confidence": "high"
+ },
+ {
+  "word": "ultramarine blue",
+  "decision": "rule:pato",
+  "target": "blue (PATO_0000318)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Ultramarine is a deep, vivid blue. A colour-name shade does not justify its own class, so it maps to the PATO hue.",
+  "confidence": "high"
+ },
+ {
+  "word": "unpleated",
+  "decision": "rule:negated_value",
+  "target": "not plicate (PATO_0104365)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "'Without pleats' negates PATO_0104365 plicate, which has 'pleated' as a synonym. The French example ('pliées') is a positive fold statement and should be grounded on its own.",
+  "confidence": "high"
+ },
+ {
+  "word": "weakly distinct",
+  "decision": "rule:pato",
+  "target": "inconspicuous (PATO_0000464)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Here 'distinct' means clearly marked off, not free from other parts (as in the 'free' rule). Lobes or scars that are only weakly distinct are inconspicuous.",
+  "confidence": "medium"
+ },
+ {
+  "word": "white-based",
+  "decision": "pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1: part of the bearer, region)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "The base of the petal or hair is white: the quality is white (PATO_0000323) and the bearer is the base region. This is the region slot, not a new term.",
+  "confidence": "high"
+ },
+ {
+  "word": "white-marked",
+  "decision": "pattern",
+  "target": "new: colour of a marking (multi-colored PATO_0001533 with the marking's colour white PATO_0000323)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "White markings on the leaf combine a colour pattern with the colour of the marks. The marks are not a named part, so this needs a combination of the two values, not a single term.",
+  "confidence": "medium"
+ },
+ {
+  "word": "whitish-veined",
+  "decision": "pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1: part of the bearer); veins = vascular bundle (PO_0005020), colour white (PATO_0000323), 'whitish' via docs/odp/01-approximate-value.md",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "The colour belongs to the veins of the leaf or petal, not to the whole organ. That calls for a part restriction plus an approximate colour.",
+  "confidence": "medium"
+ },
+ {
+  "word": "wider than tall",
+  "decision": "pattern",
+  "target": "docs/odp/11-ratio-of-two-dimensions.md",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "This compares two dimensions of the same bearer (width/height > 1). It is the ratio-of-two-dimensions pattern; FLOPO:0991103 depressed would add flattening that the text does not state.",
+  "confidence": "high"
+ },
+ {
+  "word": "widest below the middle",
+  "decision": "pattern",
+  "target": "new: position of greatest width",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Ovate, lanceolate, deltate and ovoid outlines are all widest below the middle, so mapping this to ovate (FLOPO:0991024) would over-assert. It states only where the widest point is, along the length.",
+  "confidence": "medium"
+ },
+ {
+  "word": "without horns",
+  "decision": "rule:negated_value",
+  "target": "not horned (FLOPO:0991029)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "'Without horns' negates FLOPO:0991029 horned, whose rule words already include 'with horns'.",
+  "confidence": "high"
+ },
+ {
+  "word": "without median groove",
+  "decision": "rule:negated_value",
+  "target": "not grooved (PATO_0002255)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "There is no PO class for a groove, so absence is stated by negating PATO_0002255 grooved. The 'median' position is lost, which is acceptable for a negation.",
+  "confidence": "medium"
+ },
+ {
+  "word": "without midrib",
+  "decision": "rule:entity_absence",
+  "target": "leaf midvein (PO_0020139) absent",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Midrib is an exact synonym of PO_0020139 leaf midvein, so 'without midrib' states that it is absent. The sepal example ('margins without midrib') is a garbled fragment and should be held.",
+  "confidence": "medium"
+ },
+ {
+  "word": "without perianth",
+  "decision": "rule:entity_absence",
+  "target": "perianth (PO_0009058) absent",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A flower without a perianth (achlamydeous): the absence of PO_0009058 perianth.",
+  "confidence": "high"
+ },
+ {
+  "word": "without ring of sterile stamens",
+  "decision": "rule:entity_absence",
+  "target": "staminode (PO_0009077) absent",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Sterile stamens are staminodes, and a flower without that ring has no staminodes. The ring arrangement only matters when the ring is present.",
+  "confidence": "medium"
+ },
+ {
+  "word": "wooded",
+  "decision": "rule:pato",
+  "target": "ligneous (PATO_0002348)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "'Wooded' plant or caudex means woody, which is PATO_0002348 ligneous. That term is already used for 'woody' in config/flora_union_pairs.tsv.",
+  "confidence": "high"
+ },
+ {
+  "word": "yellow-margined",
+  "decision": "pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1: part of the bearer, region margin)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "The margin is yellow: the quality is yellow and the bearer is the margin (leaf margin PO_0020128 for leaves; otherwise the BSPO margin region).",
+  "confidence": "high"
+ },
+ {
+  "word": "amethyst",
+  "decision": "rule:pato",
+  "target": "purple (PATO_0000951)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Amethyst is a violet-purple named after the gem. A gem-colour name does not justify its own class, so it maps to the PATO hue.",
+  "confidence": "medium"
+ },
+ {
+  "word": "annulate-septate",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "There is one specialised example, and neither half has a term ('septate' has none; PATO_0002539 ring shaped is about outline). Without the source the intended structure is unclear.",
+  "confidence": "medium"
+ },
+ {
+  "word": "aperturate",
+  "decision": "rule:pato",
+  "target": "perforate (PATO_0002112)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Domatia or fruits 'with an aperture' have an opening through them, which is perforate. PO has no general aperture class for an entity-presence rule. The 'with or without aperture' example is an alternative and needs pattern 07.",
+  "confidence": "medium"
+ },
+ {
+  "word": "apex more",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A fragment of 'apex more or less ...': '±' is handled by docs/odp/01-approximate-value.md, and the real value follows ('2-lobed', 'acute').",
+  "confidence": "high"
+ },
+ {
+  "word": "asymmetrically acute",
+  "decision": "pattern",
+  "target": "new: compound of two values (asymmetrical PATO_0000616 + acute (sensu botany) FLOPO:0991095)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "The base is both acute and asymmetrical, and both terms exist. It is a combination of two values of one bearer, not a new term.",
+  "confidence": "medium"
+ },
+ {
+  "word": "axe-shaped",
+  "decision": "new_class",
+  "target": "",
+  "label": "dolabriform",
+  "parent": "PATO:0000052",
+  "definition": "A shape quality inhering in a bearer by virtue of the bearer's being shaped like the head of an axe: narrow towards its attachment and widened on one side into a broad, more or less straight-edged distal part.",
+  "synonyms": [
+   "axe-shaped",
+   "hatchet-shaped",
+   "dolabrate"
+  ],
+  "reason": "A standard glossary shape with no PATO or FLOPO term, used for seeds and corolla lobes. Its evidence is thin (2 statements), so it should be confirmed on more floras before it is added.",
+  "confidence": "low"
+ },
+ {
+  "word": "bearing scales",
+  "decision": "rule:pato",
+  "target": "scaly (PATO_0001804)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A rachis or rhizome 'bearing scales' is scaly. The scales' colour and shape in the same statement are separate qualities of the scales.",
+  "confidence": "high"
+ },
+ {
+  "word": "bent upward",
+  "decision": "rule:pato",
+  "target": "upturned (PATO_0002031)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "PATO_0002031 upturned is defined as curved or tilted so that the tip points upwards. That fits lobes bent upward; 'at anthesis' is a stage.",
+  "confidence": "high"
+ },
+ {
+  "word": "beset",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Like 'covered', 'beset' needs what the part is beset with (roots, hairs). That covering is the quality, so the word means nothing alone.",
+  "confidence": "high"
+ },
+ {
+  "word": "bi-tripinnate",
+  "decision": "pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "'Bi-tripinnate' means bipinnate or tripinnate, two existing values: FLOPO:0991014 and FLOPO:0991159.",
+  "confidence": "high"
+ },
+ {
+  "word": "biserrulate",
+  "decision": "new_class",
+  "target": "",
+  "label": "doubly serrate",
+  "parent": "PATO:0001206",
+  "definition": "A serrated quality inhering in a bearer by virtue of the bearer's margin bearing forward-directed teeth that are themselves serrate, with smaller teeth on their edges.",
+  "synonyms": [
+   "biserrate",
+   "biserrulate",
+   "duplicate-serrate"
+  ],
+  "reason": "PATO and FLOPO have serrate and serrulate but nothing for double serration, which is a common leaf-margin character (biserrate is far more frequent than biserrulate). Biserrulate is the fine form and is kept as a synonym rather than given its own class.",
+  "confidence": "medium"
+ },
+ {
+  "word": "blunt-pointed",
+  "decision": "rule:pato",
+  "target": "obtuse (PATO_0001935)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "An apex or fruit ending in a blunt point is obtuse. The 'pointed' part does not reach acute or mucronate.",
+  "confidence": "medium"
+ }
+]

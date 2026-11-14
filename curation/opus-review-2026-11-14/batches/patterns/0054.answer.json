@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P02160",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add a naming rule for the container: 'umbellule' / 'umbellet' (a partial umbel) → PO:0030129 umbel inflorescence. It can be part of PO:0030130 compound umbel inflorescence (pattern 12). After that, '12–25-flowered' splits through the existing 'flowered → flower' row of config/flora_counted_parts.tsv.",
+  "reason": "The count is already split correctly. Only the container is missing, because PO has no 'umbellule' label, but an umbellule is itself an umbel.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02161",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "This is a note on the cultivated artichoke and what it was bred for ('selected for reduced spines'). It is not a description of the wild subsp. cardunculus, and it is a comparison with another form.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02162",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Re-transcribe: bearer spikelet PO:0009051, quality amount PATO:0000070, value word 'numerous'. Then handle it with the 'indefinite count' pattern (see P02171).",
+  "reason": "The transcribed entity 'inflorescence' and quality 'spikelet' are wrong: 'spikelet' is the counted part, not a quality.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02163",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Re-transcribe as a count: calyx lobes / calyx segments 2–5, container calyx, stage 'at anthesis' (already a row of config/flora_context_words.tsv, flowering stage PO:0007616). 'Persistent' is a separate statement. Because this is one of three alternatives given for the genus, attach it as an operand of pattern 07.",
+  "reason": "'pseudo-lobe' is a part, not a quality. The 'process' (the calyx breaking open) only explains how the counted lobes come about.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02164",
+  "decision": "new_pattern",
+  "target": "indefinite count",
+  "fix": "Slots: counted part (flower), container (inflorescence), count word ('many', 'numerous', 'several', 'few') with its cue, and an optional degree word ('densely', 'very'). OWL: has part some (flower and part of some inflorescence and has characteristic some amount), with no number range. RDF: fb:countCategory 'many' plus the source words. 'many-flowered' is split by the existing 'flowered' row.",
+  "reason": "The counted part and container are clear. Only the number is a word, which the gate holds on purpose (measurement_value_not_numeric). No pattern in docs/odp covers this.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02165",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Read 'equal to or broader than' as width towards the target with ratio_low 1 and no upper bound (an open ratio). The bearer 'wing' of a seed needs a naming rule or a FLOPO anatomy class: PO has only wing petal and petiole wing. Ground 'body' to the seed itself, or to the seed without its wing.",
+  "reason": "This is a dimension relative to another part with an open ratio bound. The pattern exists, but the bound wording and the naming of both parts are missing.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02166",
+  "decision": "new_pattern",
+  "target": "implicit comparison",
+  "fix": "A comparison word with no 'than X' takes as its target the part described in the clause just before it, here the banner (standard). Slots: bearer wing petal PO:0025325, quality decreased length PATO:0000574, towards the inferred target, with a flag that the target was inferred. OWL as in pattern 09. RDF keeps the inferred flag and the source words.",
+  "reason": "The second part of the comparison is implied by the order of the description, not stated. Pattern 09 needs the target in the clause.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02167",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'to over 2 m' only says the tallest plants exceed 2 m. It is neither an upper nor a lower bound for the taxon. Holding it is correct.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02168",
+  "decision": "new_pattern",
+  "target": "implicit comparison",
+  "fix": "'below paler' compares the abaxial surface with the adaxial surface named just before ('above brownish green'). Bearer leaf lamina abaxial epidermis PO:0000049 (slot 1), quality high brightness PATO:0000665, towards leaf lamina adaxial epidermis PO:0000050 (inferred). The rest of the clause ('or greyish green to ash-grey') is an alternative of the same bearer.",
+  "reason": "This is a comparison between the two sides of a leaf where the second side is only implied by 'above ... below'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02169",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "It is a comparison with another taxon ('differing from I. spinosa ... in the less silvery branches').",
+  "confidence": "high"
+ },
+ {
+  "id": "P02170",
+  "decision": "new_pattern",
+  "target": "degree modifier",
+  "fix": "Annotate leaflet (apex) acuminate. Keep 'shortly' (a short acumen) and 'blunt' (an obtuse tip of the acumen) as degree / shape modifiers in RDF with their cue, not as alternatives. OWL has acuminate only. Model it on the degree modifiers of Endara et al.",
+  "reason": "There is no alternative or continuum in the statement. The modifier words were taken for a second value. No pattern stores a degree modifier.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02171",
+  "decision": "new_pattern",
+  "target": "indefinite count",
+  "fix": "Counted part seed PO:0009010, container capsule locule (fruit locule), count word 'numerous' kept in RDF. OWL: amount without a range. 'tiny' is a separate size statement.",
+  "reason": "The count is a word, not a number. This is the same construction as P02164.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02172",
+  "decision": "new_pattern",
+  "target": "indefinite count",
+  "fix": "Counted part seed, container fruit (from the sentence before), count word 'numerous' with degree 'very'. OWL: amount only. RDF: category and cue.",
+  "reason": "Same construction as P02164.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02173",
+  "decision": "new_pattern",
+  "target": "count per side",
+  "fix": "Slots: counted part (leaf lobe), container (leaf lamina), position 'per side' of the midvein PO:0020139, and the range with extremes (pattern 05: 0–2(–3)). OWL: amount of lobe part of the lamina, with the range. RDF: fb:countScope 'per side', towards the midvein, so the count is not read as a total for the lamina.",
+  "reason": "The docs list counts at a position as open (count_per_position).",
+  "confidence": "high"
+ },
+ {
+  "id": "P02174",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'N or M pairs' of consecutive whole numbers as the range N–M of pairs (collection_size 2, like the 'jugate' row): leaflet pairs 2–3, container leaf. 'lateral' marks the leaflets other than the terminal one.",
+  "reason": "'2 or 3' of consecutive whole numbers is a range, not a real disjunction. Pairs are already modelled.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02175",
+  "decision": "existing_pattern",
+  "target": "docs/odp/01-approximate-value.md",
+  "fix": "Add 'or nearly so' / 'or almost so' as an approximation cue after a value: stem glabrous PATO:0000453 with value_qualifier approximately. That covers both 'glabrous' and 'nearly glabrous'.",
+  "reason": "'nearly so' refers back to the same value, so this is not a disjunction of two terms.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02176",
+  "decision": "existing_pattern",
+  "target": "basic measurement (length × width; no docs/odp file)",
+  "fix": "For whole plant / habit bearers, read 'A × B' as height PATO:0000119 × width (spread), not length × width. Two statements: height 0.6–2 dm and width 0.5–4 dm.",
+  "reason": "The numbers and units are fine. The rule that turns the first dimension of a plant into height is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02177",
+  "decision": "new_pattern",
+  "target": "indefinite count",
+  "fix": "Counted part leaf, container whole plant, count word 'several' in RDF. OWL: amount only.",
+  "reason": "Same construction as P02164.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02178",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The quality must be the attribute thickness PATO:0000915, with 4–5 mm. 'thick' after a number is the dimension, not a value.",
+  "reason": "The transcribed quality 'thick' is a value. A measurement needs the attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02179",
+  "decision": "new_pattern",
+  "target": "count per side",
+  "fix": "Counted part secondary leaf vein PO:0020140, container leaf lamina, position 'on each side of' leaf midvein PO:0020139, range 6–10. OWL: amount with the range. RDF: fb:countScope 'per side' towards the midvein.",
+  "reason": "This is a count at a position, which the docs list as open.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02180",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add the row 'clasping' → clasping PATO:0104363 (towards) to the relation table. Ground 'column' to gynostemium FLOPO_0986015 (add 'column' as an orchid synonym). Keep 'loosely' as a degree word. 'exceeding column and anther' is a second, comparative statement.",
+  "reason": "The quality term and the target class both exist. The relation word and the synonym are missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02181",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Bearer prickle PO:0025169, not spine (rose prickles grow from the epidermis). 'curved' is its own clause outside 'sparse or scattered'. That disjunction is a separate one_of (pattern 07).",
+  "reason": "The entity does not match 'prickles', and 'curved' is not part of the disjunction.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02182",
+  "decision": "new_pattern",
+  "target": "extent of a positional quality",
+  "fix": "Two statements: spathe decurrent PATO:0001984 (possible now), and the length of the decurrent part of the spathe as a measurement (0.5–1.5(–3) cm, extremes as in pattern 05). OWL: has part some (spathe and decurrent), plus a region part of the spathe with a length range. RDF: fb:extentOf decurrent, with the bounds and unit.",
+  "reason": "The number measures how far the quality extends, not a dimension of the whole bearer. No pattern covers this.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02183",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'few or very numerous' covers every possible count at genus level, so it is too vague to be a character.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02184",
+  "decision": "new_pattern",
+  "target": "count per side",
+  "fix": "Counted part longitudinal leaf vein, container leaf lamina, position 'on each side of' the midrib PO:0020139, region 'in the outer half' (slot 1, a BSPO region), count 3 with extreme 4 (pattern 05).",
+  "reason": "This is a count at a position, plus a region.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02185",
+  "decision": "new_pattern",
+  "target": "extent of a positional quality",
+  "fix": "Spadix exserted PATO:0000623 towards spathe (pattern 09 with the row 'exserted from'), stage 'in anthesis' (table row exists). The length of the exserted part is 0.5 cm as fb:extentOf exserted. OWL keeps exserted towards spathe. The extent is in RDF and on the region.",
+  "reason": "This is the same construction as P02182: a measured extent of a relational quality.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02186",
+  "decision": "new_pattern",
+  "target": "count per side",
+  "fix": "Secondary leaf vein PO:0020140, range 9–14 per side of leaf midvein PO:0020139, container leaf lamina.",
+  "reason": "This is a count at a position.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02187",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (stage kind A; config/flora_context_words.tsv)",
+  "fix": "Add the context word 'ripening' (a participle before the value, without 'when') → fruit ripening stage PO:0025502. Then fruit glossy and orange-red are annotated under that stage. 'drying glossy' is specimen condition (pattern 06).",
+  "reason": "The table only has 'when ripening' and 'when ripe'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02188",
+  "decision": "new_pattern",
+  "target": "indefinite count",
+  "fix": "Counted part flower, container capitulum inflorescence PO:0030121 ('Heads'), count word 'many' in RDF. OWL: amount only.",
+  "reason": "Same construction as P02164. The entity should be the capitulum, not just 'inflorescence'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02189",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add the row 'exserted from' → exserted PATO:0000623 towards the target (here glume PO:0009039). Strip the 'long-' prefix and keep it as a degree word.",
+  "reason": "The quality and target exist. The relation words are not in the table.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02190",
+  "decision": "existing_pattern",
+  "target": "docs/odp/01-approximate-value.md",
+  "fix": "Add 'or nearly so' as an approximation cue: whole plant glabrous PATO:0000453 with value_qualifier approximately.",
+  "reason": "Same as P02175.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02191",
+  "decision": "existing_pattern",
+  "target": "docs/odp/08-alternative-with-frequency.md",
+  "fix": "Read a list ending in 'to rarely X' as one_of(crimson, magenta, light pink) with frequency_qualifier 'rarely' on the last operand, the same as 'or rarely'. Ground 'light pink' as a pink with high brightness, or as PATO pale pink PATO:0002020 if accepted as a synonym.",
+  "reason": "These are alternatives with their own frequency. Only the 'to rarely' connector is not read.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02192",
+  "decision": "missing_term",
+  "target": "similar: a quality of a set of like parts whose members are alike in shape, size and texture (sibling of FLOPO:0991102 equal)",
+  "fix": "Glumes (as a set) + 'similar', with 'dissimilar' as its opposite. This is a coded GrassBase character.",
+  "reason": "This is not a comparison missing its second term: it says the two glumes resemble each other. FLOPO equal covers size only. Reject instead if it is judged too vague.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02193",
+  "decision": "new_pattern",
+  "target": "count per side",
+  "fix": "Secondary leaf vein PO:0020140, range 4–5 per side of leaf midvein PO:0020139, container leaf lamina.",
+  "reason": "This is a count at a position.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02194",
+  "decision": "missing_term",
+  "target": "liana (French 'Liane'): woody climbing plant; the FLOPO habit class needs an EQ signature",
+  "fix": "Give the liana class the signature whole plant + climbing FLOPO:0991108 + a woody quality. Neither PATO nor the FLOPO value list has 'woody', so that term is what is missing. Until it exists, annotate 'climbing' only.",
+  "reason": "The class exists but has no entity–quality definition, and one of its two qualities has no term.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02195",
+  "decision": "new_pattern",
+  "target": "count per side",
+  "fix": "Secondary leaf vein PO:0020140, range 13–15 per side of leaf midvein PO:0020139, container leaf lamina.",
+  "reason": "This is a count at a position.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02196",
+  "decision": "existing_pattern",
+  "target": "negation (docs/annotation-context-patterns.md, 'already represented')",
+  "fix": "Add the lexical rule 'eglandular' → glandular PATO:0002117 negated, with the cue being the whole word (the prefix e-) inside the source span.",
+  "reason": "The negation sits inside the word, so the gate finds no separate cue.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02197",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'with N <part>' (including number words such as 'one') as a count of that part. The container is the organ of the sentence (fruit PO:0009001): seed amount 1.",
+  "reason": "This is a plain count of parts. The 'with one' wording and the number word are not read.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02198",
+  "decision": "new_pattern",
+  "target": "indefinite count",
+  "fix": "Counted part pistil, container flower, count word 'many' in RDF. OWL: amount only.",
+  "reason": "Same construction as P02164.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02199",
+  "decision": "new_pattern",
+  "target": "stage before or after",
+  "fix": "A stage context with a relation other than present_during: sepal length 1.2–2.6 cm 'before' the flowering stage PO:0007616. Either map 'before anthesis' to a flower bud stage, or add a stage_relation slot (before / after) exported as 'exists during some (stage preceding anthesis)'. The relation and its cue are kept in RDF.",
+  "reason": "The docs list 'before' and 'after' a stage as open. The model has present_during only.",
+  "confidence": "high"
+ }
+]

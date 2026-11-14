@@ -65,3 +65,15 @@ SELECT ?record WHERE {
   ?record fb:unit obo:UO_0000189 . { ?record fb:low ?n } UNION { ?record fb:high ?n }
   FILTER(?n < 0 || FLOOR(?n) != ?n)
 }
+----------
+# rule: count_word_states_no_number (docs/odp/13-indefinite-count.md)
+PREFIX fb: <http://phenomebrowser.net/flopo/browse#>
+SELECT ?record WHERE { ?record fb:countWord ?word . { ?record fb:low ?n } UNION { ?record fb:high ?n } }
+----------
+# rule: count_position_without_phenotype_class (docs/odp/14-count-at-a-position.md)
+PREFIX fb: <http://phenomebrowser.net/flopo/browse#>
+SELECT ?record WHERE { ?record fb:countPosition ?kind ; fb:phenotypeClass ?class }
+----------
+# rule: count_landmark_is_not_the_bearer (docs/odp/14-count-at-a-position.md)
+PREFIX fb: <http://phenomebrowser.net/flopo/browse#>
+SELECT ?record WHERE { ?record fb:countLandmark ?part ; fb:bearer ?part }

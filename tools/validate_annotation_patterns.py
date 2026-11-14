@@ -56,6 +56,8 @@ PATTERNS = {
                                  and a["towards"].get("ratio_low") is not None),
     "11 ratio of two dimensions": ("RatioOfTwoDimensions", lambda a: bool(a.get("ratio_numerator"))),
     "12 part of a qualified whole": ("PartOfQualifiedWhole", lambda a: bool(a.get("bearer_whole"))),
+    "13 indefinite count": ("IndefiniteCount", lambda a: bool(a.get("count_word"))),
+    "14 count at a position": ("CountAtAPosition", lambda a: bool(a.get("count_position"))),
 }
 
 

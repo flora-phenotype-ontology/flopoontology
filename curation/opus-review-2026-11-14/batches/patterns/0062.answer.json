@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P02480",
+  "decision": "missing_term",
+  "target": "distalmost / uppermost: the position value for the member of a series nearest the top of the axis",
+  "fix": "Add the FLOPO position value already proposed for upper members (docs/odp/04, Limits), and a bearer_quality row 'distalmost' in config/flora_context_words.tsv. Then 'bract' + erect (PATO:0000622) with that value as the bearer's context quality. 'revolute' (PATO:0001963) is a separate statement.",
+  "reason": "'distalmost' names a member of the series of bracts, not a growth stage. Pattern 04 cannot yet express upper or lower members because the value class does not exist.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02481",
+  "decision": "new_pattern",
+  "target": "depth of division",
+  "fix": "Bearer: the divided organ (calyx). Quality: split (PATO:0001786) or lobed (PATO:0001979) in OWL. In RDF, the depth of the cut as a fraction of the organ's length (unit ratio, low 0.33, high 0.4, measured from the margin), the same way pattern 11 stores ratios. The fraction stays out of OWL.",
+  "reason": "'divided 1/3–2/5' gives how deep the calyx limb is cut, as a fraction of its length. There is no unit to find, and no pattern for the depth of a division.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02482",
+  "decision": "existing_pattern",
+  "target": "FLOPO:0991002 basal (config/flopo_flora_value_terms.tsv)",
+  "fix": "Add 'arising from the base' as a synonym of basal (definition: 'arising at or near the base of its supporting stem'). Then the statement is leaf (PO:0025034) + basal, a plain entity–quality statement, not a relation.",
+  "reason": "The phrase repeats the definition of an existing term. It is not a relation to a second part.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02483",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Counted part: leaf (PO:0025034), amount (PATO:0000070), 5–26 count. Container: branch (PO:0025073, synonym branchlet) with the context quality terminal for 'ultimate'. Add 'ultimate branch' as a grounding of the container. The transcribed entity should be the leaf, not the 'per ultimate branch' phrase.",
+  "reason": "This is an ordinary count with a container. Only the container 'ultimate branch' failed to ground to a term.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02484",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "Keep 'yellowish' as the rarely-occurring alternative colour (pattern 08). Drop 'lighter'.",
+  "reason": "'Lighter' only means lighter than the dark red-brown just given. It is too vague to become a colour value.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02485",
+  "decision": "existing_pattern",
+  "target": "negation (docs/annotation-context-patterns.md, 'What is already represented')",
+  "fix": "Add 'wanting' as a negation word after the noun: stigma (PO:0009073) + absent (PATO:0000462), or present + negated. The clause belongs to the staminate flowers, so the stigma should be part of a male flower (docs/odp/12-part-of-qualified-whole.md).",
+  "reason": "'wanting' means absent. The annotator did not know it as a negation word.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02486",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "sepal (PO:0009031) + keel-shaped (PATO:0002522), or a keel present (config/flora_counted_parts.tsv: keeled → keel). Not 'texture', and not a measurement.",
+  "reason": "'carinate' means keeled, a shape. The transcribed quality 'texture' does not match the text, and there is no number in the statement.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02487",
+  "decision": "new_pattern",
+  "target": "depth of division",
+  "fix": "Calyx (PO:0009060) + split or lobed in OWL. In RDF, the depth of the division as a fraction of the calyx length (unit ratio, 0.5–0.67), as in P02481.",
+  "reason": "'divided 1/2–2/3 its length' is a depth of division given as a fraction of a length. It is not a measurement that lacks a unit.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02488",
+  "decision": "new_pattern",
+  "target": "count per side",
+  "fix": "Counted part: secondary leaf vein (PO:0020140), amount 12–15 count, container leaf lamina (PO:0020039). Add a per-side scope (part_restrictions: one lateral half of the lamina, either side of the midvein; a pinned BSPO side). Store the per-side flag in RDF and never double the number. In OWL: has part some (lamina half and has part some vein...) with the data range.",
+  "reason": "The count holds for each side of the midvein, not for the whole leaf. docs/annotation-context-patterns.md section 4 lists this as open, and pattern 03 holds such rows back.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02489",
+  "decision": "new_pattern",
+  "target": "depth below soil surface",
+  "fix": "Bearer: rhizome (PO:0004542). Quality: depth (PATO:0001595) measured from the soil surface (towards: soil surface, an environment term), usual 2.5–5 cm. In RDF, 'common to 4 inches' becomes an upper extreme, as in pattern 05.",
+  "reason": "This is where the rhizome sits in the soil, not one of its own dimensions. The upper-bound wording 'common to a depth of' is not a bound of any pattern we have.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02490",
+  "decision": "existing_pattern",
+  "target": "negation (docs/annotation-context-patterns.md, 'What is already represented')",
+  "fix": "Add 'neither X nor Y' as a negation cue that covers both nouns: involucral bract (PO:0009045) absent at the base of the compound umbel, and the bractlets of the umbellets (involucel) absent.",
+  "reason": "'neither … nor' denies two parts. The negation word was not recognised, so it fell outside the source span.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02491",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'2-keeled' splits through config/flora_counted_parts.tsv (keeled → keel): keel, amount 2, container lower glume (glume PO:0009039 as a lower member). Keep 'sharply' as a degree modifier and 'throughout' as the whole length, in RDF only.",
+  "reason": "The counted-word table already has 'keeled'. The modifiers 'sharply' and 'throughout' blocked the split and sent the row to a measurement reading.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02492",
+  "decision": "new_pattern",
+  "target": "implied second term",
+  "fix": "Bearer: inner tepal (tepal PO:0009033 + inner position value). Quality: decreased length (PATO:0000574) towards outer tepal, through slot 3 (pattern 09). The target comes from the member named in the clause before (the outer segments), with that clause stored as the cue. 'un peu' is a degree modifier, RDF only.",
+  "reason": "The second term is not written; it is the outer segments described just before. Pattern 09 needs the second part to be written in the clause.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02493",
+  "decision": "existing_pattern",
+  "target": "measurement of a dimension (docs/odp/05-range-with-extremes.md)",
+  "fix": "Map the adjective in 'N mm thick' to the attribute thickness (PATO:0000915), the same way 'long' maps to length. Then petiole + thickness, 2–3 mm.",
+  "reason": "PATO has thickness. The annotator took 'thick' as the value 'increased thickness', not as the dimension being measured.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02494",
+  "decision": "missing_term",
+  "target": "supra-axillary: a positional quality of a structure arising just above the axil of a leaf, not in it",
+  "fix": "New FLOPO value under position (PATO:0000140), a sibling of axillary and terminal. Inflorescence + supra-axillary, with frequency 'mostly'.",
+  "reason": "This is one positional word, not a relation needing a second part. I found no term for it in PATO or FLOPO.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02495",
+  "decision": "missing_term",
+  "target": "numerous: a count too large or too variable to be stated (indefinite, usually more than about 10)",
+  "fix": "New FLOPO value under amount (PATO:0000070), used in the count pattern in place of a number: stamen + numerous. PATO:0000470 'increased amount' is relative to normal and does not fit.",
+  "reason": "The count pattern holds back non-numeric counts ('many', 'few'). An indefinite number is a real botanical character (e.g. polyandry).",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02496",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Bearer: trichome (PO:0000282), the stellate scale-like hairs on the lower (abaxial) leaf surface (slot 1). Quality: height (PATO:0000119), 0.1 mm.",
+  "reason": "The 0.1 mm height belongs to the hairs. The transcription put it on the leaf blade, with 'hairs' as the quality.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02497",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Read 'usually N unit (to M unit)' as the usual value N and the extreme value_max_extreme M, with '(to' as the cue. Bearer: inflorescence bract (PO:0009054), length.",
+  "reason": "A bracketed maximum after the usual value is the range-with-extremes pattern. It was wrongly checked as a bare upper bound.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02498",
+  "decision": "existing_pattern",
+  "target": "FLOPO:0991108 climbing (config/flopo_flora_value_terms.tsv)",
+  "fix": "Add the habit noun 'climber' as a synonym or rule: whole plant (PO:0000003) + climbing.",
+  "reason": "The value exists. Only the noun form is not read, so the annotator went looking for a FLOPO phenotype class with no entity–quality signature.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02499",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Bearer: papilla of the distal laminal cells, not 'leaf'. Read as alternatives absent (PATO:0000462) or low (decreased height) under docs/odp/07 (secondary pattern, a pair across attributes). Ignore the garbled 'visible'.",
+  "reason": "The source text is garbled ('absent visible or low'), and the transcribed bearer 'leaf' is wrong: the papillae belong to the distal laminal cells.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02500",
+  "decision": "missing_term",
+  "target": "numerous: a count too large or too variable to be stated (indefinite, usually more than about 10)",
+  "fix": "carpel (count) + numerous, container aggregate fruit or gynoecium. Same new value as P02495.",
+  "reason": "An indefinite count. The structure is fine; the value term is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02501",
+  "decision": "new_pattern",
+  "target": "count per side",
+  "fix": "Counted part: leaf lamina tooth (PO:0025518), amount 12–17, container leaflet lamina, with the per-side scope (one margin). Use the same representation as P02488.",
+  "reason": "The count is per margin. That is the open 'count at a position' construction, and the entity 'teeth per side' is not a part.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02502",
+  "decision": "existing_pattern",
+  "target": "slot 1, region (docs/annotation-context-patterns.md, kind C; config/flora_context_words.tsv 'at base')",
+  "fix": "Read 'at base' as the basal region: sepal + concave (PATO:0001857) in a basal region. The bearer is the dorsal sepal ('dorsal one'), an upper member of the series that has no value yet. Until that exists, keep the sepal as the bearer.",
+  "reason": "'at base' is already a reviewed region word. The row was wrongly sent to the stage reading.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02503",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Usual count 1–5. 'or in occasional specimens to 15' becomes value_max_extreme 15, with frequency 'occasionally' in RDF. Bearer: spikelet, count.",
+  "reason": "This is a rare upper extreme of a count range, not two real alternatives.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02504",
+  "decision": "new_pattern",
+  "target": "implied second term",
+  "fix": "Bearer: marginal laminal cell (leaf cell + margin region, slot 1). Quality: decreased size (PATO:0000587) towards the laminal cells named in the clause before (slot 3), with that clause stored as the cue.",
+  "reason": "The comparison's second term is the laminal cells described just before. It is not written in the clause, so pattern 09 cannot fill it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02505",
+  "decision": "new_pattern",
+  "target": "position of the widest point",
+  "fix": "Bearer: leaf. In RDF, a measurement of where the widest point sits along the base-to-apex axis, as a fraction of length from the base (unit ratio, 0.14–0.2). In OWL, at most a shape class that implies 'widest below the middle' (ovate). The fraction stays RDF only.",
+  "reason": "This is a position along the leaf's own length, not a relation to another part. No pattern measures it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02506",
+  "decision": "missing_term",
+  "target": "numerous: a count too large or too variable to be stated (indefinite, usually more than about 10)",
+  "fix": "branch (PO:0025073) count + numerous, container whole plant. The same clause's 'très rameux' already gives branched (PATO:0000402).",
+  "reason": "An indefinite count of branches. The structure is fine; the value term is missing.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02507",
+  "decision": "new_pattern",
+  "target": "degree modifier",
+  "fix": "peristome tooth + torsioned (PATO:0002445, synonym twisted) in OWL. Keep 'weakly' as a degree qualifier, RDF only (Endara et al. degree modifiers, like the frequency qualifier). The alternative 'to 1/2 times' becomes an upper bound of 0.5 turns on the amount of twisting, also RDF.",
+  "reason": "'Weakly' changes how strongly the value holds. No pattern stores a degree. The alternative is a measure of twisting, not a second value.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02508",
+  "decision": "existing_pattern",
+  "target": "slot 1, region (docs/annotation-context-patterns.md, kind C; config/flora_context_words.tsv 'distally')",
+  "fix": "tepal (PO:0009033) + cucullate (FLOPO:0991119, synonym hooded), stated of the distal region. 'distally' is already in the table as a region.",
+  "reason": "The context word is a place on the part, not a stage, and the hooded value exists for tepals.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02509",
+  "decision": "missing_term",
+  "target": "acaulescent: of a plant whose stem is so short that it appears absent, its leaves arising at ground level",
+  "fix": "New FLOPO value of whole plant (PO:0000003). Do not annotate it as 'stem absent': the stem is very short, not absent. 'or exceptionally caulescent' is an alternative with its own frequency (pattern 08).",
+  "reason": "Treating it as negation is wrong botanically, and no term for the habit exists.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02510",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'Glumes similar' does not say in what way the two glumes are alike. FLOPO:0991102 equal covers size only, so it is too vague to annotate.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02511",
+  "decision": "missing_term",
+  "target": "numerous: a count too large or too variable to be stated (indefinite, usually more than about 10)",
+  "fix": "'many flowered' goes through the counted-word table (flowered → flower): flower, count numerous, container raceme (inflorescence). Same new value as P02495.",
+  "reason": "The counted-word split exists but needs a number. 'many' needs the indefinite count value.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02512",
+  "decision": "existing_pattern",
+  "target": "measurement of a dimension (docs/odp/05-range-with-extremes.md, number parser)",
+  "fix": "Teach the number parser the inch mark (″ or \") and the fraction sign ½: pedicel + length, 1–1.5 inch (2.5–3.8 cm).",
+  "reason": "The statement is an ordinary length range. Only the unit sign and the fraction were not parsed.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02513",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add French endings to config/flora_counted_parts.tsv ('-lobé/-lobée' → lobe), or the rule '2-lobé' → bilobed (PATO:0002214). Ground 'écaille' (the scale or appendage on the petal) as the bearer.",
+  "reason": "The count is in the word, as pattern 03 handles, but only English endings are read, and the scale was not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02514",
+  "decision": "new_pattern",
+  "target": "depth of division",
+  "fix": "pinna + lobed (PATO:0001979) in OWL. In RDF, the depth of division given as the distance left between the bottom of the cuts and the costa (distance PATO:0000040 towards the costa, 3–4 mm), as in P02481.",
+  "reason": "'lobed to 3–4 mm from the costa' measures how deep the lobing goes, not a quality PATO can carry as a number.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02515",
+  "decision": "missing_term",
+  "target": "numerous: a count too large or too variable to be stated (indefinite, usually more than about 10)",
+  "fix": "spathe (inflorescence bract PO:0009054, synonym spathe), count numerous, container the generative shoot, with frequency 'usually'.",
+  "reason": "An indefinite count. The structure is fine; the value term is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02516",
+  "decision": "new_pattern",
+  "target": "depth below soil surface",
+  "fix": "root system (PO:0025025) + depth (PATO:0001595) from the soil surface, with upper bound 2 m and 'may reach' as the cue (pattern 02). Keep the soil condition 'on deep well-drained soils' in RDF only, like specimen condition.",
+  "reason": "Rooting depth is a real trait, but it is measured from the soil surface and depends on the site. No pattern covers it.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02517",
+  "decision": "new_pattern",
+  "target": "distance beyond another part",
+  "fix": "Bearer: stamen (anterior pair). Quality: exserted (PATO:0000623) towards the corolla (slot 3, pattern 09). In RDF, a measurement of distance (PATO:0000040) beyond the corolla throat, 1–3 mm. 'anterior' is a member of the series and stays unresolved until position values exist.",
+  "reason": "The relation pattern gives 'exserted from the corolla' but has no place for how far.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02518",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "filament (PO:0009067) + white (PATO:0000323). 'blancs' is a plain colour; this is not a measurement.",
+  "reason": "The quality was transcribed as the attribute 'color' and sent to the measurement check. The text gives the value white.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02519",
+  "decision": "new_pattern",
+  "target": "degree modifier",
+  "fix": "seta + fragile (PATO:0001362) in OWL, as one alternative of 'soft or fragile' (pattern 07). Keep 'little' (= slightly) as a degree qualifier, RDF only.",
+  "reason": "'little fragile' means slightly fragile, not 'not fragile', so the negation reading is wrong. No pattern stores a degree.",
+  "confidence": "medium"
+ }
+]

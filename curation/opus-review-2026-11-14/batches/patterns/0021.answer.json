@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P00840",
+  "decision": "new_pattern",
+  "target": "elliptical comparison with the contrasted side",
+  "fix": "When a comparative follows a contrasting clause of the same sentence ('dark green above, paler beneath'), take the second term from that clause: the bearer is leaf lamina abaxial epidermis PO:0000049, a lighter colour (PATO high brightness PATO:0000665) towards leaf lamina adaxial epidermis PO:0000050 through RO:0002503. In addition, give the leaf lamina the existing value discolorous FLOPO:0991070 (OWL). The comparison wording stays in RDF.",
+  "reason": "The second term is not missing; it is the 'above' clause just before. The previous review rejected 'paler' as a term, so a rule is needed, not a term.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00841",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'Graines: inconnues' says the seeds are unknown to the author (missing data), not that seeds are absent. Annotating it as presence or absence would be false.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00842",
+  "decision": "missing_term",
+  "target": "liana: a woody climbing habit of a whole plant (a woody plant rooted in the ground that climbs on other plants); child of climbing FLOPO:0991108",
+  "fix": "Add the FLOPO value class and give the FLOPO liana phenotype class the EQ signature 'whole plant PO:0000003 and has characteristic some liana'. PO lists 'liana' only as a synonym of whole plant, which carries no quality.",
+  "reason": "climbing FLOPO:0991108 exists but leaves out woodiness. Neither the PATO lexicon nor the FLOPO value terms has 'woody', so liana cannot be built from two existing values.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00843",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add a qualitative reading to the count pattern: 'numerous', 'many', 'nombreux/nombreuses' → PATO:0000470 increased amount ('An amount which is relatively high') on the counted part, with no numbers or unit. It is held now as measurement_value_not_numeric.",
+  "reason": "An existing PATO term fits, so no new term is needed. Flowers are the counted part (container: the plant or inflorescence).",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00844",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Same rule as P00843: 'numerous' → PATO:0000470 increased amount on leaf PO:0025034 (container: stem).",
+  "reason": "Same construction as P00843.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00845",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "The count of pattern 03 (bearer: secondary leaf vein PO:0020140; quality: amount PATO:0000070; container: leaf lamina PO:0020039; low 4, high 6, unit count), plus a position slot for 'per side / on each side of the midvein': one half of the lamina, i.e. a lateral region of the lamina beside leaf midvein PO:0020139. In OWL the counted veins are 'part of some (lateral region and part of some leaf lamina)'. The words 'per side' are kept as the cue in RDF.",
+  "reason": "The docs list 'counts at a position' as still open (annotation-context-patterns.md section 4).",
+  "confidence": "high"
+ },
+ {
+  "id": "P00846",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "Read 'basal' as the bearer quality FLOPO:0991002 basal of the spikelet PO:0009051 and 'bearing nutlet' as the presence of a part (has part some nut fruit PO:0030102; PO has 'nutlet' as a synonym). Record the '1 or 2' as a count of such spikelets (pattern 03) in the cluster.",
+  "reason": "This says that only the basal spikelets of a cluster set fruit. It is not a relation to another part.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00847",
+  "decision": "missing_term",
+  "target": "outer / exterior (of a member of a series: placed farthest from the axis or centre of the series)",
+  "fix": "With an 'outer' value class, pattern 04 covers it: leaf sheath PO:0020104 with bearer qualities outer + basal FLOPO:0991002, and the value hirsute FLOPO:0991050. 'all over' marks the whole sheath, in contrast with 'on the margin'. 'the ... ones' must be resolved to the leaf sheaths.",
+  "reason": "The docs say upper/lower/inner/outer members of a series are open for lack of value classes. It is not an alternative: two statements about two members.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00848",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Rule as in P00843 ('nombreuses' → PATO:0000470). The counted part is 'soies', grounded to pappus element PO:0025394 (synonym pappus bristle) with container pappus PO:0025393. The transcribed bearer 'pappus' is the container, not the counted part.",
+  "reason": "French form of the same construction. The bearer has to move to the bristles.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00849",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation)",
+  "fix": "Lexicon rule: 'acaulous', 'acaulescent' → absence of an aerial stem (whole plant: has part no (stem PO:0009047 and aerial FLOPO:0991036)). The word itself is the negation cue (prefix a-), so no separate cue is needed in the span.",
+  "reason": "The negation is inside the word, so the cue check fails. Absence of an aerial stem, not of any stem: the same plant has stolons and bulbs.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00850",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Ground 'd.b.h.' / 'dbh' (diameter at breast height) to the bearer stem PO:0009047 (synonym trunk) and quality diameter PATO:0001334. 'to' is already an upper-bound cue, so the bound itself is fine.",
+  "reason": "The failure is the abbreviation, not the bound. The transcribed bearer 'whole plant' should be the trunk.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00851",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Grounding rule for the container: 'rachis' in an inflorescence sentence → inflorescence axis PO:0020122 (synonym inflorescence rachis); in a leaf sentence → leaf rachis PO:0020055. Then '2-5-flowered' splits as in the table (flowered → flower).",
+  "reason": "The counted-part table has 'flowered'; only the container failed to ground.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00852",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "As P00845: secondary leaf vein PO:0020140, amount 8–9 (count), container leaf lamina, position: each side of leaf midvein PO:0020139.",
+  "reason": "Same construction as P00845 ('on each side of midvein').",
+  "confidence": "high"
+ },
+ {
+  "id": "P00853",
+  "decision": "existing_pattern",
+  "target": "docs/odp/12-part-of-qualified-whole.md",
+  "fix": "'lamina' here is the limb (ligule) of the ray corolla: bearer corolla PO:0009059 part of ray flower PO:0025331, length 9–10 mm and width about 3 mm. 'ca.' is the approximate cue of pattern 01. There is no stage qualifier; 'Ray florets' was wrongly read as a stage.",
+  "reason": "The reason 'developmental stage' does not fit the text. This is a part of a qualified whole.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00854",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'nerved → vein' is already in the table. The container 'lower lemma' does not ground: PO has only sterile lemma PO:0009040 and fertile lemma PO:0009041. Add a grounding rule: in a two-flowered panicoid spikelet, 'lower lemma' → sterile lemma PO:0009040, or else a union of the two. Then count vein, 7, container lemma.",
+  "reason": "This is a count in a word ('measurement_missing_unit' is a side effect). The container needs a rule.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00855",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The quality should be the value 'stout' = PATO:0000591 increased thickness (synonyms stout, thickened) on stem PO:0009047, not the attribute thickness with a number expected.",
+  "reason": "The text gives a qualitative value. The PATO lexicon has 'stout' as a synonym.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00856",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Rule as in P00843: 'numerous' → PATO:0000470 increased amount on carpel PO:0009030 (container: flower).",
+  "reason": "Same construction. 'Carpels numerous' (apocarpous, many carpels) is a key character in Rosaceae.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00857",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (continuum; slot 1 region)",
+  "fix": "A continuum from increased thickness PATO:0000591 ('slightly' as degree) to head-shaped FLOPO:0991097 ('sub-' = approximately) on style PO:0009074. The region needs a new row in config/flora_context_words.tsv: 'in the upper part' / 'in upper part' → region distal.",
+  "reason": "Both values exist and the continuum pattern exists. The region wording is the missing row.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00858",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1 region)",
+  "fix": "'base obtuse' is a region of the leaflet: bearer the leaflet with its basal region (pinned BSPO basal region) and value obtuse. 'median/lateral leaflets' is a series member (kind D), not a stage.",
+  "reason": "The text has no stage. The reason misreads the position words.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00859",
+  "decision": "new_pattern",
+  "target": "spacing of parts",
+  "fix": "Bearer trichome PO:0000282 (synonym scale), part of leaf lamina abaxial epidermis PO:0000049, quality distance PATO:0000040 towards trichome (the same kind of part). The value 3–4 has unit ratio, relative to the scale's own diameter, and goes in RDF only (as in pattern 10). In OWL: only 'trichome and has characteristic some (distance and towards some trichome)'.",
+  "reason": "The transcribed 'leaf blade' + 'diameter' is wrong: this is the spacing of the scales. The docs list spacing as designed but it has no pattern file.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00860",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Ground the bearer 'perichaetial leaves' to perichaetal bract PO:0030030 (add the spelling 'perichaetial leaf' as a synonym). Ground the target 'upper stem leaves' to non-vascular leaf PO:0025075, with 'upper' as a series position (kind D, not yet a value class). Then 'larger than' works with towards.",
+  "reason": "The second term is present. Neither moss term grounds as written.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00861",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground the container 'spathe bracts' to bract PO:0009055. Then '3–8-veined' splits as in the table (veined → vein).",
+  "reason": "Only the container failed to ground.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00862",
+  "decision": "new_pattern",
+  "target": "distance from a landmark",
+  "fix": "Bearer anther PO:0009066, quality distance PATO:0000040 towards the mouth (apex) of the staminal tube, value about 3 mm. 'inserted within the tube' is pattern 09 (inserted into PATO:0000624 towards the staminal tube) and goes into OWL. The numeric distance is a data range on the distance quality.",
+  "reason": "Pattern 09 covers 'inserted at' but not a distance measured from a point on the other part.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00863",
+  "decision": "missing_term",
+  "target": "liana: a woody climbing habit of a whole plant; child of climbing FLOPO:0991108",
+  "fix": "As P00842. 'woody vine' becomes a synonym of liana.",
+  "reason": "'Woody vines' is liana. Same missing term as P00842.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00864",
+  "decision": "new_pattern",
+  "target": "gradient along a series",
+  "fix": "Bearer bract PO:0009055 (the blade of the involucral bracts), quality length PATO:0000122. A gradient qualifier in RDF says the length decreases towards the apex of the series ('gradually shorter apically'), with the cue. OWL keeps only the attribute (no value), because no single member has a fixed value.",
+  "reason": "The comparison is between members of one series, not with a missing second part.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00865",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (temporal transition, qualitative_value_relation)",
+  "fix": "Read 'at first X then Y' as a transition from white to red on petal PO:0009032, like 'white becoming pink'. Add 'then' (after 'at first') as a transition cue instead of keeping 'at first' only as a stage qualifier.",
+  "reason": "The transition pattern exists. The annotator took the 'at first' row and held the statement as a stage.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00866",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation)",
+  "fix": "Same lexicon rule as P00849 (acaulescent → absence of an aerial stem), plus 'almost' as the approximate cue of pattern 01. The full statement 'scapose or almost acaulescent' is a union of two values (pattern 07).",
+  "reason": "The negation is inside the word.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00867",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1 region)",
+  "fix": "Add 'in upper part' and 'in the upper part' to config/flora_context_words.tsv as region distal (as for 'above' on axes). Then: peduncle PO:0009053, a distal region that is pubescent, 'sparsely' as degree.",
+  "reason": "This is a region on the part, not a stage; the table lacks the wording.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00868",
+  "decision": "missing_term",
+  "target": "rib (of a fruit or stem: a raised longitudinal ridge on the surface)",
+  "fix": "The table already has 'ribbed → rib', but 'rib' grounds to no PO class. With an anatomy class for rib, the count is: rib, 10–14, container achene fruit PO:0030107.",
+  "reason": "The split is defined, but the counted part has no class.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00869",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation)",
+  "fix": "Lexicon rule: 'eglandular' → glandular PATO:0002117 negated, with the word as its own cue, on corolla PO:0009059. The parentheses in the source should be kept as a note: they may mean 'usually'.",
+  "reason": "The negation is inside the word, so the cue check fails.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00870",
+  "decision": "missing_term",
+  "target": "twining: a climbing quality of a stem that climbs by winding spirally round a support; child of climbing FLOPO:0991108",
+  "fix": "Stem PO:0009047 has the value twining. The FLOPO twining phenotype class gets that EQ signature.",
+  "reason": "climbing covers twining only in its definition text. Twining is a frequent and diagnostic stem character (Dioscorea, Convolvulaceae).",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00871",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Map 'thick' after a number and unit to the attribute thickness (PATO), not to a value. Usual range 1.2–2 mm and extremes 0.7 and 2.5 on leaf PO:0025034.",
+  "reason": "The range with extremes is implemented. Only the word 'thick' failed to map to its attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00872",
+  "decision": "missing_term",
+  "target": "liana: a woody climbing habit of a whole plant; child of climbing FLOPO:0991108",
+  "fix": "As P00842. The whole habit line 'Hierba, arbusto, trepadora, liana' is a union of habit values (pattern 07).",
+  "reason": "Same missing term as P00842.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00873",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept a bound in parentheses after an adjective ('long (to 11 mm)') as an upper-bound cue: bract PO:0009055, length at most 11 mm.",
+  "reason": "This is from a recognition note, but it still states a character of the taxon. The bound has a cue the parser does not know.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00874",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Let a region cue after a union of values of one attribute apply to the whole union: leaf lamina base, shape one_of (obtuse, rounded). The rule 'a cue across an alternative is left alone' should allow this case when both values share an attribute.",
+  "reason": "Both values exist. This is a union of one attribute plus slot 1, not a taxon-level contradiction.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00875",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Rule as in P00843 ('numerous' → PATO:0000470) on leaf PO:0025034, with 'basal' as bearer quality FLOPO:0991002 (pattern 04).",
+  "reason": "Same construction as P00843 with a basal position.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00876",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md (measurement and unit table)",
+  "fix": "Add 'feet'/'foot' (UO foot) to the unit table, and read 'stands N to M feet in height' as PATO height on whole plant PO:0000003, low 10, high 15.",
+  "reason": "This is a plain length measurement. The imperial unit and the wording are not recognised.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00877",
+  "decision": "missing_term",
+  "target": "lower (of a member of a series: placed nearer the base of the axis than the other members)",
+  "fix": "With a 'lower' value class: stamen PO:0009029 with bearer quality lower (pattern 04), inserted into PATO:0000624 towards the calyx tube (pattern 09), with the middle region of the tube as the target part.",
+  "reason": "Pattern 09 covers 'inserted at'. The series member 'lower whorl' is open for lack of a value class.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00878",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (frequency_qualifier)",
+  "fix": "Read 'usually' as frequency_qualifier, not as a negation cue. Ground 'trunk' to stem PO:0009047 (synonym), value short (decreased length).",
+  "reason": "There is no negation in the text. A cue was misread.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00879",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Read 'average 25–30 cm but may reach 80 cm' as the usual range 25–30 cm with value_max_extreme 80 cm. Add 'may reach' as a max-extreme cue, and take the metric value in parentheses. Bearer vascular leaf PO:0009025 (synonym pitcher). 'in certain areas' goes in RDF only.",
+  "reason": "This is an extreme of a range, not an upper bound alone. The range with extremes is implemented.",
+  "confidence": "medium"
+ }
+]

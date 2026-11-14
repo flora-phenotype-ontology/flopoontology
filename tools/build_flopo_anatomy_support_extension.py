@@ -111,6 +111,12 @@ def build_module(
     if {row["proposal_key"] for row in new_rows} != set(allocations):
         raise ValueError("registry and new_flopo_local rows disagree")
 
+    other_flopo = {
+        row["flopo_iri"].rsplit("/", 1)[-1]
+        for row in _rows(Path("config/flopo_id_registry.tsv"))
+        if row.get("deprecated", "0") == "0"
+    }
+
     def resolve(token: str) -> URIRef:
         if token in allocations:
             return URIRef(OBO + allocations[token])
@@ -118,6 +124,8 @@ def build_module(
             if token not in live:
                 raise ValueError(f"{token} is not a live PO class in {po_path}")
             return URIRef(OBO + token)
+        if token in other_flopo or token in allocations.values():
+            return URIRef(OBO + token)  # a live class of another FLOPO module (pinna, gynostemium)
         raise ValueError(f"unresolvable parent or filler {token!r}")
 
     for row in spec:

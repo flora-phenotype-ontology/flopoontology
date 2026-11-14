@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P02600",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Ground 'rounded' of an apex or base to PATO:0001935 obtuse (synonym 'roundish'), as row 52 of config/flora_union_pairs.tsv already does ('rounded or capitate'); the two values then collapse into one. The bearer is leaf lamina base PO:0008019 (region rule for 'base'), not the leaf blade.",
+  "reason": "Both values have a term; the alternative failed only because 'rounded' had no grounding and the region word 'base' was not used.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02601",
+  "decision": "new_pattern",
+  "target": "count-at-position",
+  "fix": "A count (PATO:0000070 amount, unit count, low 8, high 11) of the leaf's secondary veins, with container leaf lamina and a new slot per_position = leaf midvein PO:0020139 with the cue 'on each side of'. RDF: fb:perPosition obo:PO_0020139 and fb:positionText. OWL: only the container has part some vein; the per-side numbers stay as literals because they are not the total for the lamina.",
+  "reason": "Listed as open in docs/annotation-context-patterns.md §4 and held by the count pattern (03, Limits).",
+  "confidence": "high"
+ },
+ {
+  "id": "P02602",
+  "decision": "new_pattern",
+  "target": "count-at-position",
+  "fix": "As P02601: a count of lateral veins, 8-12 per side of the midvein; the container is the terminal leaflet (leaflet PO:0020049 with bearer quality terminal PATO:0002476 from the previous clause), not the leaf.",
+  "reason": "A count at a position; 'on each side' implies the midrib.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02603",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read 'to over N' after a growth verb ('lengthening to over 3 cm') as a strict lower bound ('over'); the 'to' belongs to the verb and is not an upper-bound cue. Add 'often' as the frequency and 'in fruit' as the stage (row of flora_context_words.tsv).",
+  "reason": "'over' is a documented lower-bound cue; the parser took 'to' as an upper bound and failed.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02604",
+  "decision": "new_pattern",
+  "target": "qualitative-count",
+  "fix": "A count with no number: the counted part (lenticel PO:0000031), the container (branch/shoot axis), and a qualitative value (numerous/many → PATO:0000470 increased amount; few → decreased amount) in place of low/high, with the cue kept. OWL: container has part some (lenticel and has characteristic some 'increased amount'); RDF fb:countValue plus the words. Lenticel presence on the branch is annotated anyway.",
+  "reason": "The count pattern holds 'few' and 'many' (measurement_value_not_numeric); a term exists but there is no pattern for a count without a number.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02605",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'unknown' means the part was not seen, not that it is absent; it is not a phenotype.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02606",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add colour comparisons to the table: 'paler than' → high brightness PATO:0000665, 'darker than' → low brightness PATO:0000327, towards the named part. Here the target is 'surface above' = leaf lamina adaxial epidermis PO:0000050, and the bearer is the primary lateral vein on the adaxial side.",
+  "reason": "The second term is stated ('surface above'), so the earlier rejection of 'paler' without a second term does not apply; only the table row is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02607",
+  "decision": "new_pattern",
+  "target": "qualitative-count",
+  "fix": "As P02604: ovules numerous (PATO:0000470), container plant ovary locule PO:0025266, with 'in each' as a per-container cue.",
+  "reason": "A count without a number, given per locule.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02608",
+  "decision": "new_pattern",
+  "target": "angle-to-another-part",
+  "fix": "A measurement of the angle between the bearer (primary lateral vein) and a second part: quality angle (PATO) with unit degree (UO), low 30, high 60, towards leaf midvein PO:0020139 (slot 3). OWL: has characteristic some (angle and towards some 'leaf midvein'); the degrees as a data range and literals.",
+  "reason": "No pattern covers angles; the same construction appears as 'at ± 50° to the midrib' (P02613) and 'divaricate from stem at 45 degrees'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02609",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Read fractions 'N/M the width of X' as a ratio (0.083-0.2) of width towards X; here costa PO:0030072, towards the leaf (phyllid) at its base (region). The measurement needs no unit, so 'measurement_missing_unit' should not fire for a ratio.",
+  "reason": "Pattern 10 covers 'N times as long as'; fractions are the same thing written the other way.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02610",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The statement is about hairs, not the leaf: a second kind of trichome, 2-celled (cell count of the hair; note that flora_counted_parts.tsv maps 'celled' to locule, which is wrong for hairs), with frequency 'sometimes'. Drop the comparatives 'denser' and 'much shorter', which compare it with the 5-8-celled hairs.",
+  "reason": "'denser' on the leaf does not render the statement.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02611",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (§5 processes)",
+  "fix": "Read 'rooting at/from the (last) node(s)' as presence of shoot-borne roots at the node: presence of a root, with slot 1 = shoot axis node PO:0005004 of the branch, frequency 'sometimes'. Needs a rule for the verb 'rooting'.",
+  "reason": "The doc names this exact case (adventitious roots at the nodes: presence with slot 1).",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02612",
+  "decision": "new_pattern",
+  "target": "qualitative-count",
+  "fix": "As P02604: stamen, container flower PO:0009046, numerous → PATO:0000470.",
+  "reason": "A count without a number.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02613",
+  "decision": "new_pattern",
+  "target": "count-at-position",
+  "fix": "As P02601: main veins (nerve → vein) 10-15 on each side of the midrib, container leaflet. The rest of the clause, 'at ± 50° to the midrib', is a separate angle-to-another-part statement.",
+  "reason": "A count at a position.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02614",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Allow measurement operands in the union across attributes: whole plant (height or diameter) with the same range; the usual range 5-15 cm and extremes 3 and 25 via pattern 05, with '+' as an open maximum.",
+  "reason": "'tall or across' gives the size as height for erect plants and spread for prostrate ones; the transcription as height alone is too narrow.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02615",
+  "decision": "missing_term",
+  "target": "liana/liane: a woody climbing plant",
+  "fix": "Map 'liana', 'liane' and 'lianes' on a whole plant to climbing FLOPO:0991108, as already done for 'lianescent' (C354), optionally with woody; give the FLOPO liana phenotype class that EQ signature.",
+  "reason": "The FLOPO phenotype class has no EQ signature; climbing exists.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02616",
+  "decision": "new_pattern",
+  "target": "qualitative-count",
+  "fix": "As P02604: leaf, container whole plant/rosette, numerous → PATO:0000470; 'very' is kept as a degree in RDF only. 'in a dense rosette' is a separate arrangement statement.",
+  "reason": "A count without a number.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02617",
+  "decision": "missing_term",
+  "target": "inner: positional value of the member of a series nearest the centre or axis",
+  "fix": "Add a FLOPO position value 'inner' (with 'outer') for pattern 04 bearer_context_qualities; then 'inner bracteoles' are bracteoles PO:0009043 with that position, and the 5-7 × ca. 1 mm measurement goes through.",
+  "reason": "Pattern 04 says that upper, lower, inner, outer and lateral have no value class yet; 'inner' was read as a stage.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02618",
+  "decision": "missing_term",
+  "target": "stipule scar: the mark left on the shoot axis where a stipule has been shed",
+  "fix": "New FLOPO anatomy class like leaf scar FLOPO_0986052 (part of shoot axis PO:0025029); then presence, size (large) and colour (pale brown) of the stipule scar, with stage 'on young growth'.",
+  "reason": "The scar is on the stem, not a quality of the stipule; leaf scar is the model.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02619",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add the table row 'exserted from / beyond' → exserted PATO:0000623 towards the named part (here bract PO:0009055), accepting the misspelling 'exerted'. It is the counterpart of 'included in'.",
+  "reason": "Both terms exist; only the relation words are missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02620",
+  "decision": "new_pattern",
+  "target": "count-at-position",
+  "fix": "As P02601: lateral veins 5-7 on each side of the midrib, container leaflet. 'not reaching the margin' is a separate statement.",
+  "reason": "A count at a position.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02621",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation)",
+  "fix": "Add 'neither X nor Y' as a negation cue whose scope covers both operands: petiole not fleshy, and petiole not winged.",
+  "reason": "Negation exists; the cue 'nor' was not accepted alone, and 'neither' is outside the span.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02622",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation)",
+  "fix": "Add French 'nul/nulle/nuls/nulles' (after the noun) as an absence cue: bracteole PO:0009043 absent (PATO:0000462) on the flower.",
+  "reason": "An absence written with a French word not in the cue list.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02623",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'unknown' means not seen, not absent.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02624",
+  "decision": "missing_term",
+  "target": "rule: 'upper (or lower) surface darker/paler' on a leaf = discolorous FLOPO:0991070",
+  "fix": "Map a comparative colour between the two surfaces of one leaf to leaf discolorous FLOPO:0991070, with frequency 'usually'; keep 'upper darker' as words in RDF.",
+  "reason": "The second term is the other surface of the same leaf; an existing FLOPO value covers it, so no comparison slot is needed.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02625",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add 'embracing' (with 'clasping') to the 'enclosing, surrounding' row → surrounding PATO:0001772 towards gynostemium FLOPO_0986015 ('column'); the bearer is the labellum FLOPO:0980978 (lateral parts), with region 'below middle'.",
+  "reason": "Both terms exist; the relation word 'embracing' and the grounding of 'column' to gynostemium are missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02626",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'few to many' covers the whole range and says nothing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02627",
+  "decision": "missing_term",
+  "target": "glandular-punctate: dotted with glands",
+  "fix": "Repair the fused OCR form 'glandularpunctate' and map 'glandular-punctate' to punctate PATO:0001512 (the dots being glands); the bearer is the abaxial side of the sepal ('on back', slot 1).",
+  "reason": "It is one compound value, not an alternative; 'glandular' alone loses the dots.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02628",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation)",
+  "fix": "Read the suffix '-less' ('bractless', as 'leafless') as absence: bract/bracteole absent (PATO:0000462) on the flower pedicel PO:0030113.",
+  "reason": "Negation through the suffix exists for 'leafless' but not for this word.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02629",
+  "decision": "missing_term",
+  "target": "trap (bladder of Utricularia, a modified leaf segment) and its mouth (opening)",
+  "fix": "New FLOPO anatomy classes for the trap and its mouth (part of trap); then the mouth has position basal FLOPO:0991002.",
+  "reason": "The structure is fine (position of a part of the trap); neither part has a class.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02630",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Allow '±', 'c.' and 'about' between the cue 'to' and the number: an upper bound of 60 cm with value_qualifier approximately (pattern 01).",
+  "reason": "Both the bound cue and '±' are documented; only their combination fails.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02631",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'partite → lobe' is already in flora_counted_parts.tsv; let the container be a lobe that has bearer quality terminal PATO:0002476 (pattern 04) so it grounds: count of 3 lobes (segments) of the terminal leaf lobe.",
+  "reason": "The container 'terminal lobe' is itself a lobe and failed to ground.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02632",
+  "decision": "existing_pattern",
+  "target": "docs/odp/12-part-of-qualified-whole.md",
+  "fix": "The lobes are lobes of the perianth of the male flower: the bearer is a perianth lobe, part of the perianth, part of a male flower; 'c.' is an approximate cue (pattern 01). Thickness 0.2 mm.",
+  "reason": "The stage reason comes from the male-flower context (kind B on a part), which pattern 12 covers.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02633",
+  "decision": "new_pattern",
+  "target": "count-at-position",
+  "fix": "As P02601: lateral veins ca. 4 on each side of the midrib, container leaf lamina, with 'ca.' as approximate.",
+  "reason": "A count at a position.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02634",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Not glabrous: absence of multicellular trichomes on the leaflet ('free from' as a negation cue), with the alternative 'or with a few on the midrib' (pattern 08). The surfaces are separately 'glabrous or strigulose above'.",
+  "reason": "'glabrous' contradicts the rest of the clause; only multicellular hairs are absent.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02635",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The bearer is the venation (vein system) of the leaflet/pinnule PO:0020049, not the leaflet: pinnate PATO:0000410 on the leaflet would mean a pinnately compound pinnule. 'on pinnules' names the whole the veins belong to, not a stage.",
+  "reason": "The entity does not match the text.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02636",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Split at the comma: bractlet PO:0009043 setaceous FLOPO:0991124 is annotated directly. The comparison is a union of 'as long as' (pattern 10, equality) and 'slightly longer than' (pattern 09, increased length PATO:0000573) towards the spikelet.",
+  "reason": "The disjunction belongs to the second clause and blocked the first, which is plain.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02637",
+  "decision": "missing_term",
+  "target": "rule: 'dehiscing horizontally/transversely' = circumscissile FLOPO:0991150",
+  "fix": "Map the phrase on a fruit/capsule to circumscissile FLOPO:0991150.",
+  "reason": "The term exists; the process wording has no rule.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02638",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add French 'jusqu'à' as an upper-bound cue, and 'en fruit' to flora_context_words.tsv (stage PO:0001002, as 'in fruit'); 's'allongeant' is then the length at fruit stage. Bearer: pedicel of the female flower (pattern 12).",
+  "reason": "All parts exist; the French cues are missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02639",
+  "decision": "missing_term",
+  "target": "trullate: trowel-shaped, rhombic with the widest part below the middle and straight sides",
+  "fix": "New FLOPO value under rhomboid PATO:0001938; 'deltoid' grounds to triangular PATO:0001875, and the continuum then goes through.",
+  "reason": "'trullate' has no term; it is a common shape term in floras.",
+  "confidence": "medium"
+ }
+]

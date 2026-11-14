@@ -13,6 +13,31 @@ phrase and are estimates.
 > open: upper / lower / inner / outer members of a series (no value classes yet), "before" and
 > "after" a stage, counts at a position, and kind F of the stage qualifier.
 
+> **Update of 2026-11-14.** A second model (Claude Opus) reviewed 3,300 unresolved statements,
+> 220 for each reason they were held (`curation/opus-review-2026-11-14/patterns.tsv`). Half of
+> them fit a pattern that existed and the annotator missed; a quarter need a pattern that did not
+> exist. Done after that review:
+>
+> - 107 more readings of the stage qualifier in `config/flora_context_words.tsv`: bare place
+>   words (apex, base, margin, distal, upper part, ...), members of a series with six new FLOPO
+>   position values (upper, lower, inner, outer, lateral, median: kind D below), "adult" and
+>   "later" as mature, the seedling stage, and a kind `unscoped` for "on both surfaces",
+>   "throughout", "when present", which restrict nothing. 130,000 statements of the 37 floras
+>   had a stage qualifier without a reading.
+> - "4 or 5 leaves" is the range 4-5; "glabrous or nearly so" is glabrous, approximately.
+> - Micrometres are a length unit (10,900 statements). Feet (68,700), inches and decimetres
+>   are still held: the pinned UO has no class for them.
+> - Two new patterns: [13 indefinite count](odp/13-indefinite-count.md) ("seeds numerous") and
+>   [14 count at a position](odp/14-count-at-a-position.md) ("veins 4-6 on each side").
+>
+> Proposed by the review and still open, with the number of the 800 "new pattern" statements:
+> comparison with an implied second term ("paler beneath", "upper leaves smaller": 76), spacing
+> and distance from a landmark (29), depth and order of division ("divided 1/3-2/5", "2-3-
+> pinnatisect": 30), before and after a stage (26), a part present at a place and processes
+> (22), habit nouns (17), a bound on the maximum (16), a gradient along a series (10), the
+> position of greatest width (8), the wall of a cell as bearer ("thin-walled"), and a part with
+> a fixed whole ("stipular colleter": the 404 `rule:bearer_part` answers of `bearers.tsv`).
+
 ## What is already represented
 
 | Source wording | Representation |

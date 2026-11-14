@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P02680",
+  "decision": "existing_pattern",
+  "target": "02-bounded-measurement.md",
+  "fix": "Add the cue 'to at least' as an inclusive lower bound (value_low 2 m, no upper value). The leading 'to' must not make it an upper bound.",
+  "reason": "'to at least 2 m' says the plant reaches 2 m or more. That is a lower bound, and the parser only knows 'at least' or 'to' on their own.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02681",
+  "decision": "existing_pattern",
+  "target": "04-state-of-the-bearer.md",
+  "fix": "Read 'breaking and becoming filamentose' as fibrous FLOPO:0991026 ('splitting into fibres'), negated by 'not', on leaf sheath PO:0020104. 'the upper' is a member of a series (kind D), which has no value class yet; until it does, keep it as a cue in RDF only.",
+  "reason": "This is not a process to annotate: it says the sheath does not fray into threads, a texture term FLOPO already has.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02682",
+  "decision": "missing_term",
+  "target": "inner (FLOPO position value: the member of a series that sits on the inner whorl, e.g. inner sepals, inner tepals); with its pair 'outer'",
+  "fix": "Add inner/outer position values so that bearer_context_qualities can say which sepals are meant. The measurement itself (length 3 mm, width 1 mm) needs nothing new.",
+  "reason": "The 'stage' is really kind D (inner vs outer sepals). The context doc lists this as open because there are no value classes yet.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02683",
+  "decision": "new_pattern",
+  "target": "exsertion distance",
+  "fix": "Slots: bearer (style), the length by which it sticks out (PATO length, usual range 1.5-2.5, max extreme 4, mm) and the reference part it sticks out of (corolla tube/throat, via towards). OWL: style and has characteristic some (exserted PATO:0000623 and towards some corolla tube); the distance is kept in RDF as a measurement on the exserted portion, because it is not the length of the style.",
+  "reason": "Pattern 09 says measurements combined with a relation are not read. 'Exserted 1.5-2.5 mm' measures how far it projects, not the organ's own size.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02684",
+  "decision": "existing_pattern",
+  "target": "measurement (dimension words; as in 02-bounded-measurement.md)",
+  "fix": "Map a number+unit followed by 'thick' to the attribute thickness PATO:0000915, not to the value 'thick'. Bearer: fruit PO:0009001 ('pod').",
+  "reason": "A plain measurement: the dimension word was taken as a quality value instead of the measured attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02685",
+  "decision": "existing_pattern",
+  "target": "config/flopo_flora_value_terms.tsv (FLOPO:0991193 emergent)",
+  "fix": "Add 'emerged' as a synonym of emergent FLOPO:0991193 (leaves rising above the water) on leaf PO:0025034.",
+  "reason": "Not a process: an aquatic growth position that FLOPO already defines.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02686",
+  "decision": "missing_term",
+  "target": "acaulescent: whole plant whose stem is very short or not visible above ground, so the leaves form a basal rosette",
+  "fix": "New FLOPO value under PATO size/shape of the stem (or a rule: stem PO:0009047 + decreased length + rosulate FLOPO:0991005 on the whole plant). Do not read it as the stem being absent.",
+  "reason": "The botanical meaning is 'stem very short or not visible', not 'no stem'. A negation would be wrong for Tillandsia, which has a short stem.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02687",
+  "decision": "transcription_error",
+  "target": "trichome PO:0000282 of vegetative bud PO:0000058; quality length PATO:0000122",
+  "fix": "Re-transcribe: the hairs of the leaf bud are 0.1 mm long (length of trichome, part of leaf bud), and their colour is grey-brown. 'stem' and 'hairs' as entity/quality are wrong.",
+  "reason": "The span is about leaf-bud hairs, not the stem. 'hairs' is the part, not the quality.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02688",
+  "decision": "existing_pattern",
+  "target": "growth-form nouns → whole plant EQ (climbing FLOPO:0991108, tendrilous PATO:0015005)",
+  "fix": "Give the FLOPO class 'climber' the signature whole plant PO:0000003 + climbing FLOPO:0991108. 'tendrilled' adds whole plant tendrilous PATO:0015005. 'woody' has no PATO term; leave it out.",
+  "reason": "The phenotype class just needs its EQ signature; the terms exist.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02689",
+  "decision": "existing_pattern",
+  "target": "02-bounded-measurement.md",
+  "fix": "Add 'to more than' as a strict lower bound (value_low 1 m, exclusive). The leading 'to' must not start an upper bound.",
+  "reason": "Same construction as 'to at least': the plant grows taller than 1 m.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02690",
+  "decision": "existing_pattern",
+  "target": "03-count-of-parts.md",
+  "fix": "Ground the container 'rachis' to inflorescence axis PO:0020122 when the clause is about an inflorescence (or fall back to the inflorescence of the sentence). Count of flower 5-9; 'laxly' stays a cue.",
+  "reason": "PO lists only 'inflorescence rachis' as a synonym, so plain 'rachis' was not grounded, though the sentence makes clear it is the inflorescence.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02691",
+  "decision": "existing_pattern",
+  "target": "09-relation-to-another-part.md",
+  "fix": "Second term is present: 'vegetative leaves' → non-vascular leaf PO:0025075. Bearer 'perichaetial leaf' → perichaetal bract PO:0030030 (add the spelling 'perichaetial leaf' as synonym). Quality decreased width PATO:0000599 towards non-vascular leaf.",
+  "reason": "The reason given is wrong: the comparison names its second term. Both moss parts just need synonyms to ground.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02692",
+  "decision": "existing_pattern",
+  "target": "03-count-of-parts.md",
+  "fix": "Ground 'verticillaster' to cyme inflorescence PO:0030126 (it is a PO synonym) as the container. Read 'up to 10-12-flowered' as a count of flower whose top is 12 (pattern 02 cue plus the compound split).",
+  "reason": "The container exists in PO; the 'up to' before the compound probably blocked the split.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02693",
+  "decision": "new_pattern",
+  "target": "elliptical comparison",
+  "fix": "'(plus petites)' leaves out its second term; it is the part coordinated just before it (bractées, 2 mm). Slots: bearer bracteole PO:0009043, decreased size PATO:0000587, towards bract (taken from the coordinated part, not from the words after the relation). OWL as pattern 09.",
+  "reason": "Pattern 09 only looks for the target after the relation words. Here it comes before them, in the same coordination. Also, 'infructescence' is not the bearer.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02694",
+  "decision": "new_pattern",
+  "target": "alternative across bearers",
+  "fix": "'abaxially glabrous or only veins sparsely pilose': one_of over full statements with different bearers (leaflet abaxial epidermis glabrous | leaflet vein pilose FLOPO:0991048, 'sparsely' as degree). OWL: a union of two has-part restrictions, which ELK cannot use, so keep it in RDF only, and in OWL only what both alternatives share.",
+  "reason": "Pattern 07 allows unions over the values or attributes of one bearer, not over different parts.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02695",
+  "decision": "existing_pattern",
+  "target": "growth-form nouns → whole plant EQ (climbing FLOPO:0991108)",
+  "fix": "'liane' (and 'arbuste grimpant') → whole plant PO:0000003 + climbing FLOPO:0991108. Both alternatives give the same value, so no union is needed.",
+  "reason": "The phenotype class just needs its EQ signature; 'liana' is already a PO whole-plant synonym and climbing exists.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02696",
+  "decision": "existing_pattern",
+  "target": "08-alternative-with-frequency.md",
+  "fix": "Add 'in one variety' / 'in var. X' as an infraspecific qualifier on the second operand, like a frequency cue (RDF only). The union glabrous PATO:0000453 | pubescent PATO:0000455 (one attribute, pattern 07) holds for the species.",
+  "reason": "The alternative is limited to a variety; the existing alternative-with-qualifier pattern handles it once the cue is added.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02697",
+  "decision": "new_pattern",
+  "target": "count per side",
+  "fix": "Count of secondary veins (bearer vein, container leaf lamina PO:0025060) with count_basis 'per side of midvein' (towards leaf midvein PO:0020139). The basis changes the meaning, so the number goes in RDF only. OWL keeps only that the vein is present.",
+  "reason": "The context doc lists counts at a position as still open. Writing 8-11 as the vein count of the whole blade would be wrong.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02698",
+  "decision": "new_pattern",
+  "target": "exsertion distance",
+  "fix": "As for 'style exserted': bearer stamen filament (not stamen), exserted PATO:0000623 towards the corolla tube in OWL, and the projecting distance 1-2 mm in RDF.",
+  "reason": "The number is how far the filament projects, not a size of the filament. The entity should be the filament.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02699",
+  "decision": "missing_term",
+  "target": "rib: a raised longitudinal ridge on the surface of a fruit, stem or other organ",
+  "fix": "flora_counted_parts.tsv maps 'ribbed' → rib, but 'rib' grounds to no PO or FLOPO class. Add a FLOPO anatomy class (or pin a PO class) so '6-ribbed' becomes a count of rib (6) with container fruit; until then annotate fruit ribbed FLOPO:0991062.",
+  "reason": "This is a compound count, not a measurement without a unit; it fails only because the counted part has no class.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02700",
+  "decision": "existing_pattern",
+  "target": "03-count-of-parts.md",
+  "fix": "The container is the pistillate scale of the clause, not 'green center'. 'center' is a region (median region of the scale, via the slot-1 context table). Count of vein 3; the colour green is a separate statement on that region.",
+  "reason": "The container was taken from the following noun ('center'), which is a region of the scale, not an organ.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02701",
+  "decision": "existing_pattern",
+  "target": "measurement (dimension words; as in 02-bounded-measurement.md)",
+  "fix": "Map 'N mm thick' to thickness PATO:0000915 on the stipe (fern frond stalk), range 2.6-6 mm.",
+  "reason": "A plain measurement whose dimension word was read as the value 'thick'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02702",
+  "decision": "existing_pattern",
+  "target": "negation cues (annotation-context-patterns.md, 'What is already represented') with 08-alternative-with-frequency.md",
+  "fix": "Add 'wanting' as a negation cue: involucre PO:0009100 absent. The alternative 'or of an occasional solitary, deciduous bract' is a second operand with frequency 'occasional' (pattern 08).",
+  "reason": "'wanting' means absent; the cue list does not have it.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02703",
+  "decision": "new_pattern",
+  "target": "vague count",
+  "fix": "Slots: counted part (flower), container (head), the count word ('numerous'), RDF only, with no numbers. OWL states only that the head has flowers. PATO 'increased amount' is a comparison with a normal number and should not be used.",
+  "reason": "Pattern 03 holds 'few'/'many' as non-numeric. They are still useful key characters but need a record without a data range.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02704",
+  "decision": "new_pattern",
+  "target": "vague count",
+  "fix": "Leaf PO:0025034, count word 'many', container stem/whole plant, RDF only. 'sparsely distichous' is a separate arrangement statement.",
+  "reason": "Same construction as 'flowers numerous': a count with no number.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02705",
+  "decision": "new_pattern",
+  "target": "vague count",
+  "fix": "Split 'many-flowered' with the 'flowered' row of flora_counted_parts.tsv: counted part flower, container raceme/inflorescence PO:0009049, count word 'many', RDF only. 'dense' stays a separate statement.",
+  "reason": "The compound split needs a number; with 'many' it is a vague count.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02706",
+  "decision": "existing_pattern",
+  "target": "07-alternatives.md",
+  "fix": "Split it into: bearer multicellular trichome PO:0025162 that is part of bract (pattern 12), branched PATO:0000402 | unbranched PATO:0000414 (union of one attribute); and glandular trichome PO:0004509 present, part of bract, 'courts' as length. The transcribed 'hairy' on the bract is too coarse.",
+  "reason": "The 'or' is between two values of the hairs, not of the bract. The hairs need to be the bearer.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02707",
+  "decision": "existing_pattern",
+  "target": "09-relation-to-another-part.md",
+  "fix": "Bearer utricle → utricle capsule fruit PO:0030097 (the transcribed quality 'utricule' is the entity). Add 'protruding from' → protruding PATO:0001598 / exserted PATO:0000623 to the relation table, towards perianth PO:0009058.",
+  "reason": "This is a relation to another part, but the table lacks 'protruding from' and the transcription moved the organ into the quality slot.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02708",
+  "decision": "existing_pattern",
+  "target": "03-count-of-parts.md",
+  "fix": "Read the count '0' as absence: petal PO:0009032 negated present (or absent PATO:0000462), with '0' as the cue.",
+  "reason": "In flora formulas, 'pétales 0' is the standard way of saying there are no petals.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02709",
+  "decision": "existing_pattern",
+  "target": "annotation-context-patterns.md §5 (process as presence of a part, slot 1)",
+  "fix": "'rooting at the lower nodes' → shoot-borne nodal root PO:0003005 present, part of stem PO:0009047. 'lower nodes' is the position (region cue in RDF).",
+  "reason": "The doc already lists this exact phrase as the presence of a part at a place.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02710",
+  "decision": "existing_pattern",
+  "target": "07-alternatives.md",
+  "fix": "Add a rule 'narrowly X' → X (lanceolate) with the degree in RDF. Then linear-lanceolate (continuum) | lanceolate is a union of one shape attribute.",
+  "reason": "The union fails only because 'narrowly lanceolate' does not ground.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02711",
+  "decision": "existing_pattern",
+  "target": "03-count-of-parts.md",
+  "fix": "Normalise the hyphen the OCR lost ('3-4cleft' → '3-4-cleft') before the split. 'cleft' → lobe in flora_counted_parts.tsv: count of lobe 3-4, container leaf.",
+  "reason": "A compound count with a scanning error in the hyphen.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02712",
+  "decision": "existing_pattern",
+  "target": "growth-form nouns → whole plant EQ (climbing FLOPO:0991108)",
+  "fix": "'Liane' → whole plant PO:0000003 + climbing FLOPO:0991108; the length 3-12 m is a separate measurement.",
+  "reason": "The phenotype class just needs its EQ signature; the terms exist.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02713",
+  "decision": "existing_pattern",
+  "target": "10-ratio-to-another-part.md",
+  "fix": "Read fractions ('3/4') and '3/4 to as long as' as a length ratio 0.75-1 of upper glume PO:0006004 towards spikelet PO:0009051.",
+  "reason": "A ratio to another part; the parser only reads 'N times as long as' and 'as long as', not fractions.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02714",
+  "decision": "new_pattern",
+  "target": "gradient along the bearer",
+  "fix": "Two records for the cells of two regions of the leaf (upper cells subcircular; basal-marginal cells linear), linked by a qualitative_value_relation 'grading into along the axis' (the spatial counterpart of the 'becoming' transition). OWL: each region's cells with their own shape; the gradient in RDF only.",
+  "reason": "Not a process: the cells change shape gradually from the leaf middle to the base. No pattern covers a gradual change along an organ.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02715",
+  "decision": "existing_pattern",
+  "target": "07-alternatives.md",
+  "fix": "The pair simple|branched is already accepted in flora_union_pairs.tsv. Let the region cue 'at inflorescence' (upper/flowering part of the stem) attach to the second operand only, instead of blocking the whole union.",
+  "reason": "A reviewed union; it fails because a region cue that applies only to the second alternative is left alone.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02716",
+  "decision": "existing_pattern",
+  "target": "annotation-context-patterns.md §5 (process as presence of a part, slot 1)",
+  "fix": "'producing adventitious roots' → shoot-borne root PO:0000042 present, part of stem, frequency_qualifier 'occasionally'. The transcribed quality 'root' is the part.",
+  "reason": "The presence of a part, not a process. The doc's rule for 'rooting at the nodes' applies.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02717",
+  "decision": "existing_pattern",
+  "target": "07-alternatives.md",
+  "fix": "Pair glabrous|glandular is already accepted in flora_union_pairs.tsv. Add a grounding rule: 'with (adj) glands' → glandular PATO:0002117 (colour and 'papillose' as separate statements of the glands).",
+  "reason": "The second alternative is a phrase ('with ... glands'), not the adjective in the pair table.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02718",
+  "decision": "transcription_error",
+  "target": "leaflet PO:0020049 ('pinnule'), counted in pairs; container: lowest pinna",
+  "fix": "Entity should be the pinnules (primary pinnules, stalked), counted as about 10 pairs (pattern 03 with collection_size 2). 'stalked' is a quality of the pinnules, not the entity.",
+  "reason": "The transcribed entity 'stalked' is an adjective.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02719",
+  "decision": "new_pattern",
+  "target": "duration of development",
+  "fix": "Slots: bearer seed cone → megasporangiate strobilus PO:0005032 (not fruit), process 'maturation', duration 1 year. OWL: bearer participates in some (maturation and has characteristic some (duration and has magnitude 1, unit year)); the source words in RDF.",
+  "reason": "Time to maturity is a key character in Juniperus (1 vs 2 years), but no pattern covers how long a process takes. The transcribed entity 'fruit' is also wrong for a conifer.",
+  "confidence": "medium"
+ }
+]

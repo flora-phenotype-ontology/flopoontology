@@ -1,0 +1,353 @@
+[
+ {
+  "word": "colonial",
+  "decision": "new_class",
+  "target": "",
+  "label": "colonial",
+  "parent": "PATO:0001629",
+  "definition": "An aggregated quality inhering in a plant by virtue of its growing in a group of closely spaced shoots or individuals, usually spread vegetatively from one parent by rhizomes, stolons or root suckers.",
+  "synonyms": [
+   "colony-forming",
+   "forming colonies"
+  ],
+  "reason": "A widely used habit term (123 statements in 11 floras). Like FLOPO caespitose, it goes under PATO:0001629 aggregated. PO whole plant already lists 'clonal colony' as a bearer synonym, but there is no quality for it.",
+  "confidence": "medium"
+ },
+ {
+  "word": "bicolored",
+  "decision": "rule:pato",
+  "target": "multi-colored (PATO_0001533)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Bicolored means having two colours, which falls under PATO multi-colored (two or more hues). For leaves where it means the two faces differ in colour, FLOPO discolorous (FLOPO:0991070) is the more exact value.",
+  "confidence": "high"
+ },
+ {
+  "word": "poorly developed",
+  "decision": "rule:pato",
+  "target": "decreased size (PATO_0000587)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "'Rhizomes/indusium poorly developed' means small or reduced. PATO hypoplastic is defined by a lower number of cells, which is not what floras mean, so decreased size is the nearest honest value.",
+  "confidence": "low"
+ },
+ {
+  "word": "irregularly branched",
+  "decision": "pattern",
+  "target": "new: two values of one bearer (branched PATO_0000402 + irregular spatial pattern PATO_0000330)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "This joins the value 'branched' with an adverb that describes how the branches are spaced. Splitting it into two values on the same bearer keeps both parts of the meaning without adding a new term.",
+  "confidence": "medium"
+ },
+ {
+  "word": "marginate",
+  "decision": "new_class",
+  "target": "",
+  "label": "marginate",
+  "parent": "PATO:0000052",
+  "definition": "A shape quality inhering in a bearer by virtue of the bearer's having a distinct border that differs in thickness, texture or colour from the rest of it.",
+  "synonyms": [
+   "margined",
+   "bordered"
+  ],
+  "reason": "A standard glossary term for seeds, fruits, scales and petioles, and no PATO or FLOPO term covers it. When the colour of the border is given (e.g. 'white-margined'), that should be annotated as the colour of the margin instead.",
+  "confidence": "medium"
+ },
+ {
+  "word": "heteromorphic",
+  "decision": "rule:flopo_value",
+  "target": "dimorphic (FLOPO:0991092)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "In the examples (fertile vs sterile blades, ray vs disc florets) the parts come in two different forms, which matches FLOPO dimorphic. 'Flowers heteromorphic or homomorphic' in the heterostyly sense should go to FLOPO heterostylous (FLOPO:0991137) instead.",
+  "confidence": "medium"
+ },
+ {
+  "word": "subshrubby",
+  "decision": "new_class",
+  "target": "",
+  "label": "suffrutescent",
+  "parent": "PATO:0000141",
+  "definition": "A structural quality inhering in a plant by virtue of its being woody and persistent only at the base, with herbaceous upper shoots that die back seasonally.",
+  "synonyms": [
+   "subshrubby",
+   "sous-frutescent",
+   "suffruticose"
+  ],
+  "reason": "A common growth-form value with no PATO or FLOPO term. The plant type itself (suffrutex) only exists as a synonym of PO whole plant, not as a quality.",
+  "confidence": "medium"
+ },
+ {
+  "word": "biternate",
+  "decision": "new_class",
+  "target": "",
+  "label": "biternate",
+  "parent": "PATO:0000141",
+  "definition": "A structural quality inhering in a compound leaf by virtue of its being divided into three primary divisions, each of which is again divided into three.",
+  "synonyms": [
+   "twice ternate",
+   "biterné"
+  ],
+  "reason": "A specific division of compound leaves with no existing term. It is placed under PATO structure, like FLOPO trifoliolate (FLOPO:0991161) and unifoliolate.",
+  "confidence": "medium"
+ },
+ {
+  "word": "epigeal",
+  "decision": "rule:flopo_value",
+  "target": "aerial (FLOPO:0991036)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Epigeal stems and stolons, and cotyledons raised in epigeal germination, are above the ground, which is what FLOPO aerial means. For 'germination épigée' with a seed as bearer, the bearer should be the cotyledon.",
+  "confidence": "medium"
+ },
+ {
+  "word": "pinnately branched",
+  "decision": "new_class",
+  "target": "",
+  "label": "pinnately branched",
+  "parent": "PATO:0000402",
+  "definition": "A branched quality inhering in a bearer by virtue of the bearer's branches arising in two rows on opposite sides of a main axis, like the barbs of a feather.",
+  "synonyms": [
+   "pinnately ramified"
+  ],
+  "reason": "Mostly said of stems of mosses, ferns and algae, and is the axis counterpart of FLOPO pinnately veined (FLOPO:0991201). When the bearer is a vein, map it to pinnately veined instead.",
+  "confidence": "medium"
+ },
+ {
+  "word": "pentamerous",
+  "decision": "pattern",
+  "target": "new: merosity (number of parts in each floral whorl; see docs/odp/03-count-of-parts.md, Limits)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "This is a count of 5 parts per whorl. The count pattern explicitly does not split 'merous' because the word names no single part. A merosity pattern (a count per whorl) covers every N-merous word without adding one term per number.",
+  "confidence": "high"
+ },
+ {
+  "word": "leafless",
+  "decision": "rule:entity_absence",
+  "target": "leaf (PO_0025034) absent",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "'Leafless' means without leaves: the complement of has_part some leaf, the same rule as for ebracteate and bladeless. 'Stipule: leafless' is a misassigned bearer.",
+  "confidence": "high"
+ },
+ {
+  "word": "annulate",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "The word is used in two senses that need different annotations. On bark or spines it means marked with rings; on a corolla throat it means an annulus (a ring of hairs or thickening) is present, which is a part being present. One term would mix them.",
+  "confidence": "medium"
+ },
+ {
+  "word": "lorate",
+  "decision": "rule:pato",
+  "target": "strap-shaped (PATO_0002430)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Lorate means strap-shaped, the same as ligulate, which the previous review mapped to PATO_0002430.",
+  "confidence": "high"
+ },
+ {
+  "word": "abortive",
+  "decision": "new_class",
+  "target": "",
+  "label": "abortive",
+  "parent": "PATO:0000141",
+  "definition": "A structural quality inhering in a plant structure by virtue of its having stopped developing before maturity, so that it is present but reduced and usually non-functional.",
+  "synonyms": [
+   "aborted"
+  ],
+  "reason": "Abortive stamens, pollen and fruits are present but did not finish developing. PATO aplastic means the part is absent and PATO vestigial means an evolutionary remnant, so neither fits.",
+  "confidence": "medium"
+ },
+ {
+  "word": "scaleless",
+  "decision": "rule:entity_absence",
+  "target": "scale absent (no specific class: PO_0000282 trichome has 'scale' only as a synonym and is too broad)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "'Without scales' states that a part is absent, like awnless. But there is no class for scales on their own: using trichome would also claim the part has no hairs. This needs a FLOPO scale bearer class (or PO_0006003 for bud scales) before it can be applied.",
+  "confidence": "low"
+ },
+ {
+  "word": "tetramerous",
+  "decision": "pattern",
+  "target": "new: merosity (number of parts in each floral whorl; see docs/odp/03-count-of-parts.md, Limits)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A count of 4 parts per whorl. Handled by the same merosity pattern as pentamerous, not by its own term.",
+  "confidence": "high"
+ },
+ {
+  "word": "suffused",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A linking word: in 'suffused with red' the colour that follows is the value. Without that colour it says nothing about the plant.",
+  "confidence": "high"
+ },
+ {
+  "word": "shaggy",
+  "decision": "rule:flopo_value",
+  "target": "villous (FLOPO:0991051)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "'Shaggy' means covered with long, soft, loose hairs, which is villous; most examples ('shaggy long-hairy') are about hairs. 'Shaggy bark' would instead be FLOPO exfoliating.",
+  "confidence": "medium"
+ },
+ {
+  "word": "ample",
+  "decision": "rule:pato",
+  "target": "increased size (PATO_0000586)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "'Panicle ample' and 'ample sheath' mean large or wide. When paired with 'lax' or 'diffuse', the open shape is a separate value (PATO loose).",
+  "confidence": "medium"
+ },
+ {
+  "word": "callous",
+  "decision": "new_class",
+  "target": "",
+  "label": "callose",
+  "parent": "PATO:0000150",
+  "definition": "A texture quality inhering in a bearer by virtue of the bearer's bearing hard, thickened, usually raised patches (calluses).",
+  "synonyms": [
+   "callous",
+   "calloused",
+   "calleux"
+  ],
+  "reason": "A standard glossary term (phyllary tips, filaments, lip disc) with no existing term. PO 'plant callus' is undifferentiated tissue grown in culture, not this thickening.",
+  "confidence": "medium"
+ },
+ {
+  "word": "cracked",
+  "decision": "rule:flopo_value",
+  "target": "fissured (FLOPO:0991022)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "'Cracked' is already a synonym of FLOPO fissured, and the main bearer (bark) matches.",
+  "confidence": "high"
+ },
+ {
+  "word": "obliquely ovoid",
+  "decision": "pattern",
+  "target": "new: two values of one bearer (ovate PATO_0001891 + asymmetrical PATO_0000616)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "This is the 3-D egg shape plus a lopsidedness, two values that already exist. Annotating both on the same bearer avoids a term for every 'obliquely X'.",
+  "confidence": "medium"
+ },
+ {
+  "word": "widening",
+  "decision": "rule:pato",
+  "target": "dilated (PATO_0001571)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "'Widening distally/above' means made wider, the opposite of narrowed→tapered. The previous review mapped 'expanded' to PATO dilated. The direction ('distally') goes in the position.",
+  "confidence": "medium"
+ },
+ {
+  "word": "elliptic-ovate",
+  "decision": "pattern",
+  "target": "docs/annotation-context-patterns.md (continuum between two values: elliptic PATO_0000947 – ovate)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A hyphenated pair of two shapes, handled like 'linear-lanceolate' by the existing continuum pattern (a linked record holding both values).",
+  "confidence": "high"
+ },
+ {
+  "word": "white-margined",
+  "decision": "pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1: part of the bearer — margin, value white)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "It gives a colour for one part of the bearer (its margin), so it is annotated as the colour of that part, not as a new term.",
+  "confidence": "high"
+ },
+ {
+  "word": "coroniform",
+  "decision": "rule:pato",
+  "target": "crown like (PATO_0040006)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Coroniform means crown-shaped (crown-like pappus or calyx lobes), which matches PATO crown like exactly.",
+  "confidence": "high"
+ },
+ {
+  "word": "maculate",
+  "decision": "rule:pato",
+  "target": "spotted (PATO_0000333)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Maculate means marked with spots or blotches of another colour, which is the definition of PATO spotted.",
+  "confidence": "high"
+ },
+ {
+  "word": "sparsely",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "An adverb of degree or density that modifies the value after it (hirsute, pilose, branched). It is not a quality by itself.",
+  "confidence": "high"
+ },
+ {
+  "word": "corrugate",
+  "decision": "rule:pato",
+  "target": "rugose (PATO_0001359)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Corrugate means the surface is thrown into wrinkles or folds, which falls under PATO rugose (many wrinkles or creases). 'Corrugate-cristate' is a pair of two values for the continuum pattern.",
+  "confidence": "medium"
+ }
+]

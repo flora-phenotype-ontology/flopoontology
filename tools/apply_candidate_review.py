@@ -46,6 +46,9 @@ TARGET_RE = re.compile(
     re.IGNORECASE,
 )
 UNION_ACCEPT_MIN = 0.6
+# one-word names of the new anatomy classes that mean other things on other organs: related
+# synonyms in the ontology, but no rule
+GENERIC_PART_WORDS = {"beak", "orifice", "article", "bladder", "callus", "diaphragm", "commissure", "fig", "massue", "gorge", "rostrum", "bec"}
 # quality words that name a part, checked by hand (2026-11-14); fruit and inflorescence kinds
 # are taken by their PO label
 PART_AS_QUALITY = {
@@ -293,6 +296,27 @@ def main() -> None:
                     "reason": re.sub(r"\s+", " ", ("not a part: " if row["decision"] == "not_a_part" else "") + row["reason"]),
                     "statements": row["statements"], "floras": row["floras"], "reviewed": STAMP,
                 })
+    # the plant parts that became FLOPO classes (tools/stage_review_classes.py): their words
+    staged = args.review_dir / "staged-classes.tsv"
+    if staged.exists():
+        for row in _rows(staged):
+            if row["queue"] != "bearers" or not row["flopo_id"]:
+                continue
+            identifier = row["flopo_id"]
+            if identifier not in catalog.res.flopo_catalog:
+                stats["bearers new class not in the registry yet"] += 1
+                continue
+            rule = dict.fromkeys(FIELDS, "")
+            rule.update(match_field="bearer", kind="bearer", po_id=identifier, target_label=row["label"])
+            for word in row["names"].split("|"):
+                key = na.normalize_key(word)
+                if not key or len(key) < 4 or ("bearer", key) in taken or key in catalog.res.po_lexicon or key in GENERIC_PART_WORDS:
+                    continue
+                taken.add(("bearer", key))
+                out.append({**rule, "match_key": key, "review_status": "second_model_reviewed",
+                            "evidence": f"{identifier.replace('_', ':')} {row['label']}: new FLOPO anatomy class of "
+                                        f"the second-model review ({row['statements']} statements)"})
+                stats["bearers new class rules"] += 1
     for index, rule in enumerate(out, 1):
         rule["rule_id"] = f"R{index:04d}"
 

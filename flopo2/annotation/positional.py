@@ -170,11 +170,18 @@ def surface_scope(outer_bearer: str, cue_side: str, cue_start: int, cue_end: int
 
 
 def reviewed_scope_pairs() -> set[tuple[str, str]]:
+    """(organ, part) pairs of the reviewed tables: the surfaces, and the apex, base and margin
+    classes (``REGION_PARTS``). PO does not state every one as a part: "leaf lamina tip"
+    (PO:0025589) is defined as the distal portion of the leaf lamina but is asserted only as a
+    leaf tip."""
+
+    from flopo2.verify.recover_claude_missing_bearer import REGION_PARTS  # no cycle at import
+
     return {
         (outer, scope)
         for outer, sides in SURFACE_SCOPE.items()
         for scope, _mode in sides.values()
-    }
+    } | {(outer, part) for outer, parts in REGION_PARTS.items() for part in parts.values()}
 
 
 @lru_cache(maxsize=4)

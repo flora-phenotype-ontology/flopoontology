@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P01920",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground the container from the organ named just before the count in the clause ('corolle ... à 3 lobes'). PO has a lobe class for that organ, so the bearer is corolla lobe with amount 3 (count) and no container is needed. French 'à N <part>' is not read as a count yet.",
+  "reason": "A count of the corolla lobes; the organ stands right before it in the same clause.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01921",
+  "decision": "existing_pattern",
+  "target": "measurement attribute words (flopo2/ingest/ncvc_annotate.py: 'thick' -> PATO:0000915 thickness)",
+  "fix": "With a number and a length unit, 'thick' must ground to the attribute thickness PATO:0000915, not to the value 'increased thickness' PATO:0000591 (whose synonym is 'thick'). Bearer: branch PO:0025073 (synonym twig); 'leafy' is a state of the twig.",
+  "reason": "A plain thickness range in mm; the word picked the value class instead of the attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01922",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add a rule: 'paler/darker beneath (above)' on a leaf, leaflet or lamina has the other surface as its implied second term. Annotate it as discolorous FLOPO:0991070 on the lamina, keeping 'paler beneath' as the cue. The comparison needs no named second part.",
+  "reason": "The two sides of the leaflet differ in colour; the term discolorous already exists.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01923",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Same rule as 'paler beneath': leaf lamina discolorous FLOPO:0991070, with 'slightly' as a degree cue kept in RDF.",
+  "reason": "The two leaf surfaces differ in colour; the second term (the upper surface) is implied.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01924",
+  "decision": "transcription_error",
+  "target": "entity trichome PO:0000282 (hair), part of flower; quality length PATO:0000122",
+  "fix": "Re-transcribe as hair length 0.1-0.2 mm, with flower as the whole (pattern 12 / container). 'hairs' is not a quality.",
+  "reason": "The measured thing is the hair, not the flower; the quality slot holds the part's name.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01925",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "Describes an informal form within the species ('calyx measurements in the lower range' compared with the typical form), not the taxon as a whole.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01926",
+  "decision": "missing_term",
+  "target": "numerous: an amount quality of a kind of part present in a large, indefinite number (in flowers, more than about 10-12)",
+  "fix": "Add a FLOPO value under amount PATO:0000070; bearer stamen, container flower. PATO:0002118 multiple (more than two copies) is too weak, and PATO:0000470 increased amount is relative to normal.",
+  "reason": "'Stamens numerous' is a standard key character (indefinite stamens) with no term.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01927",
+  "decision": "new_pattern",
+  "target": "extent-of-qualified-region",
+  "fix": "Slots: bearer (bracteole), region quality (fused with PATO:0000642, towards the other bracteole), and the length of the fused region with value and unit. OWL: has part some (bracteole and has part some (region and has characteristic some 'fused with' and has characteristic some (length and has magnitude ...))); RDF keeps 'joined for' as the cue.",
+  "reason": "The number measures how far the parts are joined, not the bracteole; no pattern measures a region defined by a quality.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01928",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (stage kind A, 'in fruit' in config/flora_context_words.tsv)",
+  "fix": "Map the process word 'thickening' to the state increased thickness PATO:0000591 (synonym thickened), with the stage 'in fruit' PO:0001002. The bearer is the sepal of pistillate flowers (pattern 12).",
+  "reason": "Accrescent sepals: a state at the fruit stage, phrased as a process.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01929",
+  "decision": "existing_pattern",
+  "target": "docs/odp/01-approximate-value.md",
+  "fix": "Read 'X or nearly so' as the value X with value_qualifier approximately and 'or nearly so' as the cue, not as a disjunction.",
+  "reason": "'Straight or nearly so' means approximately straight; there is only one value.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01930",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md (secondary; config/flora_union_pairs.tsv)",
+  "fix": "Add a reviewed pair (cyme inflorescence | solitary flower). Union over full statements of the shoot: has part some cyme or has part some (flower and has characteristic solitary).",
+  "reason": "An alternative between two kinds of inflorescence; each side is annotatable.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01931",
+  "decision": "missing_term",
+  "target": "abaxial (series member): a position quality of a member placed on the abaxial side of the flower, towards the subtending bract",
+  "fix": "One of the position values still missing for pattern 04 (beside upper/lower/inner/outer). Then: bearer flower nectary PO:0009056 with that position, length (0-)0.3-0.8 mm (pattern 05), in staminate flowers (pattern 12).",
+  "reason": "'Abaxial' names which of the two Salix nectaries is meant; the context slot has no value for it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01932",
+  "decision": "missing_term",
+  "target": "numerous: an amount quality of a kind of part present in a large, indefinite number",
+  "fix": "Same term as for 'Stamens numerous'; bearer seed PO:0009010, container fruit. 'brown' is a separate colour statement.",
+  "reason": "An amount without a number; no term for 'numerous'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01933",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (temporal transition, qualitative_value_relation)",
+  "fix": "Read French 'ensuite'/'puis' as a transition cue ('entier dans le bouton, déchiré ensuite'). Ground 'déchiré en segments irréguliers' to split PATO:0001786, with an 'irregularly' cue. The earlier state is entire, in bud.",
+  "reason": "The calyx is entire in bud and splits irregularly at anthesis: a transition between two states.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01934",
+  "decision": "transcription_error",
+  "target": "ovary PO:0009062, pubescent, degree 'sparsely' (éparsement)",
+  "fix": "The value '1,5 mm' belongs to the previous clause (ovary length); the pubescence statement has no measurement. Annotate it as a plain value with its degree cue.",
+  "reason": "A number from the next clause was attached to a qualitative statement.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01935",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add 'may reach' (and 'reaches') to the inclusive upper-bound cues. Use the metric parenthesis (10 cm), or accept inches. The stage 'at maturity' is kind A.",
+  "reason": "An upper bound on pappus diameter with an unlisted cue.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01936",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md slot 1 (config/flora_context_words.tsv 'outside')",
+  "fix": "Allow 'outside'/'inside' on calyx lobes and synsepalous calyces, not only single perianth members. The bearer is the calyx lobe (the subject of the clause 'lobes rounded, ...'), on its outer surface.",
+  "reason": "A surface statement of the calyx lobe; the bearer restriction left it out.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01937",
+  "decision": "new_pattern",
+  "target": "count-per-position",
+  "fix": "Slots: counted part (vein), container (leaflet lamina), position part (one side of the midrib, BSPO lateral side), value per side. OWL: has part some (lamina and has part some (lateral region and has part some (vein and has characteristic some (amount and has magnitude [6,17])))); RDF keeps 'on each side'. Do not double the count.",
+  "reason": "The count is per side of the midrib; this is held in pattern 03 and listed as open.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01938",
+  "decision": "existing_pattern",
+  "target": "measurement attribute words (flopo2/ingest/ncvc_annotate.py: 'thick' -> PATO:0000915 thickness)",
+  "fix": "Same rule as 'twigs 2-8 mm thick': 'thick' after a number is thickness. Bearer perianth lobe of the male flower bud (container perianth, pattern 12).",
+  "reason": "A thickness range; the word picked the value class instead of the attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01939",
+  "decision": "new_pattern",
+  "target": "conditional-state",
+  "fix": "Slots: bearer, conditioning state (pinnate / simple) and the dependent statements. OWL: has part some (lamina and ((pinnate and length [15,48] cm) or (simple and length [0,10] cm))), a union of conjunctions; RDF keeps 'if ... then' as the cue.",
+  "reason": "The value holds only for laminae in one state; no pattern links a value to an alternative state of the same bearer.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01940",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Read fractions ('1/2-3/5 as long as') as a ratio 0.5-0.6, unit ratio, towards the spur (ground 'spur' to the PO spur class).",
+  "reason": "A ratio to another part written with fractions instead of 'times'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01941",
+  "decision": "existing_pattern",
+  "target": "docs/odp/08-alternative-with-frequency.md",
+  "fix": "Accept ', rarely X' after a value as an alternative with its own frequency even without 'or' ('simple, rarely branched'). Operands: unbranched, branched + rarely. It is not a negation.",
+  "reason": "The usual wording of an alternative with frequency, joined by a comma.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01942",
+  "decision": "new_pattern",
+  "target": "after-stage",
+  "fix": "Slots: value, stage (flowering PO stage) and a relation 'after' (or 'before') to that stage, beside present_during. OWL: has characteristic some (contorted and exists during some (stage preceded by flowering stage)); RDF keeps 'after flowering'. Contorted: map to torsioned PATO:0002445 (synonym twisted) with a 'spirally' cue.",
+  "reason": "'After flowering' is listed as open (A2); the model only has present_during.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01943",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add 'darker / paler than' to the comparison words, with low brightness PATO:0000327 / high brightness PATO:0000665 towards the fruit rib. Bearer: canal PO:0025132 (synonym sulcus) of the fruit; 'slightly' is a degree cue.",
+  "reason": "The second term (ribs) is in the clause; only the colour comparison words are missing.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01944",
+  "decision": "transcription_error",
+  "target": "involucral bract PO:0009045 (phyllary), low saturation PATO:0000328 (pale)",
+  "fix": "Bearer phyllary, not bract. 'pale' is a colour; the negation flag is spurious.",
+  "reason": "Plain statement 'phyllaries pale'; wrong bearer and a false negation reading.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01945",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Take the second term from the preceding clause ('lateral leaflets similar to terminal'). Bearer: lateral leaflet lamina, decreased size towards the terminal leaflet, frequency 'sometimes'.",
+  "reason": "A comparison whose second term stands one clause earlier.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01946",
+  "decision": "missing_term",
+  "target": "widest below the middle: a 2-D shape quality of a flat organ whose greatest width lies in its proximal half",
+  "fix": "A FLOPO shape value; it would be the parent of ovate, lanceolate and deltate in the planned shape hierarchy (compare pato#627). Bearer leaf lamina.",
+  "reason": "A standard descriptive term for the position of maximum width; no PATO class for it.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01947",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add 'contiguous' -> abutting PATO:0002435, with the same kind of part (lobe) as the implied second term, as for spacing.",
+  "reason": "Adjacent lobes touch one another; abutting exists.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01948",
+  "decision": "missing_term",
+  "target": "numerous: an amount quality of a kind of part present in a large, indefinite number",
+  "fix": "Same term; bearer spike inflorescence, container shoot. 'usually' is the frequency.",
+  "reason": "An amount without a number; no term for 'numerous'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01949",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "The usual range is '15 to 30 feet'; 'records indicate ... up to 100 feet' is value_max_extreme. Accept feet as a length unit (it was rejected as a non-length unit).",
+  "reason": "A recorded maximum outside the usual height range.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01950",
+  "decision": "missing_term",
+  "target": "numerous: an amount quality of a kind of part present in a large, indefinite number (in flowers, more than about 10-12)",
+  "fix": "Same term; bearer stamen, container flower.",
+  "reason": "'Stamens numerous' has no term.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01951",
+  "decision": "existing_pattern",
+  "target": "docs/odp/01-approximate-value.md",
+  "fix": "Split 'sub-' on 'subellipsoid' to ellipsoid + approximately. Then use the existing continuum 'obovoid to ellipsoid'.",
+  "reason": "A continuum whose second value is a 'sub-' word without its own term.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01952",
+  "decision": "new_pattern",
+  "target": "count-per-position",
+  "fix": "Counted part: leaf margin tooth; container: leaf lamina; position: each side (half) of the lamina; value 30-75 per side. Same representation as the vein count per side.",
+  "reason": "A count per side; held in pattern 03.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01953",
+  "decision": "new_pattern",
+  "target": "count-per-position",
+  "fix": "Counted part: secondary vein; container: leaf lamina; position: each side of the midvein; value 9-11 per side.",
+  "reason": "A count per side of the midvein; held in pattern 03.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01954",
+  "decision": "missing_term",
+  "target": "numerous: an amount quality of a kind of part present in a large, indefinite number",
+  "fix": "Read 'many' as the same term; bearer pistil, container flower.",
+  "reason": "An amount without a number; 'many' = numerous.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01955",
+  "decision": "missing_term",
+  "target": "numerous: an amount quality of a kind of part present in a large, indefinite number",
+  "fix": "Same term; bearer spike, container panicle.",
+  "reason": "An amount without a number; no term for 'numerous'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01956",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Bearer: leaf base (region rule). Union of obtuse | rounded | cordate approximately ('subcordate', pattern 01) | cordate with a 'shortly' degree cue.",
+  "reason": "A four-way alternative of base shapes; it fails on the 'sub-' and 'shortly' members.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01957",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md slot 1 (region 'above'/'below' on stem)",
+  "fix": "Allow the region scope on measurements: width of the distal region of the stem internode, upper bound 4 mm with lower 2 mm. 'widened to' is a width cue, not a stage.",
+  "reason": "Width of the upper part of the internode; 'above' is a region, misread as a stage.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01958",
+  "decision": "transcription_error",
+  "target": "megasporangiate strobilus PO:0005032 (seed cone)",
+  "fix": "The bearer is the seed cone, not a fruit (Pinus has no fruit). Then: indehiscent or slightly dehiscent at maturity, pattern 07 with a degree cue.",
+  "reason": "'Seed cones' was transcribed as fruit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01959",
+  "decision": "transcription_error",
+  "target": "fruit valve PO:0000033; quality unfused from PATO:0000651 (towards the other valves), at dehiscence",
+  "fix": "Re-transcribe with the valve as bearer. 'Separating' is the state of being unfused at the dehiscence stage, as opposed to remaining joined at the apex.",
+  "reason": "The statement is about the capsule valves, and the quality slot holds a process phrase.",
+  "confidence": "medium"
+ }
+]

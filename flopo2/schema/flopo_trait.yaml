@@ -284,6 +284,20 @@ classes:
           compiled into a taxon axiom and is not compared for conflicts.
         inlined: true
         range: SpecimenCondition
+      count_word:
+        description: >-
+          A count stated without a number ("seeds numerous", "few-flowered"): the counted part
+          is present (quality present) and the word for how many is kept with its cue. The
+          phenotype class is that of the presence; the word is not part of it.
+        inlined: true
+        range: IndefiniteCount
+      count_position:
+        description: >-
+          The count holds at each place of a kind, not for the organ as a whole ("lateral veins
+          4-6 on each side of the midrib", "flowers 1-3 per node"). An assertion with a count
+          position carries no phenotype_class_iri: the number says nothing about the total.
+        inlined: true
+        range: CountPosition
       value_union_scope:
         description: >-
           For value_operator one_of: whether the alternatives are values of one attribute
@@ -741,6 +755,44 @@ classes:
         range: integer
         description: Exclusive offset of whole_text in the source segment.
 
+  IndefiniteCount:
+    description: >-
+      The word that states a count without a number.
+    attributes:
+      amount:
+        required: true
+        range: IndefiniteAmount
+      count_text:
+        required: true
+        description: Exact word copied from the source statement ("numerous", "few-flowered").
+      start:
+        range: integer
+        description: Inclusive offset of count_text in the source segment.
+      end:
+        range: integer
+        description: Exclusive offset of count_text in the source segment.
+
+  CountPosition:
+    description: >-
+      The kind of place at which a count is taken, with the structure that marks the place.
+    attributes:
+      kind:
+        required: true
+        range: CountPositionKind
+      landmark_term:
+        description: >-
+          PO or FLOPO class of the structure the place is defined by (leaf midvein for "on each
+          side of the midrib", stem node for "per node"), when the source names it.
+      position_text:
+        required: true
+        description: Exact cue copied from the source statement ("on each side of the midrib").
+      start:
+        range: integer
+        description: Inclusive offset of position_text in the source segment.
+      end:
+        range: integer
+        description: Exclusive offset of position_text in the source segment.
+
   SpecimenCondition:
     description: >-
       A condition of preservation or treatment of the specimen under which the statement holds.
@@ -890,6 +942,28 @@ enums:
     permissible_values:
       same_attribute:
       across_attributes:
+
+  IndefiniteAmount:
+    description: How many, as far as a word without a number says.
+    permissible_values:
+      few:
+        description: A small number ("few", "a few", "pauci-", "peu nombreux").
+      several:
+        description: More than two or three, not many ("several", "plusieurs").
+      many:
+        description: A large or uncounted number ("many", "numerous", "multi-", "nombreux").
+
+  CountPositionKind:
+    description: The kind of place at which a count is taken.
+    permissible_values:
+      each_side:
+        description: On each of the two sides of an axis or organ ("on each side of the midrib", "per side").
+      per_node:
+        description: At each node of an axis ("per node", "at each node").
+      per_axil:
+        description: In each axil ("per leaf axil").
+      at_region:
+        description: At a named region of the organ ("at the base", "at the apex", "on the margin").
 
   SpecimenConditionKind:
     description: Condition of the specimen a statement is restricted to.

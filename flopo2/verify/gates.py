@@ -252,13 +252,52 @@ def load_flopo_ids(path: Path = Path("config/flopo_id_registry.tsv")) -> set[str
     return out
 
 
+# "4 or 5 leaves", "4- or 5-jugate", "3 ou 4": two numbers of one count or measurement, which
+# is the range between them; "glabrous or nearly so": the value, approximately. Neither is a
+# choice between two values (second-model review, 2026-11-14).
+NUMERIC_ALTERNATION = re.compile(
+    r"(?<![\w.,])(\d+(?:[.,]\d+)?)\s*-?\s*(?:,\s*)?(?:or|ou)\s+(\d+(?:[.,]\d+)?)(?![\d.,]*\d)"
+)
+OR_NEARLY_SO = re.compile(
+    r",?\s*\bor\s+(?:very\s+)?(?:nearly|almost|practically|virtually)\s+so\b|,?\s*\bou\s+presque\b(?!\s+\w)"
+)
+
+
 def _has_real_disjunction(source_text: str) -> bool:
+    """An "or" between two values, anywhere in the text. Used for the clause around a statement:
+    two numbers of a count and "or nearly so" there belong to some statement and are not a
+    choice between values of this one."""
+
     source_text = re.sub(
         r"\bmore\s+or\s+less\b|\bplus\s+ou\s+moins\b",
         "",
         _norm(source_text),
     )
+    source_text = OR_NEARLY_SO.sub("", NUMERIC_ALTERNATION.sub(r"\1-\2", source_text))
     return re.search(r"\b(?:or|ou)\b", source_text) is not None
+
+
+def unexplained_disjunction(source_text: str, value_low=None, value_high=None, approximate_cue: str = "") -> bool:
+    """An "or" in the statement's own words that the assertion does not account for.
+
+    "4 or 5" is accounted for by the range 4-5 of the assertion, and "or nearly so" by its
+    approximation cue; any other "or" is a choice between values."""
+
+    text = re.sub(r"\bmore\s+or\s+less\b|\bplus\s+ou\s+moins\b", "", _norm(source_text))
+
+    def numbers(match: re.Match) -> str:
+        try:
+            pair = sorted(float(n.replace(",", ".")) for n in match.groups())
+            stated = sorted((float(value_low), float(value_high)))
+        except (TypeError, ValueError):
+            return match.group(0)
+        return f"{match.group(1)}-{match.group(2)}" if pair == stated else match.group(0)
+
+    text = NUMERIC_ALTERNATION.sub(numbers, text)
+    cue = _norm(approximate_cue)
+    if cue and OR_NEARLY_SO.fullmatch(" " + cue):
+        text = text.replace(cue, "", 1)
+    return re.search(r"\b(?:or|ou)\b", text) is not None
 
 
 # --- Attribute-aware disjunction scoping (curator decision 2026-09-18, C3) -----------------
@@ -653,7 +692,8 @@ def check_assertion(
         and not assertion.get("qualitative_value_relation")
         and _has_real_disjunction(source_context)
     ):
-        if _has_real_disjunction(source_text):
+        approximate = assertion.get("modality_text", "") if assertion.get("value_qualifier") == "approximately" else ""
+        if unexplained_disjunction(source_text, assertion.get("value_low"), assertion.get("value_high"), approximate):
             reasons.append("atomic_source_contains_disjunction")
             score -= 0.35
         elif not _clause_disjunction_is_off_topic(source_context, assertion.get("pato_id", "")):

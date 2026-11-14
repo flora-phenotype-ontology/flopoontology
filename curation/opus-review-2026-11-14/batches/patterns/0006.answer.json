@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P00240",
+  "decision": "new_pattern",
+  "target": "count per side",
+  "fix": "A count (03-count-of-parts: bearer secondary vein, quality PATO:0000070 amount, container leaf lamina PO:0020039) plus a per-side slot. The number counts the veins on one side of the midvein, not the whole blade, so it must not be doubled or read as a total. RDF: fb:countPer \"side of midvein\" with its cue. OWL: the amount on veins that are part of a lateral half of the lamina (a pinned BSPO lateral region), with the data range as given. 'ca.' is value_qualifier approximately.",
+  "reason": "Listed as open in annotation-context-patterns.md §4 ('count at a position') and 03-count-of-parts.md Limits; no odp file covers it.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00241",
+  "decision": "new_pattern",
+  "target": "count per side",
+  "fix": "As P00240: lateral vein amount 10-15, container leaf lamina, per-side slot with the cue 'per side' (side of the midvein implied).",
+  "reason": "Same construction as P00240; the parser holds it as count_per_position.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00242",
+  "decision": "new_pattern",
+  "target": "indefinite count",
+  "fix": "Bearer stamen, quality PATO:0000070 amount, no numeric range. RDF holds count_qualifier 'many' with its cue. OWL states only 'has part some (stamen and has characteristic some amount)'. Do not use PATO:0000470 increased amount: it compares to a reference organism. In descriptions 'stamens many' usually means more than about 10; record that as a convention in RDF, not as a bound.",
+  "reason": "03-count-of-parts holds 'few'/'many' as measurement_value_not_numeric, and no pattern gives them a representation.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00243",
+  "decision": "existing_pattern",
+  "target": "03-count-of-parts.md",
+  "fix": "Read 'N or M' with adjacent whole numbers as a count range (value_low 4, value_high 5) rather than a disjunction of two values. Bearer leaf (PO:0025034), container stem (PO:0009047).",
+  "reason": "Two adjacent integers joined by 'or' are a count range, which the count pattern already handles.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00244",
+  "decision": "new_pattern",
+  "target": "indefinite count",
+  "fix": "Bearer capitulum (an Asteraceae head; ground it with a bearer rule to the PO head/capitulum class instead of generic inflorescence), quality amount, count_qualifier 'numerous' in RDF only. OWL as in P00242.",
+  "reason": "Indefinite count. The bearer should be the head, not inflorescence in general.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00245",
+  "decision": "new_pattern",
+  "target": "optional part",
+  "fix": "Two operands of one record: absence (presence negated, cue '0') or a count of ray florets 5-18. RDF holds both operands with value_operator one_of. OWL can state neither (a union with a negation is outside EL), so no class is asserted; the record is queryable only in RDF.",
+  "reason": "07-alternatives unions positive values, and absence is kept out of the pair table ('absence is stated by negation').",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00246",
+  "decision": "existing_pattern",
+  "target": "02-bounded-measurement.md",
+  "fix": "Map 'N mm thick' to PATO:0000915 thickness (attribute) with the range 0.7-1 mm on pericarp. 'generally' is frequency_qualifier usually. The contrasting clause about the edges is a separate record (P00277).",
+  "reason": "The attribute exists. The parser takes 'thick' as a value word instead of the dimension of a measurement.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00247",
+  "decision": "existing_pattern",
+  "target": "03-count-of-parts.md",
+  "fix": "Ground the container 'pinnule lobe' with a bearer rule (a lobe that is part of a pinnule, PO leaflet). Count sori as pairs (object aggregate of 2, as for 'jugate'), with the upper bound cue 'up to' (02). 'up to 7 pairs' gives a high of 7 pairs.",
+  "reason": "Count with pairs and a container is covered; only the container grounding is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00248",
+  "decision": "existing_pattern",
+  "target": "03-count-of-parts.md",
+  "fix": "Carry the elided container from the series 'basal cone scales 9-ovulate, middle 7-ovulate': the container is a seed cone scale and the bearer an ovule (add 'ovulate → ovule' to config/flora_counted_parts.tsv if absent). 'middle' is a series-member position (kind D, open), so annotate the count with the middle position held in RDF until kind D accepts FLOPO values.",
+  "reason": "The organ is given in the previous clause; the count-in-word pattern applies.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00249",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation: negated, negation_scope absence)",
+  "fix": "Add 'wanting' to NEGATION_EVIDENCE in flopo2/verify/gates.py. Involucre present, negated, scope absence.",
+  "reason": "'wanting' means absent, but it is not in the negation cue list.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00250",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'inconnus' means not known (not collected or described), not absent. It says nothing about the phenotype.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00251",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md §5 (processes) with slot 1",
+  "fix": "Rule: 'rooting from/at the (lower) nodes' gives shoot-borne root (PO:0000042) present, with the stem node as the place (part_restrictions: the node, basal region of the culm). Check whether 'rarely' also scopes 'rooting' in 'rarely geniculate and rooting'; if so, carry frequency_qualifier rarely.",
+  "reason": "Annotation-context-patterns.md already designs this as presence of adventitious roots at a place.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00252",
+  "decision": "new_pattern",
+  "target": "indefinite count",
+  "fix": "Bearer seed (PO:0009010), container fruit, quality amount with count_qualifier 'numerous' in RDF; OWL as in P00242.",
+  "reason": "Indefinite count.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00253",
+  "decision": "new_pattern",
+  "target": "indefinite count",
+  "fix": "Bearer ovule, container ovary, quality amount, count_qualifier 'nombreux' (numerous) in RDF; OWL as in P00242.",
+  "reason": "Indefinite count (French).",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00254",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Drop the stage qualifier. This is a plain length of the spikelet, 2 mm (and width 1 mm).",
+  "reason": "The clause 'spikelets elliptic, 2 mm. long' names no stage; the developmental_stage_context flag is spurious.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00255",
+  "decision": "missing_term",
+  "target": "acaulescent: a plant whose aerial stem is absent or so short that the leaves seem to arise from the ground",
+  "fix": "Prefer a rule over a class: stem (PO:0009047) with very short length, rather than stem absent (acaulescent plants have a short or underground stem). If no length value fits, add a FLOPO value class on whole plant. 'slender' and '1-4 dm high' are separate records.",
+  "reason": "It is not a negation. The word is a habit term and has no grounding.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00256",
+  "decision": "missing_term",
+  "target": "falling (of stipules): caducous, shed early; rule to PATO:0001730 deciduous (generic)",
+  "fix": "A reviewed rule 'falling' → PATO:0001730 on the stipule; no new class.",
+  "reason": "The quality exists (the normalization already uses deciduous (generic) for caducous organs). Only the word is unmapped; it is a disposition, not a process.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00257",
+  "decision": "existing_pattern",
+  "target": "02-bounded-measurement.md",
+  "fix": "Add the cue 'to more than X'. It means the longest bracts exceed X, so it is a lower bound on the maximum: store it as an open upper end above 30 cm (max extreme > 30 cm), not as an upper bound.",
+  "reason": "This bound wording is not in the cue list, and its meaning is the reverse of 'to X'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00258",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'unknown' means not described, not absent. Note the bearer would also be wrong: nutlet, not fruit in general.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00259",
+  "decision": "new_pattern",
+  "target": "optional part",
+  "fix": "Bearer lower glume (PO:0006002). Operands: vestigial (PATO:0000588) or absent (presence negated), held as one_of in RDF. OWL asserts nothing (no EL union with a negation).",
+  "reason": "The union-pair table rejects 'absent' as a value ('absence is stated by negation'), so 07-alternatives cannot take it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00260",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The bearer is the trichome (PO:0000282), part of the abaxial leaf surface (lower surface, slot 1). The quality is length 0.1 mm. 'thin', 'widely spaced' and 'scale-like' are separate records; the 0.2 mm larger hairs are another record.",
+  "reason": "'hairs' was taken as the quality of the leaf; the hairs are the measured part.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00261",
+  "decision": "new_pattern",
+  "target": "parts borne on a part",
+  "fix": "OWL: has part some (inflorescence branch and has part some (raceme inflorescence PO:0030115 and has characteristic some decreased length)). RDF holds the borne part and its quality under the bearing part, with the cue 'bearing'. Covers 'X bearing Y' and 'X with Y'.",
+  "reason": "'bearing' is partonomy, not one of the attachment relations of 09-relation-to-another-part.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00262",
+  "decision": "new_pattern",
+  "target": "indefinite count",
+  "fix": "Bearer flower, container spike (via 'flowered → flower' in config/flora_counted_parts.tsv), count_qualifier 'many' in RDF. 'loosely' is a separate arrangement quality (lax) of the spike.",
+  "reason": "Count in a word with a non-numeric number.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00263",
+  "decision": "new_pattern",
+  "target": "growth form",
+  "fix": "Give the habit classes an EQ signature: liana = whole plant (PO:0000003) has characteristic climbing (FLOPO:0991108) plus ligneous (PATO:0002348), as two records. The class then classifies under FLOPO instead of being held.",
+  "reason": "The value class exists (climbing), but the habit class has no EQ signature (registry OTHER).",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00264",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The bearer is the main lateral (secondary) vein, not the leaf blade. Make two records: prominent on the adaxial surface (slot 1, 'above'), and the same quality negated on the abaxial side ('but not below' gives the negation cue).",
+  "reason": "The quality 'prominent' belongs to the veins, and the negation lies outside the transcribed span.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00265",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Bearer trichome (glandular hair), part of the stem; quality length, ca. 0.5 mm (value_qualifier approximately).",
+  "reason": "'hairs' was taken as the quality of the stem.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00266",
+  "decision": "new_pattern",
+  "target": "count per side",
+  "fix": "As P00240: secondary vein amount 16-24, container leaf lamina, per side of the midvein.",
+  "reason": "Same construction as P00240.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00267",
+  "decision": "new_pattern",
+  "target": "growth form",
+  "fix": "Whole plant has characteristic climbing (FLOPO:0991108); twining is a kind of climbing (or a later child value), so 'climbing or twining' collapses to climbing. Perennial and herbaceous are separate records.",
+  "reason": "Habit classes have no EQ signature, but the climbing value exists.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00268",
+  "decision": "new_pattern",
+  "target": "indefinite count",
+  "fix": "Bearer flower, container raceme inflorescence (PO:0030115), count_qualifier 'many' in RDF; OWL as in P00242.",
+  "reason": "Indefinite count in a compound word.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00269",
+  "decision": "new_pattern",
+  "target": "growth form",
+  "fix": "Vine = whole plant climbing (FLOPO:0991108). With shrub and tree habits (EQ signature needed too), this is an alternative with frequency (08: 'rarely small trees') over the growth-form operands.",
+  "reason": "Habit classes without an EQ signature block the alternative.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00270",
+  "decision": "new_pattern",
+  "target": "indefinite count",
+  "fix": "Bearer flower, container inflorescence, count_qualifier 'many' in RDF; OWL as in P00242.",
+  "reason": "Indefinite count.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00271",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1, kind C surface/region)",
+  "fix": "Add 'on upper side' for petioles to config/flora_context_words.tsv: the adaxial side of the petiole (pinned BSPO region as a part_restrictions filler). Pilose is then said of that side.",
+  "reason": "This is a place on the part (kind C), not a stage; the table has no row for it on a petiole.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00272",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (temporal transition, qualitative_value_relation)",
+  "fix": "Rule: 'becoming less hairy with age' = glabrescent (FLOPO_0991052) on the young shoot, or a transition from hairy to glabrescent. Not a negation.",
+  "reason": "The transition pattern and the glabrescent value both exist; only the wording is unmapped.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00273",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Bearer trichome, part of the branchlet; quality length 1-2 mm. 'whitish' is a colour record of the trichome.",
+  "reason": "'hairs' was taken as the quality of the branchlet.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00274",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1, region)",
+  "fix": "'near point of attachment' is the basal region of the (rhizome) scale. 'darker' is low brightness (PATO:0000327) of that region, compared with the rest of the same scale. Hold the comparison in RDF, since its second term is the scale itself. Part of the alternative 'concolored, brown or ...'.",
+  "reason": "The second term is implied (the rest of the scale), so a region of the bearer covers it.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00275",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation: negated, negation_scope absence)",
+  "fix": "Accept a count of '0' as absence evidence (add the numeral 0 after a part name to NEGATION_EVIDENCE). Petal present, negated. The whole is the female flower (12-part-of-qualified-whole).",
+  "reason": "Zero as absence is not in the cue list.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00276",
+  "decision": "new_pattern",
+  "target": "count per side",
+  "fix": "Bearer lobe of the keel crest (container crest, a ground-able part of the keel petal), amount 2-4, per side of the crest. Same per-side slot as P00240. 'each lobe entire or divided' is a separate record.",
+  "reason": "Count at a position; the crest also needs grounding.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00277",
+  "decision": "existing_pattern",
+  "target": "02-bounded-measurement.md",
+  "fix": "Thickness (PATO:0000915) of the pericarp, upper bound 1.3 mm (cue 'up to'). The place 'at the four edges' is a region of the pericarp: the angles of the fruit, via a slot-1 region row.",
+  "reason": "Bound, attribute and region are all covered once 'thick' maps to thickness.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00278",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation: negated, negation_scope absence)",
+  "fix": "Add French 'nul/nulle/nuls/nulles' to NEGATION_EVIDENCE. Pappus present, negated, scope absence.",
+  "reason": "'nul' means absent, but it is not in the cue list.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00279",
+  "decision": "existing_pattern",
+  "target": "09-relation-to-another-part.md",
+  "fix": "Stamen inserted into (PATO:0000624) towards the corolla tube, as slot 3. The '2-3 mm below throat' is a distance measurement (PATO:0000040) towards the corolla throat, held with the relation record.",
+  "reason": "Attachment with a second term is covered; the distance to a landmark is the spacing form already planned in §3.",
+  "confidence": "medium"
+ }
+]

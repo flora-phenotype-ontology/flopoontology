@@ -44,6 +44,9 @@ from flopo2.ingest.ncvc_annotate import (
 RULE_TABLES = [
     Path("flopo2/ingest/flora_value_term_rules.tsv"),
     Path("flopo2/ingest/collenette_normalization.tsv"),
+    # rules of the second-model review (tools/apply_candidate_review.py): they fill gaps, after
+    # the reviewed tables above and before the transcription model's own proposals
+    Path("flopo2/ingest/flora_review_rules.tsv"),
     Path("flopo2/ingest/llm_term_rules.tsv"),
 ]
 _PAGE_RE = re.compile(r":page-(\d+)")

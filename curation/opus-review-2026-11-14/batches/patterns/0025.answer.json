@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P01000",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add a row 'obscuring / concealing / hiding X' to the relation table, read with bearer and target swapped: stamen (PO:0009029) with PATO:0002516 'concealed by' towards petal (PO:0009032). PATO has no active 'concealing'. 'at least partially' stays in RDF as a degree qualifier.",
+  "reason": "A relation of the petals to the stamens. PATO's relational 'concealed by' covers it once the bearer and target are swapped.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01001",
+  "decision": "new_pattern",
+  "target": "value_with_extent",
+  "fix": "Slots: bearer (leaf PO:0025034), value (decurrent PATO:0001984), extent (low/high + unit) of the region showing the value. OWL: has part some (leaf and has characteristic some decurrent); the 5–10 mm is RDF only (fb:extentLow/fb:extentHigh/fb:unit) because it is the length of the decurrent wing, not of the leaf.",
+  "reason": "The number measures how far the base runs down the stem, not any PATO attribute of the blade. There is no PO class for the decurrent wing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01002",
+  "decision": "new_pattern",
+  "target": "before_or_after_stage",
+  "fix": "Slots: bearer leaf with basal FLOPO:0991002 (pattern 04), quality senescent PATO:0001487 (rule withering/withered → senescent), stage PO:0007616 flowering stage with operator 'by/before' and its cue, frequency 'usually'. OWL keeps leaf+basal+senescent; the stage relation ('by' = at or before) and frequency stay in RDF until the model has before/after next to present_during.",
+  "reason": "'by flowering' is the open before/after-stage case listed in annotation-context-patterns.md. 'sometimes persistent' is a second alternative with its own frequency.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01003",
+  "decision": "existing_pattern",
+  "target": "docs/odp/08-alternative-with-frequency.md",
+  "fix": "Read the parenthetical 'les 3-foliolées beaucoup plus nombreuses' as a frequency cue ('mostly / usually') on the operand 3 of the 3–5-foliolate count (pattern 03: leaflet PO:0020049 amount, container leaf). Add the French comparative 'beaucoup plus nombreuses' to the frequency cue list.",
+  "reason": "The main count is already covered by pattern 03. The parenthetical only says which count is most frequent.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01004",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Union of the negated-value rule C363 (indehiscent = not dehiscent FLOPO:0991149) and dehiscent on fruit/pod. The negation gate (NEGATION_EVIDENCE in flopo2/verify/gates.py) only knows 'indehiscent': add the French 'ind[ée]hiscent(e|es|s)?'.",
+  "reason": "The French accented plural is not matched by the negation cue list. The union is weak at genus level but still true of the genus.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01005",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept 'to ±' (and 'to c.', 'to about') as an inclusive upper bound with value_qualifier approximately (pattern 01). Split 'L × W' into leaf length ≤19 cm and width ≤10 cm. Allow the 'cm.' abbreviation with a full stop.",
+  "reason": "An upper bound followed by a ± approximation, two dimensions; the cue list lacks 'to ±'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01006",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Bearer is the corolla tube (the clause subject 'tube'), not the corolla; increased length PATO:0000573 towards sepal PO:0009031, ratio_low 3.3, ratio_high 4.8. The ratio reader must accept decimal multiples. The next clause, '0.8–1.4 times as long as lobes', spans 1 and gives plain length towards corolla lobe.",
+  "reason": "This is exactly the 'N times as long as X' wording of pattern 10. It failed on the wrong bearer and the decimal ratio.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01007",
+  "decision": "missing_term",
+  "target": "suborbicular / subreniform: 'sub-' + orbicular PATO:0001934 / reniform PATO:0001871",
+  "fix": "No new class: each union operand takes the pattern 01 'sub' qualifier (orbicular, reniform). Union per pattern 07 on schizocarp fruit PO:0030098 rather than plain fruit.",
+  "reason": "Both values exist in PATO. The union fails because the 'sub-' words are not split into value + qualifier inside an 'or' list.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01008",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read 'to' as the bound cue also when an anaphoric subject with a parenthesis ('the lateral ones (modified stipules)') stands before it, and allow 'mm.' with a full stop. Bearer stipule PO:0020041 (the spines are modified stipules), length ≤10 mm. 'lateral' stays unqualified until the position values of pattern 04 exist.",
+  "reason": "'to 10 mm long' is a plain inclusive upper bound. The cue was not tied to the bearer because of the parenthesis.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01009",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Read fractions in 'N/M–P/Q the length of X' as ratio 0.5–0.667, giving decreased length PATO:0000574 towards spikelet PO:0009051. The bearer is lower glume PO:0006002, not glume.",
+  "reason": "Pattern 10 lists 'half the length of'. Written fractions are not parsed, so the row fell to missing unit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01010",
+  "decision": "missing_term",
+  "target": "basely attached = blade attached to the petiole at its base (not peltate): rule to basifixed FLOPO:0991135",
+  "fix": "Add a rule 'basely attached' → FLOPO:0991135 basifixed on leaf / leaf lamina. It is the explicit opposite of peltate FLOPO:0991107 in Peperomia descriptions.",
+  "reason": "This is an attachment quality of the blade itself, not a relation needing a second part. An existing FLOPO value fits.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01011",
+  "decision": "new_pattern",
+  "target": "substance_produced_by_part",
+  "fix": "Slots: producing bearer (whole plant or stem), substance (gum: a CHEBI or FLOPO exudate class), and qualities of the substance (colour). OWL: has part some (whole plant and 'produces' some (gum and has characteristic some yellowish-white)); RDF keeps the wording. The medicinal use in the same sentence is not annotated.",
+  "reason": "Exuding gum is a trait, but there is no pattern or class for a secreted substance and its colour. 'resinous' FLOPO:0991075 is a texture, not a gum.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01012",
+  "decision": "new_pattern",
+  "target": "comparison_between_series_members",
+  "fix": "Slots: bearer petal + member position (ventral), relational quality (decreased length / decreased width), target petal + member position (dorsal). OWL: has part some (petal and has characteristic some ventral and has characteristic some ('decreased width' and towards some (petal and has characteristic some dorsal))). It needs the dorsal/ventral position values still open in pattern 04, and an exception to relation_target_is_not_the_bearer when the positions differ.",
+  "reason": "The second term (the dorsal petal) is in the sentence but is the same PO class as the bearer. Pattern 09 forbids that today.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01013",
+  "decision": "new_pattern",
+  "target": "weak_degree",
+  "fix": "Slots: value (accrescent FLOPO:0991082), degree qualifier 'scarcely / slightly / faintly' with its cue. Like pattern 01, it is not used for a strict taxon axiom: the OWL class names the value, the degree is RDF only (fb:degree). Not a negation, so the negation gate is not involved.",
+  "reason": "'scarcely' is a degree word (Endara et al. degree modifier), not a negation cue and not an approximation.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01014",
+  "decision": "new_pattern",
+  "target": "before_or_after_stage",
+  "fix": "Slots: sepal PO:0009031, senescent PATO:0001487 (rule withering → senescent), stage operator 'early' = before or at flowering stage PO:0007616, cue 'early'. OWL: sepal and has characteristic some senescent; the timing is RDF only until before/after relations exist in the model.",
+  "reason": "'early withering' is a quality with an early timing: the open before/after-stage case.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01015",
+  "decision": "transcription_error",
+  "target": "perennial (not negated)",
+  "fix": "Drop the negation: whole plant PO:0000003 with perennial life span PATO:0104361.",
+  "reason": "'Herbs, perennial, cespitose' has no negation. The negated flag is a transcription error.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01016",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Split '2-carpellate' with the existing row carpellate → carpel: carpel PO:0009030 amount 2, container gynoecium PO:0009062. Ground 'pistil' as container to gynoecium, not to carpel (PO lists pistil as a carpel synonym, which makes container = bearer).",
+  "reason": "This is a count in a word. The stage reason is spurious; it fails because 'pistil' grounds to the counted part itself.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01017",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'Calyptra unknown' means not observed, not absent. It says nothing about the phenotype.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01018",
+  "decision": "missing_term",
+  "target": "appressed-scaly = covered with scales lying flat: rule to scaly PATO:0001804",
+  "fix": "Rule 'appressed-scaly' → scaly PATO:0001804 on root PO:0009005 (appressed describes the scales). 'faintly' goes to the weak_degree pattern. The preceding 'drying dark brown' is specimen condition (pattern 06) for the colour only.",
+  "reason": "The quality is an existing PATO value under a compound word. The stage reason comes from the 'drying' clause.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01019",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Parse the fractions '2/3–3/4 length of' as ratio 0.667–0.75: pedicel PO:0030112, decreased length PATO:0000574 towards spikelet PO:0009051 ('sessile' as a context state).",
+  "reason": "This is pattern 10's 'half the length of' wording with written fractions.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01020",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'numerous' gives no number. Pattern 03 holds 'few' and 'many' as measurement_value_not_numeric, and 'usually numerous' inflorescences per plant is too vague.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01021",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read the count '0' after a part name as absence: stipule PO:0020041 with absent PATO:0000462, which needs no negation cue. Alternatively, add a bare '0' count to NEGATION_EVIDENCE.",
+  "reason": "'Stipules 0' is a family-level absence statement written as a zero count.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01022",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add the row vittate → vitta (FLOPO_0986042) to config/flora_counted_parts.tsv. Container fruit/mericarp PO:0020075. The furrow (vallecula) is a count at a position (open count_per_position); do not ground it to PO canal.",
+  "reason": "This is an 'N-xed' count whose ending is missing from the table. The vitta class already exists.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01023",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add the row 'apical on / terminal on X' → terminal PATO:0002476 towards stem PO:0009047 ('leafy' FLOPO:0991012 as the target's state). Bearer inflorescence PO:0009049.",
+  "reason": "This is a position relation to another part, and PATO's relational 'terminal' fits.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01024",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1, region) / config/flora_context_words.tsv",
+  "fix": "Add 'at very base' and 'at the very base' as region = base. Filament PO:0009067 has no PO base class, so use the BSPO basal region as the part_restrictions filler with lanate PATO:0104357.",
+  "reason": "This is a region on the bearer; only the 'very' variant of the cue is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01025",
+  "decision": "existing_pattern",
+  "target": "flopo2/verify/gates.py NEGATION_EVIDENCE (negation, annotation-context-patterns.md)",
+  "fix": "Add 'bract' to the '-less' list (bractless). Annotate bract PO:0009055 absent on the spike; the parenthesis 'bractlike lower scales' must not be read as bracts.",
+  "reason": "The negation is inside the word, and the cue list lacks 'bractless'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01026",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Container 'rachis' inside an inflorescence clause grounds to inflorescence axis PO:0020122 (synonym inflorescence rachis), or to the inflorescence. Count: flower amount 1–3 via the 'flowered' row.",
+  "reason": "'rachis' is in flora_rejected_bearer_words.tsv because it is ambiguous; the sentence context makes it unambiguous.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01027",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Grounding rule: umbellule / umbellet / partial umbel → umbel inflorescence PO:0030129 part of compound umbel inflorescence PO:0030130, used as container. Flower amount 10–20.",
+  "reason": "This is an 'N-flowered' count whose container has no direct term; a rule is better than a new class.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01028",
+  "decision": "missing_term",
+  "target": "contiguous = touching neighbouring parts of the same kind without being joined: rule to approximate FLOPO:0991190",
+  "fix": "Rule 'contiguous' → FLOPO:0991190 approximate (defined as close to the nearest structures of its kind without being joined), with '±' as pattern 01 qualifier. Bearer theca.",
+  "reason": "The quality is about the bearer's own kind, so no second term is needed. An existing FLOPO value covers it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01029",
+  "decision": "transcription_error",
+  "target": "thickness / diameter, not 'thick'",
+  "fix": "Quality: diameter PATO:0001334 (or thickness PATO:0000915) 3–8 mm. Bearer branch PO:0025073 ('twig' is a synonym) with 'leafy' FLOPO:0991012 as context state. Add the rule 'N unit thick' → attribute.",
+  "reason": "The transcriber gave the value word 'thick' where the number needs the attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01030",
+  "decision": "missing_term",
+  "target": "withered / withering = senescent PATO:0001487 (rule)",
+  "fix": "Rule withered → PATO:0001487 senescent. 'Basal' FLOPO:0991002 (pattern 04) and 'at anthesis' PO:0007616 (stage, in context table) already resolve.",
+  "reason": "The stage and position are handled; only the quality word has no rule.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01031",
+  "decision": "transcription_error",
+  "target": "entity leaf, container ultimate branch",
+  "fix": "Bearer leaf PO:0025034, amount 1–2, container branch PO:0025073 ('ultimate' = last-order branch, kept as text). Pattern 03.",
+  "reason": "The transcribed entity 'per ultimate branch' is the container, not the counted part.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01032",
+  "decision": "existing_pattern",
+  "target": "docs/odp/12-part-of-qualified-whole.md",
+  "fix": "Carry the heading 'Female flowers:' over the following clauses: style PO:0009074 part of (flower and female), amount 3.",
+  "reason": "This is the 'calyx of male flowers' case written as a section heading. The stage reason comes from the sex word.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01033",
+  "decision": "new_pattern",
+  "target": "spacing_between_like_parts",
+  "fix": "Slots: bearer (secondary leaf vein PO:0020140), distance PATO:0000040 with low/high + unit, towards the same class, cue 'from each other' / 'apart'. OWL: has part some (secondary leaf vein and has characteristic some (distance and towards some secondary leaf vein)), numbers as data range. The RDF keeps the cue.",
+  "reason": "Spacing is described in annotation-context-patterns.md section 3 but has no docs/odp pattern, and the 'towards' rule forbids target = bearer.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01034",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Union of 'in pairs' (paired FLOPO:0991004) and 'groups of four' read as the pattern 03 aggregate count (object aggregate has member exactly 4 cone). Add cues 'in groups/clusters of N'. Bearer seed cone.",
+  "reason": "Alternatives over group sizes. Both operands have a representation; the 'groups of N' cue is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01035",
+  "decision": "transcription_error",
+  "target": "two statements: petal white; petal amount 5",
+  "fix": "Petal PO:0009032 with white PATO:0000323, and a separate count petal amount 5 (container flower).",
+  "reason": "The count '5' was merged into the colour statement, so the colour row looked like a measurement without a unit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01036",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Grounding rule: 'd.b.h.' → stem PO:0009047 (trunk) diameter PATO:0001334, measured at breast height (cue kept). Upper bound 'to 50 cm', inclusive.",
+  "reason": "The bound is plain 'to'. It failed because 'd.b.h.' did not ground and the bearer was set to whole plant.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01037",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1, region)",
+  "fix": "'near base' is in flora_context_words.tsv: leaf margin with BSPO basal region (or leaf base margin) and revolute/recurved. Allow 'somewhat' before the value as a degree word (weak_degree) instead of blocking.",
+  "reason": "A region on the bearer. The stage reason is spurious; the hedge 'somewhat' and the region cue blocked it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01038",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Normalise the OCR 'l3' (letter l before digits, followed by a unit) to 13 while keeping the source cue. Then leaf PO:0025034 length ≤13 mm, inclusive ('but mostly shorter' adds nothing).",
+  "reason": "The bound cue 'to' is supported; the number is an OCR error and does not parse.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01039",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'2-lobed' → bilobed PATO:0002214 (word rule, as for trilobed), with 'distally' as region = distal (BSPO distal region) under slot 1.",
+  "reason": "Pattern 03 says 'N-lobed' stays the lobed-shape quality where a rule exists. The '2' was read as a measurement.",
+  "confidence": "high"
+ }
+]

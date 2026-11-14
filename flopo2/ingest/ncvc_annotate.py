@@ -55,7 +55,9 @@ ANNOTATION_EXTENSION_IRI = "http://phenomebrowser.net/flopo/annotation-extension
 PATO_PRESENT = "PATO_0000467"
 PATO_ABSENT = "PATO_0000462"
 WHOLE_PLANT = "PO_0000003"
-LENGTH_UNITS = {"m", "cm", "mm"}
+# µm since 2026-11-14 (10,900 statements, mostly spores and cells of the moss floras); feet, inches
+# and decimetres have no class in the pinned UO and stay held
+LENGTH_UNITS = {"m", "cm", "mm", "µm", "μm", "um"}
 HERE = Path(__file__).resolve().parent
 DEFAULT_NORMALIZATION = HERE / "ncvc_normalization.tsv"
 DEFAULT_HOLDS = HERE / "ncvc_data_quality_holds.tsv"
@@ -462,7 +464,8 @@ def plan_bearer_scope(
     value = (value_terms or [pato_id])[0]
     family = scope_rules._value_family(value)
     if not family:
-        attributes = set(_attribute_ancestors(res, value)) | {pato_id}
+        # a FLOPO value has its attribute in pato_id ("acute (sensu botany)" under sharpness, a shape)
+        attributes = set(_attribute_ancestors(res, value)) | {pato_id} | set(_attribute_ancestors(res, pato_id))
         family = next((f for f, a in scope_rules.FAMILY_ATTRIBUTE.items() if a in attributes), "")
     scope = {"outer_bearer": po_id, "scope_text": cue_text, "scope_start": cue_start, "scope_end": cue_end}
     if kind == "surface":
@@ -478,7 +481,12 @@ def plan_bearer_scope(
         return None, f"region_scope_value_family:{family or 'other'}"
     region_class = scope_rules.REGION_PARTS.get(po_id, {}).get(key)
     if region_class is not None:
-        if region_class not in res.po_catalog | res.flopo_catalog or not po_scope_within(region_class, po_id):
+        # the pair comes from the reviewed table; PO need not state the part_of itself
+        from flopo2.annotation.positional import reviewed_scope_pairs
+
+        if region_class not in res.po_catalog | res.flopo_catalog or not (
+            po_scope_within(region_class, po_id) or (po_id, region_class) in reviewed_scope_pairs()
+        ):
             return None, "region_scope_unknown_class"
         return {"po_id": region_class,
                 "bearer_scope": {**scope, "scope_class": region_class, "mode": "substituted_bearer"},
@@ -830,7 +838,7 @@ def normalize_counts(rec: dict) -> None:
         if group and (not container or _GROUP_WORDS.search(container)):
             container = ""  # the group is the bearer, not a structure the parts belong to
         phenotype.update({
-            "count_of": counted, "count_container": container,
+            "count_of": counted, "count_container": container, "count_entity": entity,
             "count_collection_size": 2 if pairs else None, "count_collection": group,
             "count_quality": phenotype.get("quality_en"), "entity_en": counted, "po_label": counted,
             "quality_en": "amount", "pato_label": "amount", "unit": "count",
@@ -897,6 +905,100 @@ def counts_from_compounds(rec: dict, res: "Resources") -> None:
             "entity_en": counted, "po_label": counted, "quality_en": "amount", "pato_label": "amount",
             "value_low": low, "value_high": high, "unit": "count", "count_from_compound": word,
         })
+
+
+# Counts without a number (docs/odp/13-indefinite-count.md): the words, by the amount they state.
+INDEFINITE_AMOUNTS = {
+    "few": ["very few", "a few", "few", "peu nombreux", "peu nombreuses", "peu nombreuse", "pauci"],
+    "several": ["several", "plusieurs"],
+    "many": ["very numerous", "very many", "numerous", "many", "nombreux", "nombreuses", "nombreuse", "multi"],
+}
+_INDEFINITE_WORD = {word: amount for amount, words in INDEFINITE_AMOUNTS.items() for word in words}
+_INDEFINITE_COMPOUND = re.compile(r"^(few|several|many|numerous|multi|pauci)\s*-+\s*([a-z]+)$", re.IGNORECASE)
+
+
+def indefinite_counts(rec: dict, res: "Resources") -> None:
+    """"seeds numerous", "few-flowered", "many-seeded": a count without a number.
+
+    The counted part is stated as present, and the word for how many is kept with the row
+    (``count_word``); the part named in a compound word comes from the reviewed table
+    ``config/flora_counted_parts.tsv``, as for "5-flowered" (:func:`counts_from_compounds`).
+    """
+
+    table = load_counted_parts()
+    for phenotype in rec.get("phenotypes") or []:
+        if phenotype.get("merged_into") or phenotype.get("count_of"):
+            continue
+        if phenotype.get("value_low") is not None or phenotype.get("value_high") is not None:
+            continue
+        if (phenotype.get("qualifiers") or {}).get("negated") in (True, "true", "True"):
+            continue
+        original = _PAREN_RE.sub("", ncvc_guide._normalize(phenotype.get("quality_en"))).strip()
+        word = original.lower()
+        entity = _PAREN_RE.sub("", ncvc_guide._normalize(phenotype.get("entity_en"))).strip()
+        compound = _INDEFINITE_COMPOUND.match(word)
+        if word in _INDEFINITE_WORD:
+            if not entity:
+                continue
+            amount, counted, container = _INDEFINITE_WORD[word], entity, ""
+        elif compound and compound.group(2) in table and not table[compound.group(2)].get("collection_size"):
+            amount = _INDEFINITE_WORD.get(compound.group(1).lower(), "many")
+            part = table[compound.group(2)]["part"]
+            specific = f"{entity} {part}" if entity and not entity.lower().endswith(part) else entity
+            counted, container = part, entity
+            if specific and ground_bearer(res, {"entity_en": specific, "po_label": specific})[0]:
+                counted, container = specific, ""
+            elif _singular(entity.lower()) == part or not entity:
+                container = ""
+        else:
+            continue
+        if ground_phenotype(res, phenotype).kind == "assertion":
+            continue  # the word has a term of its own
+        phenotype.update({
+            "count_of": counted, "count_container": container, "count_quality": phenotype.get("quality_en"),
+            "entity_en": counted, "po_label": counted, "quality_en": "present", "pato_label": "present",
+            "count_word": {"amount": amount, "word": original},
+        })
+        # alternatives listed with the row belong to another quality of the sentence
+        if isinstance(phenotype.get("qualifiers"), dict):
+            phenotype["qualifiers"] = {**phenotype["qualifiers"], "alternatives": []}
+
+
+_POSITION_KIND = {"side": "each_side", "node": "per_node", "axil": "per_axil", "apex": "at_region",
+                  "base": "at_region", "tip": "at_region", "margin": "at_region"}
+
+
+def count_position(res: "Resources", container: str, span_text: str, start: int) -> dict | None:
+    """"lobes 3-10 on each side", "stomatal rows 5-6 on each side of midrib", "flowers 1-3 per
+    node": the kind of place the count is taken at, with its cue in the statement and, where
+    the source names it, the structure that marks the place (docs/odp/14-count-at-a-position.md).
+    ``None`` when the cue does not stand, once, in the statement."""
+
+    words = container.strip().split()
+    kind = _POSITION_KIND.get(_singular(words[-1])) if words else None
+    if kind is None:
+        return None
+    phrase = r"\s+".join(re.escape(w) for w in words) + r"(?:s|es)?"
+    cue = re.compile(
+        r"(?<![\w-])(?:(?:on|at|in|along|per|to)\s+)?(?:(?:each|either|every|both|the)\s+)?" + phrase
+        + r"(?:\s+of\s+(?:the\s+|each\s+)?(?P<landmark>[a-z][a-z-]*(?:\s+[a-z][a-z-]*)?))?(?![\w-])",
+        re.IGNORECASE,
+    )
+    found = list(cue.finditer(span_text))
+    if len(found) != 1:
+        return None
+    match = found[0]
+    landmark = ""
+    name = match.group("landmark") or ("" if kind in {"each_side", "at_region"} else " ".join(words))
+    if name:
+        landmark = ground_bearer(res, {"entity_en": name, "po_label": name})[0] or ""
+        if not landmark and " " in name:  # "midrib and"-like tails: the first word alone
+            landmark = ground_bearer(res, {"entity_en": name.split()[0], "po_label": name.split()[0]})[0] or ""
+    out = {"kind": kind, "position_text": span_text[match.start():match.end()],
+           "start": start + match.start(), "end": start + match.end()}
+    if landmark:
+        out["landmark_term"] = landmark
+    return out
 
 
 # "two-seeded", "four-petalled", "one-flowered": a count of the part named by the stem.  "-lobed"
@@ -2215,6 +2317,7 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
         split_inline_alternatives(rec)
         normalize_counts(rec)
         counts_from_compounds(rec, res)
+        indefinite_counts(rec, res)
     segments = [seg.to_row() for seg in ncvc_guide.iter_segments_from_records([rec])]
     for seg in segments:
         seg.update(
@@ -2298,6 +2401,17 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
         span_text = text[start:end]
 
         reason = grounding.reason if grounding.kind == "unresolved" else ""
+        if reason == "missing_or_unsupported_bearer" and phenotype.get("count_entity") and _POSITIONS.search(
+            str(phenotype.get("count_container") or "")
+        ):
+            # "leaf blade with 3-10 lobes on each side": the lobes are those of the row's organ
+            organ, part = str(phenotype["count_entity"]), str(phenotype.get("count_of") or "")
+            for name in dict.fromkeys((f"{organ} {part}", f"{organ.split()[0]} {part}")):
+                if part and ground_bearer(res, {"entity_en": name, "po_label": name})[0]:
+                    phenotype.update({"entity_en": name, "po_label": name})
+                    grounding = ground_phenotype(res, phenotype)
+                    reason = grounding.reason if grounding.kind == "unresolved" else ""
+                    break
         towards = None
         ratio = None
         relational_gap = reason == "no_ontology_term_for_quality" or reason.startswith(
@@ -2336,10 +2450,37 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
         if reason in {"no_ontology_term_for_quality", "missing_or_unsupported_bearer"} and phenotype.get("reread_reason"):
             reason = phenotype["reread_reason"]
         container_po = ""
+        position = count_word = None
+        if not reason and phenotype.get("count_word"):
+            # the word that states the count must stand in the statement
+            words = INDEFINITE_AMOUNTS[phenotype["count_word"]["amount"]]
+            found = re.search(
+                r"(?<![\w])(?:" + "|".join(re.escape(w) for w in [phenotype["count_word"]["word"], *words]) + r")(?:-+\w+)?",
+                span_text, re.IGNORECASE,
+            )
+            if found is None or re.search(r"\d", span_text):
+                # no word for the count in the statement, or a number beside it ("few (4 or 5)")
+                reason = "count_word_not_in_source_span"
+            else:
+                count_word = {"amount": phenotype["count_word"]["amount"], "count_text": found.group(0),
+                              "start": start + found.start(), "end": start + found.end()}
         if not reason and phenotype.get("count_container") and _POSITIONS.search(phenotype["count_container"]):
-            # "1-3 fruits per leaf axil": the fruits are in the axil, not part of it.
-            reason = "count_per_position"
-        if not reason and phenotype.get("count_container"):
+            # "1-3 fruits per leaf axil": the fruits are in the axil, not part of it. The count is
+            # one per place of that kind (docs/odp/14-count-at-a-position.md).
+            position = count_position(res, phenotype["count_container"], span_text, start) if has_value else None
+            if position is None:
+                reason = "count_per_position"
+            else:
+                organ = str(phenotype.get("count_entity") or "")
+                organ_po = ground_bearer(res, {"entity_en": organ, "po_label": organ})[0] if organ else ""
+                if organ_po and organ_po != grounding.po_id:
+                    container_po = organ_po
+                grounding.provenance.append(
+                    f"count: at each place of a kind ({position['position_text']!r} -> {position['kind']}"
+                    + (f", {position['landmark_term']}" if position.get("landmark_term") else "")
+                    + "); no phenotype class, the number is not that of the whole organ"
+                )
+        if not reason and position is None and phenotype.get("count_container"):
             container = phenotype["count_container"]
             container_po, container_prov, _ = ground_bearer(res, {"entity_en": container, "po_label": container})
             if container_po:
@@ -2377,6 +2518,21 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
             reason = "taxon_level_alternatives_or_continuum"
         if not reason and gates._has_real_disjunction(span_text):
             reason = "explicit_disjunction"
+        nearly_so = None
+        if not reason:
+            # "4 or 5 leaves" is the range 4-5 only when the transcription has both numbers, and
+            # "glabrous or nearly so" is approximate only for the value the words follow
+            value_word = ncvc_guide._normalize(phenotype.get("quality_en"))
+            nearly = gates.OR_NEARLY_SO.search(span_text)
+            if nearly and not has_value and value_word and re.search(
+                re.escape(value_word) + r"\W*$", span_text[:nearly.start()], re.IGNORECASE
+            ):
+                nearly_so = nearly.group(0).lstrip(", ")
+            if gates.unexplained_disjunction(
+                span_text, phenotype.get("value_low") if has_value else None,
+                phenotype.get("value_high") if has_value else None, nearly_so or "",
+            ):
+                reason = "explicit_disjunction"
         context = bearer_whole = None
         if not reason and str(qualifiers.get("stage") or "").strip():
             context = stage_context(
@@ -2387,6 +2543,13 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                 grounding.pato_id, *grounding.value_terms
             }:
                 context = None  # the context word is the quality itself
+            # "on both surfaces", "throughout", "when present": said of the bearer as a whole
+            unscoped = context is not None and context[0]["kind"] == "unscoped"
+            if unscoped:
+                grounding.provenance.append(
+                    f"context: {text[context[1]:context[2]]!r} restricts nothing: the statement holds of the bearer ({CONTEXT_WORDS})"
+                )
+                context = None
             scope_plan = None
             if context is not None and context[0]["kind"] in {"surface", "region"}:
                 if container_po or grounding.pato_id == PATO_PRESENT or grounding.negate or gates._has_real_disjunction(
@@ -2403,9 +2566,9 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                     )
                     if scope_plan is None:
                         context = None
-            if context is None and not container_po:
+            if context is None and not container_po and not unscoped:
                 bearer_whole = whole_context(res, str(qualifiers["stage"]), text, start, end, grounding.po_id)
-            if context is None and bearer_whole is None:
+            if context is None and bearer_whole is None and not unscoped:
                 reason = "developmental_stage_context"
         if not reason and has_value:
             if unit not in LENGTH_UNITS and not is_supported_count(unit, grounding.pato_id):
@@ -2555,6 +2718,14 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                 assertion["value_low_inclusive"] = False
         if container_po:
             assertion["bearer_container"] = container_po
+        if position is not None:
+            assertion["count_position"] = position
+        if count_word is not None:
+            assertion["count_word"] = count_word
+            grounding.provenance.append(
+                f"count: {count_word['count_text']!r} states no number: the part is present, "
+                f"amount word {count_word['amount']!r} (docs/odp/13-indefinite-count.md)"
+            )
         if phenotype.get("count_collection_size"):
             assertion["bearer_collection_size"] = int(phenotype["count_collection_size"])
         elif phenotype.get("count_collection"):
@@ -2620,6 +2791,11 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                 _mark_approximate(assertion, cue.group(1), text)
                 if assertion.get("value_qualifier") == "approximately":
                     grounding.provenance.append(f"quality: {cue.group(1)!r} before the value read as approximately")
+            elif nearly_so:
+                # "glabrous or nearly so": the value, approximately
+                _mark_approximate(assertion, nearly_so, text)
+                if assertion.get("value_qualifier") == "approximately":
+                    grounding.provenance.append(f"quality: {nearly_so!r} after the value read as approximately")
         if towards is not None:
             approximate_cue = towards.pop("approximate", "")
             assertion["towards"] = towards
@@ -2761,7 +2937,7 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                 "frequency_qualifier", "unspecified"
             ) != "unspecified" and not assertion.get("modality_text"):
                 assertion["frequency_qualifier"] = "unspecified"
-            if not assertion.get("qualitative_value_relation") and not assertion.get("specimen_condition"):
+            if not assertion.get("qualitative_value_relation") and not assertion.get("specimen_condition") and not assertion.get("count_position"):
                 ensure_annotation_class_iri(assertion)
             disposition.assertion = assertion
             if not hold_code:

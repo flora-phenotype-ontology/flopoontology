@@ -104,6 +104,36 @@ the three matching assets, run the full gate without this option, then update
 staging option for updates to `master`. The staging result is
 not a claim that the public release has passed the complete Dashboard.
 
+### 2026-11-15
+
+28,399 FLOPO classes (1,306 deprecated identifiers retained); every earlier identifier
+preserved; ELK finds no unsatisfiable classes.
+
+- 176 FLOPO flora values FLOPO:0991211–0991386. 170 come from a second review of the quality
+  words that 37 parsed floras use and PATO lacks (dioicous and the other bryophyte sex
+  conditions, monomorphic, margined, callose, doubly serrate, pandurate, fugacious, the
+  palmately divided and twice-divided leaf forms, hemi-epiphytic, parasitic, diadelphous,
+  chasmogamous, latiseptate, …), each beneath the closest PATO class or beneath the FLOPO
+  value it narrows (bipinnatifid beneath pinnatifid). Six are positions of a member of a
+  series (upper, lower, inner, outer, lateral, median), needed for "upper leaves" and "inner
+  tepals".
+- 77 FLOPO-local anatomy classes FLOPO:0986063–0986139 beneath PO (endostome, sporocarp,
+  perispore, stelidium, style head, column foot, lignotuber, seed wing, corolla throat,
+  elater, syconium, …), provisional until PO has them. FLOPO:0986056–0986062 were withdrawn
+  before the 2026-11-13 release and are not used.
+- 79 definitions of earlier flora values reworded into PATO's form, and 32 values moved
+  beneath a closer parent: serrulate beneath serrated, hirsute, pilose, strigose and canescent
+  beneath hairy, scabrous and tuberculate beneath rough, connate beneath fused with, the
+  kinds of dehiscence beneath dehiscent, turbinate beneath obconical, marginal beneath
+  peripheral. Ten synonyms that are labels of other classes are removed (papery, hairy,
+  discolored, obconical, …).
+- The review was made by a second model (Claude Opus; Sonnet for the pairs of alternatives)
+  in 356 batches and checked by Claude Fable 5.2 (AI) at the curator's instruction: every
+  answer is in `curation/opus-review-2026-11-14/`, what became a class in
+  `staged-classes.tsv`, what was not applied and why in `not-applied.tsv`
+  (`tools/llm_candidate_review.py`, `tools/stage_review_classes.py`,
+  `tools/apply_definition_review.py`, `tools/apply_candidate_review.py`).
+
 ### 2026-11-13
 
 28,146 FLOPO classes (1,306 deprecated identifiers retained); every earlier identifier

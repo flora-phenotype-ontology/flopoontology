@@ -332,6 +332,16 @@ class Builder:
         if condition:  # "black when dry"
             g.add((formal, FB.specimenCondition, Literal(condition["condition"])))
             g.add((formal, FB.conditionText, Literal(condition.get("condition_text", ""))))
+        word = a.get("count_word") or {}
+        if word:  # "seeds numerous": present, and how many as a word
+            g.add((formal, FB.countWord, Literal(word["amount"])))
+            g.add((formal, FB.countText, Literal(word.get("count_text", ""))))
+        position = a.get("count_position") or {}
+        if position:  # "veins 4-6 on each side of the midrib"
+            g.add((formal, FB.countPosition, Literal(position["kind"])))
+            g.add((formal, FB.countPositionText, Literal(position.get("position_text", ""))))
+            if position.get("landmark_term"):
+                g.add((formal, FB.countLandmark, URIRef(iri(position["landmark_term"]))))
         if a.get("value_union_scope") == "across_attributes":  # "simple or branched"
             g.add((formal, FB.unionScope, Literal("across_attributes")))
         for operand in a.get("value_operands") or []:
@@ -374,8 +384,9 @@ class Builder:
             if uo:
                 self.used_terms.add(curie(uo))
             g.add((formal, FB.unitSymbol, Literal(a["unit"])))
-            if uo and not condition and (a.get("value_low") is not None or a.get("value_high") is not None):
-                # Counts per container or of pairs are other traits than counts of the bare part.
+            if uo and not condition and not position and (a.get("value_low") is not None or a.get("value_high") is not None):
+                # Counts per container or of pairs are other traits than counts of the bare part;
+                # a count at each place of a kind ("4-6 on each side") is merged with nothing.
                 # So are measurements at a stage or of a state ("calyx 8 mm in fruit", "young leaves").
                 context = "|".join(str(a.get(k) or "") for k in ("bearer_container", "bearer_collection_size"))
                 context += "|" + ",".join(_context_terms(a))
@@ -427,7 +438,9 @@ class Builder:
         contexts += [s.get("stage_text", "") for s in a.get("developmental_stage_contexts") or []]
         contexts += [self.vocab.label(q) for q in a.get("bearer_context_qualities") or []]
         contexts += [(a.get("bearer_whole") or {}).get("whole_text", ""),
-                     (a.get("specimen_condition") or {}).get("condition_text", "")]
+                     (a.get("specimen_condition") or {}).get("condition_text", ""),
+                     (a.get("count_word") or {}).get("count_text", ""),
+                     (a.get("count_position") or {}).get("position_text", "")]
         contexts = [c for c in contexts if c]
         return f"{label} ({', '.join(contexts)})" if contexts else label
 

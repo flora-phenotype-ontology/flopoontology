@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P02360",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'each X has N Y' as the container: count of petal PO:0009032 (amount PATO:0000070, 5, count) with bearer_container flower PO:0009046; the container word 'flower' stands in the same sentence and was not grounded.",
+  "reason": "A plain count with an explicit container; only the 'each X has' construction is unknown to the container reader.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02361",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (habit rules)",
+  "fix": "Map 'climber' on the whole plant PO:0000003 to the EQ value climbing FLOPO:0991108 instead of the old FLOPO whole-plant class without signature; 'herbaceous' as a second statement with PATO:0002352 herbaceous.",
+  "reason": "Both terms exist; the habit rule points to a class that has no EQ signature.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02362",
+  "decision": "new_pattern",
+  "target": "presence at a place",
+  "fix": "Presence of bracteole PO:0009043 with a place: OWL has part some (inflorescence and has part some bracteole) for the male glomerule (pattern 12 for the male qualifier); 'between the flowers' / 'séparées par' kept in RDF as the place cue. The doc names presence with slot 1 as the representation but there is no pattern file.",
+  "reason": "This says where bracteoles are placed among the flowers, not a quality of the flower; there is no PATO relation 'separated by'.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02363",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (rule) with frequency qualifier",
+  "fix": "Rule 'borne at leafless nodes' (of flowers) -> cauliflorous FLOPO:0991175, whose definition includes flowers on older leafless branches; 'often' as frequency_qualifier.",
+  "reason": "An existing FLOPO value covers flowering on leafless older wood; prefer a rule to a new term.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02364",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Teach the ratio reader fraction words ('one third', 'one half', 'a quarter'): ratio_low 0.33, ratio_high 0.5, quality decreased length PATO:0000574 towards hypanthium PO:0009065, bearer calyx lobe.",
+  "reason": "A ratio to another part, with no unit by nature; only the written-out fractions are not read.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02365",
+  "decision": "existing_pattern",
+  "target": "measurement grounding (dimension adjective after a number)",
+  "fix": "Map 'thick' after a measured value to the attribute thickness PATO:0000915: rhizome, 1-1.5 cm.",
+  "reason": "An ordinary measurement; the adjective was not changed to its PATO attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02366",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (processes; slot 1 region)",
+  "fix": "Read the verb 'dehiscing' as dehiscent FLOPO:0991149 on the fruit/capsule, 'apically' as the apical region (slot 1), 'often' as frequency; 'by two slits' stays in RDF.",
+  "reason": "The process wording names a quality that FLOPO added on 2026-11-13.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02367",
+  "decision": "transcription_error",
+  "target": "epicalyx bract PO:0025577 vestigial PATO:0000588",
+  "fix": "'scarcely present' means barely developed, not present: annotate epicalyx bract (or epicalyx PO:0009063) as vestigial PATO:0000588; do not treat it as negated presence.",
+  "reason": "The transcribed quality 'present' turns the sense around, and the negation that the gate expected is not there.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02368",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add the French cue 's'insérant (au-dessous de/sur/à)' to the 'inserted at' row: filament PO:0009067, inserted into PATO:0000624 towards anther PO:0009066; 'au-dessous du quart inférieur' kept in comparison_text.",
+  "reason": "An insertion relation to another part that is named in the clause; only the French reflexive verb is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02369",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "These are common names of the taxon, not a phenotype.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02370",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "'above' on a leaf -> leaf lamina adaxial epidermis PO:0000050 (slot 1); 'almost hairless' = glabrous with value_qualifier approximately (pattern 01); 'with some scattered hairs' needs a rule to sparsely hairy; then a union of the two values.",
+  "reason": "Both alternatives describe a nearly glabrous upper surface; existing patterns cover it once the 'scattered hairs' rule exists.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02371",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (habit rules)",
+  "fix": "Map 'twining' on a vine/whole plant to climbing FLOPO:0991108 (its definition includes twining), not to the class without signature; 'woody' as a separate statement.",
+  "reason": "An existing EQ value covers it; a narrower 'twining' term is not needed for now.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02372",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation); flopo2/verify/gates.py NEGATION_EVIDENCE",
+  "fix": "Add French 'nul/nulle/nuls/nulles' to the negation cues: pappus PO:0025393 absent (complement of present).",
+  "reason": "'pappus nul' means the pappus is absent; the cue list lacks 'nul'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02373",
+  "decision": "transcription_error",
+  "target": "pistillode PO:0009078",
+  "fix": "Entity is 'rudiment d'ovaire' = pistillode PO:0009078 of the male flower (pattern 12), absent; also add 'nul' to the negation cues.",
+  "reason": "This statement is about the male flower's rudimentary ovary; recording the ovary as absent would be false for the taxon.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02374",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (continuum); docs/odp/01-approximate-value.md",
+  "fix": "Ground 'broadly ovate' to ovate (FLOPO:0991024 temporary / PATO:0104368), with 'broadly' kept in RDF; then the continuum suborbicular (approx. orbicular) to ovate.",
+  "reason": "The continuum pattern exists; the second value with the 'broadly' modifier was not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02375",
+  "decision": "transcription_error",
+  "target": "lower glume PO:0006002",
+  "fix": "Entity is 'the first scale' = first glume = lower glume PO:0006002 (PO synonym 'first glume'), absent; add 'wanting' to the negation cues.",
+  "reason": "The spikelet is present; the absent part is its first glume, as usual in Paspalum.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02376",
+  "decision": "new_pattern",
+  "target": "depth of incision",
+  "fix": "Bearer petal with quality split PATO:0001786, and the depth of the split as a length measurement (0.5-1 mm) on the cleft/sinus. OWL: has characteristic some split; the depth stays in RDF as a measurement of the incision, since PO has no sinus class.",
+  "reason": "This measures how deep the split goes, which no current pattern covers.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02377",
+  "decision": "new_pattern",
+  "target": "position of greatest width",
+  "fix": "Bearer leaf lamina; the relative position of the widest point along the base-apex axis as a measurement with unit 'ratio' (0.2-0.4 from base), or as a region (middle, above middle). OWL keeps only the lamina shape; the position stays in RDF until PATO has a 'position of maximum width' quality.",
+  "reason": "Common in fern and leaf descriptions, but there is no PATO term and no pattern.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02378",
+  "decision": "missing_term",
+  "target": "numerous: an amount quality of a set of like parts too many to be counted in the description (indefinite number), child of amount PATO:0000070",
+  "fix": "",
+  "reason": "'Numerous' has no number, so the count pattern holds it; PATO increased amount PATO:0000470 compares with a normal state and does not fit a taxon description.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02379",
+  "decision": "missing_term",
+  "target": "numerous (indefinite amount, child of PATO:0000070); same term as P02378",
+  "fix": "",
+  "reason": "'ovules nombreux' is an indefinite count; same need as P02378.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02380",
+  "decision": "missing_term",
+  "target": "candelabriform: a shape quality of a whole plant whose several erect branches arise from a short common axis, like a candelabrum",
+  "fix": "",
+  "reason": "'wandlike' is already covered by virgate FLOPO:0991038 (synonym wand-like); the alternative 'candelabra-form' has no term, so the union could not be built.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02381",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Strip the degree adverb 'shallowly' before splitting the compound word: count of leaf lamina lobe PO:0025517, 5-7; keep 'shallowly' in RDF ('lobed' is in config/flora_counted_parts.tsv).",
+  "reason": "A count in a word that the adverb blocked.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02382",
+  "decision": "new_pattern",
+  "target": "duration of development",
+  "fix": "Bearer seed cone; quality duration PATO:0001309 of its maturation, value 2 with unit year. OWL: has characteristic some duration; the number and unit as a data range, as for other measurements.",
+  "reason": "A phenological duration (2-year seed cones in Pinus), not a quality of form; no pattern for time spans.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02383",
+  "decision": "existing_pattern",
+  "target": "docs/odp/06-specimen-condition.md",
+  "fix": "Add the cue 'au séchage' (and 'noircissant au séchage') to specimen condition: the fruit is red, and black when dried is a specimen_condition annotation.",
+  "reason": "Blackening on drying describes the herbarium specimen, a pattern that already exists.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02384",
+  "decision": "missing_term",
+  "target": "numerous (indefinite amount, child of PATO:0000070); same term as P02378",
+  "fix": "",
+  "reason": "This is an indefinite count of seeds per capsule.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02385",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add a row 'paler / darker than' -> color brightness PATO:0000016 towards the named part (petiole PO:0020038); the geniculum bearer must ground to a FLOPO anatomy class or to the petiole region.",
+  "reason": "The second term is named; only colour comparisons are missing from the table.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02386",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "Count of secondary vein (amount, 3-5, count) with container leaf lamina, plus a position slot 'per side of midvein'. OWL as pattern 03; the per-side scope stays in RDF so the number is not read as the total. Listed as open in docs/annotation-context-patterns.md.",
+  "reason": "The count is per side of the midvein, which is held as count_per_position.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02387",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Allow '±' (and 'about') between the cue 'to' and the number: an upper bound of thickness PATO:0000915 ≤ 1 cm, with value_qualifier approximately (pattern 01).",
+  "reason": "An upper bound whose cue is broken by the '±' sign.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02388",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add a row 'enfoncé dans / immersed in / sunk in' -> sunken PATO:0002416 towards the disc (ground 'disque' to the floral disc class).",
+  "reason": "A position relation to a named second part; the cue is missing from the table.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02389",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Split range compounds 'N-M-veined' like '3-5-foliolate': count of vein, 1-3, unit count, container leaf lamina PO:0020039.",
+  "reason": "'veined' is in config/flora_counted_parts.tsv; the range form was not split, so it was treated as a measurement without a unit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02390",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation); flopo2/verify/gates.py NEGATION_EVIDENCE",
+  "fix": "Add 'neither ... nor' to the negation cues and spread the negation to both members: inflorescence not fleshy PATO:0001374-class 'fleshy', and not condensed into a head.",
+  "reason": "The negation exists but this English cue is missing (only French 'ni' is listed).",
+  "confidence": "high"
+ },
+ {
+  "id": "P02391",
+  "decision": "new_pattern",
+  "target": "position of greatest width",
+  "fix": "As P02377: lamina widest at the middle and above, as a region of the widest point (middle to upper part) in RDF; OWL keeps the elliptic-oblong shape.",
+  "reason": "This is the same construction as P02377.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02392",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add the cue 'extending to' (and accept '±' before the number): pedicel length ≤ ~1 cm with the stage 'in fruit' (PO:0001002, already in config/flora_context_words.tsv).",
+  "reason": "An upper bound at a stage; only the cue is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02393",
+  "decision": "new_pattern",
+  "target": "comparison with the opposite surface",
+  "fix": "Bearer the abaxial surface (leaf lamina abaxial epidermis PO:0000049, slot 1); quality color brightness PATO:0000016 towards the adaxial surface PO:0000050, inferred from the surface word, not named in the text; the inference is marked in RDF.",
+  "reason": "Pattern 09 needs a named second term; here it is implied by 'beneath' (common in floras).",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02394",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (habit rules)",
+  "fix": "As P02361/P02371: 'vine' / 'twining' -> whole plant climbing FLOPO:0991108; 'herbaceous' PATO:0002352 as a second statement.",
+  "reason": "These terms exist; the rule points to a class without an EQ signature.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02395",
+  "decision": "existing_pattern",
+  "target": "docs/odp/12-part-of-qualified-whole.md",
+  "fix": "Carry the head 'ray-flowers' from the preceding clause: corolla part of ray flower PO:0025331, length 1 mm (the next clause gives disk flower PO:0025332 corollas 2 mm).",
+  "reason": "The qualifier is the whole that the corolla belongs to, not a stage; without it the two corolla lengths conflict.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02396",
+  "decision": "new_pattern",
+  "target": "before or after a stage",
+  "fix": "Bearer leaf with position basal FLOPO:0991002 (kind D); the leaf is absent or withered from flowering stage PO:0007616 onward. A stage relation 'by/after' beside present_during; OWL keeps the bearer and quality, and the stage relation goes in RDF until the model has a before/after relation.",
+  "reason": "Listed as open: the model has present_during only.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02397",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (stage kind A); config/flora_context_words.tsv",
+  "fix": "Accept 'fruiting' as an adjective before the noun ('fruiting pedicels'): pedicel length 0.6-0.8 mm during fruit development stage PO:0001002 ('fruiting' is already a row).",
+  "reason": "The stage word is in the table; it was not read in front of the noun.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02398",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md; config/flora_union_pairs.tsv",
+  "fix": "All values exist: scandent = climbing FLOPO:0991108, straggling = straggly FLOPO:0991043, erect PATO:0000622. Add the reviewed pairs (climbing/straggly/erect) to the union-pair table; 'shrub' and 'evergreen' are separate statements.",
+  "reason": "Alternatives across two attributes (position, shape) need a reviewed pair row.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02399",
+  "decision": "missing_term",
+  "target": "pandurate: a shape quality of a lamina by virtue of its being fiddle-shaped, obovate-oblong with a concave narrowing on each side below the middle",
+  "fix": "",
+  "reason": "The other values exist (oblanceolate, spatulate, lanceolate, elliptic, oblong in PATO); 'pandurate' has none, which blocks the union.",
+  "confidence": "medium"
+ }
+]

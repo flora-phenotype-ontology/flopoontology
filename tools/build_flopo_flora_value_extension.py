@@ -68,6 +68,7 @@ RULE_FIELDS = [
 # Taste/odour words that a fruit can carry as a taste ("sweet and edible"): odour readings only.
 NOT_FRUIT = r"^(?!.*\b(?:fruit|berry|drupe|pod|capsule)s?\b).+"
 ODOUR_WORDS_NOT_FRUIT = {"sour", "sweet", "spicy"}
+FLAVOUR = "PATO_0000043"  # a taste value ("sour", FLOPO:0991340) is said of fruits above all
 
 
 def read_spec(root: Path = ROOT) -> list[dict[str, str]]:
@@ -79,7 +80,14 @@ def read_spec(root: Path = ROOT) -> list[dict[str, str]]:
         number = int(row["flopo_id"].split(":")[1])
         if not ID_BLOCK[0] <= number <= ID_BLOCK[1]:
             raise ValueError(f"{row['flopo_id']} is outside the reserved block")
+    FLOPO_PARENTS.clear()
+    FLOPO_PARENTS.update({row["flopo_id"]: row["parent"] for row in rows if row.get("status") != "obsolete"})
     return rows
+
+
+# flopo_id -> parent of the rows of the specification (filled by read_spec): a value may sit
+# beneath another value of this module ("bipinnatifid" beneath "pinnatifid")
+FLOPO_PARENTS: dict[str, str] = {}
 
 
 def _local(curie: str) -> str:
@@ -92,6 +100,9 @@ def attribute_of(pato: dict, attributes: set[str], parent: str) -> str:
     frontier, seen = [parent], set()
     while frontier:
         current = frontier.pop(0)
+        if current in FLOPO_PARENTS:  # a value beneath another value of this module
+            frontier.append(FLOPO_PARENTS[current])
+            continue
         if _local(current) in attributes:
             return _local(current)
         seen.add(current)
@@ -108,9 +119,10 @@ def build_graph(rows: list[dict[str, str]], pato: dict) -> Graph:
     graph.add((MODULE, RDF.type, OWL.Ontology))
     graph.add((OIO.inSubset, RDF.type, OWL.AnnotationProperty))
     graph.add((MODULE, RDFS.comment, Literal(__doc__.split("\n\n")[0], lang="en")))
+    labels = {row["flopo_id"]: row["label"] for row in rows}
     for row in rows:
-        if row["parent"] not in pato:
-            raise ValueError(f"{row['label']}: parent {row['parent']} is not a live PATO class")
+        if row["parent"] not in pato and row["parent"] not in FLOPO_PARENTS:
+            raise ValueError(f"{row['label']}: parent {row['parent']} is not a live PATO class or a value of this module")
         cls = OBO[_local(row["flopo_id"])]
         graph.add((cls, RDF.type, OWL.Class))
         if row.get("status") == "obsolete":
@@ -136,7 +148,8 @@ def build_graph(rows: list[dict[str, str]], pato: dict) -> Graph:
             graph.add((cls, OIO.hasRelatedSynonym, Literal(synonym, datatype=XSD.string)))
         date = row.get("added") or DECISION_DATE
         note = (
-            f"FLOPO-local value class beneath PATO {row['parent']} ({pato[row['parent']].name}), "
+            f"FLOPO-local value class beneath {'PATO ' if row['parent'] in pato else ''}{row['parent']} "
+            f"({pato[row['parent']].name if row['parent'] in pato else labels[row['parent']]}), "
             f"added {date} for quality words of the parsed flora corpora "
             f"(evidence: {row['source_words']}). Candidate for submission to PATO."
         )
@@ -175,7 +188,7 @@ def rule_rows(rows: list[dict[str, str]], pato: dict, attributes: set[str]) -> l
                     "match_field": "quality",
                     "match_key": key,
                     "bearer_constraint": (row.get("rule_bearer_constraint") or "")
-                    or (NOT_FRUIT if key.split()[0] in ODOUR_WORDS_NOT_FRUIT else ""),
+                    or (NOT_FRUIT if key.split()[0] in ODOUR_WORDS_NOT_FRUIT and attribute != FLAVOUR else ""),
                     "kind": "flopo_value",
                     "pato_id": attribute,
                     "value_term": _local(row["flopo_id"]),

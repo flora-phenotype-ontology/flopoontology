@@ -35,7 +35,7 @@ measurement value some xsd:decimal[>= 3, <= 5] and has value unit some 'count un
 
 | Rule | Layer | Statement |
 |---|---|---|
-| `measurement_unit_without_value` (existing) | data model | a count has a number ("few", "many" are held: `measurement_value_not_numeric`) |
+| `measurement_unit_without_value` (existing) | data model | a count has a number ("few", "many" follow pattern 13) |
 | `count_container_not_grounded` (annotator) | annotator | the container must be a PO or FLOPO class |
 | shape `CountOfParts` | ShEx | quality amount, unit count, optional container |
 | `count_is_a_whole_number` | SPARQL | bounds are whole and not negative |
@@ -51,5 +51,7 @@ same decision as for all measurements.
 
 ## Limits
 
-"merous", "ranked" and "seriate" are not split: they name no single part. A count at a position
-("veins 5-10 on each side of the midrib") is held (`count_per_position`).
+"merous", "ranked" and "seriate" are not split: they name no single part. A count without a
+number ("seeds numerous") is pattern [13](13-indefinite-count.md); a count at a position ("veins
+5-10 on each side of the midrib") is pattern [14](14-count-at-a-position.md). "4 or 5 leaves" is
+the range 4-5 (since 2026-11-14), when the transcription has both numbers.

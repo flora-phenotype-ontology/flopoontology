@@ -205,3 +205,69 @@ def test_part_of_a_qualified_whole(res):
     from flopo2.owl.annotation_class import annotation_class_iri
 
     assert annotation_class_iri(a) != annotation_class_iri({k: v for k, v in a.items() if k != "bearer_whole"})
+
+
+def test_a_count_without_a_number_is_presence_with_a_count_word(res):
+    text = "Inflorescences few-flowered; seeds numerous."
+    (flowers, seeds), _ = annotate(
+        res, text,
+        {"entity_en": "inflorescence", "quality_en": "few-flowered", "source_en": "Inflorescences few-flowered"},
+        {"entity_en": "seed", "quality_en": "numerous", "source_en": "seeds numerous"},
+    )
+    assert (flowers["po_id"], flowers["pato_id"], flowers["bearer_container"]) == ("PO_0009046", "PATO_0000467", "PO_0009049")
+    assert flowers["count_word"]["amount"] == "few"
+    assert text[flowers["count_word"]["start"]:flowers["count_word"]["end"]] == "few-flowered"
+    assert (seeds["po_id"], seeds["pato_id"], seeds["count_word"]["amount"]) == ("PO_0009010", "PATO_0000467", "many")
+    assert flowers.get("phenotype_class_iri") and issues(flowers, text) == [] and issues(seeds, text) == []
+    assert "count_word_with_number" in issues({**seeds, "value_low": 20.0}, text)
+    assert "count_word_without_presence" in issues({**seeds, "pato_id": "PATO_0000070"}, text)
+    assert "count_word_text_not_verbatim" in issues({**seeds, "count_word": {**seeds["count_word"], "start": 0}}, text)
+
+
+def test_a_count_on_each_side_has_its_position_and_no_phenotype_class(res):
+    text = "Leaf blade with 3-10 lobes on each side."
+    (a,), _ = annotate(res, text, {"entity_en": "leaf blade", "quality_en": "number of lobes", "value_low": 3,
+                                   "value_high": 10, "unit": "lobes", "source_en": "with 3-10 lobes on each side"})
+    assert (a["po_id"], a["pato_id"], a["value_low"], a["value_high"]) == ("PO_0025517", "PATO_0000070", 3.0, 10.0)
+    assert a["bearer_container"] == "PO_0020039" and a["count_position"]["kind"] == "each_side"
+    assert text[a["count_position"]["start"]:a["count_position"]["end"]] == "on each side"
+    assert not a.get("phenotype_class_iri") and issues(a, text) == []
+    assert "count_position_with_phenotype_class" in issues({**a, "phenotype_class_iri": "http://example.org/c"}, text)
+    assert "count_position_without_count" in issues({**a, "value_low": None, "value_high": None}, text)
+    from flopo2.owl.assertions import _strict
+
+    assert _strict({**a, "gate": {"status": "accepted"}}, True) is False
+
+
+def test_two_numbers_joined_by_or_are_a_range(res):
+    text = "Stems with 4 or 5 leaves."
+    (a,), _ = annotate(res, text, {"entity_en": "stem", "quality_en": "number of leaves", "value_low": 4,
+                                   "value_high": 5, "unit": "leaves", "source_en": "with 4 or 5 leaves"})
+    assert (a["po_id"], a["value_low"], a["value_high"], a["unit"]) == ("PO_0025034", 4.0, 5.0, "count")
+    # one number only in the transcription: the choice between two numbers stays unresolved
+    rows, _ = annotate(res, text, {"entity_en": "stem", "quality_en": "number of leaves", "value_low": 4,
+                                   "value_high": 4, "unit": "leaves", "source_en": "with 4 or 5 leaves"})
+    assert rows == []
+
+
+def test_or_nearly_so_is_an_approximation_cue(res):
+    text = "Stems glabrous or nearly so."
+    (a,), _ = annotate(res, text, {"entity_en": "stem", "quality_en": "glabrous", "source_en": "Stems glabrous or nearly so"})
+    assert a["pato_id"] == "PATO_0000453" and a["value_qualifier"] == "approximately"
+    assert text[a["modality_start"]:a["modality_end"]] == "or nearly so"
+
+
+def test_place_words_of_the_second_model_review(res):
+    text = "Leaf blades ovate, apex acute. Upper leaves sessile. Leaves pubescent on both surfaces."
+    apex, upper, both = annotate(
+        res, text,
+        {"entity_en": "leaf blade", "quality_en": "acute", "source_en": "apex acute", "stage": "apex"},
+        {"entity_en": "leaf", "quality_en": "sessile", "source_en": "Upper leaves sessile", "stage": "upper"},
+        {"entity_en": "leaf", "quality_en": "pubescent", "source_en": "Leaves pubescent on both surfaces",
+         "stage": "on both surfaces"},
+    )[0]
+    assert apex["po_id"] == "PO_0025589" and apex["value_terms"] == ["FLOPO_0991095"]  # leaf lamina tip, acute
+    assert upper["bearer_context_qualities"] == ["FLOPO_0991376"]                    # the upper leaves
+    assert both["po_id"] == "PO_0025034" and not both.get("bearer_scope")            # the leaf as a whole
+    assert all(a["gate"]["status"] == "accepted" for a in (apex, upper, both))
+

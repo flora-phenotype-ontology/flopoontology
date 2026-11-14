@@ -39,10 +39,18 @@ def test_module_is_the_build_of_the_spec(spec, pato):
     assert isomorphic(committed, build_graph(spec, pato))
 
 
-def test_every_value_sits_directly_under_a_live_pato_class(spec, pato):
+def test_every_value_sits_under_a_live_pato_class(spec, pato):
+    """Directly, or beneath another live value of the module ("mucronulate" beneath "mucronate")."""
+
+    by_id = {row["flopo_id"]: row for row in spec}
     for row in spec:
-        assert row["parent"] in pato, row
-        assert not pato[row["parent"]].name.startswith("obsolete"), row
+        parent, seen = row["parent"], set()
+        while parent in by_id:
+            assert parent not in seen and by_id[parent].get("status") != "obsolete", row
+            seen.add(parent)
+            parent = by_id[parent]["parent"]
+        assert parent in pato, row
+        assert not pato[parent].name.startswith("obsolete"), row
 
 
 def test_values_are_embedded_live_in_the_release(spec):
@@ -80,8 +88,11 @@ def test_rules_use_attribute_slim_top_level_terms(spec, pato):
 
 def test_bare_taste_words_are_not_odour_rules(spec, pato):
     attributes = load_pato_attribute_terms(ROOT / "config/pato_lexicon.tsv")
-    keys = {r["match_key"] for r in rule_rows(spec, pato, attributes)}
-    assert not {"sour", "sweet", "spicy", "head", "single", "rosette", "pairs"} & keys  # 2026-10-13 review
+    rules = rule_rows(spec, pato, attributes)
+    keys = {r["match_key"] for r in rules}
+    assert not {"sweet", "spicy", "head", "single", "rosette", "pairs"} & keys  # 2026-10-13 review
+    # the bare word "sour" is the taste (FLOPO:0991340, 2026-11-14), never the odour
+    assert [r["pato_id"] for r in rules if r["match_key"] == "sour"] == ["PATO_0000043"]
     assert {"sour smell", "sweet scent", "spicy scent", "dense head", "borne singly"} <= keys
 
 

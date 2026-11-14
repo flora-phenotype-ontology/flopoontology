@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P01840",
+  "decision": "missing_term",
+  "target": "climber (habit noun): rule for climbing FLOPO:0991108 on whole plant PO:0000003",
+  "fix": "Add 'climber' as a habit-noun rule for climbing on whole plant. Give FLOPO_0985031 'whole plant climbing phenotype' the EQ signature whole plant + FLOPO:0991108. Leave 'tall' unannotated (vague size); 'up to 15 m in length' is a separate bounded length (pattern 02).",
+  "reason": "The value class exists. The habit noun has no rule and the phenotype class has no EQ signature, as in P01791.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01841",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "The row 'angled → angle' is in config/flora_counted_parts.tsv, but 'angle' grounds to no class. Read 'N-angled' as angular PATO:0001977 of the stem PO:0009047 (culm), with the number of angles (3) as a count in RDF. For a sedge culm, '3-angled' can also be read as triangular PATO:0001875 in cross-section.",
+  "reason": "A count in a compound word whose counted part has no class. 'measurement_missing_unit' is spurious.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01842",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "With habit-noun rules (climbing shrub, liana → climbing FLOPO:0991108 on whole plant PO:0000003), both alternatives give the same value. The union reduces to one value. Height 1.2–40 m and trunk diameter are separate statements.",
+  "reason": "As P01774: the value terms exist, but the habit nouns have no rule and FLOPO_0985031 has no EQ signature.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01843",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add 'or more' after a number as a lower-bound cue (inclusive, ≥4), so it is not taken as a disjunction. Count of cauline leaf PO:0000013 ('stem-leaves'), unit pairs. The data range goes into OWL and the cue into RDF.",
+  "reason": "This is a count with an open upper end, not an alternative. Only the cue is unknown.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01844",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "'young' is in config/flora_context_words.tsv (young PATO:0000309): branch PO:0025073, young, brown PATO:0000952. Do not let the next clause ('turning black-brown in second year') block the reading. That clause is a separate transition, and 'in second year' needs an A2 table row.",
+  "reason": "The stage cue is known. The row was held because of the following transition clause.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01845",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Grounding rule: 'apical' (also 'basal', 'parietal') on an ovule with no named target means attached at the apex of the locule PO:0025263. Plant ovule PO:0020003 is attached to the apical region of the locule. 'pendant' is the hanging orientation of the ovule (separate statement), and '1 ovule' is a count per ovary (pattern 03).",
+  "reason": "This is placentation: a position relative to an implicit second part, which pattern 09 can take with a default target.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01846",
+  "decision": "new_pattern",
+  "target": "count-at-position",
+  "fix": "As P01779: count of secondary veins (leaf lamina vein PO:0020138) 7-11 per side of the leaf midvein PO:0020139. RDF keeps 'on each side of'.",
+  "reason": "The docs list this as an open count at a position.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01847",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add 'angular' next to 'angled' in config/flora_counted_parts.tsv (with the same grounding as P01841). The count 2–4, extreme 5, uses pattern 05. 'older' (old PATO:0000308) is in the table, and 'terete or … -angular or -winged' is a union (07, secondary across attributes).",
+  "reason": "The counted-part ending 'angular' is not in the table. The other parts have patterns.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01848",
+  "decision": "missing_term",
+  "target": "liana (habit noun): rule for climbing FLOPO:0991108 on whole plant PO:0000003",
+  "fix": "Add 'liana(s)' as a habit-noun rule: whole plant climbing FLOPO:0991108 (a liana is a woody climber, so woodiness can be a second statement). Give FLOPO_0985031 its EQ signature. '1-3 m' is a separate length.",
+  "reason": "'Liana' is a PO synonym of whole plant, so it became the entity, not a quality. The value term exists.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01849",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "Add the French 'jeune(s)' as a row for young PATO:0000309 in config/flora_context_words.tsv. Ground 'tétragone(s)' to quadrangular PATO:0001988 and 'rameaux' to branch PO:0025073, not stem.",
+  "reason": "The English pattern exists. The French state word and shape word are not mapped.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01850",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Map the French 'orangé(s)' to orange PATO:0000953 ('jaune(s)' → yellow PATO:0000324). Then fruit PO:0009001 colour one_of {orange, yellow}.",
+  "reason": "A same-attribute union, which pattern 07 covers. One value word is unmapped.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01851",
+  "decision": "transcription_error",
+  "target": "entity should be the fringe elements of the pitcher wings, not flower",
+  "fix": "Count the fringe elements of the pitcher wing, 2-4 per cluster. Neither PO nor FLOPO has a class for these fringe elements, so leave it in RDF. Nepenthes flowers are not described here.",
+  "reason": "The text describes pitcher wings. The flower entity is wrong.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01852",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation)",
+  "fix": "Add 'wanting' to the absence cues: involucre PO:0009100 absent PATO:0000462 (or present, negated).",
+  "reason": "As P01778: a plain absence whose cue word is unknown.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01853",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md (plain range)",
+  "fix": "After a number and unit, read 'thick' as the attribute thickness PATO:0000915, not the value 'thick'. Petiole PO:0020038, 2-4 mm.",
+  "reason": "As P01798: the attribute exists, but the word was grounded to a value.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01854",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept 'to ±' (to about) as an upper-bound cue combined with value_qualifier approximately (pattern 01). Stem PO:0009047 (trunk is a synonym), diameter PATO:0001334, ≤ 80 cm. 'simple' (unbranched trunk) is a separate statement.",
+  "reason": "Both cues are known separately. Only the combination 'to ±' is not parsed.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01855",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "A bare measurement after 'Stems' with no attribute word is the stem length PATO:0000122 (for an erect shrub, effectively its height). Usual range 10–30 dm, min extreme 2 dm. Accept dm as a length unit.",
+  "reason": "A plain length range with an extreme, not a count. The attribute is implicit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01856",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "As P01854: 'to ±' is an approximate upper bound. Whole plant PO:0000003, height PATO:0000119, ≤ 2 m, approximately.",
+  "reason": "The combined cue is not parsed.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01857",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground 'the fourth scale' in an Andropogoneae spikelet to fertile lemma PO:0009041 (the lemma of the upper floret). Count of teeth 2 with that lemma as the container.",
+  "reason": "A count in a compound word whose container (a numbered spikelet scale) was not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01858",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "In comparison(), skip adjectives and adverbs between 'than the' and the target noun ('minutely papillate'). Anther PO:0009066 decreased length towards filament PO:0009067. 'papillate' of the filaments is a separate statement.",
+  "reason": "The second term is in the text. The modifiers in front of it blocked grounding.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01859",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "As P01765: add 'to more than' as a cue. Store stem PO:0009047 length PATO:0000122 of 1 m, with the qualifier 'at least', in RDF only (no OWL data range). For a climbing vine this is length, not height.",
+  "reason": "The combined cue is read as neither bound.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01860",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'N or N+1' between two adjacent integers in a count as the range N–N+1, not as a disjunction. Leaf lamina vein PO:0020138 with container leaf lamina PO:0020039, count 2–3. In Cornus these are lateral veins per side, so RDF can note 'pairs'.",
+  "reason": "A plain count. The 'or' between adjacent numbers is a range.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01861",
+  "decision": "missing_term",
+  "target": "twining: a climbing quality of a stem that climbs by winding spirally round a support; child of climbing FLOPO:0991108",
+  "fix": "Add the value and give FLOPO_0985034 'twining climbing phenotype' the EQ signature stem PO:0009047 + twining. 'Deciduous' is a separate statement (deciduous (plant) PATO:0001731), and 'shrubs' is the habit.",
+  "reason": "The phenotype class exists without a value or signature. Climbing covers twining only in its definition text.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01862",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add the French cue 'plus long (que)'. Grounding rule: a series member compared without 'que' ('le médian plus long') takes the other members just named (the 2 lateral lobes) as target. Bearer: the calyx lobe of the lower lip, increased length PATO:0000573 towards the lateral calyx lobes. 'Médian' (a series member) has no value yet.",
+  "reason": "This is a dimension comparison with an implicit second term and a series member, both in the pattern-09 scope or listed as open.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01863",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1 region)",
+  "fix": "'below' on culm is in config/flora_context_words.tsv (region proximal). Bearer stem PO:0009047, proximal region triangular PATO:0001875, with 'obtusely' as a modifier (the angles are blunt). 'sharply-triangular … above' is the paired distal statement. The stage reason is spurious.",
+  "reason": "A known region cue. The row was misclassified as a stage, and the shape with modifier was not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01864",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Apply the 'lobed → lobe' row: count of corolla lobes 5 in corolla PO:0009059. 'measurement_missing_unit' is spurious, since a count has no unit.",
+  "reason": "A compound-word count already in the table.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01865",
+  "decision": "missing_term",
+  "target": "inframedial: of sori, placed between the costa (costule) and the margin, nearer the costa",
+  "fix": "Add a FLOPO position value under position PATO:0000140 for sorus PO:0025359, with its siblings medial, supramedial and submarginal. 'Borne on acroscopic veins' is a separate relation (pattern 09).",
+  "reason": "A standard fern descriptor with no PATO or FLOPO term. The relation to costa and margin is fixed by the word.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01866",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1 surface)",
+  "fix": "'abaxially' is a surface row: leaf lamina abaxial epidermis PO:0000049, tomentose, degree 'densely'. Gray (of the indumentum) and 'with sparsely pubescent veins' are separate statements. 'Middle stem leaves' is a cauline leaf with the series member 'middle' (still open).",
+  "reason": "No alternative or continuum is in the span. The reason is spurious, and the surface pattern applies.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01867",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md (plain range)",
+  "fix": "Add the French 'épais de N' as the attribute thickness PATO:0000915 (for a terete peduncle, arguably diameter). Peduncle PO:0009053, 2-3 mm.",
+  "reason": "A plain measurement. The French attribute word was grounded as a value.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01868",
+  "decision": "missing_term",
+  "target": "soon falling (caducous): rule to PATO:0001730 deciduous (generic)",
+  "fix": "Rule 'soon falling' / 'falling' → bract PO:0009055 deciduous (generic) PATO:0001730. The timing 'soon' stays in RDF with its cue.",
+  "reason": "This is a shedding disposition, not a process. The quality exists, and only the wording is unmapped.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01869",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Apply 'lobed → lobe': count of lobes 3–5 of the leaf lamina PO:0020039, with frequency 'sometimes' and degree 'slightly' (shallow lobes) in RDF.",
+  "reason": "A compound-word count with known qualifiers. The unit reason is spurious.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01870",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Apply 'toothed → tooth': count of teeth 2–4 with the container being the leaf lobe (the clause is about the lobes), not the whole leaf margin. Strip 'acutely' as a separate statement (the teeth are acute).",
+  "reason": "The adverb fused into the quality blocked the compound-word split.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01871",
+  "decision": "new_pattern",
+  "target": "relative-to-stage (before/after)",
+  "fix": "Calyx tube of female flowers (pattern 12), accrescent FLOPO:0991082, width 5 mm after anthesis; 3 mm at anthesis is a separate statement. 'later' is a stage after flowering, which needs the before/after slot. Until then, keep the width in RDF with the cue.",
+  "reason": "The value holds after a stage, and the docs list before/after as open. The bearer is the calyx tube, not the calyx.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01872",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (temporal transition)",
+  "fix": "Read 'X, becoming Y' as a qualitative_value_relation transition (as for 'white becoming pink'): corolla PO:0009059 rotate → funnelform-campanulate (a continuum of the two shapes). Keep 'as day progresses' as the cue of the transition in RDF.",
+  "reason": "The transition pattern exists. The diurnal-time phrase was taken as a stage.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01873",
+  "decision": "missing_term",
+  "target": "climbing shrub (habit noun): rule for climbing FLOPO:0991108 on whole plant PO:0000003",
+  "fix": "Give FLOPO_0985031 its EQ signature, whole plant + climbing. 'Evil-smelling' is a separate odour statement (foetid), and 'to 3.6 m long' is a bounded length.",
+  "reason": "The value exists. The habit phrase has no rule and the phenotype class has no signature.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01874",
+  "decision": "missing_term",
+  "target": "liane (French habit noun): rule for climbing FLOPO:0991108 on whole plant PO:0000003",
+  "fix": "As P01848 with the French 'liane(s)'. The rest of the list ('arbuste ou petit arbre') is a habit union (07).",
+  "reason": "The same gap as for 'liana', in French.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01875",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation)",
+  "fix": "Add 'lack(s)' / 'lacking' to the absence cues: lemma awn PO:0006032 absent PATO:0000462, for lemma PO:0009037 and the glumes (both are subjects).",
+  "reason": "A plain absence whose verb cue is unknown.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01876",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Apply 'nerved → vein': count of veins 7 of the leaf lamina PO:0020039. The nerves radiate from the cordate base (palmate venation), so 'base' is where they start, not the container.",
+  "reason": "A compound-word count already in the table. The unit reason is spurious.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01877",
+  "decision": "missing_term",
+  "target": "withered / withering → shriveled PATO:0002460 (a synonym rule, no new class)",
+  "fix": "With the rule: leaf with basal FLOPO:0991002 (pattern 04), shriveled, stage 'at anthesis' PO:0007616 (in the table), frequency 'mostly'.",
+  "reason": "As in the earlier review: the word is unmapped, and the context cues exist.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01878",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add 'enclosed within/in' as an attachment/position cue → surrounded by PATO:0005016 (synonym 'enclosed by') towards the target. Bearer achene fruit PO:0030107, target the calyx tube (in Rosaceae the hypanthium), with 'indurated' as a separate statement of the target.",
+  "reason": "The relation and its PATO term exist, but the cue is not read.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01879",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "'young' is in the table: branch PO:0025073 (twig is a synonym), young PATO:0000309. Ground 'angled' with no number to angular PATO:0001977; the counted-part row applies only to 'N-angled'.",
+  "reason": "A known state cue. Only the bare 'angled' lacks a grounding.",
+  "confidence": "high"
+ }
+]

@@ -75,7 +75,11 @@ def update_release(release_path: Path, module_path: Path, release_date: str) -> 
             raise ValueError(f"flora value class not embedded: {class_iri}")
         if (cls, OWL.deprecated, Literal(True)) in check:
             continue  # withdrawn term: deprecated shell with its replacement, no PATO parent
-        parents = [p for p in check.objects(cls, RDFS.subClassOf) if str(p).startswith(OBO + "PATO_")]
+        # beneath PATO directly, or beneath another value of the module ("bipinnatifid")
+        parents = [
+            p for p in check.objects(cls, RDFS.subClassOf)
+            if str(p).startswith(OBO + "PATO_") or str(p) in classes
+        ]
         if not parents:
             raise ValueError(f"flora value class not embedded beneath PATO: {class_iri}")
     return {"classes": len(classes), "replaced_declarations": replaced}

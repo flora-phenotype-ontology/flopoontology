@@ -47,13 +47,14 @@ EXPECTED = {
 
 
 def _proposed() -> dict[str, dict[str, str]]:
-    """Classes added in the flora candidate review of 2026-11-13 (drafted by AI review)."""
+    """Classes added in the flora candidate reviews of 2026-11-13 and 2026-11-14 (AI review)."""
 
     allocations = load_allocations(REGISTRY)
     return {
         allocations[row["proposal_key"]]: row
         for row in _tsv(SPEC)
-        if row["action"] == "new_flopo_local" and "flora candidate review" in row["note"]
+        if row["action"] == "new_flopo_local"
+        and ("flora candidate review" in row["note"] or "second-model review" in row["note"])
     }
 
 
@@ -122,6 +123,11 @@ def test_classes_are_provisional_po_parented_and_carry_provenance():
         assert languages == {"en", "fr"}
     proposed = _proposed()
     assert proposed and not set(proposed) & set(EXPECTED)
+    other_flopo = {
+        row["flopo_iri"].rsplit("/", 1)[-1]
+        for row in _tsv(ROOT / "config" / "flopo_id_registry.tsv")
+        if row.get("deprecated", "0") == "0"
+    }
     for flopo_id, row in proposed.items():
         cls = URIRef(OBO + flopo_id)
         assert (cls, RDFS.label, Literal(row["label"], lang="en")) in graph
@@ -134,8 +140,9 @@ def test_classes_are_provisional_po_parented_and_carry_provenance():
         parents = [p for p in graph.objects(cls, RDFS.subClassOf) if isinstance(p, URIRef)]
         assert len(parents) == 1
         parent = str(parents[0]).removeprefix(OBO)
-        assert parent in live or parent in proposed or parent in EXPECTED
-        assert {str(f).removeprefix(OBO) for f in _some(graph, cls, PART_OF)} <= live | set(proposed)
+        # a parent or whole may be a live class of another FLOPO module (pinna, corolla tube)
+        assert parent in live or parent in proposed or parent in EXPECTED or parent in other_flopo
+        assert {str(f).removeprefix(OBO) for f in _some(graph, cls, PART_OF)} <= live | set(proposed) | other_flopo
     indumentum = URIRef(OBO + "FLOPO_0986003")
     assert _some(graph, indumentum, HAS_PART) == {URIRef(OBO + "PO_0000282")}
 

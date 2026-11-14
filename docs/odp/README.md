@@ -19,6 +19,8 @@ rules that are checked, and what is known about the pattern in the literature.
 | 10 | [Equality and ratio to another part](10-ratio-to-another-part.md) | as long as the sepals, 2-3 times as long as | 2026-11-13 |
 | 11 | [Ratio of two dimensions](11-ratio-of-two-dimensions.md) | 2-3 times as long as wide | 2026-11-13 |
 | 12 | [Part of a qualified whole](12-part-of-qualified-whole.md) | calyx of male flowers | 2026-11-13 |
+| 13 | [Indefinite count](13-indefinite-count.md) | seeds numerous, few-flowered | 2026-11-14 |
+| 14 | [Count at a position](14-count-at-a-position.md) | veins 4-6 on each side of the midrib | 2026-11-14 |
 
 Earlier patterns (continuum and transition between two values, stage of development, surface or
 region of the bearer) are described in `docs/annotation-context-patterns.md`.

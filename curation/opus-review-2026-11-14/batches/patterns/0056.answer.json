@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P02240",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground the container 'areole' (Cactaceae, 'per areole') to PO:0025353 areole bud. The counted part is the spine (spine leaf PO:0025173). Read 'per X' as the cue for the container.",
+  "reason": "A count of spines per areole. Only the cactus areole lacks a grounding rule; PO has it as areole bud, a cluster of spine leaves.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02241",
+  "decision": "existing_pattern",
+  "target": "docs/odp/11-ratio-of-two-dimensions.md",
+  "fix": "'longer than wide' is a length/width ratio above 1 and 'about as wide as long' is a ratio of about 1. Together they make one bounded ratio (low 1, approximately) rather than a disjunction. Bearer: indusium.",
+  "reason": "Both alternatives are values of the same ratio that pattern 11 already reads. The disjunction collapses to one range.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02242",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground the container 'ultimate branch' to branch PO:0025073, keeping 'ultimate' (last-order branch) as text. The bearer is the leaf, with the count 3-10.",
+  "reason": "A plain count of leaves per container. The container phrase with the modifier 'ultimate' did not ground.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02243",
+  "decision": "new_pattern",
+  "target": "widest region of the bearer",
+  "fix": "Slots: bearer (leaf), region of greatest width (base, middle, apex), degree ('much'), and frequency ('sometimes'). OWL: the leaf has a basal region with increased width towards the rest of the leaf. RDF keeps the frequency and the degree.",
+  "reason": "The second term of the comparison is the rest of the same organ, not another part, so pattern 09 does not apply. The meaning is vague, and with 'sometimes' it adds little to 'linear-lanceolate'.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02244",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'with or without spines' is spiny or not spiny. That union is true of every plant and says nothing about the family.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02245",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add the cue 'attain(ing) a height of' (and 'as much as' for the trunk diameter) as an inclusive upper bound, like 'reaching'. 'reported to' can be kept in RDF as a certainty note.",
+  "reason": "This is an upper bound of the plant's height, worded with a cue the parser does not know.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02246",
+  "decision": "new_pattern",
+  "target": "vague count",
+  "fix": "A count word without a number (numerous, many, several, few, and many-flowered) becomes amount PATO:0000070 of the counted part, with the container from pattern 03. The value is a qualitative term: numerous/many -> increased amount PATO:0000470 ('relatively high'), several -> multiple PATO:0002118 (more than two). The word is kept in RDF. Here: flower counted, inflorescence (cyme) as container.",
+  "reason": "Pattern 03 holds 'many' and 'few' as non-numeric. PATO has suitable value terms, so a rule is enough and no new term is needed.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02247",
+  "decision": "new_pattern",
+  "target": "vague count",
+  "fix": "Bearer: inflorescence branch, with the inflorescence as container. 'numerous' -> increased amount PATO:0000470.",
+  "reason": "The same construction: a vague count word in place of a number.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02248",
+  "decision": "new_pattern",
+  "target": "elliptical comparison",
+  "fix": "The second term of the comparison is not after 'than'. It is in a neighbouring clause ('but otherwise like the leaves') or is the previous member of a series. Read it from there and use the towards slot of pattern 09. Here: the sheath (base) of the perigonial bract PO:0030028, with increased width towards the vegetative leaf.",
+  "reason": "The previous review rejected 'broader' because it had no second term, but here the term stands in the same sentence. The transcribed entity 'bract' should be perigonial bract.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02249",
+  "decision": "existing_pattern",
+  "target": "rule:flopo_value climbing FLOPO:0991108 (as C354 lianescent, C355 scrambling)",
+  "fix": "Add the rule 'vine' on whole plant -> FLOPO:0991108 climbing, so the word maps to the EQ value class rather than an old FLOPO phenotype class without an EQ signature.",
+  "reason": "The value term exists. Only the word-to-term rule is missing. Schnella is a liana.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02250",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read 'N or more' as an inclusive lower bound, not as a disjunction. The count is of ridges with the fruit (achene) as container (pattern 03). 'horizontal', 'low' and 'blunt' belong to the ridges, not the fruit.",
+  "reason": "This is a lower-bounded count. The annotator took 'or more' as an alternative and gave the ridges' orientation to the fruit.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02251",
+  "decision": "new_pattern",
+  "target": "depth of division",
+  "fix": "Slots: bearer (perianth of the bud), quality split PATO:0001786, and the fraction of the bearer's length to which it is cut (0.17-0.25, unit ratio). OWL: split with a ratio magnitude. RDF: the numerator (lobe length) and denominator (bearer length), as in pattern 11.",
+  "reason": "The fraction is a depth of incision, not a measurement missing its unit. The same wording ('lobed to 1/3', 'divided halfway') is common in floras.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02252",
+  "decision": "new_pattern",
+  "target": "merosity",
+  "fix": "Slots: bearer (flower), the number of members per floral whorl (5), and an optional qualifier ('unequally'). OWL: a count quality of the flower under has number of PATO:0001555 with magnitude 5, unit count. RDF records the per-whorl reading and the qualifier.",
+  "reason": "Pattern 03 excludes '-merous' because it names no single part. Merosity is a number per whorl.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02253",
+  "decision": "new_pattern",
+  "target": "measured exsertion",
+  "fix": "Slots: bearer (style, anther), quality exserted PATO:0000623 towards the perianth, and the length of the part beyond it (10 mm). OWL: exserted towards perianth. RDF: length of the exserted part with its unit.",
+  "reason": "This is a trait of var. bondana itself (the comparison with var. cameronii is separate), but no pattern holds a projection length.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02254",
+  "decision": "new_pattern",
+  "target": "vague count",
+  "fix": "Bearer: stamen, flower as container. 'numerous' -> increased amount PATO:0000470.",
+  "reason": "A vague count word in place of a number.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02255",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'grooved above or not' is grooved or not grooved, a union that is true of every plant.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02256",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add grounding rules for the ordinal spikelet scales of the older North American Flora wording: first scale -> lower glume, second scale -> upper glume (glume PO:0009039), third scale -> sterile lemma PO:0009040, fruiting scale -> lemma PO:0009037. '3-nerved' then splits to a count of veins with these as containers.",
+  "reason": "The counted-part split works. The container 'second and third scales' does not ground.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02257",
+  "decision": "existing_pattern",
+  "target": "rule:flopo_value climbing FLOPO:0991108 (as C354 lianescent, C355 scrambling)",
+  "fix": "Add the rule 'climber' on whole plant -> FLOPO:0991108 climbing. '(?)' applies only to 'subperennial'.",
+  "reason": "The value term exists. Only the rule for the noun is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02258",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (stage kind A; processes, section 5)",
+  "fix": "Read 'splitting to the base' as the quality split PATO:0001786 of the calyx, with stage 'at anthesis' from the context table. The 3 segments are a count (pattern 03), and 4 is the rare alternative (pattern 08).",
+  "reason": "The process names a resulting state at a stated stage. Both slots exist.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02259",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add 'inserted above / below' to the insertion cues (inserted into PATO:0000624). The target is the corolla tube, and 'above middle' goes into comparison_text.",
+  "reason": "This is an insertion relation with a named second part. Only the cue variant is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02260",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "It states how far the placenta's attachment extends along its own length, with no second part and only a vague extent ('presque la totalité'). A one-off description, not a reusable trait.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02261",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "With a number, map 'thick' to the attribute thickness PATO:0000915 (like long -> length). Accept 'mm.' with a full stop as the unit. The bearer is the branch PO:0025073 ('branches 4-angled ...'), not the stem.",
+  "reason": "A thickness range with an extreme. The adjective was not mapped to its attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02262",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (processes, section 5)",
+  "fix": "Add the rule 'dehiscing' -> FLOPO:0991149 dehiscent, with the bearer follicle fruit PO:0030105. The side ('adaxial') can be kept as a region via slot 1 or in RDF.",
+  "reason": "The process is the existing quality 'dehiscent' under another word form.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02263",
+  "decision": "new_pattern",
+  "target": "vague count",
+  "fix": "Bearer: seed, with the capsule (fruit) as container. 'nombreuses' -> increased amount PATO:0000470.",
+  "reason": "A vague count word in place of a number (French).",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02264",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1, region)",
+  "fix": "Add a context-table row for a bare 'base' as the subject of a sub-clause ('lemmas ..., base pubescent') -> region base of the organ named before it. Bearer: lemma PO:0009037, quality pubescent PATO:0000455.",
+  "reason": "This is a region of the bearer, not a stage. It was filed under the wrong reason because only 'at base' is in the table.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02265",
+  "decision": "existing_pattern",
+  "target": "rule:flopo_value climbing FLOPO:0991108 (as C354 lianescent, C355 scrambling)",
+  "fix": "Add the Spanish rule 'trepadora' (habit) on whole plant -> FLOPO:0991108 climbing.",
+  "reason": "The value term exists. Only the rule for the word is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02266",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Bearer: trichome, part of the flower (perianth). Quality: length PATO:0000122, 0.2-0.5 mm. 'woolly' is a separate statement.",
+  "reason": "The quality was transcribed as the noun 'hairs' on the flower. The measurement is the length of the hairs.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02267",
+  "decision": "existing_pattern",
+  "target": "docs/odp/01-approximate-value.md",
+  "fix": "Read 'ou presque' / 'or nearly so' as an approximation cue: glabrous PATO:0000453 with value_qualifier approximately, or FLOPO:0991053 subglabrous. The bearer is the calyx tube.",
+  "reason": "'glabrous or nearly so' is one approximate value, not a disjunction.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02268",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept the upper-bound cue 'to' inside a length × width pair ('6-20 × to 1.3 cm'): length 6-20 cm, width at most 1.3 cm. 'in flower' is the existing stage context.",
+  "reason": "The cue is known, but not after '×'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02269",
+  "decision": "new_pattern",
+  "target": "vague count",
+  "fix": "Bearer: leaf with the position basal FLOPO:0991002 ('radical', pattern 04). 'several' -> multiple PATO:0002118.",
+  "reason": "A vague count word in place of a number.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02270",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'unknown' records missing information, not a trait. It is neither presence nor absence.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02271",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The length 0.2-0.8 mm belongs to the filament (stamen filament), not the stamen. Annotate it as its own statement, split from 'distinct or slightly connate', which is a separate alternative (free FLOPO:0991068 / connate FLOPO:0991067).",
+  "reason": "The wrong bearer, and the length statement was blocked by a disjunction in a neighbouring clause.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02272",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'contain N X' as a count: the bearer is X (flower), the container is the subject (inflorescence), and the unit is count.",
+  "reason": "A plain count with its container. The verb wording is not read, so the unit was missed.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02273",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground the container 'caudex branch' to branch PO:0025073 (a branch of the stem; caudex is a synonym of stem PO:0009047). Count 1, frequency 'usually'.",
+  "reason": "A count per container whose two-word container did not ground.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02274",
+  "decision": "new_pattern",
+  "target": "member of a series",
+  "fix": "Slots: bearer (calyx lobe), a position value naming the member (anterior, lateral, posterior, inner, outer, upper, lower), and the measurements. OWL: calyx lobe with the position value. This needs value classes for the positions, and the kind D slot must accept FLOPO values. Width 0.5-1.3 mm is also missed.",
+  "reason": "Kind D, 'which member of a series', is listed as still open for these positions.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02275",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground 'areole' to PO:0025353 areole bud as the container. Counted part: spine (spine leaf PO:0025173). Extremes as in pattern 05.",
+  "reason": "Same as P02240.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02276",
+  "decision": "new_pattern",
+  "target": "elliptical comparison",
+  "fix": "Take the second term from the previous member of the series (the wings) and use the pattern 09 towards slot: keel petal PO:0025326, decreased length PATO:0000574 towards the wing. The bearer should be keel petal, not petal.",
+  "reason": "The comparison target is left out because it is clear from the series 'banner ...; wings ...; keel-petals shorter'.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02277",
+  "decision": "new_pattern",
+  "target": "timing relative to another stage",
+  "fix": "Slots: stage of one part (flowering stage PO:0007616), a relation (before / with / after), and the other stage (leaf expansion). RDF: a relation between the two PO stages for the taxon. OWL only if a FLOPO class (synanthous / hysteranthous) is later added.",
+  "reason": "'before' and 'after' a stage are listed as open. This is the same construction with 'with'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02278",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Use the same ordinal-scale grounding rule as P02256 (third scale -> sterile lemma PO:0009040). Also fill in the elided noun ('the third' = the third scale) from the series.",
+  "reason": "The counted part is split. The elided ordinal container is not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02279",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'N or M' between two numbers as a count range (5-6), not a disjunction. Bearer: leaf with cauline FLOPO:0991117 (pattern 04). Fix the lemma 'cauline leave' -> leaf.",
+  "reason": "A count range written with 'or'. The annotator took it for an explicit alternative.",
+  "confidence": "high"
+ }
+]

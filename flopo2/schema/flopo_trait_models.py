@@ -151,6 +151,46 @@ class ValueUnionScope(str, Enum):
     across_attributes = "across_attributes"
 
 
+class IndefiniteAmount(str, Enum):
+    """
+    How many, as far as a word without a number says.
+    """
+    few = "few"
+    """
+    A small number ("few", "a few", "pauci-", "peu nombreux").
+    """
+    several = "several"
+    """
+    More than two or three, not many ("several", "plusieurs").
+    """
+    many = "many"
+    """
+    A large or uncounted number ("many", "numerous", "multi-", "nombreux").
+    """
+
+
+class CountPositionKind(str, Enum):
+    """
+    The kind of place at which a count is taken.
+    """
+    each_side = "each_side"
+    """
+    On each of the two sides of an axis or organ ("on each side of the midrib", "per side").
+    """
+    per_node = "per_node"
+    """
+    At each node of an axis ("per node", "at each node").
+    """
+    per_axil = "per_axil"
+    """
+    In each axil ("per leaf axil").
+    """
+    at_region = "at_region"
+    """
+    At a named region of the organ ("at the base", "at the apex", "on the margin").
+    """
+
+
 class SpecimenConditionKind(str, Enum):
     """
     Condition of the specimen a statement is restricted to.
@@ -368,6 +408,8 @@ class SourceStatement(ConfiguredBaseModel):
                        'SeasonContext',
                        'RelationalTarget',
                        'QualifiedWhole',
+                       'IndefiniteCount',
+                       'CountPosition',
                        'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
@@ -377,6 +419,8 @@ class SourceStatement(ConfiguredBaseModel):
                        'SeasonContext',
                        'RelationalTarget',
                        'QualifiedWhole',
+                       'IndefiniteCount',
+                       'CountPosition',
                        'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
@@ -398,6 +442,8 @@ class UnresolvedTraitSpan(ConfiguredBaseModel):
                        'SeasonContext',
                        'RelationalTarget',
                        'QualifiedWhole',
+                       'IndefiniteCount',
+                       'CountPosition',
                        'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
@@ -407,6 +453,8 @@ class UnresolvedTraitSpan(ConfiguredBaseModel):
                        'SeasonContext',
                        'RelationalTarget',
                        'QualifiedWhole',
+                       'IndefiniteCount',
+                       'CountPosition',
                        'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
@@ -467,6 +515,8 @@ class TraitAssertion(ConfiguredBaseModel):
     towards: Optional[RelationalTarget] = Field(default=None, description="""The second term of a relational quality: \"style shorter than the corolla tube\" is the quality decreased length of the style towards (RO:0002503) the corolla tube. Compiled as has_quality some (Q and towards some E2); part of the FAC signature when present.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
     bearer_whole: Optional[QualifiedWhole] = Field(default=None, description="""The bearer is part of a structure that itself has stated qualities: \"calyx of male flowers\" is calyx and part_of some (flower and has_quality some male). Part of the FAC signature. Not used together with bearer_container.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
     specimen_condition: Optional[SpecimenCondition] = Field(default=None, description="""The statement holds of the specimen in a stated condition of preservation or treatment (\"black when dry\", \"when fresh\", \"on wetting\"), not of the living plant as such. An assertion with a specimen condition carries no phenotype_class_iri, is not compiled into a taxon axiom and is not compared for conflicts.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
+    count_word: Optional[IndefiniteCount] = Field(default=None, description="""A count stated without a number (\"seeds numerous\", \"few-flowered\"): the counted part is present (quality present) and the word for how many is kept with its cue. The phenotype class is that of the presence; the word is not part of it.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
+    count_position: Optional[CountPosition] = Field(default=None, description="""The count holds at each place of a kind, not for the organ as a whole (\"lateral veins 4-6 on each side of the midrib\", \"flowers 1-3 per node\"). An assertion with a count position carries no phenotype_class_iri: the number says nothing about the total.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
     value_union_scope: Optional[ValueUnionScope] = Field(default=ValueUnionScope.same_attribute, description="""For value_operator one_of: whether the alternatives are values of one attribute (same_attribute, the default and the primary pattern: \"white or pink\") or qualities under different attributes (across_attributes, the secondary pattern: \"woody or fleshy\"). The secondary pattern is allowed only when the primary cannot apply, and requires value_operands with the verbatim \"or\" between them.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion'], 'ifabsent': 'ValueUnionScope(same_attribute)'} })
     bearer_scope: Optional[BearerScope] = Field(default=None, description="""Provenance of a positional or sub-part restriction of the named organ, such as \"beneath\", \"à la face supérieure\", \"at the apex\" or \"stellate-\". The logical content lives in anatomical_entity (bearer substituted by a more specific PO part such as leaf lamina abaxial epidermis) or in part_restrictions; this record keeps the outer organ and the exact cue so the source statement can be verified. It never participates in the FAC signature.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
     qualitative_value_relation: Optional[QualitativeValueRelation] = Field(default=None, description="""A source-ordered relation between two grounded categorical values. This captures a qualitative continuum, explicit taxon-level variation, or a temporal transition without pretending that the endpoints form a finite OWL union. It is a structured annotation and is deliberately excluded from FAC and reusable FLOPO class materialization.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
@@ -554,6 +604,8 @@ class ValueOperand(ConfiguredBaseModel):
                        'SeasonContext',
                        'RelationalTarget',
                        'QualifiedWhole',
+                       'IndefiniteCount',
+                       'CountPosition',
                        'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
@@ -563,6 +615,8 @@ class ValueOperand(ConfiguredBaseModel):
                        'SeasonContext',
                        'RelationalTarget',
                        'QualifiedWhole',
+                       'IndefiniteCount',
+                       'CountPosition',
                        'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
@@ -613,6 +667,8 @@ class SeasonContext(ConfiguredBaseModel):
                        'SeasonContext',
                        'RelationalTarget',
                        'QualifiedWhole',
+                       'IndefiniteCount',
+                       'CountPosition',
                        'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
@@ -622,6 +678,8 @@ class SeasonContext(ConfiguredBaseModel):
                        'SeasonContext',
                        'RelationalTarget',
                        'QualifiedWhole',
+                       'IndefiniteCount',
+                       'CountPosition',
                        'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
@@ -647,6 +705,8 @@ class RelationalTarget(ConfiguredBaseModel):
                        'SeasonContext',
                        'RelationalTarget',
                        'QualifiedWhole',
+                       'IndefiniteCount',
+                       'CountPosition',
                        'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
@@ -656,6 +716,8 @@ class RelationalTarget(ConfiguredBaseModel):
                        'SeasonContext',
                        'RelationalTarget',
                        'QualifiedWhole',
+                       'IndefiniteCount',
+                       'CountPosition',
                        'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
@@ -679,6 +741,8 @@ class QualifiedWhole(ConfiguredBaseModel):
                        'SeasonContext',
                        'RelationalTarget',
                        'QualifiedWhole',
+                       'IndefiniteCount',
+                       'CountPosition',
                        'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
@@ -688,6 +752,73 @@ class QualifiedWhole(ConfiguredBaseModel):
                        'SeasonContext',
                        'RelationalTarget',
                        'QualifiedWhole',
+                       'IndefiniteCount',
+                       'CountPosition',
+                       'SpecimenCondition',
+                       'DevelopmentalStageContext',
+                       'TermMention']} })
+
+
+class IndefiniteCount(ConfiguredBaseModel):
+    """
+    The word that states a count without a number.
+    """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'http://phenomebrowser.net/flopo/flopo-trait'})
+
+    amount: IndefiniteAmount = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['IndefiniteCount']} })
+    count_text: str = Field(default=..., description="""Exact word copied from the source statement (\"numerous\", \"few-flowered\").""", json_schema_extra = { "linkml_meta": {'domain_of': ['IndefiniteCount']} })
+    start: Optional[int] = Field(default=None, description="""Inclusive offset of count_text in the source segment.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SourceStatement',
+                       'UnresolvedTraitSpan',
+                       'ValueOperand',
+                       'SeasonContext',
+                       'RelationalTarget',
+                       'QualifiedWhole',
+                       'IndefiniteCount',
+                       'CountPosition',
+                       'SpecimenCondition',
+                       'DevelopmentalStageContext',
+                       'TermMention']} })
+    end: Optional[int] = Field(default=None, description="""Exclusive offset of count_text in the source segment.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SourceStatement',
+                       'UnresolvedTraitSpan',
+                       'ValueOperand',
+                       'SeasonContext',
+                       'RelationalTarget',
+                       'QualifiedWhole',
+                       'IndefiniteCount',
+                       'CountPosition',
+                       'SpecimenCondition',
+                       'DevelopmentalStageContext',
+                       'TermMention']} })
+
+
+class CountPosition(ConfiguredBaseModel):
+    """
+    The kind of place at which a count is taken, with the structure that marks the place.
+    """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'http://phenomebrowser.net/flopo/flopo-trait'})
+
+    kind: CountPositionKind = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['CountPosition']} })
+    landmark_term: Optional[str] = Field(default=None, description="""PO or FLOPO class of the structure the place is defined by (leaf midvein for \"on each side of the midrib\", stem node for \"per node\"), when the source names it.""", json_schema_extra = { "linkml_meta": {'domain_of': ['CountPosition']} })
+    position_text: str = Field(default=..., description="""Exact cue copied from the source statement (\"on each side of the midrib\").""", json_schema_extra = { "linkml_meta": {'domain_of': ['CountPosition']} })
+    start: Optional[int] = Field(default=None, description="""Inclusive offset of position_text in the source segment.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SourceStatement',
+                       'UnresolvedTraitSpan',
+                       'ValueOperand',
+                       'SeasonContext',
+                       'RelationalTarget',
+                       'QualifiedWhole',
+                       'IndefiniteCount',
+                       'CountPosition',
+                       'SpecimenCondition',
+                       'DevelopmentalStageContext',
+                       'TermMention']} })
+    end: Optional[int] = Field(default=None, description="""Exclusive offset of position_text in the source segment.""", json_schema_extra = { "linkml_meta": {'domain_of': ['SourceStatement',
+                       'UnresolvedTraitSpan',
+                       'ValueOperand',
+                       'SeasonContext',
+                       'RelationalTarget',
+                       'QualifiedWhole',
+                       'IndefiniteCount',
+                       'CountPosition',
                        'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
@@ -707,6 +838,8 @@ class SpecimenCondition(ConfiguredBaseModel):
                        'SeasonContext',
                        'RelationalTarget',
                        'QualifiedWhole',
+                       'IndefiniteCount',
+                       'CountPosition',
                        'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
@@ -716,6 +849,8 @@ class SpecimenCondition(ConfiguredBaseModel):
                        'SeasonContext',
                        'RelationalTarget',
                        'QualifiedWhole',
+                       'IndefiniteCount',
+                       'CountPosition',
                        'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
@@ -735,6 +870,8 @@ class DevelopmentalStageContext(ConfiguredBaseModel):
                        'SeasonContext',
                        'RelationalTarget',
                        'QualifiedWhole',
+                       'IndefiniteCount',
+                       'CountPosition',
                        'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
@@ -744,6 +881,8 @@ class DevelopmentalStageContext(ConfiguredBaseModel):
                        'SeasonContext',
                        'RelationalTarget',
                        'QualifiedWhole',
+                       'IndefiniteCount',
+                       'CountPosition',
                        'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
@@ -764,6 +903,8 @@ class TermMention(ConfiguredBaseModel):
                        'SeasonContext',
                        'RelationalTarget',
                        'QualifiedWhole',
+                       'IndefiniteCount',
+                       'CountPosition',
                        'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
@@ -773,6 +914,8 @@ class TermMention(ConfiguredBaseModel):
                        'SeasonContext',
                        'RelationalTarget',
                        'QualifiedWhole',
+                       'IndefiniteCount',
+                       'CountPosition',
                        'SpecimenCondition',
                        'DevelopmentalStageContext',
                        'TermMention']} })
@@ -820,6 +963,8 @@ QualitativeValueRelation.model_rebuild()
 SeasonContext.model_rebuild()
 RelationalTarget.model_rebuild()
 QualifiedWhole.model_rebuild()
+IndefiniteCount.model_rebuild()
+CountPosition.model_rebuild()
 SpecimenCondition.model_rebuild()
 DevelopmentalStageContext.model_rebuild()
 TermMention.model_rebuild()

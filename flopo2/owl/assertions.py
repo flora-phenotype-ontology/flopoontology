@@ -774,8 +774,8 @@ def _taxon_class(graph: Graph, record: dict) -> URIRef | None:
 
 
 def _strict(assertion: dict, unqualified_as_universal: bool) -> bool:
-    if assertion.get("qualitative_value_relation") or assertion.get("specimen_condition"):
-        return False  # "black when dry" is not a claim about the living plant
+    if assertion.get("qualitative_value_relation") or assertion.get("specimen_condition") or assertion.get("count_position"):
+        return False  # "black when dry" is not a claim about the living plant; "4-6 per side" not a total
     # Entailing degree operands keep strict eligibility; operand-level frequency or
     # approximation makes the claim qualified (schema extension E2).
     if not operands_fac_representable(assertion) or operands_make_qualified(assertion):
@@ -1162,7 +1162,7 @@ def build_assertion_ontology(
                     )
                 qualitative_relation = bool(assertion.get("qualitative_value_relation"))
                 structured_operands = not operands_fac_representable(assertion) or bool(
-                    assertion.get("specimen_condition")
+                    assertion.get("specimen_condition") or assertion.get("count_position")
                 )
                 description: URIRef | None = None
                 if qualitative_relation or structured_operands:

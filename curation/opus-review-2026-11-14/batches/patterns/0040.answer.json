@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P01600",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Read 'arrondi ou subéchancré' as a union of rounded and emarginate (PATO:0002234). The 'sub-' prefix gives value_qualifier approximately (pattern 01). Add the French rule 'échancré' → emarginate. The bearer should be the middle lobe of the lip (the 'lobe médian'), not the whole epichile.",
+  "reason": "The disjunction is two shape values of one attribute, which is the union pattern. What blocks it is the French word 'subéchancré' with no rule, plus a bearer that is too broad.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01601",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "'dichasial' is not a stage. Add it to config/flora_context_words.tsv as a bearer word, or use pattern 12 (bract part of a dichasium), so the stage kind is not triggered. Ground 'apex' to the apex region (slot 1). Read 'obtuse, acuminate to cuspidate' as alternatives of the apex shape: obtuse PATO:0001935 or the continuum acuminate–cuspidate.",
+  "reason": "This is a plain apex-shape statement about a named kind of bract. The stage reason is a false trigger.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01602",
+  "decision": "new_pattern",
+  "target": "timing qualifier of a value",
+  "fix": "Bearer fruit, value dehiscent FLOPO:0991149 in OWL. 'tardily' is stored only in RDF as a timing qualifier with its cue, like frequency_qualifier, so the class stays plain dehiscent. 'Late' gives no new class.",
+  "reason": "The term exists. 'tardily' changes when the fruit opens, not what it is, and no pattern carries that.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01603",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md",
+  "fix": "'adaxially' is already a surface row. Allow the cue when it stands directly before the value inside the statement span, even though 'abaxially' appears earlier in the same comma-joined clause. Allow a degree word ('moderately') between cue and value. Bearer leaf lamina adaxial epidermis, value pilose FLOPO:0991048.",
+  "reason": "Slot 1 (surface) covers this. The rule 'context word once per clause' and the degree word block it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01604",
+  "decision": "new_pattern",
+  "target": "qualitative count",
+  "fix": "Counted part inflorescence, container whole plant. Quality amount with a qualitative value class ('numerous': many, more than a usual number, not given as a figure) in place of a data range. 'souvent' goes to frequency_qualifier and 'très' to a degree cue, both RDF only.",
+  "reason": "Pattern 03 holds non-numeric counts (measurement_value_not_numeric). 'numerous' needs its own value. This item is weak: inflorescences per plant, 'often very'.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01605",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "The count is of rows of sori (an aggregate, as in 'jugate'), 1 per side. Bearer: sorus row, part of a lateral region of the pinnule on each side of the midrib (slot 1 part_restrictions, BSPO side). Amount 1 with a per_side flag in RDF. OWL: has part some (sorus and part of some (lateral region and part of some pinnule)).",
+  "reason": "Count at a position is listed as open in annotation-context-patterns.md. 'amount' of sori is also the wrong thing counted: 1 counts rows, not sori.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01606",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Annotate 'long petioles' as petiole increased length PATO:0000573. Record 'may exceed 30 cm' only as a rare upper extreme (value_max_extreme > 30 cm, RDF only, pattern 05). It is not a lower bound of all petioles.",
+  "reason": "'may exceed' is a cue the parser lacks. Read as 'more than', it would wrongly claim every petiole is over 30 cm.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01607",
+  "decision": "new_pattern",
+  "target": "count of parts with a quality",
+  "fix": "Counted part: stamen that has fertile PATO:0000955. Container: the shorter stamens of the flower (series member). Amount 1–2, frequency 'occasionally' in RDF. 'Shorter stamens sterile' is annotated separately as sterile PATO:0000956.",
+  "reason": "The statement says how many members of a set have a quality, not that the set has it. Neither pattern 03 nor pattern 08 says this.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01608",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md",
+  "fix": "'at base' is a region row. Allow it after the value and ground it to stem base PO:0008039 with value procumbent PATO:0002389. 'distally ascending to erect' is a separate statement on the distal region.",
+  "reason": "Slot 1 (region) covers this. It was misread as a stage.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01609",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read the 'to 10 cm' in brackets after 'long' as an inclusive upper bound on branch length, with 'usually' as frequency_qualifier. Bearer: the branch of the head array, i.e. the inflorescence branch.",
+  "reason": "'to' is a supported cue. The brackets and the preceding qualitative value block it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01610",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Bearer calyx lobe (not sepal), towards calyx tube, ratio 2 with 'nearly' as approximate cue (pattern 01). Allow 'nearly' before 'twice'.",
+  "reason": "Pattern 10 covers 'twice as long as'. It is blocked by the 'nearly' cue and the second part of a gamosepalous calyx.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01611",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Union of flat PATO:0000407 or sunken PATO:0002416 ('impressed' → sunken for veins, add the rule if missing). 'somewhat' is a degree cue on the second value. 'above' is the adaxial side (slot 1).",
+  "reason": "Two values of one surface attribute. A rule for 'impressed' and a degree cue are what is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01612",
+  "decision": "transcription_error",
+  "target": "seed / pericarp",
+  "fix": "The quality 'pericarp' is a structure. The text says the seeds leave the pericarp after ripening, i.e. the fruit opens or breaks down at maturity. If it is kept, annotate fruit dehiscent FLOPO:0991149 with stage mature. Otherwise leave it.",
+  "reason": "The transcribed quality is a part, not a quality.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01613",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add the comparison cue 'paler than' (a lighter-colour PATO quality, e.g. decreased intensity PATO:0001783, to confirm) with towards. Ground 'surface' to the organ of the sentence (leaf lamina), not to a term of its own.",
+  "reason": "This is a comparison with a second part. Only the cue and the grounding of 'surface' are missing.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01614",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Strip the FNA markup '˂…˃' before parsing. '˂' is an opening bracket, not '<'. Then 'to 80 cm' is an inclusive upper bound of whole plant PO:0000003 height.",
+  "reason": "A markup character was taken for a strict-bound sign.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01615",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add the cue 'to more than': the largest plants exceed 5 m. Store it in RDF as value_max_extreme > 5 m, with no OWL data range. For a climber the attribute is stem length, not height.",
+  "reason": "'to more than' is not a bound on all plants. It is a lower bound on the maximum.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01616",
+  "decision": "new_pattern",
+  "target": "depth of division",
+  "fix": "Bearer: the perianth of the flower bud. Value cleft/split PATO:0001786. The depth of the incision is a ratio to the bearer's length (3/4–4/5, unit ratio) in RDF, as in pattern 11. An absolute depth gets a length unit (see P01632).",
+  "reason": "How deep an organ is divided is a measure of the incision, not of the bearer. No pattern carries it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01617",
+  "decision": "new_pattern",
+  "target": "measured offset from another part",
+  "fix": "Bearer style (and the staminal tube, as a second record). Value exserted PATO:0000623 towards corolla (pattern 09, OWL). The projection is a distance PATO:0000040 with data range 0.2–0.9 cm on the same record, also in RDF.",
+  "reason": "Pattern 09 says comparisons with a measurement are not read.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01618",
+  "decision": "new_pattern",
+  "target": "measured offset from another part",
+  "fix": "Bearer stigma, value exserted PATO:0000623 towards anther, distance 2–5 mm as in P01617.",
+  "reason": "The same construction: a relation to another part with a measured distance.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01619",
+  "decision": "existing_pattern",
+  "target": "docs/odp/12-part-of-qualified-whole.md",
+  "fix": "Read a sex adjective before a part ('female glumes') as pattern 12: glume PO:0009039 part of a spikelet or flower that has female. Value scarious FLOPO:0991047.",
+  "reason": "Pattern 12 reads 'of female flowers'. The adjective form is not read and is wrongly sent to the stage kind.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01620",
+  "decision": "new_pattern",
+  "target": "qualitative count",
+  "fix": "Counted part stamen, container flower. Quality amount with the qualitative value 'numerous' (indefinite, many). OWL uses the value class in place of a data range.",
+  "reason": "'Stamens numerous' is a real diagnostic character, but pattern 03 accepts only numbers.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01621",
+  "decision": "missing_term",
+  "target": "ultimate segment: the smallest, last-order free division of a divided frond or leaf (pinnule or lobe of a pinnule)",
+  "fix": "With the term, pattern 09 applies: decreased length PATO:0000574 towards the ultimate segment, frequency 'usually'. Ground the fern 'costa' to the pinna midvein, not PO:0030072, which is the bryophyte costa.",
+  "reason": "The comparison is supported. Its second term has no class.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01622",
+  "decision": "missing_term",
+  "target": "lip appendage: an outgrowth of the orchid labellum (as in Disperis)",
+  "fix": "With the container grounded (part of the lip), '2 lobes' is a count by pattern 03, or the rule bilobed.",
+  "reason": "The count is fine. Its container 'appendage' does not ground.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01623",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add a grounding rule for numbered 'scales' of a grass spikelet: first scale = lower glume, second = upper glume, third = sterile lower lemma. Then 3-nerved → vein amount 3, with each scale as container.",
+  "reason": "'N-nerved' is supported. Only the older numbered 'scale' wording lacks grounding.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01624",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "Counted part secondary vein, container leaf lamina, restricted to one side of the midvein (slot 1, BSPO lateral side). Amount 8–10 per side. OWL: has part some (secondary vein and part of some (lateral region and part of some leaf lamina)) with the data range. RDF per_side true.",
+  "reason": "Listed as open in annotation-context-patterns.md (count_per_position).",
+  "confidence": "high"
+ },
+ {
+  "id": "P01625",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Add a rule that resolves 'X or narrowly/broadly so' to 'X or narrowly/broadly X'. Here: union of ovate PATO:0001891 and narrowly ovate.",
+  "reason": "This is a plain union of shape values. 'so' refers back to the earlier value and is not resolved.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01626",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read 'to (a-)b' as an inclusive upper bound b (1.5 cm). Keep the '(1-)' in brackets as a variant of the bound in RDF text only.",
+  "reason": "'to' is supported. The extreme in brackets inside the bound blocks it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01627",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Accept '+' after an extreme ('200+') as an open extreme (value_max_extreme ≥ 200, RDF). Split 'L × W' into length and width ranges, each with its extremes.",
+  "reason": "The range with extremes is supported. The '+' sign stops it.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01628",
+  "decision": "transcription_error",
+  "target": "lip / prolonged into central keel",
+  "fix": "The subject is the callus of the lip, not the lip. If it is kept, annotate presence of a keel on the median region of the lip (slot 1), joined to the callus. 'V-shaped' is a separate statement about the callus.",
+  "reason": "The transcribed entity and the free-text quality do not match the structure of the text.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01629",
+  "decision": "new_pattern",
+  "target": "measured offset from another part",
+  "fix": "Bearer stamen, value inserted into PATO:0000624 towards corolla (pattern 09). The landmark is the base of the corolla, with distance PATO:0000040 1.5–2.5 mm. 'which is 0.3 of tube length' is a ratio in RDF only.",
+  "reason": "Pattern 09 keeps the insertion region only as text and does not read a measured distance.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01630",
+  "decision": "existing_pattern",
+  "target": "docs/odp/06-specimen-condition.md",
+  "fix": "Add 'drying' as a specimen_condition cue (dried). Then 'drying shiny or membranous' goes to the dried condition, and 'blade coriaceous' is annotated on its own with the existing coriaceous value.",
+  "reason": "The disjunction belongs to the dried specimen, not to the living blade.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01631",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Split off the count: lobe amount 6–8, with the staminal tube margin as container. Annotate 'truncate or irregularly lobed' separately as an alternative on the lobe shape (pattern 07).",
+  "reason": "The disjunction is about the shape of the counted lobes and should not block the count.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01632",
+  "decision": "new_pattern",
+  "target": "depth of division",
+  "fix": "Bearer petal, value split PATO:0001786. The depth of the split is a length (1–1.5 mm) of the incision, stored on the record and in RDF.",
+  "reason": "The same construction as P01616, with an absolute depth.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01633",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "As P01624: secondary vein, amount 2 per side of the midvein, container leaf lamina.",
+  "reason": "Count at a position is open.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01634",
+  "decision": "new_pattern",
+  "target": "qualitative count",
+  "fix": "Counted part flower, container the inflorescence (the dichotomous cymes). Value 'numerous'.",
+  "reason": "A non-numeric count. Pattern 03 holds it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01635",
+  "decision": "new_pattern",
+  "target": "qualitative count",
+  "fix": "Counted part leaf with basal position FLOPO:0991002 (pattern 04), container whole plant. Value 'numerous'.",
+  "reason": "A non-numeric count of a member of a series.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01636",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'Unknown' says the specimens lack these organs. It is not absence in the plant, so it is no phenotype.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01637",
+  "decision": "new_pattern",
+  "target": "qualitative count",
+  "fix": "Counted part cauline leaf (FLOPO:0991117 position), container stem. Value 'several' (a few, about 3–7). Only if 'several' is accepted as a value; otherwise leave it.",
+  "reason": "A non-numeric count, and a vaguer one than 'numerous'.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01638",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add the rule 'persisting/persistent' → non-deciduous PATO:0001732 on the calyx lobe. Read 'to enclose mature capsule' as an enclosing relation towards fruit (add the cue), with stage mature.",
+  "reason": "The process word is a quality under another name, as annotation-context-patterns.md §5 says. The relation needs one cue.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01639",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'parted' → lobe is already in config/flora_counted_parts.tsv. Split '5-parted' into calyx lobe amount 5 and do not let the trailing 'to base' block the split. Keep 'to base' as a depth-of-division cue in RDF.",
+  "reason": "This is a count inside a word, which the table covers. The reason given was wrong.",
+  "confidence": "high"
+ }
+]

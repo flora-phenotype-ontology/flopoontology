@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P00160",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Accept the prime sign (') after a number as the unit foot (convert to m), and treat height PATO:0000119 as a length (as for P00123). Whole plant PO:0000003, height 3-8 ft, frequency_qualifier usually. 'sometimes reaches 20'' is a separate upper bound with frequency sometimes (patterns 02 and 08).",
+  "reason": "This is an ordinary height range in feet. Only the unit sign and the height-as-length rule are missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00161",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Resolve 'each' to the sepals of the same clause (sepal PO:0009031) as the container, as for P00125. Read '2 or several' as an inclusive lower bound of 2 (pattern 02), not a disjunction. Do not ground 'tubercle' to PO:0025352 tubercle (a cactus podarium). Put tuberculate FLOPO:0991060 on the sepal apex (slot 1 region) in OWL, and keep the count in RDF.",
+  "reason": "The container is named through 'each'. 'N or several' is a bound. The word 'tubercle' must not be grounded to the PO cactus class.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00162",
+  "decision": "new_pattern",
+  "target": "projection beyond another part",
+  "fix": "Slots: bearer (leaf rachis PO:0020055), reference part (the lateral leaflets PO:0020049, via towards) and the length of the projecting piece, with its approximation cue ('some'). OWL: leaf rachis has characteristic some (protruding PATO:0001598 and towards some leaflet). RDF: fb:projectionLength 2 mm with value_qualifier approximately. The same construction covers 'exserted 2 mm beyond the corolla' and 'mucro 1 mm'.",
+  "reason": "The number measures how far the rachis extends past the leaflets, not the rachis itself. Patterns 09 and 10 do not carry such a distance.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00163",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "'thinly or thickly' joins two degree adverbs that together allow any density. Drop the degree union and annotate the ocrea (stipule PO:0020041, the fused stipules) as hairy PATO:0000454. 'whitish' is the colour of the hairs: a separate statement on trichome PO:0000282 with value_qualifier approximately.",
+  "reason": "A union of the two opposite degrees says nothing about density. It should not block the plain 'hairy' statement.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00164",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (growth-form rows)",
+  "fix": "As P00134: 'climbers' plus 'woody' gives whole plant PO:0000003 climbing FLOPO:0991108 and ligneous PATO:0002348 (a liana). 'to 5 m tall' is an inclusive upper bound (pattern 02). For a climber the attribute is length rather than height.",
+  "reason": "The climbing value term exists. The growth-form word only needs its EQ rule.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00165",
+  "decision": "transcription_error",
+  "target": "entity secondary leaf vein PO:0020140; quality prominent PATO:0001482",
+  "fix": "Make the secondary veins the bearer, not the leaf (the EQ class FLOPO_0993932 exists). 'on both surfaces' is a slot 1 surface scope on both sides, not a disjunction. '6 or 7 pairs' is a separate count, the range 6-7 of pairs (pattern 03, pair groups as for P00159).",
+  "reason": "The disjunction is in the count ('6 or 7'), not in the quality. The prominence belongs to the veins.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00166",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Ground 'spathes' to spathe FLOPO_0986007 (or inflorescence bract PO:0009054), not bract. Ground 'supporting branch' (the branch that bears the spathe) to peduncle PO:0009053, or else branch PO:0025073. Result: increased width PATO:0000600 towards that part. Keep 'obviously' in comparison_text.",
+  "reason": "'wider than X' is a supported comparison. Only the target phrase 'supporting branch' failed to ground.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00167",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (growth-form rows)",
+  "fix": "As P00145: 'climbers' gives whole plant PO:0000003 climbing FLOPO:0991108, with no 'ligneous' unless the text says so. 'prickly' is a separate statement.",
+  "reason": "The growth-form noun only needs its EQ rule.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00168",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md; docs/odp/05-range-with-extremes.md",
+  "fix": "As P00142: add 'may reach' as an inclusive upper-bound cue and take the metric value in parentheses (25 m). Better still, combine it with the preceding 'usually less than 33 feet (10 m)': usual upper bound 10 m (strict, frequency usually) and value_max_extreme 25 m. Whole plant PO:0000003, height.",
+  "reason": "This is the upper bound of a height with a cue the list lacks.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00169",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation)",
+  "fix": "Treat the privative prefix 'e-' in 'eglandular' (also 'ebracteate', 'exstipulate', 'epapillate') as a negation cue inside the word itself: glandular PATO:0002117, negated. Ground the bearer to cypsela FLOPO_0986053 (or achene fruit PO:0030107) rather than fruit.",
+  "reason": "The negation is part of the word. The gate looks for a separate negation word in the span.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00170",
+  "decision": "existing_pattern",
+  "target": "docs/odp/01-approximate-value.md",
+  "fix": "As P00158: parse '¼' plus the inch sign (\") as 0.25 inch (6.35 mm), with 'about' as the approximation cue. Stipule PO:0020041, length. 'soon wither away' (caducous) is a separate statement.",
+  "reason": "A single approximate length in imperial units.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00171",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'few to more than 10-flowered' runs from a vague 'few' (held by design, P00153) to an open lower bound. It sets almost no limit on the flower count. 'laxly' (a lax inflorescence) can be annotated as a separate statement.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00172",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'with or without prickles' is a value together with its negation, so it says nothing (as for P00044). The bearer is also the fruiting pedicel, not the fruit. 'glabrescent' on flower pedicel PO:0030113 in fruit can be annotated on its own.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00173",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (section 5, processes: presence of a part at a place)",
+  "fix": "Add a word rule: 'suckering' means a sucker is present (shoot-borne shoot system PO:0004545, synonym sucker) with present PATO:0000467. 'from the base' is a slot 1 region (stem base PO:0008039).",
+  "reason": "The process word describes a lasting trait: the plant has basal suckers. The doc names this reading.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00174",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground 'umbellule' (and 'umbellet', 'partial umbel') to umbel inflorescence PO:0030129 that is part of a compound umbel inflorescence PO:0030130, as the container. Flower PO:0009046, usual range 10-15, value_max_extreme 20 (pattern 05).",
+  "reason": "This is a count in a word with a container. Only the word 'umbellule' does not ground.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00175",
+  "decision": "existing_pattern",
+  "target": "docs/odp/12-part-of-qualified-whole.md",
+  "fix": "There is no growth-stage word in the clause. If the qualifier holds the female flower (the ovary and stigma belong to the female-flower description of this monoecious Jatropha), use pattern 12: stigma PO:0009073 bilobed PATO:0002214, part of a flower that is female. Otherwise drop the qualifier, which has no cue in the clause, and annotate plain stigma bilobed.",
+  "reason": "This is a plain EQ statement held back by a qualifier with no stage word in the span.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00176",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "As P00084: 'thick' after a number names the attribute thickness PATO:0000915. Bark PO:0004518, 4-8 mm.",
+  "reason": "An ordinary measurement. The value term was used instead of the attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00177",
+  "decision": "transcription_error",
+  "target": "entity corolla lobe FLOPO_0986006 (part of the lower corolla lip); quality length",
+  "fix": "Make the lobe the bearer, with the lower lip as its container (pattern 12 or slot 1), and the attribute length 7 mm with 'ca.' as value_qualifier approximately (pattern 01). '3-lobed' is the count of the lip's lobes (pattern 03).",
+  "reason": "The transcriber put the entity into the quality ('length of lower lip lobes').",
+  "confidence": "high"
+ },
+ {
+  "id": "P00178",
+  "decision": "missing_term",
+  "target": "lower pitcher / upper pitcher: the two pitcher morphs of Nepenthes (the ground pitchers of the rosette and the aerial pitchers of the climbing stem)",
+  "fix": "With these morph values as bearer_context_qualities (pattern 04, kind D), annotate the lid nectar glands black, on the lid underside (slot 1). If 'black' describes dried material, it gets the specimen condition (pattern 06).",
+  "reason": "The qualifier that blocks the row is most likely the pitcher type, which has no value class. It is not a growth stage.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00179",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "As P00160: accept 'feet' as a length unit (convert to m) and treat height as a length. Whole plant PO:0000003, height 1-3 ft.",
+  "reason": "An ordinary height range in imperial units.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00180",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'Graines: inconnues' says the seeds have not been seen. It is a state of knowledge, not absence, and must not be read as negation (as for P00101).",
+  "confidence": "high"
+ },
+ {
+  "id": "P00181",
+  "decision": "existing_pattern",
+  "target": "docs/odp/01-approximate-value.md",
+  "fix": "Read 'very broadly' as a degree modifier and keep it as cue text, as 'narrowly' was in P00120. Annotate sepal PO:0009031 ovate FLOPO:0991024 (the temporary class for PATO:0104368). Do not add a 'broadly ovate' term.",
+  "reason": "There is no alternative or continuum here. It is one shape with a degree modifier.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00182",
+  "decision": "transcription_error",
+  "target": "entity petiole PO:0020038; quality length, upper bound 11 mm",
+  "fix": "The parenthetical belongs to 'petiolate' (FNA writes '(petiole to 11 mm)'). It is a bound on the petiole length inside the 'sessile or petiolate' alternative (pattern 07), not the length of the leaf.",
+  "reason": "The leaf blade is measured separately in the next clause (1-2.5 cm). 11 mm is the petiole.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00183",
+  "decision": "existing_pattern",
+  "target": "docs/odp/01-approximate-value.md",
+  "fix": "Read 'subequal' as 'sub-' plus equal: leaf PO:0025034 equal FLOPO:0991102 (a quality of a set of like parts) with value_qualifier approximately. The set is the opposite pair at a node ('in a pair'). This needs no second part.",
+  "reason": "FLOPO 'equal' is a quality of the set, not a relation. The 'sub-' rule already exists.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00184",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "As P00095: read 'to more than 1 m' as a strict lower bound (>1 m) on whole plant height. Do not take the 'to' as an upper-bound cue.",
+  "reason": "'more than' is a supported lower-bound cue. The 'to' in front of it confused the parser.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00185",
+  "decision": "new_pattern",
+  "target": "comparison within a series",
+  "fix": "Slots: the member picked by position (basal acroscopic secondary pinnule; leaflet PO:0020049 with position text), the relational quality, and the series it is compared with (the other secondary pinnules of the same pinna). OWL: leaflet has characteristic some (increased size PATO:0000586 towards some leaflet). RDF: fb:superlative true, fb:series 'secondary pinnules of the pinna', with the cue.",
+  "reason": "A superlative compares one member with the rest of its series. Pattern 09 needs a different part as the second term.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00186",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (section 5, processes: presence of a part at a place)",
+  "fix": "Add the rule 'rooting at the nodes': shoot-borne root PO:0000042 present PATO:0000467 at shoot axis node PO:0005004 of the stem (slot 1). Together with 'prostrate' this also gives creeping FLOPO:0991009, whose definition includes rooting at the nodes.",
+  "reason": "The doc names this exact wording as the presence of a part at a place.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00187",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground 'per spike-like infructescence' to infructescence PO:0006342 as the container. 'spike-like' is a separate shape statement and should not block grounding. Fruit count 4-10. '(immature)' is bearer_context_quality young/immature (pattern 04).",
+  "reason": "The container is named after 'per'. Only its modifier stopped the grounding.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00188",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Sepal PO:0009031, count 5, container calyx. 'broad or narrow' joins two opposite width values and says nothing (as for P00044). Drop it so it does not block the count. 'persistent' is a separate statement. The text is the genus description, so it applies to the species only by inheritance.",
+  "reason": "The disjunction is on width, not on the count it blocked.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00189",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Map 'd.b.h.' / 'dbh' (diameter at breast height) to stem PO:0009047 (trunk) diameter PATO:0001334. Keep 'at breast height' as measurement-position text. Upper bound 50 cm, inclusive.",
+  "reason": "'to' is a supported cue. The abbreviation was not grounded, and the bearer is the trunk, not the whole plant.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00190",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1, surface)",
+  "fix": "Read 'except for pubescent midvein' as a separate positive statement: leaf midvein PO:0020139 pubescent PATO:0000455 on the adaxial side ('adaxially' scopes the clause). The glabrous adaxial blade is a statement of its own. No stage applies.",
+  "reason": "There is no stage wording. The stage qualifier leaked in, and the exception is simply a second statement on another part.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00191",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read a count of '0' as absence: bracteole PO:0009043, has number of 0, i.e. absent PATO:0000462. '(in ours)' limits the genus statement to the species of this flora area. Keep it in RDF as a scope note, not in OWL.",
+  "reason": "'0' is the usual flora way of writing absence. The gate looks for a negation word.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00192",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "As P00043/P00131: leaf lamina tooth PO:0025518, 14-18, container the terminal leaflet margin, counted per side of the lamina. RDF: fb:countScope 'per side' with the cue. OWL states only that the margin has teeth, with no total cardinality.",
+  "reason": "The number counts one side only. The docs list counts at a position as open.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00193",
+  "decision": "existing_pattern",
+  "target": "docs/odp/01-approximate-value.md; docs/annotation-context-patterns.md (continuum)",
+  "fix": "Strip 'sub-' from an operand of a continuum: sepal PO:0009031, spatulate PATO:0001937 to oblong PATO:0000946, with the second value approximately. The calyx is divided to the base, so the 'segments' are the sepals.",
+  "reason": "Both values have PATO terms, and the continuum and 'sub-' patterns exist. They are not combined.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00194",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Take the noun phrase right after 'than' as the target, instead of requiring the target word to occur once in the clause. 'corolla' occurs again in 'corolla tube'. Result: stamen PO:0009029 decreased length towards corolla PO:0009059.",
+  "reason": "This is the standard comparison wording. The 'once in the clause' check failed because of a second, longer mention.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00195",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "The 'fid' → lobe row exists. Ground the container 'central segment' of the 3-sect blade to leaf lamina lobe PO:0025517, with 'central' as position text (kind D). Count of lobes 3.",
+  "reason": "The counted part is in the table. Only the container phrase failed to ground.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00196",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "As P00112: 'to at least 80 cm' is an inclusive lower bound (≥80 cm) on leaf lamina PO:0020039 length.",
+  "reason": "'at least' gives a lower bound. The 'to' was read as an unsupported upper-bound cue.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00197",
+  "decision": "transcription_error",
+  "target": "entity rootstock (stem PO:0009047, caudex, or rhizome); quality scaly PATO:0001804",
+  "fix": "'covered with scales' is scaly PATO:0001804 on the rootstock, or present scales (trichome PO:0000282, synonym scale) on it. 'dark-brown' is the colour of the scales, as a separate statement. There is no comparison here.",
+  "reason": "'covered' is not a quality, and the reason 'comparison without a second term' does not fit the text.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00198",
+  "decision": "new_pattern",
+  "target": "comparison with an implicit second term",
+  "fix": "As P00154: the bearer is the midvein of the pistillate scale (bract PO:0009055). The implicit second term is the rest of the same scale (pale brown, named just before). OWL: as pattern 09, towards the scale. RDF: fb:targetImplicit true. PATO has no relational 'lighter than'.",
+  "reason": "'paler' compares the midvein with the body of its own scale, which the clause does not repeat.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00199",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "As P00124/P00125: '0 or 1' between whole numbers in a count is the range 0-1. Ray flower PO:0025331, container the capitulum.",
+  "reason": "In a count, 'N or N+1' is a range, not a disjunction.",
+  "confidence": "high"
+ }
+]

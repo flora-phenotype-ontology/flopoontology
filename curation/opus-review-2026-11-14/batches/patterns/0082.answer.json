@@ -1,0 +1,162 @@
+[
+ {
+  "id": "P03280",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'N or M' between two whole numbers as a count range (value_low 4, value_high 5, unit count): for whole numbers the union {4,5} equals the range 4-5, so no union is needed. Also attach the 'Male flowers:' heading as bearer_whole (pattern 12, flower + male).",
+  "reason": "Sepal count 4-5 in male flowers. It is held only because the 'or' between the numbers is treated as a disjunction of values.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03281",
+  "decision": "missing_term",
+  "target": "nut scar (cupule scar): the scar on a Fagaceae nut where it was attached to the cupule; FLOPO anatomy class part of the fruit, like leaf scar FLOPO_0986052",
+  "fix": "Add the entity. Then 'basal' is a region of the nut (BSPO basal region, slot 1), not FLOPO:0991002 basal (which is about the stem), and '1-1.5 cm in diam.' is a diameter of the scar.",
+  "reason": "'scar' alone is in the rejected bearer words because it needs its organ. The cupule scar is a real diagnostic character in Castanopsis and Lithocarpus.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03282",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add suffix rows 'sect' and 'sected' -> lobe (bearer calyx lobe FLOPO_0986005) to config/flora_counted_parts.tsv. Keep 'from base' (divided to the base) as the cue text in RDF.",
+  "reason": "'5-sect' (FOC for 5-sected) is a count of calyx segments in one word, and its suffix is not in the table.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03283",
+  "decision": "missing_term",
+  "target": "claw of the perianth scale (Fuirena): the narrow stalk-like lower part of a perianth scale, below its blade",
+  "fix": "Pattern 10 already reads 'as long as' (ratio 1, PATO length towards the target). It fails because 'claws' does not ground: 'claw' is rejected as a generic part. A FLOPO class for the claw of the perianth scale (and its blade, if not grounded) would let pattern 10 apply.",
+  "reason": "The structure is equality to another part. Only the target term is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03284",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Read 'similar to X but smaller/larger/narrower ...' as the comparative with the target X (bract decreased size towards leaf PO_0025034). The resemblance 'similar to' itself stays in RDF as comparison_text.",
+  "reason": "The second term is in the sentence ('leaves'). It comes before the comparative, without 'than', so comparison() does not find it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03285",
+  "decision": "new_pattern",
+  "target": "qualities of the indumentum",
+  "fix": "Bearer stem pubescent PATO_0000455, plus a part slot for the hairs (trichome PO_0000282 part_of stem) carrying their own qualities: sparse PATO_0001609, spreading PATO_0104356, white PATO_0000323. OWL: has part some (stem and has characteristic some pubescent and has part some (trichome and has characteristic some white and has characteristic some spreading)). The RDF keeps each hair quality with its cue.",
+  "reason": "The reason given (alternatives) is wrong: there is no 'or'. The adverb and adjectives describe the hairs, not the stem, and no pattern gives the hairs their own qualities.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03286",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'ribbed' -> rib is in flora_counted_parts.tsv. Add 'medially' (region: medial region, a pinned BSPO class) to config/flora_context_words.tsv so the region cue does not block the split. The count of ribs (2-3) is then in the medial region of the floral scale.",
+  "reason": "A count in a word with a place word in front that the context table does not know.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03287",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'each with N X' as the count of X with bearer_container = the subject of the clause before it (placenta PO_0025078). Read '3 or 4' as the range 3-4, as in P03280.",
+  "reason": "Ovules 3-4 per placenta: an ordinary count with a container.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03288",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Let the 'N-veined' split go through when adverbs ('obviously', 'longitudinally') stand before it. Keep them as cue text in RDF (prominence and direction of the veins are not in the class).",
+  "reason": "'3-5-veined' is in the counted-parts table (veined -> vein). The adverbs in front stop the split, and the row ends as a missing unit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03289",
+  "decision": "missing_term",
+  "target": "se desquamant / desquamant (fr): synonym of FLOPO:0991021 exfoliating (outer layers shed in sheets, strips, plates or flakes); no new class",
+  "fix": "Add the French synonym so the bark (rhytidome) gets FLOPO:0991021. 'par petites plaques de ± 5 mm' is already covered by the definition's 'plates'; keep the flake size in RDF only.",
+  "reason": "The quality exists with English synonyms only, and the French verb phrase is not read.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03290",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "Count of veins (amount, unit count, 2) with bearer_container leaf and a position slot naming the side of the midrib (a lateral region of the leaf lamina, pinned BSPO, relative to leaf midvein PO_0020139). '(or 3)' is a max extreme (pattern 05). OWL: has part some (leaf and has part some ((vein and part of some lateral region) and has characteristic some (amount and has magnitude 2))).",
+  "reason": "The docs list counts at a position as still open.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03291",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'unknown' means the fruit and seeds have not been seen. It says nothing about the plant and must not be read as present or absent.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03292",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Allow whitespace between the number and the hyphen of the suffix ('9-11 -veined', POWO style, also 'Palea 2 -veined'). Count of veins 9-11, container lemma.",
+  "reason": "An ordinary count in a word, broken only by a space before the hyphen.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03293",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground 'nombreux' / 'many' / 'numerous' to PATO:0002118 multiple (present in more than two copies) as a count value without a number. 'à la base de la hampe florale' is a position on the scape; keep it as cue text, or as region once a whole/region slot covers another organ.",
+  "reason": "The term exists. 'Many' words are held by rule (measurement_value_not_numeric), but PATO multiple says exactly 'more than two'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03294",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'Fruit unknown' means it is not known from the type collection. It is not an absence or presence of fruit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03295",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Split the phrase in two. 'to 2 mm whole' is the length of the whole leaf with an inclusive upper bound of 2 mm. '0.7-1.1 mm (absent tip)' is the length without the apex; keep it in RDF only with its text, since no class names the leaf minus its tip.",
+  "reason": "Two measurements of different scope run together. The 'to' is the bound of the second, not of the first range.",
+  "confidence": "low"
+ },
+ {
+  "id": "P03296",
+  "decision": "new_pattern",
+  "target": "excess beyond another part",
+  "fix": "A relational quality with its target and a measured excess: bearer leaf sheath, quality protruding/extending towards leaf collar PO_0006012 (slot 3), plus excess_low 1, excess_high 1-2 mm in RDF; frequency 'sometimes'. OWL keeps only the relation towards the collar; the excess length stays as literals. The same construction covers 'exserted 2 mm beyond the corolla' and 'exceeding the lemma by 3 mm'.",
+  "reason": "Pattern 09 says comparisons with a measurement are not read. The number is the length beyond the other part, not a dimension of the sheath.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03297",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground 'many' to PATO:0002118 multiple as a count value without a number (as in P03293); bearer stem, container whole plant.",
+  "reason": "The number of stems is stated as a word, and PATO has the value.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03298",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The quality is lanceolate PATO_0001877 (on leaf blade). '20-50 × 2-7,5 cm' is a separate length × width statement (decimal comma) and should not be attached to the shape.",
+  "reason": "The statement is a plain shape. The quality was transcribed as the attribute 'shape', and the measurement reason belongs to the next clause.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03299",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add 'elongating to' (like 'reaching') as an inclusive upper-bound cue, with '±' after the cue as approximately (pattern 01). Add 'finally' to the context table as a late stage (A2), so the length holds at maturity.",
+  "reason": "Inflorescence length at maturity about 1.5 cm. Only the verb cue and the '±' after 'to' are not known.",
+  "confidence": "medium"
+ }
+]

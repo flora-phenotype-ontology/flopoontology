@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P00520",
+  "decision": "new_pattern",
+  "target": "count_per_side",
+  "fix": "Count of the part (vein PO, amount PATO:0000070, unit count) with the container narrowed to one side of the organ: has part some (vein and part of some (lateral half of lamina and part of some leaf lamina)) and amount [4,10]; RDF keeps the cue 'on each side of midrib' and a per_side flag so the numbers are not read as totals. This is the 'count at a position' item listed as open in docs/annotation-context-patterns.md section 4.",
+  "reason": "Counts at a position are held by design (03-count-of-parts.md, Limits); no pattern yet.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00521",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'similar to' gives no attribute; the previous review rejected 'similar' (C245). Even with the second part named, the statement does not say in which quality they agree.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00522",
+  "decision": "new_pattern",
+  "target": "count_per_side",
+  "fix": "Tooth count with the container one side of the leaflet margin: has part some (margin tooth and part of some (lateral half of leaflet margin)) and amount [1,5]; per_side flag and cue 'per side' in RDF. The bearer is the leaflet (PO_0020049), from the sentence.",
+  "reason": "Same construction as P00520 (count of teeth on each side of the leaflet).",
+  "confidence": "high"
+ },
+ {
+  "id": "P00523",
+  "decision": "new_pattern",
+  "target": "part_present_at_position",
+  "fix": "Presence of shoot-borne root (PO_0000042) located at the stem node (PO_0020141): has part some (stem and has part some (stem node and has part some shoot-borne root)); 'often' as frequency_qualifier in RDF. Sketched in docs/annotation-context-patterns.md section 5 (presence with slot 1) but not implemented for nodes.",
+  "reason": "Not a process but a part present at a place; slot 1 covers apex/base/margin regions only, not nodes.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00524",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Read 'one third length of' (no 'the') as ratio 1/3, giving decreased length (PATO:0000574) towards the perigynium body. Add a grounding rule mapping 'body' in a Carex perigynium sentence to perigynium (PO_0009044), so it differs from the bearer, the perigynium beak.",
+  "reason": "Fractional ratios are covered by pattern 10 ('half the length of'); the cue variant and the target grounding are missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00525",
+  "decision": "new_pattern",
+  "target": "extent_of_quality",
+  "fix": "Spathe decurrent (PATO:0001984) in OWL. The length of the decurrent part is a measurement of the region that has the quality: has part some (spathe region and has characteristic some (length [0.3,0.8] cm)); the 1.0 extreme goes in RDF per pattern 05. RDF links the extent to the decurrent statement.",
+  "reason": "A number qualifying how far a qualitative state extends; not a dimension of the whole organ.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00526",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'2-lobed' has its own term and must not be split into a lobe count: ground it to bilobed (PATO:0002214). The bearer is the apex of the culm sheath (slot 1 region on the sheath leaf of the bamboo culm), not 'lobe'.",
+  "reason": "Pattern 03 says bilobed/trilobed stay qualities; the annotator counted lobes and could not ground the container.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00527",
+  "decision": "new_pattern",
+  "target": "count_per_side",
+  "fix": "As P00520: vein count [5,7] with the container one side of the leaf lamina, and per_side in RDF.",
+  "reason": "Same count-per-side construction.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00528",
+  "decision": "new_pattern",
+  "target": "indefinite_count",
+  "fix": "A count with no numbers: bearer leaf, quality amount (PATO:0000070), and RDF count_qualifier 'numerous' with its cue. OWL only has part some (leaf and has characteristic some amount), with no data range. Do not use increased amount (PATO:0000470), which is relative to a normal reference.",
+  "reason": "'few'/'many' are held as non-numeric (pattern 03 rules); a non-numeric count needs its own pattern, not a new term.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00529",
+  "decision": "new_pattern",
+  "target": "indefinite_count",
+  "fix": "As P00528: seed (bearer) with amount and count_qualifier 'numerous' in RDF; the container is the fruit/capsule of the sentence.",
+  "reason": "Same construction as P00528.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00530",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "'to N+' says the largest value is at least N, so it is not an upper bound. Add a rule: the cue 'to N+' gives no OWL range, and RDF keeps 100 as an open maximum (pattern 05 extreme). The qualitative part is leaf petiolate/long petiole, with bearer state 'basal and proximal cauline' (pattern 04).",
+  "reason": "The cue is unknown to the gate; the '+' must not be read as an inclusive upper bound.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00531",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'veined → vein' is already in config/flora_counted_parts.tsv. The split probably fails on the en-dash range '5–7-veined'; accept the en-dash (and '–' + hyphen) in the N-M-xed regex. Count of veins [5,7], container glume.",
+  "reason": "Pattern 03 covers N-veined; the annotator held it under a wrong reason (missing unit).",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00532",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Read 'slightly shorter than or equaling X' as one ratio range from just below 1 to 1, which spans 1, so the quality is length (PATO:0000122) towards lemma, with 'slightly' and the words in RDF. Ground 'lemma' to the PO lemma class.",
+  "reason": "Equality and 'shorter than' are both covered; their combination with 'or' is not read.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00533",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md",
+  "fix": "Accept 'from X to Y' as a continuum cue (qualitative_value_relation). Let a 'sub-' value (suborbicular = orbicular, approximately, pattern 01) be one end of the continuum.",
+  "reason": "The continuum and the approximate pattern both exist; the leading 'from' and the sub- end are not combined.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00534",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add 'branched → branch' (shoot axis) to config/flora_counted_parts.tsv and accept a space before 'branched' ('2-3 branched'). The count of branches [2,3] goes with the region 'in the upper part' (slot 1 distal region of the stem) and 'usually' as frequency.",
+  "reason": "A count in a word; the ending 'branched' is not in the table.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00535",
+  "decision": "new_pattern",
+  "target": "count_per_side",
+  "fix": "As P00520: lateral vein count [1,2] per side of the midrib. 'upper' is a series-member position (kind D, still open) and is kept in RDF until position values are allowed in bearer_context_qualities.",
+  "reason": "Count per side, plus an open kind-D qualifier.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00536",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md",
+  "fix": "Add the postposed 'none' (\"Stolons none\") as a negation cue: stolon (PO_0003024) present, negated, with 'none' as the cue in the span.",
+  "reason": "Negation is represented; the cue word is missing from the span check.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00537",
+  "decision": "missing_term",
+  "target": "ft. = foot, a unit of length (UO_0010013? verify in UO)",
+  "fix": "Add 'ft.', 'ft', 'feet' to the unit table with the UO foot class, or convert to m. Whole plant height (PATO:0000119) [1,3] ft.",
+  "reason": "The structure is a plain height measurement; only the imperial unit is unknown.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00538",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'nerved → vein' is in the table; accept the en-dash range '3–5-nerved'. 'from base' (veins arising at the base, palmate) goes in RDF or as a context word, not as a unit. Count of veins [3,5], container leaf blade.",
+  "reason": "Covered by pattern 03; held under a wrong reason.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00539",
+  "decision": "missing_term",
+  "target": "withered: dried up and shrivelled (of a leaf), here as a state at a stage",
+  "fix": "Ground 'withered' as a synonym of shriveled (PATO:0002460) rather than a new class. Stage 'at anthesis' via developmental_stage_contexts (kind A, implemented). 'basal and lower stem leaves' is a kind-D position (FLOPO basal FLOPO:0991002 / cauline) once the slot takes FLOPO values.",
+  "reason": "The stage and position machinery exists or is designed; the blocker is the quality word.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00540",
+  "decision": "new_pattern",
+  "target": "alternative_numeric_ranges",
+  "fix": "Two disjoint usual ranges for one count, each with its own extremes: RDF holds operands [(4,6, min 3, max 7), (6,10, min 6, max 11)] with value_operator one_of. OWL uses the union of the data ranges (DataUnionOf, outside EL) or, for ELK, the hull [4,10]. Count of pairs of lateral veins (pairs, as with 'jugate').",
+  "reason": "Pattern 07 unions values, not numeric ranges; pattern 05 handles one range only.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00541",
+  "decision": "new_pattern",
+  "target": "depth_of_division",
+  "fix": "The perianth (of the female flower bud) is lobed, with the depth of the incision as a fraction of the organ's length in RDF (division_ratio_low 1/6, high 1/5, cue 'cleft'). OWL states only the lobed quality on the perianth (part of a female flower, pattern 12). Do not use PATO cleft (PATO:0000403), a cell/pathology quality.",
+  "reason": "A fraction of the organ's own length, not a ratio to another part (pattern 10) or of two dimensions (pattern 11).",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00542",
+  "decision": "missing_term",
+  "target": "deep brown = dark brown (PATO:0001245)",
+  "fix": "Add 'deep' as a synonym of 'dark' for colour values (deep brown → dark brown PATO:0001245). Bearer staminode, quality colour.",
+  "reason": "The structure is a plain colour; the modifier 'deep' is not grounded (the 'missing unit' reason is spurious).",
+  "confidence": "high"
+ },
+ {
+  "id": "P00543",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md",
+  "fix": "Add the French negation cues 'nul', 'nulle', 'nuls', 'nulles' (postposed) for the fdac flora: pappus present, negated.",
+  "reason": "Negation is represented; the French cue word is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00544",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "'˜' is a garbled '~' (about). Accept 'to ~N' / 'to ˜N' as an inclusive upper bound with value_qualifier approximately (pattern 01), like 'to c.'. Stem length ≤ 10 cm.",
+  "reason": "The upper-bound cue is known; the approximation sign after it is not.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00545",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Read coordinated comparisons sharing one target ('narrower than and about length of X'): decreased width towards X, plus length towards X with ratio 1, approximately (pattern 10). Ground 'bodies of perigynia' to perigynium (PO_0009044).",
+  "reason": "The second term is present; the coordination and the 'bodies of' phrase hide it from the target reader.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00546",
+  "decision": "new_pattern",
+  "target": "count_of_rows",
+  "fix": "Arrangement of a part in rows: bearer stoma, container the basal region of the moss capsule (slot 1), with the number of rows [2,3] in RDF ('2 or 3' is a range). OWL: presence of stomata in the basal region of the capsule; the row count is a count of row aggregates, as 'jugate' counts pairs.",
+  "reason": "Not an alternative of qualities; rows (like 'seriate') are excluded from pattern 03.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00547",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md",
+  "fix": "Add 'at least in <part>' to the context words: the named part (inflorescence PO_0009049) becomes the bearer of stipitate-glandular (FLOPO:0991172), the safe minimum. The whole plant gets no annotation.",
+  "reason": "Not a stage; a scope restriction to a part, like slot 1, missing as a cue.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00548",
+  "decision": "new_pattern",
+  "target": "depth_of_division",
+  "fix": "As P00541: calyx lobed, with the division ratio 0.5, approximately ('c.'), in RDF and the lobed quality in OWL.",
+  "reason": "Same construction: the depth of division as a fraction of the organ.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00549",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The bearer is the hypochile (FLOPO_0986030), not the lip. Length 2–2.5 mm and width 1.5–2 mm of the hypochile.",
+  "reason": "The dimensions follow 'hypochile concave, globose-saccate'; the stage reason is spurious.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00550",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Grounding rule: 'under surface / abaxially paler' (the implicit second term is the other surface of the same leaf) → leaf lamina discolorous (FLOPO:0991070), with the comparison words in RDF. This avoids a 'paler' class, which the previous review rejected (C241).",
+  "reason": "The second term is implicit but fixed (the upper surface); an existing FLOPO value covers the meaning.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00551",
+  "decision": "new_pattern",
+  "target": "combined_length_of_parts",
+  "fix": "One measurement of two consecutive parts together: bearer petiole + leaf rachis (PO_0020055) of the same leaf, length ≤ 30 cm (pattern 02). RDF lists both parts as a 'combined' bearer. OWL: has part some (leaf and has characteristic some length...) is wrong, so keep it in RDF only, or use a FLOPO 'leaf axis' class if one is added.",
+  "reason": "Neither part alone has this length; no pattern for a sum of parts.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00552",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The statement is only 'mm'; the source says 'petiole 9-25 mm long': petiole length [9,25] mm, a plain measurement with no negation.",
+  "reason": "Truncated statement; the negation reason is spurious.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00553",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Split into: fruit scurfy (FLOPO:0991127), and trichome (PO_0000282) part of fruit with length 0.3 mm and lower extreme 0.1 mm (pattern 05).",
+  "reason": "'hairs' was transcribed as the quality of the fruit; the number is the hair length.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00554",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Allow a continuum compound ('linear-lanceolate' = continuum linear–lanceolate) as one operand of a 07a union with 'lanceolate'. Both are shapes, so the union stays under one attribute.",
+  "reason": "The union and continuum patterns exist but are not combined.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00555",
+  "decision": "missing_term",
+  "target": "climber (noun): a plant with a climbing habit = synonym of climbing FLOPO:0991108",
+  "fix": "Add the noun 'climber' as a synonym for whole plant climbing (FLOPO:0991108), as a grounding rule, not a new class. 'trailing' is a second statement (prostrate habit).",
+  "reason": "The value class exists; the habit noun does not ground to it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00556",
+  "decision": "new_pattern",
+  "target": "alternative_with_own_scope",
+  "fix": "A one_of union whose operands carry their own bearer_scope: (bract glabrous) or (bract villous) or (abaxial surface of bract glabrescent). OWL: (bract and has characteristic some (glabrous or villous)) or (bract and has part some (abaxial region and has characteristic some glabrescent)). RDF has operands each with an optional scope.",
+  "reason": "Pattern 07 unions values of one bearer; here one operand has its own surface, and the transcription split it off.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00557",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "As P00550: 'abaxially ... paler' → leaf lamina discolorous (FLOPO:0991070); 'abaxially glabrous' is a separate surface statement (slot 1, leaf lamina abaxial epidermis PO_0000049).",
+  "reason": "Same implicit-surface comparison as P00550.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00558",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The entity is bracteole (PO_0009043), absent on the peduncle, not bract. Add the privative prefix 'e-' (ebracteolate, ebracteate) as an in-word negation cue, like 'leafless'.",
+  "reason": "Wrong part; the negation is in the word itself, so no separate cue stands in the span.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00559",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The bearer is the tunic (FLOPO_0986041) of the bulb, not the bulb, and the colour is light brown (PATO:0001246; 'pale' = light).",
+  "reason": "Wrong entity; the 'missing unit' reason is spurious.",
+  "confidence": "high"
+ }
+]

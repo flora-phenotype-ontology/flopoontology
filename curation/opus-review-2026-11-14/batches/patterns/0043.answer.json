@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P01720",
+  "decision": "new_pattern",
+  "target": "exception_to_general_statement",
+  "fix": "Slots: the general statement (whole plant, glabrous PATO), the excepted parts (root, petal) with their cue 'except for', and a flag that the excepted parts do not have the general value. OWL: the general value is not asserted for the excepted parts, and they get 'not glabrous' (hairy) only where the attribute has two values. RDF: fb:exceptPart for each excepted part. Do not record 'petal pubescent'; the text does not say pubescent.",
+  "reason": "The annotator read 'except' as a negation and put a value, pubescent, on the petals that the text does not give. The text says only that the petals are not glabrous.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01721",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (kind C, slot 1 bearer part)",
+  "fix": "'adaxially' is a side of the leaf, not a stage. Allow the surface/side rule for relief qualities of veins (impressed = sunken PATO:0002416 via rule C216), stated of the adaxial side of the lamina as a part_restrictions filler. Record 'deeply' as a degree on the value.",
+  "reason": "The surface rule takes only colours, hairs and smooth/rough, so 'adaxially' fell through to the stage qualifier.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01722",
+  "decision": "missing_term",
+  "target": "EQ signature for FLOPO_0900035 whole plant lianescent (liana = woody climber)",
+  "fix": "Define FLOPO_0900035 as whole plant (PO:0000003) and has_characteristic climbing (FLOPO:0991108) and woody (PATO ligneous). Rule Q14 then gives an EQ annotation instead of holding it.",
+  "reason": "The class exists but has no EQ definition, so every 'liana/liane' is held.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01723",
+  "decision": "not_annotatable",
+  "target": "comparison with another taxon",
+  "fix": "",
+  "reason": "'plus comprimés ... comme chez debilis' compares the young shoots with another species. It is not an absolute trait of this taxon.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01724",
+  "decision": "new_pattern",
+  "target": "count_per_side",
+  "fix": "Slots: the counted part (secondary leaf vein PO:0020140), the count range, the reference part (midrib) and the cue 'on each side of'. RDF: fb:countPer 'side of midrib' with the range (the total is about twice that). OWL: only the presence of secondary veins in the lamina, because a count per side is not the count of the whole organ. Extremes in parentheses go to pattern 05.",
+  "reason": "The docs list counts at a position as still open.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01725",
+  "decision": "new_pattern",
+  "target": "implicit_comparison",
+  "fix": "Slots: the bearer (midrib, on its adaxial side), a relative colour quality (paler = increased lightness) and a default second term taken from the bearer type (midrib → the surrounding lamina on the same side). OWL: has_characteristic some (paler and towards some lamina). RDF: fb:towardsImplicit true, so the second term is marked as inferred, not read from the text.",
+  "reason": "The second term is not stated but is fixed by convention for a midrib or vein (compared with the lamina). Rule C241 holds all 'paler' rows.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01726",
+  "decision": "missing_term",
+  "target": "coalescing (lenticels running together) → rule to confluent with PATO:0002512",
+  "fix": "Rule: 'coalescing/confluent' on a set of like parts (lenticels) → PATO:0002512 towards the same kind of part (pattern 09 slot). Record 'frequently' as frequency. 'In vertical columns' is a second statement about arrangement in rows.",
+  "reason": "This is a lasting state of the bark, not an event. It only lacks a rule.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01727",
+  "decision": "transcription_error",
+  "target": "entity should be trichome (hair, PO:0000282) part of flower; quality length",
+  "fix": "Re-transcribe as hair (trichome) of the flower: length 0.1 mm, plus dense, scurfy and greyish brown as separate statements (pattern 12 for 'of the flower').",
+  "reason": "'hairs' was taken as the quality and the flower as the bearer. The measurement is the hair length.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01728",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "The container of '3-nerved' is the organ at the head of the clause (the scales). 'center' is a region of the scale (median region), not the bearer. Fall back to the clause organ when the noun after 'N-nerved' does not ground.",
+  "reason": "'nerved → vein' is in the table. Only the container failed, on the word 'center'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01729",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Remove the manner adverb before 'N-lobed' and read it as a count of 3 lobes of the fruit. Record 'obtusely' as a separate statement: lobe obtuse. It is a count, not a measurement.",
+  "reason": "The adverb 'obtusely' stopped the split of 'N-lobed', and the row was sent to the measurement check.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01730",
+  "decision": "not_annotatable",
+  "target": "too vague",
+  "fix": "",
+  "reason": "'Few to more than 10' gives no usable number at either end: 'few' is vague and 'more than 10' is open. The count adds nothing beyond the fact that there are flowers.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01731",
+  "decision": "new_pattern",
+  "target": "count_per_side",
+  "fix": "As P01724: secondary leaf vein PO:0020140, count 3–4 per side of the midvein. RDF fb:countPer; OWL only the presence of the veins.",
+  "reason": "Count at a position is open in the docs.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01732",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (temporal transition, qualitative_value_relation)",
+  "fix": "Read 'white farinose when young, becoming efarinose' as a change from farinose to efarinose on the abaxial leaf blade. Add 'becoming' as a transition cue when the earlier value is in the same clause.",
+  "reason": "'Becoming X' after a stated earlier value is the existing 'white becoming pink' transition, not an event.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01733",
+  "decision": "new_pattern",
+  "target": "count_per_side",
+  "fix": "As P01724: lateral (secondary) veins 7–10 per side of the midrib.",
+  "reason": "Count at a position is open.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01734",
+  "decision": "missing_term",
+  "target": "EQ signature for FLOPO_0900035 whole plant lianescent",
+  "fix": "As P01722: whole plant and climbing FLOPO:0991108 and woody. The stem diameter 'dépassant 1 cm' is a separate bounded measurement (pattern 02).",
+  "reason": "Same held class without an EQ definition.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01735",
+  "decision": "missing_term",
+  "target": "EQ signature for FLOPO_0985031 whole plant climbing phenotype",
+  "fix": "Define FLOPO_0985031 as whole plant and has_characteristic climbing FLOPO:0991108. Alternatively drop normalization rule Q09, which overrides the reviewed value rule V210 (climbing → FLOPO:0991108).",
+  "reason": "The value term exists, but the older phenotype-class rule wins and holds the row.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01736",
+  "decision": "new_pattern",
+  "target": "count_per_side",
+  "fix": "As P01724: lateral veins 5–7 per side of the midrib.",
+  "reason": "Count at a position is open.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01737",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Read 'equaling or slightly exceeding X' as one ratio range from 1 upward: quality length (the range includes 1), towards capsule (fruit), stage 'in fruit' (kind A). Do not split it into a disjunction.",
+  "reason": "Equality and 'exceeding' are both covered by patterns 09/10. Their alternative is a ratio range, not a union.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01738",
+  "decision": "new_pattern",
+  "target": "implicit_comparison",
+  "fix": "Slots: bearer (leaf lamina abaxial side), relative colour quality (paler = increased lightness), default second term = the opposite side of the same organ when the other side's colour is stated in the clause ('olivaceous above'). OWL: abaxial epidermis has_characteristic some (paler and towards some adaxial epidermis). RDF fb:towardsImplicit.",
+  "reason": "'Paler beneath' after 'above' compares the two sides of the leaf, a common and reusable construction that rule C241 holds.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01739",
+  "decision": "missing_term",
+  "target": "twining: a climbing quality of a stem by which it winds round a support (child of climbing FLOPO:0991108)",
+  "fix": "Add the FLOPO value 'twining' (stem). The list 'sprawling, scrambling, or rarely somewhat twining' then follows patterns 07/08 (alternatives, the last with frequency 'rarely' and approximation 'somewhat').",
+  "reason": "Twining is held as the phenotype class FLOPO_0985034 without EQ. No value exists for the stem.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01740",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add the container word 'umbellet' → umbel inflorescence PO:0030129 (an ultimate umbel of a compound umbel) and the cue 'in each' for the container. Count of fruits = 3.",
+  "reason": "The count pattern applies. Only the container word 'umbellet' does not ground.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01741",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "A list of modifiers separated by commas before one noun is a conjunction, not an alternative. Annotate prickle present (part of branch), and recurved, yellowish brown and scattered as separate statements of the prickle.",
+  "reason": "There is no 'or' or 'to'. The list check misread the adjectives as alternatives.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01742",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "'contracting to an acumen' is the shape (acuminate apex), not an event. Record the acumen (leaf apex) length with upper bound 'to 1 cm', and 'sometimes very abruptly' as a frequency/degree on the shape statement.",
+  "reason": "This is an upper bound with a known cue. The verb hid it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01743",
+  "decision": "missing_term",
+  "target": "EQ signature for FLOPO_0900035 whole plant lianescent",
+  "fix": "As P01722. 'Suffruticose' is a second statement (subshrub, also a held whole-plant class that needs a signature).",
+  "reason": "Same held class without an EQ definition.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01744",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Add the French cue 'de même taille que' (ratio 1, size PATO:0000117). Resolve the elided target 'la stérile' to frond (FLOPO_0985026) qualified as sterile (wholeQuality as in pattern 12). Bearer: frond, fertile.",
+  "reason": "Equality to another part is pattern 10. The French cue and the elided, qualified target are missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01745",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read 'to L by W cm' as two upper bounds (length ≤18 cm, width ≤7 cm). Ground 'the most apical' leaflet with the 'terminal' bearer_quality PATO:0002476 (add the cue 'most apical'), and 'usually' as frequency. 'The largest' can be added as pattern 09 against the lateral leaflets.",
+  "reason": "This is an upper bound with the known cue 'to'. The 'by' form and the position phrase were not read.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01746",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "A union of habit statements: (tree, height ≤20 m) or (shrub and epiphytic FLOPO:0991110). Add the pair to config/flora_union_pairs.tsv. The tree and shrub classes also need EQ signatures, as for lianescent.",
+  "reason": "Alternatives across attributes are the secondary pattern 07. They are blocked by a missing reviewed pair and the held growth-form classes.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01747",
+  "decision": "missing_term",
+  "target": "contiguous: a spatial quality of a set of like structures whose members touch their neighbours (child of crowded PATO:0000619)",
+  "fix": "Add the value or a rule for 'contigu(ë)s' on flowers in the cyme, as a quality of the set, like FLOPO 'equal/unequal'.",
+  "reason": "This is reciprocal (the flowers touch each other), not a comparison missing its second term. The rule wrongly held it as one.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01748",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read 'to more than X' as a strict lower bound (value_low 10 cm, exclusive). 'to' here does not start an upper bound.",
+  "reason": "The 'more than' lower-bound cue exists. The 'to' before it was misread as an upper bound.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01749",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add the row 'articulated with → PATO:0002278 articulated with' to the relation table. Target: pseudobulb. It currently grounds to corm PO:0025355 by synonym, which is botanically doubtful for orchids and should be checked.",
+  "reason": "This is an attachment relation with a PATO term. It is missing only from the pattern's word table.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01750",
+  "decision": "not_annotatable",
+  "target": "missing data (part unknown)",
+  "fix": "",
+  "reason": "'Capsule unknown' says the part has not been seen. It does not say it is absent, so it is not a phenotype.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01751",
+  "decision": "new_pattern",
+  "target": "count_per_side",
+  "fix": "As P01724: main lateral veins 10–13 per side of the midrib. Ground the entity to the vein of the leaf, not to 'nervure'.",
+  "reason": "Count at a position is open.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01752",
+  "decision": "missing_term",
+  "target": "twining (stem; child of climbing FLOPO:0991108)",
+  "fix": "As P01739. 'to left' (sinistrorse) is the direction of twining; record it in RDF until a value for twining direction is reviewed.",
+  "reason": "Twining has no value term. It is held as a phenotype class without EQ.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01753",
+  "decision": "not_annotatable",
+  "target": "missing data (part unknown)",
+  "fix": "",
+  "reason": "'Unknown' means not seen. It does not mean absent.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01754",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Read fractions '2/3–4/5 the length of X' as ratio_low 0.67 and ratio_high 0.8 with decreased length towards the spikelet. Resolve the elided 'the upper' to upper glume (series member, kind D).",
+  "reason": "This is a ratio to another part. Fractions and the 'the length of' cue are not read, so the row went to the unit check.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01755",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "The container of '10-20-flowered' is 'the heads' of the clause: the head inflorescence (capitulum-like umbel), grounded to the inflorescence class. Use the clause organ when the word stands alone.",
+  "reason": "'flowered → flower' is in the table. Only the container failed.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01756",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "As P01728: the container is the pistillate scale of the clause, 'center' is a region. 'when young' is stage kind A.",
+  "reason": "The counted part is known. The container stopped on 'center'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01757",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Read 'N times length of X' (without 'as long as') as a ratio cue, and put a reversed range '2-1' in order as 1–2. Since the range includes 1, the quality is length towards calyx.",
+  "reason": "This is a ratio to another part. The cue form and the reversed range were not read.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01758",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add the row 'armed → branch of the organ' to config/flora_counted_parts.tsv, only after a number ('N-armed'; bare 'armed' means spiny). The style branch has no PO term, so use style branched with count 2 until one exists.",
+  "reason": "This is a count written inside one word, with a suffix missing from the table.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01759",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Read 'glabrous or margins ciliolate' as a union across bearers of the same leaf: (leaf glabrous) or (leaf margin ciliolate, with dendritic hairs ≤0.2 mm by pattern 02). Add the reviewed pair glabrous/ciliolate to config/flora_union_pairs.tsv.",
+  "reason": "These are alternatives within one taxon. They are blocked because the second alternative changes the bearer to the margin.",
+  "confidence": "medium"
+ }
+]

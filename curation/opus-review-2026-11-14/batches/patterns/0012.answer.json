@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P00480",
+  "decision": "new_pattern",
+  "target": "qualitative count",
+  "fix": "Bearer: the counted part (leaf, with the context quality basal FLOPO:0991002 by pattern 04). Quality: amount PATO:0000070 with no numbers. The count word (few, several, many, numerous) goes in RDF as fb:countWord with its cue. OWL: has part some (leaf and has characteristic some basal and has characteristic some amount); 'many' is not used as a class, because PATO increased amount means more than normal for the species.",
+  "reason": "'many' is a count without a number. Pattern 03 holds non-numeric counts (measurement_value_not_numeric), and no pattern takes them.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00481",
+  "decision": "existing_pattern",
+  "target": "plain entity-quality statement; negation handling in docs/annotation-context-patterns.md",
+  "fix": "glabrous PATO:0000453 is a value in its own right, not 'not hairy', so it must not go through the negation-cue check. Ground the fern 'stipe' (the stalk of the frond) to petiole, not to PO:0025066 stalk.",
+  "reason": "'Stipe dark brown, glabrous' has no negation. The reason is a false trigger.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00482",
+  "decision": "existing_pattern",
+  "target": "config/flopo_flora_value_terms.tsv: FLOPO:0991108 climbing (rule_words), habit phenotype FLOPO_0985031",
+  "fix": "Give the climbing-habit phenotype class (FLOPO_0985031 whole plant climbing phenotype) the EQ signature whole plant PO:0000003 + climbing FLOPO:0991108. Add the rule words liana, liane, lianes, climber, climbing shrub and scandent. Woodiness has no term and is not annotated.",
+  "reason": "A liana is a woody climber. Climbing already exists, and the phenotype class only lacks its signature.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00483",
+  "decision": "new_pattern",
+  "target": "measured relation",
+  "fix": "A relation of pattern 09 that carries a number: filament PO:0009067 has characteristic exserted PATO:0000623 (towards the perianth where it is named). The 1.5-1.8 cm is the length of the part that sticks out, stored in RDF as fb:relationMagnitude with unit cm, not as the filament's length. OWL keeps only exserted.",
+  "reason": "Pattern 09 lists 'comparisons with a measurement' as not read. The number is the length beyond the perianth, not a quality of the whole filament.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00484",
+  "decision": "existing_pattern",
+  "target": "docs/odp/08-alternative-with-frequency.md",
+  "fix": "Add French 'nul/nulle' (absent) as a negation cue that refers back to the noun 'pubescence'. Read 'pubescence externe ... parfois réduite à quelques poils ou plus rarement nulle' as: outer surface of the corolla hairy, alternative glabrous with frequency 'rarely' (cue 'plus rarement').",
+  "reason": "The statement is an alternative with its own frequency. The negation word is in the span but was not read.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00485",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "Count of pattern 03: bearer secondary leaf vein, container leaf lamina PO:0020039, 7-9, unit count. Add count_scope 'per side' with its reference part, the midvein. OWL states the count only for the half-lamina (part of some leaf lamina, towards the midvein); RDF keeps fb:countScope 'each side' so the number is never doubled.",
+  "reason": "Listed as open in annotation-context-patterns.md section 4 (count_per_position).",
+  "confidence": "high"
+ },
+ {
+  "id": "P00486",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "Add 'at length' to config/flora_context_words.tsv as a bearer_quality (mature or old, the counterpart of 'at first' = young). Ground 'excurved-spreading' to spreading PATO:0104356 and keep 'widely' as a degree word. Pair it with 'at first ascending' as a temporal transition (qualitative_value_relation).",
+  "reason": "'at first … at length' is a change of state. 'at first' is in the table and 'at length' is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00487",
+  "decision": "new_pattern",
+  "target": "depth of division",
+  "fix": "Bearer: calyx. Quality: divided (the lobed or divided value). The depth is a fraction of the bearer's own length: fb:divisionDepth 0.25 with unit 'ratio', and the cue 'divided 1/4 its length'. OWL keeps the lobed/divided quality; the fraction stays in RDF only, like the ratios of pattern 11.",
+  "reason": "This is a ratio of how deep the cut goes to the organ's length, not a measurement missing its unit. No pattern reads it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00488",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "As P00485: count of secondary veins 9-12, container leaf lamina, count_scope 'each side of midvein', reference part the midvein (PO costa/midvein class).",
+  "reason": "Same construction: counts at a position are listed as open.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00489",
+  "decision": "missing_term",
+  "target": "pruinose (white powdery): covered with a whitish, powdery or waxy bloom that rubs off",
+  "fix": "New FLOPO value under waxy PATO:0002384, sibling of glaucous PATO:0104277. Glaucous means a bloom with a blue-green look, which is not what 'white powdery' says. Rule words: white powdery, powdery, pruinose, farinose.",
+  "reason": "This is a surface quality, not a process. No PATO or FLOPO term matches.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00490",
+  "decision": "new_pattern",
+  "target": "qualitative count",
+  "fix": "Bearer: root, quality amount PATO:0000070, count words 'few-several' kept as fb:countWord (as a range of two words). OWL: amount only.",
+  "reason": "A count without a number.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00491",
+  "decision": "existing_pattern",
+  "target": "config/flopo_flora_value_terms.tsv: FLOPO:0991108 climbing (rule_words), habit phenotype FLOPO_0985031",
+  "fix": "whole plant PO:0000003 + climbing FLOPO:0991108 through the rule word 'climber'. Drop 'vigorous': it is too vague to annotate.",
+  "reason": "Same habit word as P00482. Climbing exists.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00492",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md, slot 1 (surface: inside/outside)",
+  "fix": "Allow the surface words 'inside'/'outside' on fused perianth tubes (corolla tube, calyx tube), not only on single perianth members and bracts: the inner side of the corolla tube is glabrous PATO:0000453. The 'inside' cue stands once in the clause ('inside lighter red, glabrous').",
+  "reason": "The context is a place on the part (kind C), not a stage. The bearer is outside the table's allowed bearers.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00493",
+  "decision": "existing_pattern",
+  "target": "measurement parser (length × width), unit table",
+  "fix": "Read 'a-b × c-d dm' as length 0.5-1.5 dm and width 0.2-0.8 dm of the inflorescence. Add 'dm' (decimetre, a UO unit) to the units if it is missing, and do not route the statement to counts.",
+  "reason": "A normal two-dimension measurement in decimetres, wrongly marked as a count or non-length measurement.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00494",
+  "decision": "missing_term",
+  "target": "middle (median): the central member of a series of three or more, here the middle lobe of the lower lip",
+  "fix": "New FLOPO position value next to the proposed upper/lower/lateral values, used as a context quality (pattern 04). The bearer is a corolla lobe that is part of the lower lip (pattern 12). 'small' is the absolute value decreased size PATO:0000587, not a relation.",
+  "reason": "Nothing in the statement relates to another part. The missing piece is the position 'middle'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00495",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'opening by N valves' with N as a word ('two' = 2): bearer fruit valve PO:0000033, container fruit, 2, unit count. Separately, fruit dehiscent FLOPO:0991149.",
+  "reason": "This is a count with a word numeral, not a measurement missing its unit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00496",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Accept extremes in parentheses with no dash, '(a) b-c (d)': usual range 1.5-2.5 mm, extremes 1.3 and 3.0. Ground 'calyx-lobes' to calyx lobe rather than sepal. The statement is the species-level line before the varieties.",
+  "reason": "Range with extremes in a spacing the parser does not know. It is not a set of alternatives.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00497",
+  "decision": "new_pattern",
+  "target": "count per unit length",
+  "fix": "Bearer: leaf lamina tooth PO:0025518, container leaf margin PO:0020128, value 6-10, unit 'count per cm'. OWL: amount with a data range and that rate unit; RDF fb:unit with the rate, so it is never read as a plain count. 'narrow spreading' are separate statements about the teeth.",
+  "reason": "This is a density along the margin, not a count missing its container.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00498",
+  "decision": "new_pattern",
+  "target": "qualitative count",
+  "fix": "Bearer: capitulum, quality amount, fb:countWord 'numerous'.",
+  "reason": "A count without a number.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00499",
+  "decision": "transcription_error",
+  "target": "pinna / shorter",
+  "fix": "'sometimes shorter' refers to the distance (1.5-3.6 cm) between the basal pair of pinnae and the next pair, not to the length of the pinna. Re-transcribe as a spacing measurement (distance PATO:0000040 towards the next pinna pair) with the 'shorter' alternative as frequency 'sometimes', or leave it out.",
+  "reason": "The transcribed entity and quality do not match what the text says.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00500",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md (bearer_container slot)",
+  "fix": "Read 'with hairs 0.1 mm' as length 0.1 mm of trichome PO:0000282 with container flower, plus a separate statement that the flower is hairy PATO:0000454. Allow bearer_container on length measurements of a part named after 'with'.",
+  "reason": "The number measures the hairs, not the flower.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00501",
+  "decision": "missing_term",
+  "target": "withered: dried up and shrunken, dead (of a leaf)",
+  "fix": "Prefer a rule over a new class: 'withered' → dead PATO:0001422. Context basal FLOPO:0991002 (pattern 04) and the 'at anthesis' stage PO:0007616 are both already in the table.",
+  "reason": "The stage and position are covered. Only the value is missing, and it is a state, not a process.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00502",
+  "decision": "not_annotatable",
+  "target": "apothecium (lichen)",
+  "fix": "No PO or FLOPO bearer for lichen fruit bodies. If lichens come into scope, use the qualitative count pattern.",
+  "reason": "Hypotrachyna is a lichen. Its structures are outside PO and FLOPO.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00503",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Allow a degree adverb before the count word ('narrowly 3-5-winged'): count of wings 3-5 on the stem (suffix 'winged' → wing in config/flora_counted_parts.tsv), plus stem winged PATO:0104354. 'narrowly' becomes a separate statement (the wings are narrow) or is kept as a degree word.",
+  "reason": "The 'winged' suffix is in the table. The adverb blocks the split; no unit is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00504",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md, slot 1 (region: apex)",
+  "fix": "Read 'paler at the tip' as the apical region of the exostome tooth having high brightness PATO:0000203 (light). The implied comparison is with the rest of the tooth, which is bright red. This is a change along the tooth, not over time.",
+  "reason": "A colour of a region of the bearer. The second term of the comparison is the bearer itself.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00505",
+  "decision": "existing_pattern",
+  "target": "config/flopo_flora_value_terms.tsv: FLOPO:0991108 climbing (rule_words), habit phenotype FLOPO_0985031",
+  "fix": "whole plant PO:0000003 + climbing FLOPO:0991108 through the rule word 'climbing shrub' ('shrub' is a synonym of whole plant). The alternative 'or liane' gives the same value.",
+  "reason": "Same habit construction as P00482.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00506",
+  "decision": "existing_pattern",
+  "target": "config/flopo_flora_value_terms.tsv: FLOPO:0991108 climbing (rule_words), habit phenotype FLOPO_0985031",
+  "fix": "Both 'lianas' and 'climbing shrubs' map to climbing FLOPO:0991108, so the union collapses to one value on the whole plant.",
+  "reason": "Same habit construction as P00482.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00507",
+  "decision": "new_pattern",
+  "target": "qualitative count",
+  "fix": "Bearer: inflorescence, quality amount, fb:countWord 'nombreuses' (numerous).",
+  "reason": "A count without a number.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00508",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Split '3-lobed' into a count of 3 lobes of the lip (labellum), or use the trilobed value where a rule says so. 'at or above the middle' is the depth of division: leave it to the 'depth of division' pattern; it is not an alternative between values.",
+  "reason": "The 'or' is in a depth phrase, not in the count.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00509",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add the cue 'or more' after a value as an inclusive lower bound: height of the whole plant >= 40 cm.",
+  "reason": "This is a lower bound, not a disjunction.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00510",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'N- or M-xed' as a count range N-M: seed count 2-3, container fruit (berry), suffix 'seeded' → seed.",
+  "reason": "A count in the word with a two-number prefix. The disjunction is a range.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00511",
+  "decision": "missing_term",
+  "target": "subpercurrent: of a costa or midrib, ending a short distance below the apex",
+  "fix": "New FLOPO value under position PATO:0000140, sibling of percurrent FLOPO:0991163 and excurrent FLOPO:0991162. Rule words: 'ending just below apex', 'ending below the apex', 'subpercurrent'. Bearer: costa PO:0030072.",
+  "reason": "A standard moss term with no class. It is a quality of the costa and needs no relation.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00512",
+  "decision": "new_pattern",
+  "target": "qualitative count",
+  "fix": "Bearer: root, quality amount, fb:countWord 'numerous' with the degree word 'very'.",
+  "reason": "A count without a number.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00513",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add 'paler/darker' to the comparison table (high brightness PATO:0000203 / low brightness). The bearer is the lower surface (leaf lamina abaxial epidermis PO:0000049) and the target is the 'upper surface' named in the same sentence. Alternatively use leaf discolorous FLOPO:0991070.",
+  "reason": "The second term is named earlier in the sentence ('upper surface').",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00514",
+  "decision": "existing_pattern",
+  "target": "docs/odp/08-alternative-with-frequency.md",
+  "fix": "Ground 'subglabrous' to FLOPO:0991053 (not glabrous) with frequency 'rarely', as an alternative to the hairy whole plant ('clothed with ... hairs').",
+  "reason": "There is no negation. A value that already exists was missed and the frequency word was not read.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00515",
+  "decision": "transcription_error",
+  "target": "awn / amount",
+  "fix": "'aiguilles crochues' are hooked spines on the sterile flowers, not awns. Re-transcribe as a count 4-8 of hooked spines per branch, container the sterile flower or its branches (pattern 12 for the sterile flower).",
+  "reason": "The entity does not match the text, and the container ('pinceau') has no class.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00516",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Bearer: trichome PO:0000282 on the achene margin. Quality increased length PATO:0000573, towards pappus PO:0025393. 'squamellae' grounds to trichome (the bearer), so the target must be the longest phrase that grounds to something other than the bearer: 'pappus'.",
+  "reason": "A comparison the pattern covers. Grounding the target failed because of the squamella/trichome synonym.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00517",
+  "decision": "existing_pattern",
+  "target": "docs/odp/12-part-of-qualified-whole.md",
+  "fix": "Read the section heading 'Male flowers:' as the whole (flower PO:0009046 + male PATO:0000384) for the stamen clause. Quality decreased length PATO:0000574, degree 'very'.",
+  "reason": "This is a sex qualifier on a part (kind B), not a developmental stage.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00518",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Strip the degree words ('inconspicuously remotely') and keep them as cues. Leaf margin: union of entire and serrulate FLOPO:0991081.",
+  "reason": "Two margin values; the adverbs blocked the union.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00519",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation)",
+  "fix": "Add the cue 'neither X nor Y', which negates both values: annotate 'not rugose' on the leaf lamina. Leave 'not very thick' out, because negating a degree gives no class.",
+  "reason": "The negation cue 'neither … nor' is not known.",
+  "confidence": "medium"
+ }
+]

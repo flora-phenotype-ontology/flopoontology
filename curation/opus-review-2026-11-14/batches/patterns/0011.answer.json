@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P00440",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Range (0.2–)0.3–1.5(–2) with extremes is covered; the unit 'dm' (decimetre) must be in the unit table, and 'Stems erect, N dm' is the length of the stem (PATO:0000122), not height (PATO:0000119), which belongs to the plant.",
+  "reason": "Plain measurement with extremes; failed on the decimetre unit and the attribute choice.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00441",
+  "decision": "missing_term",
+  "target": "sepaloid: resembling a sepal in form, texture and colour (sibling of petaloid FLOPO:0991141, under PATO:0000052)",
+  "fix": "Read 'semblables aux sépales' / 'sepal-like' on a bract or tepal as sepaloid; the clause 'mais parfois plus développées' is a separate, frequency-qualified comparison and is left out.",
+  "reason": "'Similar to the sepals' is a botanical character (sepaloid bracts), not a comparison missing its second term; FLOPO has petaloid and bract-like but no sepaloid.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00442",
+  "decision": "new_pattern",
+  "target": "exudate-of-part",
+  "fix": "Bearer = the exuding part (bark/stem; 'slash' is a cut through the bark), with has_part some (plant exudate and has_characteristic some red / sticky). Needs a FLOPO anatomy class 'plant exudate' (latex, resin, gum; PO has none); 'sometimes' as frequency_qualifier in RDF only. Same pattern covers 'milky latex present'.",
+  "reason": "Colour of an exudate, not of the slash; neither the exudate nor its presence can be stated with current bearers.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00443",
+  "decision": "existing_pattern",
+  "target": "docs/odp/01-approximate-value.md",
+  "fix": "'suborbiculate' is a spelling of 'suborbicular' and should go through the sub- rule (approximately orbicular PATO:0001934); 'broadly ovate' should go through the ovate FLOPO:0991024 rule. The pair then forms a continuum inside the comma list.",
+  "reason": "Both values have terms; the 'suborbiculate' spelling variant is not recognised.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00444",
+  "decision": "missing_term",
+  "target": "arachnoid: hairy with long, fine, entangled cobweb-like hairs (under PATO:0000454 hairy, near tomentose PATO:0002341)",
+  "fix": "With arachnoid added, 'with capitate-stalked glandular hairs' = stipitate-glandular FLOPO:0991172 and the 'or' forms a union of two hair-cover values (pattern 07; add the pair to config/flora_union_pairs.tsv if the two are treated as separate attributes).",
+  "reason": "Neither PATO nor FLOPO has arachnoid; the disjunction cannot be built without it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00445",
+  "decision": "missing_term",
+  "target": "twining: climbing by the stem winding spirally round a support (child of climbing FLOPO:0991108); and an EQ signature for the FLOPO class 'vine' = whole plant + climbing",
+  "fix": "Give 'vine' the signature whole plant has_characteristic climbing; 'twining' becomes a child value; 'semiwoody' is a separate texture statement.",
+  "reason": "The habit is a phenotype; climbing exists but twining does not, and 'vine' has no EQ.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00446",
+  "decision": "new_pattern",
+  "target": "count-at-position",
+  "fix": "Count (has number of PATO:0001555, 4–10) of lobe whose container is a position on the bearer (each side of the leaf blade's midrib/rachis), not the whole blade. OWL: the side region of the blade (BSPO pinned) has_characteristic some (has number of towards lobe) with a data range. RDF: position cue 'each side' with offsets.",
+  "reason": "Docs list 'counts at a position' as still open.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00447",
+  "decision": "new_pattern",
+  "target": "indefinite-count",
+  "fix": "Count record with value_text 'many' and no number; OWL at most 'has_characteristic some multiple' (PATO:0002118) on the container; the vague word is stored only in RDF and the key does not use it.",
+  "reason": "'many' is held as measurement_value_not_numeric in pattern 03; no pattern handles counts without numbers.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00448",
+  "decision": "missing_term",
+  "target": "twining: climbing by the stem winding spirally round a support (child of climbing FLOPO:0991108)",
+  "fix": "'twining climber' = whole plant has_characteristic twining; 'liana-like' and 'vigorous' are left out; 'milky latex present' belongs to exudate-of-part.",
+  "reason": "Same missing value as P00445.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00449",
+  "decision": "new_pattern",
+  "target": "count-at-position",
+  "fix": "Count of flowers (8–10) per turn of the spiral inflorescence: container = the inflorescence, position = one gyre of the spiral (RDF cue 'per cycle of spiral'). OWL: inflorescence has_characteristic spirally arranged FLOPO:0991114; the count per gyre stays in RDF.",
+  "reason": "The container is a repeating unit, not a part, so it cannot be grounded to PO.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00450",
+  "decision": "missing_term",
+  "target": "scrambles / scrambling: synonym of climbing FLOPO:0991108 (no new class)",
+  "fix": "Add the verb and adjective forms as lexical cues for climbing on the whole plant, with frequency_qualifier 'sometimes' in RDF; 'over other vegetation' is the support and is implied by the definition.",
+  "reason": "The climbing definition already covers a plant that leans on other plants; this is a quality under another name, not a process.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00451",
+  "decision": "transcription_error",
+  "target": "branch trichome PO:0025177 + length PATO:0000122",
+  "fix": "Bearer should be the hairs of the twig (branch trichome), with length 0.2–0.5 mm; 'woolly or scurfy rusty' is a separate cover statement.",
+  "reason": "The transcription puts 'hairs' as the quality and the stem as the bearer; the length belongs to the hairs.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00452",
+  "decision": "missing_term",
+  "target": "petal claw: the narrow, stalk-like basal part of a clawed petal (FLOPO anatomy class, part of petal; PO has none)",
+  "fix": "Annotate as petal claw has length 'about 1 mm' (approximately, pattern 01); normalise the OCR 'I mm' to '1 mm'.",
+  "reason": "PO has no claw class (FLOPO has only the value clawed FLOPO:0991169); 'I' is an OCR error for 1.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00453",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "The attribute word 'thick' must map to thickness PATO:0000915 in the measurement attribute table, the same way 'long' maps to length.",
+  "reason": "Thickness is a PATO attribute; the reason 'numeric_quality_not_pato_attribute' is wrong.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00454",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'angled → angle' is in config/flora_counted_parts.tsv, but 'angle' has no bearer term; for stems, map '4-angled' to quadrangular PATO:0001988 (in general: angular PATO:0001977 plus a count).",
+  "reason": "A count in the word, misrouted to 'measurement_missing_unit'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00455",
+  "decision": "new_pattern",
+  "target": "count-at-position",
+  "fix": "Count 6–8 of secondary vein with position 'each side of the midvein' on the leaf lamina (same representation as P00446).",
+  "reason": "Count at a position; open in the docs.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00456",
+  "decision": "transcription_error",
+  "target": "branch trichome PO:0025177 + length PATO:0000122",
+  "fix": "Bearer = twig hairs, length (0.5–)1 mm (pattern 05); normalise the OCR 'l' to '1'.",
+  "reason": "Same error as P00451: 'hairs' is taken as the quality and the twig as the bearer.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00457",
+  "decision": "new_pattern",
+  "target": "exsertion-length",
+  "fix": "Style has_characteristic exserted PATO:0000623 (towards the perianth/hypanthium when named) in OWL; the 1–1.4 mm is the length of the exserted portion, a measurement in RDF linked to the exserted quality and not the length of the style. Same pattern covers 'stamens exserted 0.4–2.3 mm'.",
+  "reason": "The number measures how far the part projects, not one of its own dimensions.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00458",
+  "decision": "transcription_error",
+  "target": "whole plant + caespitose FLOPO:0991007; stems count 'single or several'",
+  "fix": "Split the clause: 'cespitose' (a spelling of caespitose) is a habit of the whole plant, not a value of the stems; 'single or several' is a count alternative (1 or indefinite-count).",
+  "reason": "The transcription joins a count disjunction and a habit word under one bearer.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00459",
+  "decision": "transcription_error",
+  "target": "calyx + tubular PATO:0002299",
+  "fix": "Annotate the shape 'tubular' on the calyx; 'short' has no reference and no number and is dropped.",
+  "reason": "The annotatable value is the shape; a length with no number was transcribed instead.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00460",
+  "decision": "existing_pattern",
+  "target": "docs/odp/12-part-of-qualified-whole.md",
+  "fix": "Add '♂' / '♀' and French 'mâle', 'femelle' ('fleurs ♂ à pétales …') to config/flora_context_words.tsv as male PATO:0000384 / female PATO:0000383; petal part_of flower that is male, ovate FLOPO:0991024.",
+  "reason": "The petals of male flowers are a part of a qualified whole; the table has only English words.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00461",
+  "decision": "new_pattern",
+  "target": "count-at-position",
+  "fix": "Number of rows of sori on each side of the costa (1, or 2–3 pairs on basal segments) as a count at a position, with the alternative as a union; 'especially basal segments' is a bearer-state context in RDF.",
+  "reason": "Count at a position combined with a disjunction; open.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00462",
+  "decision": "new_pattern",
+  "target": "indefinite-count",
+  "fix": "As P00447: flower has_characteristic some multiple (stamens) in OWL, 'many' in RDF; botanically 'stamens many' means an indefinite number (more than about 10), and RDF can record that.",
+  "reason": "Count without a number.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00463",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md",
+  "fix": "The 'inside' surface row exists but is limited to single perianth members and bracts; extend it to a sympetalous corolla (inner surface of the corolla tube) and annotate villous FLOPO:0991051 there.",
+  "reason": "This is place on the part (kind C), not a developmental stage.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00464",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Ground 'lobes' to the lobes of the leaf blade from 'margin palmately 3–5-lobed'; then ovate FLOPO:0991024 or approximately orbicular PATO:0001934 (pattern 01) is a union of shape values.",
+  "reason": "Both values have terms; the bearer 'lobe' is not grounded.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00465",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "Add 'mid' and 'distal' (leaves) as series positions in the context table (the docs say position values for upper/inner members are still open); split the clause into a shape union/continuum (ovate to oblong or linear) and a length range of 4–15 mm.",
+  "reason": "Several statements under one series-position qualifier; mid/distal leaves have no value classes yet.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00466",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Map 'thick' to thickness PATO:0000915 (a diameter for a terete axis).",
+  "reason": "Plain measurement of a PATO attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00467",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "The 'nerved → vein' row exists; the N-xed split must run before the unit check, giving lemma has number of vein = 7.",
+  "reason": "A count in the word, misrouted to 'measurement_missing_unit'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00468",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Map 'broad' to width PATO:0000921 (diameter PATO:0001334 for a globose berry).",
+  "reason": "Plain measurement of a PATO attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00469",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Take the container from the organ of the sentence ('Involucres …; teeth 5–6'): count of teeth (counted part 'tooth') of the involucre.",
+  "reason": "The container is in the same sentence; the docs say this is resolved through the organ of the sentence.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00470",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md",
+  "fix": "'at the apex' is a region row in config/flora_context_words.tsv: leaf apex + acute (sensu botany) FLOPO:0991095. The row was read as a stage, so the region lookup must run before the stage reason is set.",
+  "reason": "Region of the bearer, not a developmental stage.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00471",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Allow value_qualifier 'approximately' (the -ish cue of pattern 01) on each one_of operand: approximately purple PATO:0000951, green, or yellow.",
+  "reason": "A colour union whose operands carry the -ish approximation.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00472",
+  "decision": "new_pattern",
+  "target": "comparison-within-series",
+  "fix": "Bearer = leaves at the proximal position of the stem (state of the bearer); quality decreased size PATO:0000587 towards leaf at the distal position (the other members of the series named in the clause). OWL as in slot 3 with the same part class and a different position; 'distant' FLOPO:0991189 is a separate statement.",
+  "reason": "The second term is the other members of the same series, implicit from the clause.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00473",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "'joined' with a plural bearer and no second part = connate FLOPO:0991067 among the styles, at the base region; '± 1/3 their length' is the extent of fusion, in RDF.",
+  "reason": "Fusion of like parts with each other; the value class exists.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00474",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'N X per Y' with Y as the container: count 2 of leaf on ultimate branch (branch, terminal order); 'usually' as frequency_qualifier.",
+  "reason": "The container is a part and can be grounded; the transcriber took 'per ultimate branch' as the entity.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00475",
+  "decision": "new_pattern",
+  "target": "comparison-within-series",
+  "fix": "Lateral lobe of the labellum has decreased size towards the central lobe, named in the preceding clause; same representation as P00472.",
+  "reason": "Implicit second term from the same series.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00476",
+  "decision": "existing_pattern",
+  "target": "docs/odp/01-approximate-value.md",
+  "fix": "'subtruncate' = approximately truncate (sub- rule) on the leaf blade base region, as a continuum with cuneate PATO:0001955; the parenthesis '(distalmost auriculate)' is a separate statement about the distal leaves. Check the lexicon for the truncate label (no exact 'truncate' row was found).",
+  "reason": "Both ends are existing values; the sub- form and the parenthesis broke the continuum.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00477",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'per node' container: count 1 of panicle branch at each node of the inflorescence axis (node is a part, so the container grounds).",
+  "reason": "Count with a grounded container; the per-container cue is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00478",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Map 'petiolulate' (on a leaflet) to petiolate FLOPO:0991023 and drop 'shortly' (as in the rejected pair 'stalks short or sessile'); add a subsessile FLOPO:0991013 / petiolate pair to config/flora_union_pairs.tsv.",
+  "reason": "An alternative across two attachment values; petiolulate is not in the lexicon.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00479",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add the French comparison cues 'plus court(e)s que', 'plus long(ue)s que' to comparison(); stamen decreased length PATO:0000574 towards petal.",
+  "reason": "This is the comparison of slot 3; only English cues are read.",
+  "confidence": "high"
+ }
+]

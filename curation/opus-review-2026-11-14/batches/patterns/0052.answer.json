@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P02080",
+  "decision": "new_pattern",
+  "target": "indefinite count",
+  "fix": "Bearer = counted part (stamen), container = flower, quality PATO:0000070 amount with an indefinite value ('numerous'|'many'|'few'|'several') and its cue, no data range. OWL keeps only the presence of the part (has part some (stamen and part of some flower)); the indefinite count stays in RDF (fb:indefiniteCount \"numerous\"), since 'numerous' has no fixed threshold across taxa.",
+  "reason": "Count without a number; 03 needs a number, and the 2026-11-13 review rejected 'many'/'few' as terms, so a rule is needed, not a term.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02081",
+  "decision": "new_pattern",
+  "target": "indefinite count",
+  "fix": "Split 'multi-/pluri-' + 'flores/flowered' using the 'flowered → flower' row of config/flora_counted_parts.tsv: bearer flower, container capitulum, quality amount with indefinite value 'many'. The indefinite value goes in RDF; OWL states only has part flower.",
+  "reason": "Same construction as 'numerous stamens'; the prefix gives an indefinite count, not a number.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02082",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'1-nerved' is split correctly (nerved → vein); the container 'empty scales' needs a grounding rule: in grass descriptions (NAF) 'empty scale' = glume (PO_0009039).",
+  "reason": "Count in a word, already covered; only the container is not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02083",
+  "decision": "existing_pattern",
+  "target": "docs/odp/08-alternative-with-frequency.md",
+  "fix": "Two operands: 'coarsely spinose-serrate toward the base' and 'rarely nearly entire' with frequency_qualifier rarely. 'nearly' must be an approximation cue (01) on entire, and the basal region attaches to the first operand only.",
+  "reason": "'X or rarely Y' is pattern 08; it fails on the 'nearly' cue and on a region cue inside one operand.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02084",
+  "decision": "new_pattern",
+  "target": "indefinite count",
+  "fix": "Bearer seed, container capsule (organ of the sentence), quality amount with indefinite value 'numerous' in RDF; OWL only has part seed.",
+  "reason": "Count word without a number.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02085",
+  "decision": "new_pattern",
+  "target": "indefinite count",
+  "fix": "Bearer leaf, container whole plant/stem, amount with indefinite value 'numerous' in RDF; OWL only has part leaf.",
+  "reason": "Count word without a number; weakly informative but the same construction.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02086",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "Count of lateral veins (amount, 11-12, unit count) with container leaf lamina and a position slot 'per side of' the reference part leaf midvein (PO_0020139). RDF: fb:countScope fb:perSide; fb:reference obo:PO_0020139. OWL: the count is of veins part of a lateral half of the lamina (BSPO lateral region), stated per side.",
+  "reason": "Listed as open in docs/annotation-context-patterns.md §4 (count at a position).",
+  "confidence": "high"
+ },
+ {
+  "id": "P02087",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "As for lateral veins: secondary veins, 11-14 per side of the leaf midvein (PO_0020139), container leaflet lamina.",
+  "reason": "Count per side of the midvein; no pattern yet.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02088",
+  "decision": "missing_term",
+  "target": "wing: a flat, thin, membranous outgrowth of a seed or fruit (PO has only 'wing petal')",
+  "fix": "Add a FLOPO anatomy class 'wing' (seed/fruit wing). Then '10-winged' resolves through the existing 'winged → wing' row of pattern 03 with container seed.",
+  "reason": "The count split exists, but the counted part has no PO or FLOPO class to ground to.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02089",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "Lateral veins 9-11 per side of the leaf midvein (PO_0020139, synonym midrib), container leaf lamina.",
+  "reason": "Count per side of the midrib.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02090",
+  "decision": "new_pattern",
+  "target": "comparison with implied second term",
+  "fix": "'paler beneath' compares the abaxial side with the adaxial side named in the same sentence ('mid-green above'). Bearer leaf lamina abaxial epidermis, quality lighter colour (color brightness PATO_0000016 increased) towards the adaxial epidermis. The implied term is filled from a table of reciprocal surfaces/regions (beneath↔above, midvein↔rest of the blade).",
+  "reason": "The review rejected 'paler' as a term because there is no second term; here the second term comes from the context and can be filled by rule.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02091",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Entity should be trichome (PO_0000282) part of ovary, quality length (PATO_0000122), 0.1 mm. 'densely pubescent' stays a separate statement of the ovary.",
+  "reason": "The hairs are the bearer of the length; transcribing the ovary as entity and 'hairs' as quality is wrong.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02092",
+  "decision": "new_pattern",
+  "target": "comparison with another dimension",
+  "fix": "Bristle length compared with achene width: the relation slot of 09 with an extra slot for the compared attribute (towards achene, of width). RDF: fb:quality length; fb:towards achene; fb:towardsAttribute PATO_0000921 width. OWL: only 'decreased length towards some achene' is safe, or keep the comparison in RDF only.",
+  "reason": "Pattern 09 compares the same dimension of two parts; here the dimensions differ.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02093",
+  "decision": "new_pattern",
+  "target": "colour with a tinge",
+  "fix": "'white suffused pink' = base colour white plus a secondary tint pink (suffused/tinged/flushed). Slots: base colour, tint colour, tint cue. OWL: has characteristic white and has characteristic pink, or a FLOPO 'tinged' multicoloured value. The range 'creamy white to …' then uses the existing continuum pattern.",
+  "reason": "The continuum fails because its second value is a compound colour with no representation.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02094",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "'similar to the upper stem leaves' is a cross-reference to another description, not a quality. The following 'slightly larger' can go through pattern 09 (increased size towards upper stem leaf).",
+  "reason": "Similarity to another part says nothing checkable by itself; the 2026-11-13 review rejected 'similar' as a term.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02095",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Entity should be the galea (upper corolla lip, FLOPO_0985017 corolla lip, upper) with 'outer surface' as the outside cue, not corolla. The corolla itself is 'mostly white'.",
+  "reason": "The colour belongs to the galea; giving it to the corolla contradicts 'Corolla mostly white'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02096",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Entity trichome (PO_0000282) part of the basal leaf (both surfaces), quality length with an upper bound ≤1 mm (pattern 02).",
+  "reason": "Hair length was transcribed as a quality 'hairs' of the leaf.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02097",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "Sori uniseriate (FLOPO:0991090) or a count of 1 row, stated per side of the midrib (PO_0020139) of the pinna lobe; same position slot as for veins per side.",
+  "reason": "Row count per side of the midrib; position counts are still open.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02098",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Entity should be leaf (counted part), container 'ultimate branch' grounded to branch (PO_0025073, synonym branchlet/twig), amount 6-11 (pattern 03).",
+  "reason": "The container phrase was transcribed as the entity.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02099",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation)",
+  "fix": "Add 'none observed'/'none seen' as a negation cue: trichome absent on the leaf epidermis (surface view of leaf anatomy). Keep the cue so readers know it is an observation.",
+  "reason": "Negation is already represented; only the cue word is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02100",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "'to' is a known bound cue. Add 'd.b.h.' (with periods, not a sentence break) as a dimension word = diameter (PATO_0001334) of the main stem/trunk (PO stem) at breast height; the entity is the stem, not the whole plant.",
+  "reason": "Upper bound with a supported cue that is blocked by the unknown abbreviation.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02101",
+  "decision": "new_pattern",
+  "target": "relation among parts of one kind",
+  "fix": "'soudées entre elles' = stamen fused with (PATO:0000642) towards stamen: 09's towards slot filled with the bearer's own class when the cue is reciprocal (entre elles, to each other, among themselves). The 1-3 mm fused length is a length of the basal fused region (RDF measurement on the part restriction). The 9-of-10 count and the alternatives ('toutes libres ou …') need 07.",
+  "reason": "Pattern 09 needs a named second part; a reciprocal relation has none.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02102",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "Count of rows of tubercles (9-10), concentric, per ventral facet of the seed; position slot 'each ventral facet' (BSPO ventral side of the seed). Tubercle and facet need grounding (FLOPO anatomy).",
+  "reason": "Count stated per position on the organ; the container is a region, not an organ.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02103",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'1-nerved' must go to the counted-part split (nerved → vein, container tepal), not the unit check; the 'N-xed' split should run before the measurement-unit gate.",
+  "reason": "Count in a word with a grounded container; it was sent down the wrong path.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02104",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Resolve the anaphor 'narrowly so' to 'narrowly elliptic' (repeat the previous value with the adverb), then union elliptic | narrowly elliptic. These are values of one attribute.",
+  "reason": "Plain alternative; only the 'so' anaphor is not resolved.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02105",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Three-way union over pubescence values: arachnoid | villous | glandular. Add reviewed pairs (arachnoid–glandular, villous–glandular) to config/flora_union_pairs.tsv.",
+  "reason": "The secondary alternative pattern exists; these pairs are not in the reviewed table.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02106",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add 'sulcate → groove' to config/flora_counted_parts.tsv (needs a groove anatomy class). Split 'Ovary and fruit' into two bearers. Otherwise fall back to fruit sulcate (FLOPO_0991061) and keep the number in RDF.",
+  "reason": "Count in a word whose ending is not in the table; not a missing unit.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02107",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Map the habit noun 'climber(s)' to whole plant + climbing (FLOPO:0991108), and 'woody' to PATO woody. Union with the shrub habit of 'Shrubs … or woody climbers'.",
+  "reason": "The term exists (climbing, added 2026-11-13); the noun form is not grounded to an entity-quality pair.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02108",
+  "decision": "existing_pattern",
+  "target": "docs/odp/01-approximate-value.md",
+  "fix": "Read 'semi-' like 'sub-': semispreading = spreading with value_qualifier approximately. Then union erect | ~spreading (07) with the stage 'in fruit' (PO_0001002, already in config/flora_context_words.tsv).",
+  "reason": "The alternative and the stage are covered; only the 'semi' prefix is unknown.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02109",
+  "decision": "new_pattern",
+  "target": "indefinite count",
+  "fix": "'many flowered' → flower (counted_parts 'flowered') of the spike, indefinite count 'many' in RDF. 'densely' is a separate spacing value (crowded) of the flowers.",
+  "reason": "Count word without a number.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02110",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1, surfaces)",
+  "fix": "'internally' is in the context table (inside); the inside/outside rule allows only single perianth members and bracts, so add spathe (FLOPO_0986007, a bract) to the allowed bearers. The stage reason comes from 'soon drooping after opening' in another clause and should not block.",
+  "reason": "The surface pattern exists; the spathe is not in its allowed bearers.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02111",
+  "decision": "new_pattern",
+  "target": "count of branchings",
+  "fix": "'simple to twice forked' = number of dichotomies of the veinlet, 0-2: count of branch points (amount, unit count) on the veinlet, with 'simple' = 0. RDF holds the range; OWL uses the data range, as in 03.",
+  "reason": "The continuum fails because 'twice forked' is a count, not a value comparable with 'simple'.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02112",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Entity tap root = primary root (PO_0020127). A numeric 'thick' maps to the attribute thickness/diameter, not the value 'increased thickness'. Usual range 5-10 cm, max extreme 20 cm ('may measure as thick as'). Use the metric values in parentheses.",
+  "reason": "Measurement with a stated extreme; it fails only because the dimension adjective is grounded as a value.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02113",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'N or M' of consecutive whole numbers as a count range value_low 3, value_high 4, not as a disjunction.",
+  "reason": "Count alternatives are a range; nothing new is needed.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02114",
+  "decision": "missing_term",
+  "target": "disarticulating: a shedability quality (PATO:0001729) of a spikelet or inflorescence breaking at abscission zones into units at maturity",
+  "fix": "Add a FLOPO value under shedability. 'at maturity' is already in the context table (mature); the place ('below each fertile floret') can use slot 1.",
+  "reason": "A common grass character; PATO 'shattered' means broken into pieces, which is not the same.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02115",
+  "decision": "new_pattern",
+  "target": "count at a position",
+  "fix": "Primary lateral veins 9-12 per side of the leaf midvein (implied), container leaf lamina. The entity should keep 'primary lateral' (lateral vein), not just 'vein'.",
+  "reason": "Count per side; still an open pattern.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02116",
+  "decision": "new_pattern",
+  "target": "comparison with implied second term",
+  "fix": "Bearer midvein of the pistillate scale, lighter colour towards the rest of the scale (the body named in 'pale to medium brown'). The implied term comes from the reciprocal table (midvein ↔ blade/body).",
+  "reason": "Comparison whose second term is the rest of the same organ, stated just before.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02117",
+  "decision": "existing_pattern",
+  "target": "docs/odp/12-part-of-qualified-whole.md",
+  "fix": "Take the section heading 'Female flowers:' as the qualified-whole cue (ovary part of a female flower). Union 'glabrous or with a few minute hairs at apex' (07) with the apex region by slot 1.",
+  "reason": "Kind B on a part is now pattern 12; the cue is in the heading, outside the clause.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02118",
+  "decision": "new_pattern",
+  "target": "relation among parts of one kind",
+  "fix": "Pinna in contact with (PATO:0001961) towards pinna: 09's towards slot filled with the bearer's own class for reciprocal words of a series (contiguous, overlapping, imbricate, distant).",
+  "reason": "'contiguous' was rejected as a term because it is relational; here the second term is the neighbouring pinna.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02119",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "A dimension adjective with a number ('0.5-1.8 mm thick') must ground to the attribute thickness (PATO_0000915), not the value increased thickness. Same gate as for 'long'/'wide'; the measurement is then a plain range.",
+  "reason": "Measurement grounding error; no new structure is needed.",
+  "confidence": "medium"
+ }
+]

@@ -1,0 +1,423 @@
+[
+ {
+  "word": "cushion",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "The word means different things in different floras: a cushion-plant habit ('cushions or mats'), a cushion-shaped floral disc ('central yellowish green cushion'), French 'coussinets' (pulvini or leaf cushions), and thickenings of a corona ('5 épaississements'). The shape sense is already handled by cushion-shaped = pulvinate (PATO:0001357).",
+  "confidence": "high"
+ },
+ {
+  "word": "branched",
+  "decision": "not_a_part",
+  "target": "branched (PATO_0000402)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A quality, not a part. 'n-branched' is a count of the branches of the part named before it (tendril, style), handled by the count-of-parts pattern 03. Some examples are fragments ('style branches', 'rootstock').",
+  "confidence": "high"
+ },
+ {
+  "word": "cross-vein",
+  "decision": "rule:bearer",
+  "target": "leaf lamina vein (PO_0020138)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "cross-veins",
+   "crossvein"
+  ],
+  "reason": "Narrower. PO lists cross-vein as a synonym of secondary, tertiary, quaternary and higher order leaf vein, so the vein order is not clear from the word. Their common parent, leaf lamina vein, follows the earlier rule for veinlet (C270).",
+  "confidence": "high"
+ },
+ {
+  "word": "secondary axis",
+  "decision": "rule:bearer",
+  "target": "branch (PO_0025073)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "secondary axes",
+   "axe secondaire",
+   "axes secondaires"
+  ],
+  "reason": "Exact synonym: PO lists 'secondary axis' under branch. Many examples are about inflorescences ('deux paires d'axes secondaires'). In an inflorescence context it should go to second order inflorescence axis (PO_0006321) through the state-of-the-bearer or qualified-whole pattern.",
+  "confidence": "medium"
+ },
+ {
+  "word": "fertile flower",
+  "decision": "rule:bearer_part",
+  "target": "flower (PO_0009046) + bearer quality fertile (PATO_0000955) from config/flora_context_words.tsv (state-of-the-bearer pattern 04)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "fleur fertile",
+   "fleurs fertiles",
+   "fertile flowers"
+  ],
+  "reason": "The context-word rule 'fertile' already lists flower as a bearer. 'Fertile flower' is a flower in a qualified state, not a separate structure.",
+  "confidence": "high"
+ },
+ {
+  "word": "capitate",
+  "decision": "not_a_part",
+  "target": "head-shaped (FLOPO:0991097) for glands and hair tips; capitate (FLOPO:0991006) for heads of flowers",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "An adjective. In 'capitate glands' the bearer is the gland (portion of secretory tissue PO_0005656) or a glandular trichome (PO_0004509), and the quality is head-shaped. 'Épis capituliformes' is the inflorescence arrangement.",
+  "confidence": "high"
+ },
+ {
+  "word": "leaf midrib",
+  "decision": "rule:bearer",
+  "target": "leaf midvein (PO_0020139)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "midrib",
+   "nervure médiane",
+   "nervure centrale"
+  ],
+  "reason": "Exact: midrib is a PO synonym of leaf midvein. In mosses use costa (PO_0030072) instead.",
+  "confidence": "high"
+ },
+ {
+  "word": "pseudo-raceme",
+  "decision": "rule:bearer",
+  "target": "inflorescence (PO_0009049)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "pseudoraceme",
+   "pseudo-racème",
+   "pseudo-racèmes"
+  ],
+  "reason": "Narrower. A raceme-like inflorescence whose units along the axis are clusters or short cymes, not single pedicelled flowers. It is not a true raceme, so raceme inflorescence (PO_0030115) would be wrong. The general inflorescence class is the safe target.",
+  "confidence": "medium"
+ },
+ {
+  "word": "probract",
+  "decision": "rule:bearer",
+  "target": "bract (PO_0009055)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "probracts",
+   "probractée",
+   "probractées"
+  ],
+  "reason": "Narrower: a bract below the flower or peduncle, a term used mostly in Aristolochiaceae and similar groups. It has the shape, size and gland qualities of a bract, and nothing in the examples needs a class of its own.",
+  "confidence": "medium"
+ },
+ {
+  "word": "pinna rachis",
+  "decision": "new_class",
+  "target": "",
+  "label": "pinna rachis",
+  "parent": "is_a PO_0025001 cardinal organ part; part_of FLOPO_0985027 pinna",
+  "definition": "A cardinal organ part (PO:0025001) that is the central axis of a pinna (FLOPO:0985027) of a bipinnate or more divided leaf or frond, bearing the pinnules or the leaflet segments.",
+  "synonyms": [
+   "pinna-rachis",
+   "secondary rachis",
+   "rachis of pinna",
+   "rachis of the pinnae"
+  ],
+  "reason": "A real structure that PO lacks: leaf rachis (PO_0020055) is the main axis of the compound leaf, not the axis of a pinna. Plain 'rachis' was rejected before as too generic. 114 statements in 6 floras. Propose to PO upstream together with pinna and pinnule.",
+  "confidence": "medium"
+ },
+ {
+  "word": "geniculum",
+  "decision": "rule:bearer",
+  "target": "petiole pulvinus (PO_0009111)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "genicula",
+   "geniculate part of petiole"
+  ],
+  "reason": "Narrower: the thickened, jointed and often bent part at the top of the petiole, which is a petiole pulvinus. Length, swelling and transverse fissuring all fit that class.",
+  "confidence": "medium"
+ },
+ {
+  "word": "basal bract",
+  "decision": "rule:bearer_part",
+  "target": "bract (PO_0009055) + bearer quality basal (FLOPO_0991002) from config/flora_context_words.tsv (state-of-the-bearer pattern 04); 'of inflorescences' as part of inflorescence (PO_0009049) (pattern 12)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "bractée basilaire",
+   "bractées basilaires",
+   "basal bracts"
+  ],
+  "reason": "The context-word rule 'basal' already lists bract as a bearer. It names the position of a bract in a series.",
+  "confidence": "high"
+ },
+ {
+  "word": "spinule",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A generic part that needs the organ it belongs to: spinules on leaf margins (teeth, 'spinulose-serrulate'), on pollen or spores ('narrowly cylindric'), or on stems. This matches the earlier rejections of 'bristle' and 'horn'.",
+  "confidence": "high"
+ },
+ {
+  "word": "tubular sheath",
+  "decision": "rule:bearer",
+  "target": "scale leaf (PO_0006003)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "tubular sheaths",
+   "sterile sheath"
+  ],
+  "reason": "Narrower: bladeless tubular leaves (cataphylls) on the lower stem or scape of orchids and graminoids. All statements are counts on stem or scape, which pattern 03 can express. Plain 'sheath' stays rejected as generic.",
+  "confidence": "medium"
+ },
+ {
+  "word": "trap",
+  "decision": "new_class",
+  "target": "",
+  "label": "bladder trap",
+  "parent": "is_a PO_0025001 cardinal organ part; part_of PO_0006001 phyllome",
+  "definition": "A cardinal organ part (PO:0025001) that is a small, hollow, stalked bladder developed from a leaf or leaf segment, with a mouth closed by a trapdoor and glandular trigger hairs, which catches small aquatic animals by suction (as in Utricularia).",
+  "synonyms": [
+   "trap",
+   "traps",
+   "bladder",
+   "utricle (Utricularia)"
+  ],
+  "reason": "A real structure without a class, used in 6 floras with 76 statements (globose or ovoid, stalked, glandular). Pitchers are already PO synonyms of vascular leaf, so this class covers only suction traps. Propose to PO upstream.",
+  "confidence": "medium"
+ },
+ {
+  "word": "buttress",
+  "decision": "new_class",
+  "target": "",
+  "label": "buttress root",
+  "parent": "is_a PO_0009005 root; part_of PO_0000003 whole plant",
+  "definition": "A root (PO:0009005) that grows strongly in thickness on its upper side near the base of the trunk, forming a flattened, plank-like ridge that joins the trunk to the ground.",
+  "synonyms": [
+   "buttress",
+   "buttresses",
+   "contrefort",
+   "contreforts",
+   "plank buttress"
+  ],
+  "reason": "PO has prop (stilt) roots but no buttress. The quality buttressed (FLOPO:0991138) covers only presence ('with small buttresses'). Height, width, thickness and shape need a bearer: 69 statements in 6 floras. Propose to PO upstream.",
+  "confidence": "medium"
+ },
+ {
+  "word": "leaf cell wall",
+  "decision": "rule:bearer_part",
+  "target": "plant-type cell wall (GO:0009505) part_of plant cell (PO_0009002) part_of non-vascular leaf (PO_0025075) (pattern 12)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "walls",
+   "cell walls"
+  ],
+  "reason": "These are moss leaf descriptions (nodose, firm, thickened walls of the lamina cells). A GO cell component of a cell of the moss leaf expresses this without a new class.",
+  "confidence": "medium"
+ },
+ {
+  "word": "cleft",
+  "decision": "not_a_part",
+  "target": "cleft → lobe in config/flora_counted_parts.tsv; split (PATO_0001786)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "'n-cleft' is a count of lobes, already handled by the counted-parts rule. 'Clefts 1.5-3 mm' is the depth of an incision, a quality of the lobed part, not a structure.",
+  "confidence": "high"
+ },
+ {
+  "word": "leaflet segment",
+  "decision": "rule:bearer_part",
+  "target": "phyllome lamina lobe (PO_0025514) part_of leaflet (PO_0020049) (pattern 12); for fern pinna segments, part_of pinna (FLOPO_0985027)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "pinna segment",
+   "pinna segments",
+   "segments of pinnae"
+  ],
+  "reason": "These are the lobes of a pinnatifid leaflet or pinna, counted in pairs and described by shape. A lobe that is part of the leaflet expresses this. Plain 'segment' stays rejected.",
+  "confidence": "medium"
+ },
+ {
+  "word": "triad",
+  "decision": "rule:bearer",
+  "target": "cyme inflorescence (PO_0030126)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "triads",
+   "triade",
+   "triades",
+   "flower triad"
+  ],
+  "reason": "Narrower: a group of three flowers (as in palms: one pistillate between two staminate), a reduced cymule. PO lists cymule as a synonym of cyme inflorescence. The three flowers can be stated through the count-of-parts pattern.",
+  "confidence": "low"
+ },
+ {
+  "word": "bract lobe",
+  "decision": "rule:bearer_part",
+  "target": "phyllome lamina lobe (PO_0025514) part_of bract (PO_0009055) (pattern 12)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "bract lobes",
+   "lobes of bracts"
+  ],
+  "reason": "A bract is a phyllome, so a lobe of its lamina is already expressible. No new class is needed.",
+  "confidence": "high"
+ },
+ {
+  "word": "border",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A generic part that needs the organ it belongs to (moss leaf, bract, glume, sepal), like 'margin' and 'rim' before. The moss-leaf sense is covered under 'leaf border'.",
+  "confidence": "high"
+ },
+ {
+  "word": "leaf border",
+  "decision": "rule:bearer",
+  "target": "leaf margin (PO_0020128)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "border",
+   "limbidium",
+   "leaf borders"
+  ],
+  "reason": "Narrower: in mosses, the band of differentiated cells along the leaf margin. The leaf margin of PO's leaf (which includes non-vascular leaves) bears the width, toothing, differentiation and number of cell rows.",
+  "confidence": "medium"
+ },
+ {
+  "word": "panicle branch",
+  "decision": "rule:bearer",
+  "target": "higher order inflorescence axis (PO_0009081)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "panicle branches",
+   "rameaux de la panicule",
+   "inflorescence branch"
+  ],
+  "reason": "Narrower: a branch of a panicle inflorescence. PO lists inflorescence branch as a synonym of higher order inflorescence axis. Counts per node and ascending, whorled or scabrous branches all fit.",
+  "confidence": "high"
+ },
+ {
+  "word": "calyx limb",
+  "decision": "new_class",
+  "target": "",
+  "label": "calyx limb",
+  "parent": "is_a PO_0025269 collective organ part structure; part_of PO_0009060 calyx",
+  "definition": "A collective organ part structure (PO:0025269) composed of the distal portions of the sepals (PO:0009031) of a fused calyx (PO:0025582), above the calyx tube (FLOPO:0986011); entire, truncate, toothed or lobed.",
+  "synonyms": [
+   "calyx limbs",
+   "limbe du calice",
+   "limbe calicinal"
+  ],
+  "reason": "Modelled on corolla limb (FLOPO:0986012) and the existing calyx tube and calyx lobe. 41 statements in 6 floras, mostly Rubiaceae. Propose to PO upstream together with corolla limb and the tubes.",
+  "confidence": "medium"
+ },
+ {
+  "word": "disc lobe",
+  "decision": "new_class",
+  "target": "",
+  "label": "floral disc lobe",
+  "parent": "is_a PO_0025001 cardinal organ part; part_of FLOPO_0986025 floral disc",
+  "definition": "A cardinal organ part (PO:0025001) that is one of the divisions of a lobed floral disc (FLOPO:0986025).",
+  "synonyms": [
+   "disc lobe",
+   "disc lobes",
+   "disk lobe",
+   "lobe du disque"
+  ],
+  "reason": "Modelled on stigma lobe and corona lobe. The floral disc is not a phyllome, so phyllome lamina lobe cannot be used, and it is distinct from disc gland (FLOPO:0986045). The floral disc is a FLOPO class, so this is FLOPO-local, not proposed upstream until PO has the disc.",
+  "confidence": "medium"
+ },
+ {
+  "word": "pseudopetiole",
+  "decision": "rule:bearer",
+  "target": "leaf lamina base (PO_0008019)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "pseudopetioles",
+   "pseudopétiole"
+  ],
+  "reason": "Narrower: the narrowed, stalk-like base of the leaf blade above the sheath in bamboos, grasses and some monocots. It is a region of the blade, not a true petiole.",
+  "confidence": "medium"
+ },
+ {
+  "word": "acorn",
+  "decision": "rule:bearer",
+  "target": "nut fruit (PO_0030102)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "acorns",
+   "gland",
+   "glans"
+  ],
+  "reason": "Narrower: acorn is a PO synonym of nut fruit (the nut of Quercus with its cupule, FLOPO_0986036).",
+  "confidence": "high"
+ },
+ {
+  "word": "annulus cell",
+  "decision": "rule:bearer_part",
+  "target": "plant cell (PO_0009002) part_of spore capsule annulus (PO_0025093) (pattern 12)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "annulus cells",
+   "indurated annulus cells"
+  ],
+  "reason": "Counts and shapes of the cells of an annulus. This is exact for moss capsules. The annulus of a fern sporangium has no PO class: those statements should wait for a PO request for a fern sporangium annulus.",
+  "confidence": "low"
+ },
+ {
+  "word": "each side",
+  "decision": "not_a_part",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A fragment of a count ('5-7 each side'), meaning a count per side of the rachis or midrib. The earlier review rejected 'per side' as not a plant structure.",
+  "confidence": "high"
+ }
+]

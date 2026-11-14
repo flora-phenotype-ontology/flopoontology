@@ -133,3 +133,22 @@ BASE <http://phenomebrowser.net/flopo/shapes/>
   fb:wholeText LITERAL ;
   fb:container . {0}
 }
+
+# --- 13. indefinite count: "seeds numerous", "few-flowered" -----------------------------------
+<IndefiniteCount> @<TraitRecord> AND {
+  fb:quality [obo:PATO_0000467] ;              # present: the count word adds no number
+  fb:countWord ["few" "several" "many"] ;
+  fb:countText LITERAL ;
+  fb:low . {0} ;
+  fb:high . {0}
+}
+
+# --- 14. count at a position: "lateral veins 4-6 on each side of the midrib" ------------------
+<CountAtAPosition> @<TraitRecord> AND {
+  fb:quality [obo:PATO_0000070] ;              # amount
+  fb:unit [obo:UO_0000189] ;
+  fb:countPosition ["each_side" "per_node" "per_axil" "at_region"] ;
+  fb:countPositionText LITERAL ;
+  fb:countLandmark IRI /^http:\/\/purl\.obolibrary\.org\/obo\/(PO|FLOPO)_[0-9]+$/ ? ;
+  fb:phenotypeClass . {0}                      # the number is not that of the whole organ
+} AND ( { fb:low xsd:decimal } OR { fb:high xsd:decimal } )

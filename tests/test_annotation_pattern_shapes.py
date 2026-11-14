@@ -70,6 +70,15 @@ CASES = {
                              'fb:wholeQuality obo:PATO_0000384 ; fb:wholeText "in male flowers" .',
                              'fb:bearer obo:PO_0009060 ; fb:quality obo:PATO_0000454 ; fb:whole obo:PO_0009046 ; '
                              'fb:wholeText "in male flowers" .'),
+    "IndefiniteCount": ('fb:bearer obo:PO_0009010 ; fb:quality obo:PATO_0000467 ; fb:countWord "many" ; fb:countText "numerous" .',
+                        'fb:bearer obo:PO_0009010 ; fb:quality obo:PATO_0000467 ; fb:countWord "many" ; fb:countText "numerous" ; '
+                        'fb:low 20.0 .'),
+    "CountAtAPosition": ('fb:bearer obo:PO_0020140 ; fb:quality obo:PATO_0000070 ; fb:low 4.0 ; fb:high 6.0 ; fb:unit obo:UO_0000189 ; '
+                         'fb:container obo:PO_0020039 ; fb:countPosition "each_side" ; '
+                         'fb:countPositionText "on each side of the midrib" ; fb:countLandmark obo:PO_0020139 .',
+                         'fb:bearer obo:PO_0020140 ; fb:quality obo:PATO_0000070 ; fb:low 4.0 ; fb:high 6.0 ; fb:unit obo:UO_0000189 ; '
+                         'fb:countPosition "each_side" ; fb:countPositionText "on each side of the midrib" ; '
+                         'fb:phenotypeClass ex:class .'),
 }
 
 
@@ -104,6 +113,9 @@ BROKEN = {
     "ratio_of_two_different_dimensions": "fb:ratioNumerator obo:PATO_0000122 ; fb:ratioDenominator obo:PATO_0000122 .",
     "whole_is_not_the_bearer": "fb:bearer obo:PO_0009046 ; fb:whole obo:PO_0009046 .",
     "count_is_a_whole_number": "fb:unit obo:UO_0000189 ; fb:low 2.5 .",
+    "count_word_states_no_number": 'fb:countWord "many" ; fb:low 20.0 .',
+    "count_position_without_phenotype_class": 'fb:countPosition "each_side" ; fb:phenotypeClass ex:class .',
+    "count_landmark_is_not_the_bearer": "fb:bearer obo:PO_0020139 ; fb:countLandmark obo:PO_0020139 .",
 }
 
 
