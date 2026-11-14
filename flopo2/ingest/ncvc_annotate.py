@@ -2122,6 +2122,8 @@ def relations_from_chain(
         if interpretation not in INTERPRETATIONS or left == right:
             continue
         g_from, g_conn, g_to = 2 * index + 1, 2 * index + 2, 2 * index + 3
+        if not match.group(g_conn).strip():
+            continue  # two words run together in the source: no connector states the relation
         out.append({
             "pato_id": common[0],
             "relation": {
@@ -2157,7 +2159,7 @@ def relation_from_llm(
         return None
     left = ground_value(res, str(answer.get("from_term") or parts[0]), bearer_texts) or ground_value(res, parts[0], bearer_texts)
     right = ground_value(res, str(answer.get("to_term") or parts[2]), bearer_texts) or ground_value(res, parts[2], bearer_texts)
-    if not left or not right or left[0] == right[0]:
+    if not match.group(2).strip() or not left or not right or left[0] == right[0]:
         return None
     common = [a for a in left[1] if a in right[1]]
     if not common:
