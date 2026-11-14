@@ -2606,7 +2606,10 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
         relation = union = None
         extra_relations: list[dict] = []
         compound = reason == "no_ontology_term_for_quality" and "-" in str(phenotype.get("quality_en") or "")
+        # a row read as a count word ("few-flowered") states presence: an "or" beside it joins
+        # other qualities of the sentence, and the row stays unresolved
         if res.relations and not negated and not has_value and not str(phenotype.get("unit") or "").strip() \
+                and not phenotype.get("count_word") \
                 and (compound or reason in {"taxon_level_alternatives_or_continuum", "explicit_disjunction"}):
             relation = build_relation(res, phenotype, text, start, end, grounding.po_id)
             unreviewed_pair = ""
