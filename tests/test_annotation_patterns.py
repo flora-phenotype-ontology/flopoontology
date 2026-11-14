@@ -271,3 +271,11 @@ def test_place_words_of_the_second_model_review(res):
     assert both["po_id"] == "PO_0025034" and not both.get("bearer_scope")            # the leaf as a whole
     assert all(a["gate"]["status"] == "accepted" for a in (apex, upper, both))
 
+
+def test_a_part_with_its_whole_by_a_reviewed_rule(res):
+    text = "Bract lobes acute."
+    (a,), _ = annotate(res, text, {"entity_en": "bract lobe", "quality_en": "acute", "source_en": "Bract lobes acute"})
+    # "bract lobe": a lobe (phyllome lamina lobe) that is part of a bract
+    assert (a["po_id"], a["bearer_container"]) == ("PO_0025514", "PO_0009055")
+    assert issues(a, text) == []
+

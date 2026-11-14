@@ -51,3 +51,11 @@ phenotype classes. The addition here is that the whole carries its own quality.
 
 Parthood is not checked against PO (a calyx is part of a flower; "stamens of female plants" is
 accepted as stated). One quality of the whole is read; "in young male flowers" is not.
+
+**A part with a fixed whole (2026-11-14).** Where a part name contains its whole and PO has no
+class for the pair ("bract lobe", "style base", "pinnule lobe", "stipular colleter"), a reviewed
+bearer rule with `container_id` gives the part as bearer and the whole as `bearer_container`:
+`has part some (lobe and part of some bract and ...)`. No quality of the whole is stated, so
+this is the container of pattern 03 rather than a qualified whole. 122 such rules come from the
+second-model review (`flopo2/ingest/flora_review_rules.tsv`).
+

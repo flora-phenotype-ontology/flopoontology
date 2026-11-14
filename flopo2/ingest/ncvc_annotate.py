@@ -107,6 +107,10 @@ class NormalizationRule:
     flopo_class: str
     target_label: str
     evidence: str
+    # For a bearer rule: the structure the part belongs to ("stipular colleter" is a colleter,
+    # part of a stipule). It becomes the assertion's bearer_container. Only the tables of the
+    # second-model review have the column.
+    container_id: str = ""
 
     def bearer_ok(self, bearer_texts: Iterable[str]) -> bool:
         if not self.bearer_constraint:
@@ -1240,6 +1244,8 @@ def check_rule_identifiers(res: Resources) -> None:
             problems.append(f"{rule.rule_id}: unknown bearer {rule.po_id}")
         if rule.pato_id and rule.pato_id not in res.pato_catalog:
             problems.append(f"{rule.rule_id}: unknown PATO {rule.pato_id}")
+        if rule.container_id and rule.container_id not in res.po_catalog | res.flopo_catalog:
+            problems.append(f"{rule.rule_id}: unknown whole {rule.container_id}")
         for flopo in (rule.value_term, rule.flopo_class):
             if flopo and flopo not in res.flopo_labels:
                 problems.append(f"{rule.rule_id}: unknown or deprecated FLOPO {flopo}")
@@ -2480,6 +2486,16 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                     + (f", {position['landmark_term']}" if position.get("landmark_term") else "")
                     + "); no phenotype class, the number is not that of the whole organ"
                 )
+        if not reason and position is None and not phenotype.get("count_container"):
+            # "stipular colleter": a part with the whole it belongs to, by a reviewed rule
+            for name in (phenotype.get("po_label"), phenotype.get("entity_en")):
+                bearer_rule = res.rule_for("bearer", normalize_key(name), [])
+                if bearer_rule is not None and bearer_rule.container_id and bearer_rule.po_id == grounding.po_id:
+                    container_po = bearer_rule.container_id
+                    grounding.provenance.append(
+                        f"bearer: {normalize_key(name)!r} is part of {container_po} (reviewed rule {bearer_rule.rule_id})"
+                    )
+                    break
         if not reason and position is None and phenotype.get("count_container"):
             container = phenotype["count_container"]
             container_po, container_prov, _ = ground_bearer(res, {"entity_en": container, "po_label": container})

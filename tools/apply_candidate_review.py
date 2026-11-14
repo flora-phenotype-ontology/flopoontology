@@ -36,7 +36,7 @@ REJECTED_BEARERS = Path("config/flora_rejected_bearer_words.tsv")
 VALUE_TERMS = Path("config/flopo_flora_value_terms.tsv")
 FIELDS = [
     "rule_id", "match_field", "match_key", "bearer_constraint", "kind", "po_id", "pato_id",
-    "value_term", "flopo_class", "target_label", "evidence", "review_status",
+    "value_term", "flopo_class", "target_label", "evidence", "review_status", "container_id",
 ]
 STAMP = "2026-11-14 AI review (Claude Opus, second model)"
 ID_RE = re.compile(r"\b(PATO|PO|FLOPO)[_:](\d{7})\b")
@@ -216,6 +216,46 @@ def bearer_rule(catalog: Catalog, row: dict) -> tuple[dict | None, str]:
     return rule, ""
 
 
+_PART_OF = re.compile(
+    r"^(?P<part>[^()]+?)\s*\(?(?P<part_id>(?:PO|FLOPO)[_:]\d{7})\)?[,;]?\s*(?:as\s+)?part[_ ]of\s+(?:the\s+|an?\s+)?"
+    r"(?P<whole>[^()]+?)\s*\(?(?P<whole_id>(?:PO|FLOPO)[_:]\d{7})\)?(?P<rest>.*)$",
+    re.IGNORECASE,
+)
+NON_VASCULAR_LEAF, LEAF = "PO_0025075", "PO_0025034"
+# Words that do not name the whole (a "basal cell" is not always that of a leaf), words with a
+# class of their own since this review, and phrases that are not a part (checked by hand)
+PART_OF_SKIP = {
+    "basal cell", "basal cells", "median cell", "adaxial cell", "distal cells", "apical cells", "lower cell",
+    "flowers per head", "male glume", "guide cell", "guide-cell", "stereid bands", "adaxial stereid band",
+    "dorsal stereid band", "marginal cell", "marginal cells", "marginal gland", "cortical cell",
+}
+
+
+def part_of_rule(catalog: Catalog, row: dict) -> tuple[dict | None, str]:
+    """"colleter (FLOPO_0986023) part_of stipule (PO_0020041)": the part with its whole."""
+
+    if na.normalize_key(row["word"]) in PART_OF_SKIP:
+        return None, "the word does not name its whole, or has a class of its own"
+    match = _PART_OF.match(row["target"].strip())
+    if not match or ID_RE.search(match["rest"]):
+        return None, "not of the form: part (id) part_of whole (id)"
+    part, whole = match["part_id"].replace(":", "_"), match["whole_id"].replace(":", "_")
+    for identifier, label in ((part, match["part"]), (whole, match["whole"])):
+        problem = catalog.check(identifier, re.sub(r"^(?:a|an|the)\s+", "", label.strip()))
+        if problem:
+            return None, problem
+        if identifier not in catalog.res.po_catalog and identifier not in catalog.res.flopo_catalog:
+            return None, f"{identifier} is not a bearer class"
+    if whole == NON_VASCULAR_LEAF:
+        whole = LEAF  # the word is used of vascular leaves too: "cell of a leaf" holds for both
+    if part == whole:
+        return None, "part and whole are one class"
+    rule = dict.fromkeys(FIELDS, "")
+    rule.update(match_field="bearer", kind="bearer", po_id=part, container_id=whole,
+                target_label=f"{catalog.label(part)} part of {catalog.label(whole)}")
+    return rule, ""
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--review-dir", type=Path, default=REVIEW)
@@ -264,6 +304,7 @@ def main() -> None:
         rule, why = value_rule(catalog, row)
         add("values", row, rule, why, [row["word"]])
     rejected_new: list[dict] = []
+    part_rows: list[dict] = []
     known_rejected = {r["word"] for r in _rows(REJECTED_BEARERS)}
     for row in _rows(args.review_dir / "bearers.tsv"):
         if row["decision"] == "rule:bearer":
@@ -288,6 +329,8 @@ def main() -> None:
                 add("bearers", row, None, "PO has the word as a label or exact synonym", [])
                 continue
             add("bearers", row, rule, why, [row["word"], *synonyms])
+        elif row["decision"] == "rule:bearer_part":
+            part_rows.append(row)  # after the other rules, so that their numbers stay
         elif row["decision"] in ("not_a_part", "rejected") and row["confidence"] != "low":
             if row["word"] not in known_rejected:
                 known_rejected.add(row["word"])
@@ -317,6 +360,12 @@ def main() -> None:
                             "evidence": f"{identifier.replace('_', ':')} {row['label']}: new FLOPO anatomy class of "
                                         f"the second-model review ({row['statements']} statements)"})
                 stats["bearers new class rules"] += 1
+    for row in part_rows:
+        if row["confidence"] == "low":
+            add("bearers", row, None, "low confidence", [])
+            continue
+        rule, why = part_of_rule(catalog, row)
+        add("bearers", row, rule, why, [row["word"]])
     for index, rule in enumerate(out, 1):
         rule["rule_id"] = f"R{index:04d}"
 
