@@ -19,10 +19,18 @@ location = / {
     add_header Cache-Control "no-cache";
 }
 
-location ~ "^/(index\.html|app\.js|styles\.css|summary\.json|release\.json|inaturalist\.json)$" {
+location ~ "^/(index\.html|app\.js|styles\.css|summary\.json|release\.json|inaturalist\.json|places\.json)$" {
     try_files $uri =404;
     add_header X-Atlas-Release $atlas_release always;
     add_header Cache-Control "no-cache";
+}
+
+# country outlines of the Map page (an exact match, before the data IRIs below)
+location = /data/countries.geojson {
+    try_files $uri =404;
+    default_type application/geo+json;
+    add_header X-Atlas-Release $atlas_release always;
+    add_header Cache-Control "public, max-age=86400";
 }
 
 location = /sparql {
