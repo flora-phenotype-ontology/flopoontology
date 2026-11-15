@@ -25,8 +25,11 @@ phrase and are estimates.
 >   "throughout", "when present", which restrict nothing. 130,000 statements of the 37 floras
 >   had a stage qualifier without a reading.
 > - "4 or 5 leaves" is the range 4-5; "glabrous or nearly so" is glabrous, approximately.
-> - Micrometres are a length unit (10,900 statements). Feet (68,700), inches and decimetres
->   are still held: the pinned UO has no class for them.
+> - Micrometres are a length unit (11,000 statements). Lengths in feet (420 statements), inches
+>   (1,120), yards and decimetres (1,150) are converted to SI units since 2026-11-15, by the
+>   curator's decision: feet and yards to metres, inches and decimetres to centimetres. The
+>   record keeps `source_unit` and `unit_conversion_factor`, and the checks against the source
+>   text divide by the factor (docs/odp/02-bounded-measurement.md).
 > - Two new patterns: [13 indefinite count](odp/13-indefinite-count.md) ("seeds numerous") and
 >   [14 count at a position](odp/14-count-at-a-position.md) ("veins 4-6 on each side").
 >

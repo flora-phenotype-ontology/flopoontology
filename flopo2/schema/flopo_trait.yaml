@@ -385,6 +385,15 @@ classes:
           Rarely reached upper extreme printed in parentheses after the usual range ("3-8(-11)
           cm": 11). Same rules as value_min_extreme; must be larger than value_high.
         range: float
+      source_unit:
+        description: >-
+          Unit of the source when it is not an SI unit of the model ("ft", "in", "dm"). The
+          values of the assertion are then converted: value in unit = value in source_unit x
+          unit_conversion_factor. Checks against the source text divide by the factor.
+      unit_conversion_factor:
+        description: >-
+          Factor by which the numbers of the source were multiplied (0.3048 for feet to metres).
+        range: float
       ratio_numerator:
         description: >-
           For a measurement of PATO ratio (PATO:0001470) between two dimensions of the same

@@ -123,7 +123,12 @@ def _own_disjunction(parsed) -> bool:
 
     qualifier = getattr(parsed.value_qualifier, "value", parsed.value_qualifier)
     cue = (parsed.modality_text or "") if qualifier == "approximately" else ""
-    return unexplained_disjunction(parsed.source_text, parsed.value_low, parsed.value_high, cue)
+    from flopo2.verify.gates import source_number
+
+    factor = parsed.unit_conversion_factor
+    return unexplained_disjunction(
+        parsed.source_text, source_number(parsed.value_low, factor), source_number(parsed.value_high, factor), cue
+    )
 
 
 def _gate_disjunction(source_text: str) -> bool:
@@ -254,7 +259,9 @@ def pattern_issues(
         elif wrong(extreme, bound):
             out.append(("extreme_not_outside_usual_range", f"{name} {extreme:g} against {bound:g}"))
         printed = {float(m.group(1).replace(",", ".")) for m in _PAREN_NUMBER.finditer(parsed.source_text or "")}
-        if float(extreme) not in printed:
+        # a converted value ("(2-)3-6(-7) dm" as 20, 30-60, 70 cm) is compared as the source has it
+        as_printed = round(float(extreme) / parsed.unit_conversion_factor, 2) if parsed.unit_conversion_factor else float(extreme)
+        if as_printed not in printed:
             out.append(("extreme_not_in_parentheses_in_source", f"{extreme:g}"))
 
     # --- indefinite count (docs/odp/13-indefinite-count.md)
@@ -461,6 +468,8 @@ def _pydantic_assertion(assertion: dict[str, Any]) -> TraitAssertion:
         "bearer_whole": assertion.get("bearer_whole") or None,
         "specimen_condition": assertion.get("specimen_condition") or None,
         "count_word": assertion.get("count_word") or None,
+        "source_unit": _optional(assertion.get("source_unit")),
+        "unit_conversion_factor": assertion.get("unit_conversion_factor"),
         "count_position": assertion.get("count_position") or None,
         "value_union_scope": assertion.get("value_union_scope") or "same_attribute",
         "value_min_extreme": assertion.get("value_min_extreme"),

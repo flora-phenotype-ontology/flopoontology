@@ -44,3 +44,13 @@ example only `Max`). The OWL form is the usual data-range restriction.
 ## Limits
 
 A bound relative to another part ("less than half the width of the seed") is pattern 10.
+
+## Units (2026-11-15)
+
+Lengths are stored in SI units with a class in UO: m, cm, mm, µm. A length that the flora gives
+in feet, yards, inches or decimetres is converted (`flopo2.ingest.ncvc_annotate.SI_CONVERSION`):
+"15 to 30 feet" is `value_low 4.572, value_high 9.144, unit "m", source_unit "ft",
+unit_conversion_factor 0.3048`. The index has `fb:sourceUnit` and `fb:unitFactor`; the number of
+the source is the value divided by the factor. Rules that compare a number with the source text
+(extremes in parentheses, "4 or 5") use the number of the source.
+

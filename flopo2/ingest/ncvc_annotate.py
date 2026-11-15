@@ -55,9 +55,25 @@ ANNOTATION_EXTENSION_IRI = "http://phenomebrowser.net/flopo/annotation-extension
 PATO_PRESENT = "PATO_0000467"
 PATO_ABSENT = "PATO_0000462"
 WHOLE_PLANT = "PO_0000003"
-# µm since 2026-11-14 (10,900 statements, mostly spores and cells of the moss floras); feet, inches
-# and decimetres have no class in the pinned UO and stay held
+# µm since 2026-11-14 (11,000 statements, mostly spores and cells of the moss floras)
 LENGTH_UNITS = {"m", "cm", "mm", "µm", "μm", "um"}
+# Lengths in other units are converted to SI (decision of the curator, 2026-11-15: "convert to SI
+# units, we do not want feet"): unit of the source -> (SI unit, factor). The number of the source
+# stays in the provenance of the assertion.
+SI_CONVERSION = {
+    **dict.fromkeys(("ft", "ft.", "foot", "feet", "'"), ("m", 0.3048)),
+    **dict.fromkeys(("yd", "yd.", "yard", "yards"), ("m", 0.9144)),
+    **dict.fromkeys(("in", "in.", "inch", "inches", '"'), ("cm", 2.54)),
+    **dict.fromkeys(("dm", "decimeter", "decimeters", "decimetre", "decimetres"), ("cm", 10.0)),
+}
+
+
+def to_si(value: float | None, factor: float) -> float | None:
+    """The converted number, to six significant digits (exact enough to give back the source's)."""
+
+    if value is None:
+        return None
+    return float(f"{float(value) * factor:.6g}")
 HERE = Path(__file__).resolve().parent
 DEFAULT_NORMALIZATION = HERE / "ncvc_normalization.tsv"
 DEFAULT_HOLDS = HERE / "ncvc_data_quality_holds.tsv"
@@ -2517,6 +2533,7 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
             alternatives = [a for a in alternatives
                             if _num(re.sub(r"[^\d.,]", "", str(a)).replace(",", ".") or None) not in outside]
         low = high = None
+        source_unit = ""
         strict_low = strict_high = False
         unit = ncvc_guide._normalize(phenotype.get("unit"))
         if not reason and alternatives and res.relations:
@@ -2568,7 +2585,9 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                 context = None
             scope_plan = None
             if context is not None and context[0]["kind"] in {"surface", "region"}:
-                if container_po or grounding.pato_id == PATO_PRESENT or grounding.negate or gates._has_real_disjunction(
+                # any "or" between the statement and its place word, also "5 or 6" of another
+                # statement: the span would run across it
+                if container_po or grounding.pato_id == PATO_PRESENT or grounding.negate or gates.unexplained_disjunction(
                     text[min(start, context[1]):max(end, context[2])]
                 ):
                     # a counted part has its container; "hairs present beneath" is another statement;
@@ -2587,7 +2606,9 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
             if context is None and bearer_whole is None and not unscoped:
                 reason = "developmental_stage_context"
         if not reason and has_value:
-            if unit not in LENGTH_UNITS and not is_supported_count(unit, grounding.pato_id):
+            if unit not in LENGTH_UNITS and unit.lower() not in SI_CONVERSION and not is_supported_count(
+                unit, grounding.pato_id
+            ):
                 reason = "count_or_non_length_measurement" if unit else "measurement_missing_unit"
             elif grounding.pato_id not in res.attribute_ids:
                 reason = "numeric_quality_not_pato_attribute"
@@ -2601,6 +2622,18 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                     reason = "measurement_value_not_numeric"  # value_low "few", "many"
                 strict_high = _bound == "upper" and bool(_STRICT_UPPER_RE.search(span_text))
                 strict_low = _bound == "lower" and bool(_STRICT_LOWER_RE.search(span_text))
+                if not reason and unit.lower() in SI_CONVERSION and unit not in LENGTH_UNITS:
+                    si_unit, factor = SI_CONVERSION[unit.lower()]
+                    stated = "-".join(f"{v:g}" for v in dict.fromkeys(x for x in (low, high) if x is not None))
+                    low, high = to_si(low, factor), to_si(high, factor)
+                    if extremes is not None:
+                        extremes = {**extremes, "min_extreme": to_si(extremes["min_extreme"], factor),
+                                    "max_extreme": to_si(extremes["max_extreme"], factor)}
+                    converted = "-".join(f"{v:g}" for v in dict.fromkeys(x for x in (low, high) if x is not None))
+                    grounding.provenance.append(
+                        f"unit: {stated} {unit} in the source, converted to {converted} {si_unit} (x {factor:g})"
+                    )
+                    source_unit, unit = unit, si_unit
         negated = bool(qualifiers.get("negated")) and str(qualifiers.get("negated")).strip().lower() not in {
             "false", "0", "no", "none"
         }
@@ -2654,6 +2687,27 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                 relation["relation"] = refine_endpoints(
                     res, relation["pato_id"], relation["relation"], text, bearer_texts
                 )
+            if relation is not None and grounding.kind == "assertion" and not compound:
+                # "Erect, ascending or rarely procumbent perennial shrub": the list is that of the
+                # rows "erect", "ascending" and "procumbent". The rows "perennial" and "shrub" share
+                # the sentence, not the list: they keep their own quality, on their own word.
+                own = {grounding.pato_id, *grounding.value_terms} - {""}
+                word = ncvc_guide._normalize(phenotype.get("quality_en")).lower()
+                listed, texts = set(), []
+                for item in (relation, *extra_relations):
+                    listed |= {item["relation"]["from_value"], item["relation"]["to_value"]}
+                    texts += [item["relation"]["from_text"].lower(), item["relation"]["to_text"].lower()]
+                if not own & listed and not any(word and (word in t or t in word) for t in texts):
+                    relation, extra_relations = None, []
+                    found = [m for m in re.finditer(r"(?<![\w-])" + re.escape(word) + r"(?![\w-])", text[start:end], re.IGNORECASE)] if word else []
+                    if len(found) == 1:
+                        start, end = start + found[0].start(), start + found[0].end()
+                        span_text = text[start:end]
+                        reason = ""
+                        grounding.provenance.append(
+                            "disjunction: the alternatives of the sentence are those of other rows; "
+                            f"the statement is narrowed to {span_text!r}"
+                        )
             if relation is not None:
                 held_reason, reason = reason, ""
                 rel = relation["relation"]
@@ -2723,6 +2777,8 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
             })
         if has_value:
             assertion.update({"value_low": low, "value_high": high, "unit": unit})
+            if source_unit:
+                assertion.update({"source_unit": source_unit, "unit_conversion_factor": SI_CONVERSION[source_unit.lower()][1]})
             if strict_high:
                 assertion["value_high_inclusive"] = False
             if extremes is not None and low is not None and extremes["min_extreme"] is not None:

@@ -277,6 +277,14 @@ def _has_real_disjunction(source_text: str) -> bool:
     return re.search(r"\b(?:or|ou)\b", source_text) is not None
 
 
+def source_number(value, factor=None):
+    """The number as the source printed it: a converted value divided by its factor."""
+
+    if value is None or not factor:
+        return value
+    return round(float(value) / float(factor), 2)
+
+
 def unexplained_disjunction(source_text: str, value_low=None, value_high=None, approximate_cue: str = "") -> bool:
     """An "or" in the statement's own words that the assertion does not account for.
 
@@ -693,7 +701,11 @@ def check_assertion(
         and _has_real_disjunction(source_context)
     ):
         approximate = assertion.get("modality_text", "") if assertion.get("value_qualifier") == "approximately" else ""
-        if unexplained_disjunction(source_text, assertion.get("value_low"), assertion.get("value_high"), approximate):
+        factor = assertion.get("unit_conversion_factor")
+        if unexplained_disjunction(
+            source_text, source_number(assertion.get("value_low"), factor),
+            source_number(assertion.get("value_high"), factor), approximate,
+        ):
             reasons.append("atomic_source_contains_disjunction")
             score -= 0.35
         elif not _clause_disjunction_is_off_topic(source_context, assertion.get("pato_id", "")):

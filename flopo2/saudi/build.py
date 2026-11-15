@@ -384,6 +384,9 @@ class Builder:
             if uo:
                 self.used_terms.add(curie(uo))
             g.add((formal, FB.unitSymbol, Literal(a["unit"])))
+            if a.get("source_unit"):  # "15-30 feet", converted to metres
+                g.add((formal, FB.sourceUnit, Literal(a["source_unit"])))
+                g.add((formal, FB.unitFactor, Literal(float(a["unit_conversion_factor"]))))
             if uo and not condition and not position and (a.get("value_low") is not None or a.get("value_high") is not None):
                 # Counts per container or of pairs are other traits than counts of the bare part;
                 # a count at each place of a kind ("4-6 on each side") is merged with nothing.

@@ -279,3 +279,44 @@ def test_a_part_with_its_whole_by_a_reviewed_rule(res):
     assert (a["po_id"], a["bearer_container"]) == ("PO_0025514", "PO_0009055")
     assert issues(a, text) == []
 
+
+def test_lengths_in_feet_inches_and_decimetres_are_converted_to_si(res):
+    text = "Trees 15 to 30 feet tall; stems (2-)3-6(-7) dm."
+    tree, stem = annotate(
+        res, text,
+        {"entity_en": "whole plant", "quality_en": "height", "value_low": 15, "value_high": 30, "unit": "ft",
+         "source_en": "Trees 15 to 30 feet tall"},
+        {"entity_en": "stem", "quality_en": "length", "value_low": 3, "value_high": 6, "unit": "dm",
+         "source_en": "stems (2-)3-6(-7) dm"},
+    )[0]
+    assert (tree["value_low"], tree["value_high"], tree["unit"]) == (4.572, 9.144, "m")
+    assert (tree["source_unit"], tree["unit_conversion_factor"]) == ("ft", 0.3048)
+    assert (stem["value_low"], stem["value_high"], stem["unit"]) == (30.0, 60.0, "cm")
+    assert (stem["value_min_extreme"], stem["value_max_extreme"]) == (20.0, 70.0)
+    assert issues(tree, text) == [] and issues(stem, text) == []
+
+
+def test_a_list_of_alternatives_stays_with_the_rows_it_lists(res):
+    from dataclasses import replace
+
+    sentence = "Erect, ascending or rarely procumbent perennial shrub"
+    chain = {"values": [{"text": "Erect", "term": "erect"}, {"text": "ascending", "term": "ascending"},
+                        {"text": "rarely procumbent", "term": "procumbent"}],
+             "connectors": [{"text": ",", "interpretation": "taxon_level_alternatives"},
+                            {"text": "or", "interpretation": "taxon_level_alternatives"}], "model": "test"}
+    rows = [{"entity_en": "whole plant", "quality_en": q, "source_en": sentence} for q in ("erect", "perennial")]
+    rec = flora_annotate.to_ncvc_record(
+        {"source_id": "test:taxon#p1", "taxon": "Testus exemplaris", "segment_text": sentence + ".",
+         "phenotypes": [{"value_low": None, "value_high": None, "unit": "",
+                         "qualifiers": {"negated": False, "stage": "", "frequency": "", "alternatives": []}, **r}
+                        for r in rows]}, "test")
+    flora_annotate.prepare(rec)
+    key = na.ncvc_guide._source_id(rec)
+    with_chain = replace(res, llm_relation_chains={(key, 0): chain, (key, 1): chain})
+    segments, _ = na.annotate_record(rec, with_chain)
+    found = next(s for s in segments if s["language"] == "en" and s["organ"] == "description")["assertions"]
+    perennial = [a for a in found if a["pato_id"] == "PATO_0104361"]
+    assert len(perennial) == 1 and not perennial[0].get("qualitative_value_relation")
+    assert perennial[0]["source_text"] == "perennial"
+    assert sum(1 for a in found if a.get("qualitative_value_relation")) == 2  # erect-ascending, ascending-procumbent
+
