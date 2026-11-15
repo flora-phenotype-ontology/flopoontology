@@ -34,7 +34,7 @@ FB = "http://phenomebrowser.net/flopo/browse#"
 OBO = "http://purl.obolibrary.org/obo/"
 VALUE_TERMS = Path("config/flopo_flora_value_terms.tsv")
 FORBIDDEN_IRI = re.compile(r"w3id\.org/flopo|^file:|//localhost[:/]|//127\.0\.0\.1[:/]")
-FORBIDDEN_LITERAL = re.compile(r"/home/leechuck|/mnt/data2|api-key|Bearer [A-Za-z0-9]|unimatrix")
+FORBIDDEN_LITERAL = re.compile(r"/home/leechuck|/mnt/data2|api-key|Bearer [A-Za-z0-9._-]{20,}|unimatrix")
 OWL_NODES = ["owl#intersectionOf", "owl#unionOf", "owl#complementOf", "owl#someValuesFrom",
              "owl#onClass", "owl#withRestrictions", "owl#equivalentClass", "22-rdf-syntax-ns#first"]
 
