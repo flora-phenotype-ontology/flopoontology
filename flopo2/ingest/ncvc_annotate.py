@@ -563,6 +563,62 @@ def whole_context(res: "Resources", word: str, text: str, start: int, end: int, 
             "start": cue_start, "end": cue_end}
 
 
+# What an absence is said of (second-model review of the contradictions within a taxon,
+# 2026-11-15: 2,641 of 3,840 were an absence read too widely).
+_NOT_OBSERVED = re.compile(
+    r"\bnot\s+(?:seen|known|observed|available|described|recorded)\b|\bunknown\b|\binconnu\w*|\bnon\s+vu\w*|\bpas\s+vu\w*",
+    re.IGNORECASE,
+)
+_ABSENCE_BEFORE = r"(?:without|no|sans|lacks?|lacking|devoid\s+of|d[ée]pourvu\w*\s+de|free\s+of|destitute\s+of)"
+_ABSENCE_AFTER = r"(?:absent\w*|lacking|wanting|missing|none|nul\w*|0|manquant\w*|not\s+present)"
+_ABSENCE_FILLER = r"(?:(?:the|any|a|an|all|its|their|is|are|being|usually|often|always|entirely|completely|totally|des|de|les|la|le)\s+)"
+_GENERIC_SUBJECTS = {"plant", "herb", "shrub", "tree", "leaf", "flower", "stem", "fruit", "seed", "species"}
+_ABSENCE_ONLY = re.compile(
+    r"^\W*(?:" + _ABSENCE_BEFORE + "|" + _ABSENCE_AFTER + r"|not|pr[ée]sent\w*|usually|always|entirely|completely)(?:\W+|$)+$", re.IGNORECASE
+)
+
+
+def absence_scope_problem(span_text: str, names: list) -> str:
+    """Why "X absent" / "without X" is not the absence of the row's part, or "".
+
+    The transcription gives the organ being described as the part of every row; "stems without
+    simple hairs" then arrives as (stem, present, negated). The absence is taken only when the
+    part itself, unqualified, is what the words call absent: "petals absent", "without petals",
+    a bare "Absent" in a field of a trait table. "Allomorphic flowers absent" (a kind of flower),
+    "without simple hairs" (another part) and "fruits not seen" (not observed) are not."""
+
+    if _NOT_OBSERVED.search(span_text):
+        return "part_not_observed"
+    if _ABSENCE_ONLY.match(span_text):
+        return ""
+    heads = set()
+    for name in names:
+        words = re.findall(r"[^\W\d_]+", str(name or "").lower())
+        if words:
+            heads.add(_singular(words[-1]))
+    for token in re.finditer(r"[^\W\d_]+", span_text):
+        if _singular(token.group(0).lower()) not in heads:
+            continue
+        before, after = span_text[:token.start()], span_text[token.end():]
+        cue = re.search(r"(?P<subject>.*?)" + _ABSENCE_BEFORE + r"\s+" + _ABSENCE_FILLER + r"*$", before, re.IGNORECASE | re.DOTALL)
+        if cue:
+            # "without petals", "plants without stipules"; not "ray florets without pappus"
+            subject = re.findall(r"[^\W\d_]+", cue.group("subject").lower())
+            if not subject or (len(subject) == 1 and _singular(subject[0]) in _GENERIC_SUBJECTS):
+                return ""
+            return "absence_in_some_members"
+        # "petals and disk absent", "auricles and oral setae absent"
+        listed = r"(?:\s*(?:,|and|or|et|ou|&)\s*(?:the\s+)?(?:[^\W\d_]+\s+){0,2}?[^\W\d_]+){0,3}?"
+        tail = re.match(listed + r"\s*,?\s+" + _ABSENCE_FILLER + r"*" + _ABSENCE_AFTER + r"\b(?P<rest>.*)", after, re.IGNORECASE | re.DOTALL)
+        if tail and not re.search(r"[^\W\d_]+\s+$", re.sub(_ABSENCE_FILLER + r"$", "", before, flags=re.IGNORECASE)):
+            # "petals absent", "the stipules are wanting"; not "allomorphic flowers absent"
+            if re.match(r"\s+(?:in|on|of|at|from|below|above|dans|chez|sur|when|except)\b", tail.group("rest"), re.IGNORECASE):
+                return "absence_in_some_members"  # "corolla absent in female flowers"
+            return ""
+        return "absence_of_a_kind_of_the_part"
+    return "absence_of_another_part"
+
+
 def stage_context(res: "Resources", word: str, text: str, start: int, end: int, bearer_texts: list[str]):
     """``(reading, cue_start, cue_end)`` for a stage qualifier that has a reviewed reading and
     stands, verbatim, in the clause of the annotated span; else ``None``."""
@@ -2651,6 +2707,16 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
             grounding.provenance.append("negation: PATO absent already expresses the negation")
         if not reason and negated and not gates.NEGATION_EVIDENCE.search(span_text):
             reason = "negation_cue_not_in_source_span"
+        if not reason and negated and grounding.pato_id == PATO_PRESENT and not grounding.value_terms:
+            if grounding.negate:
+                # "peduncle ebracteate", "stems leafless": the part is absent from the organ
+                # described, which is not a statement about the other organs of the plant
+                organ = ground_bearer(res, phenotype)[0]
+                if organ and organ not in {grounding.po_id, WHOLE_PLANT} and not container_po:
+                    container_po = organ
+                    grounding.provenance.append(f"negation: absent from {organ}, the organ described")
+            else:
+                reason = absence_scope_problem(span_text, [phenotype.get("entity_en"), phenotype.get("po_label")])
 
         relation = union = None
         extra_relations: list[dict] = []

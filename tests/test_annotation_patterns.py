@@ -320,3 +320,28 @@ def test_a_list_of_alternatives_stays_with_the_rows_it_lists(res):
     assert perennial[0]["source_text"] == "perennial"
     assert sum(1 for a in found if a.get("qualitative_value_relation")) == 2  # erect-ascending, ascending-procumbent
 
+
+@pytest.mark.parametrize("words, part, problem", [
+    ("Petals absent", "petal", ""),
+    ("without petals", "petal", ""),
+    ("Absent", "stipule", ""),
+    ("petals and disk absent", "petal", ""),
+    ("auricles and oral setae absent", "leaf sheath auricle", ""),
+    ("stipules usually absent", "stipule", ""),
+    ("without simple hairs", "stem", "absence_of_another_part"),
+    ("allomorphic pistillate flowers absent", "flower", "absence_of_a_kind_of_the_part"),
+    ("basal leaves absent", "leaf", "absence_of_a_kind_of_the_part"),
+    ("Corolla absent in female flowers", "corolla", "absence_in_some_members"),
+    ("ray florets without pappus", "pappus", "absence_in_some_members"),
+    ("Cypselae not seen", "fruit", "part_not_observed"),
+])
+def test_an_absence_is_taken_only_of_the_part_itself(words, part, problem):
+    assert na.absence_scope_problem(words, [part]) == problem
+
+
+def test_a_privative_word_is_an_absence_from_the_organ_described(res):
+    text = "Peduncles ebracteate."
+    (a,), _ = annotate(res, text, {"entity_en": "peduncle", "quality_en": "ebracteate", "source_en": "Peduncles ebracteate"})
+    # no bract on the peduncle; the involucral bracts of the same plant are another matter
+    assert (a["po_id"], a["negated"], a["bearer_container"]) == ("PO_0009055", True, "PO_0009053")
+
