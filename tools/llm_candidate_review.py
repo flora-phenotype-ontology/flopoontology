@@ -646,7 +646,7 @@ def _key(item: dict) -> str:
         if item.get(name):
             return str(item[name])
     if item.get("po_id") or item.get("pato_id"):
-        return f"{item.get('po_id')}|{item.get('pato_id')}"
+        return f"{item.get('po_id')}|{item.get('pato_id')}".replace(":", "_")
     return f"{item.get('value_a')}|{item.get('value_b')}"
 
 
