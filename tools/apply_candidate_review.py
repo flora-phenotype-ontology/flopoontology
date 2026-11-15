@@ -369,6 +369,57 @@ def main() -> None:
     for index, rule in enumerate(out, 1):
         rule["rule_id"] = f"R{index:04d}"
 
+    # The rules were checked a second time (round 2: every rule by Sonnet, the disputed ones by
+    # Opus, curation/opus-review-2026-11-15/disputed.tsv): the final verdicts.
+    disputed = Path("curation/opus-review-2026-11-15/disputed.tsv")
+    if disputed.exists():
+        verdicts = {row["rule_id"]: row for row in _rows(disputed)}
+        kept = []
+        for rule in out:
+            verdict = verdicts.get(rule["rule_id"])
+            if verdict is None or verdict["decision"] == "keep" or verdict["confidence"] == "low":
+                kept.append(rule)
+                continue
+            decision, target = verdict["decision"], verdict["target"].strip()
+            if decision == "constrain" and target and not ID_RE.search(target):
+                rule["bearer_constraint"] = _bearer_constraint(target)
+                rule["evidence"] += f" Limited to these parts in the second check: {verdict['reason'][:200]}"
+                stats["second check: constrained"] += 1
+                kept.append(rule)
+                continue
+            if decision == "retarget":
+                match = TARGET_RE.match(re.sub(r"\s+(present|absent)\s*\(", r" (", target))
+                identifier = match["id"].replace(":", "_") if match and len(set(ID_RE.findall(target))) == 1 else ""
+                prefix = identifier.split("_")[0] if identifier else ""
+                same_kind = (
+                    (rule["kind"] in ("pato", "negated_value", "flopo_value") and prefix == "PATO"
+                     and identifier not in catalog.res.attribute_ids)
+                    or (rule["kind"] in ("pato", "negated_value", "flopo_value") and prefix == "FLOPO"
+                        and identifier in catalog.value_parent)
+                    or (rule["kind"] in ("bearer", "entity_presence", "entity_absence") and prefix in ("PO", "FLOPO")
+                        and (identifier in catalog.res.po_catalog or identifier in catalog.res.flopo_catalog)
+                        and identifier not in catalog.value_parent)
+                )
+                if identifier and same_kind and not catalog.check(identifier, match["label"]):
+                    label = catalog.label(identifier)
+                    if rule["kind"] in ("pato", "negated_value", "flopo_value"):
+                        negated = rule["kind"] == "negated_value"
+                        rule.update(pato_id=catalog.value_parent[identifier] if prefix == "FLOPO" else identifier,
+                                    value_term=identifier if prefix == "FLOPO" else "",
+                                    kind="negated_value" if negated else ("flopo_value" if prefix == "FLOPO" else "pato"),
+                                    target_label=f"not {label}" if negated else label)
+                    else:
+                        suffix = {"entity_presence": " present", "entity_absence": " absent"}.get(rule["kind"], "")
+                        rule.update(po_id=identifier, target_label=label + suffix, container_id="")
+                    rule["evidence"] += f" Target changed in the second check: {verdict['reason'][:200]}"
+                    stats["second check: retargeted"] += 1
+                    kept.append(rule)
+                    continue
+            stats["second check: dropped"] += 1
+            skipped.append({"queue": "second check", "word": rule["match_key"], "decision": decision,
+                            "target": target, "why": verdict["reason"][:300], "statements": ""})
+        out = kept
+
     pairs = _rows(UNION_PAIRS)
     known_pairs = {(p["value_a"], p["value_b"]) for p in pairs}
     pairs_new: list[dict] = []
