@@ -2920,6 +2920,11 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
             other.update({"pato_id": extra["pato_id"], "qualitative_value_relation": rel,
                           "source_start": min(start, rel["from_start"]), "source_end": max(end, rel["to_end"])})
             other["source_text"] = text[other["source_start"] : other["source_end"]]
+            if any(((rel.get(f"{side}_operand") or {}).get("frequency_qualifier") or "unspecified") != "unspecified"
+                   for side in ("from", "to")):
+                # "erect, ascending or rarely procumbent": this pair states its own frequency
+                other.update({"frequency_qualifier": "unspecified", "modality_text": "",
+                              "modality_start": None, "modality_end": None})
             other["mapping_provenance"] = [
                 *[p for p in assertion["mapping_provenance"] if not p.startswith("relation:")],
                 *([f"relation: endpoints located by {extra['llm']} (flopo2.ingest.llm_relations), verified verbatim and grounded"]

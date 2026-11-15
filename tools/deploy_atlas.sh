@@ -159,7 +159,7 @@ files=(); for f in "$REL"/rdf/*.nq; do files+=(-f "rdf/$(basename "$f")"); done
 echo '{"num-triples-per-batch": 1000000}' > "$REL/index/settings.json"
 docker run --rm -u "$(id -u):$(id -g)" -v "$REL:/data" -w /data --entrypoint /qlever/qlever-index "$QLEVER_IMAGE" \
   -i index/atlas "${files[@]}" -F nq -s index/settings.json -j "${QLEVER_INDEX_THREADS:-2}" \
-  -m "${QLEVER_INDEX_MEMORY:-1G}" > "$REL/index.log" 2>&1 || { tail -20 "$REL/index.log"; die "index build failed"; }
+  -m "${QLEVER_INDEX_MEMORY:-6G}" > "$REL/index.log" 2>&1 || { tail -20 "$REL/index.log"; die "index build failed"; }
 log "QLever $COLOUR on port ${PORT[$COLOUR]}"
 start_qlever "$COLOUR" "$STAMP"
 fi
