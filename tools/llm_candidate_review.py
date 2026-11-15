@@ -639,16 +639,27 @@ def run(queues: list[str], workers: int, command: str, model: str, timeout: int,
                      f"{'stopped: the account is out of credit' if stop else 'all batches done'}\n")
 
 
+def _key(item: dict) -> str:
+    """What joins an answer to its item: each queue names its items differently."""
+
+    for name in ("word", "id", "flopo_id", "rule_id", "class"):
+        if item.get(name):
+            return str(item[name])
+    if item.get("po_id") or item.get("pato_id"):
+        return f"{item.get('po_id')}|{item.get('pato_id')}"
+    return f"{item.get('value_a')}|{item.get('value_b')}"
+
+
 def collect(queues: list[str]) -> None:
     for queue in queues:
         rows = []
         for answer in sorted((OUT / "batches" / queue).glob("*.answer.json")):
-            items = {str(i.get("word") or i.get("id") or i.get("flopo_id") or f"{i.get('value_a')}|{i.get('value_b')}"): i
+            items = {_key(i): i
                      for i in json.loads(answer.with_name(answer.name.replace(".answer", "")).read_text(encoding="utf-8"))}
             for row in json.loads(answer.read_text(encoding="utf-8")):
                 if not isinstance(row, dict):
                     continue
-                key = str(row.get("word") or row.get("id") or row.get("flopo_id") or f"{row.get('value_a')}|{row.get('value_b')}")
+                key = _key(row)
                 given = items.get(key, {})
                 merged = {**{k: v for k, v in given.items() if k not in ("examples", "with", "context")}, **row,
                           "example": " ; ".join(given.get("examples") or [])[:300] or given.get("example", "")
