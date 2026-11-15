@@ -1,0 +1,242 @@
+[
+ {
+  "id": "X00360",
+  "decision": "absence_misread",
+  "target": "bract (PO:0009055) + absent (PATO:0000462), within the inflorescence: the flower whorls have no subtending leaves (bracts). The leaves themselves are present.",
+  "fix": "'without subtending leaves' / 'not subtended by leaves' / 'ebracteate' means the bract (PO:0009055) is absent from the inflorescence part named, not that leaf (PO:0025034) is absent.",
+  "reason": "In Rumex the 'all' refers to the flower whorls in the inflorescence. 'Subtending leaves' are bracts. The plant has leaves with acute apices.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00361",
+  "decision": "absence_misread",
+  "target": "no annotation: the male inflorescence (catkin) of this taxon is unknown (not observed), not absent",
+  "fix": "'X not seen' / 'X not known' / 'X unknown' / 'X not observed' means missing data. Emit no statement, never X: absent.",
+  "reason": "Salix is dioecious and has male catkins; the author simply had no male material. The female infructescence statement is correct.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00362",
+  "decision": "absence_misread",
+  "target": "leaf lamina (PO:0020039) absent only on the basal leaf sheaths (PO:0020104, context 'basal'); the culm can be called aphyllopodic (FLOPO:0991233) if the source says the lowest sheaths are bladeless",
+  "fix": "'bladeless sheaths' / 'sheaths without blades' is a quality of those (basal) sheaths, not 'leaf lamina absent' for the taxon. Keep the absence tied to the sheath it modifies, or map it to aphyllopodic on the culm.",
+  "reason": "This is the textbook case in docs/km-classification.md. Carex has basal bladeless sheaths, and its cauline leaves have flat blades.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00363",
+  "decision": "absence_misread",
+  "target": "no annotation: the sporophyte is unknown (not seen), not absent",
+  "fix": "'X not seen' / 'X unknown' gives no statement. Also, in moss floras 'sporophyte' must not map to whole plant (PO:0000003): the described plant is the gametophyte, so a sporophyte statement on 'whole plant' contradicts every gametophyte description.",
+  "reason": "Two errors: 'not seen' was read as absence, and the PO synonym 'sporophyte' turned it into 'whole plant absent'. The plant is clearly described (yellowish green).",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00364",
+  "decision": "absence_misread",
+  "target": "no annotation (not seen = unknown). If the text said 'absent', the target would be asexual propagule (FLOPO:0986119) + absent (PATO:0000462).",
+  "fix": "'Specialized asexual reproduction not seen / absent' is about propagules (gemmae, brood bodies), never 'leaf'. 'not seen' gives no statement; 'absent' gives FLOPO:0986119 absent.",
+  "reason": "No word for leaf appears in the absence text. The bearer was wrongly attached from the context, and 'not seen' is not absence.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00365",
+  "decision": "absence_misread",
+  "target": "limbidium (FLOPO:0986075) + absent (PATO:0000462) on most leaves (or undifferentiated, PATO:0002100)",
+  "fix": "'limbidia not differentiated' / 'limbidium absent / lacking' gives limbidium (FLOPO:0986075) absent, never leaf absent. A part named inside the absence clause is the bearer, not the leaf it lies on.",
+  "reason": "The leaf border (limbidium) is what is missing, on most leaves. The leaves are present and acute.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00366",
+  "decision": "absence_misread",
+  "target": "leaf (PO:0025034) + NOT decurrent (PATO:0001984), a negated quality, not an absence",
+  "fix": "'not <quality adjective>' ('not decurrent', 'not enlarged', 'not projecting') negates that quality on the bearer. It never makes the bearer absent. The same applies to the other statement: 'Perichaetial leaves not enlarged' must be a negated increased size (PATO:0000586) on perichaetial leaves, not 'leaf: increased size'.",
+  "reason": "Neither statement says leaves are absent. Both are negated qualities: one was turned into an absence, the other lost its 'not'.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00367",
+  "decision": "absence_misread",
+  "target": "intermarginal band (no PO or FLOPO class; a band of differentiated cells inside the leaf lamina) + absent (PATO:0000462). Drop it until a class exists.",
+  "fix": "'<part> bands / rows / layers absent' is the absence of that structure, not of the margin or leaf it is described relative to ('intermarginal', 'submarginal'). Without a class for the structure, reject; do not fall back to the nearby part.",
+  "reason": "The leaf margin is present and plane. Only the intermarginal bands are missing.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00368",
+  "decision": "both_true",
+  "target": "geographic restriction: capsules are absent only in northern-hemisphere material and are known (yellowish-brown) from elsewhere. Also, a moss capsule is sporangium (PO:0025094), not capsule fruit (PO:0030091).",
+  "fix": "'X absent in <region / population> material' / 'not known from <region>' is a restricted absence. Do not assert it at taxon level. Either keep the place as context or drop it.",
+  "reason": "The flora describes the capsule colour from material outside the northern hemisphere, so both statements hold for different populations.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00369",
+  "decision": "both_true",
+  "target": "awn (PO:0025349) absent on vegetative (stem) leaves ('muticous'); awn present only on perichaetial leaves (perichaetium FLOPO:0986086)",
+  "fix": "'only present in X' gives present in X and, by implication, absent elsewhere. A general absence ('muticous') must be scoped to the leaves it describes, not to all awns of the taxon.",
+  "reason": "This is a common Grimmia pattern: muticous stem leaves, awned perichaetial leaves. The two statements are about different leaves.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00370",
+  "decision": "absence_misread",
+  "target": "stolon (PO:0003024) or subterranean stem (PO:0009047) without leaves: the leaf absence holds only on those stems",
+  "fix": "'leafless <part>' ('leafless stems', 'leafless stolons', 'flowering stem leafless') is a quality of that part. It does not make the taxon's leaves absent; scope the absence to the named part.",
+  "reason": "Plagiomnium has leafy upright stems with dark green leaves. Only its underground stolon-like stems are leafless.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00371",
+  "decision": "absence_misread",
+  "target": "no annotation: the sporophyte is unknown in the flora area (not fruiting there), not leaf absent",
+  "fix": "'Not fruiting in the area' / 'sporophytes unknown locally' gives no statement, and never on leaf. Also, 'laminal cells quadrate' belongs to the lamina cells (plant cell PO:0009002 of the leaf lamina), not to the leaf.",
+  "reason": "The absence text has no leaf in it, and it states missing data. The present statement is also wrongly put on 'leaf' (it is about cells).",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00372",
+  "decision": "absence_misread",
+  "target": "pseudostomata (no class; PO:0002000 stomatal complex is not right, since pseudostomata are not true stomata) + absent, on sporangium (PO:0025094). The capsule itself is present.",
+  "fix": "'<part> absent from <bearer> surface' is the absence of that part, with the bearer as its location. The bearer is never absent. Map moss 'capsule' to sporangium (PO:0025094), not fruit.",
+  "reason": "The capsule exists (it may be slightly emergent). Only the pseudostomata on it are missing.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00373",
+  "decision": "absence_misread",
+  "target": "distal leaves (PO:0025034, context distal) NOT deciduous, i.e. non-deciduous (PATO:0001732)",
+  "fix": "'without <adjective> X' ('without deciduous leaves', 'without simple hairs') negates the qualified kind of X. It is not 'X absent'. Read it as X NOT <adjective>, or as the absence of that specific kind only.",
+  "reason": "Timmia has green leaves. The contrast is only that its distal leaves are not shed.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00374",
+  "decision": "absence_misread",
+  "target": "plant gall (PO:0025626) + absent (PATO:0000462): the stipular spines are not swollen into ant galls",
+  "fix": "'ant galls absent' / 'without ant galls' gives plant gall (PO:0025626) absent, never stipule absent. Swollen-thorn galls are named for the gall, not the stipule that forms it.",
+  "reason": "Acacia sieberiana has straight stipular spines. It only lacks the ant-gall form seen in other acacias.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00375",
+  "decision": "absence_misread",
+  "target": "bract (PO:0009055) absent only at the base of the spikelet (below the glumes, PO:0009039). Glumes and lemmas, which PO counts as bracts, are present.",
+  "fix": "An absence with a position ('without bracts below the glumes', 'at the base') holds only at that position. Do not assert it of the general class when that class subsumes parts that are described (lemma, glume, palea are bracts).",
+  "reason": "The flagged conflict comes from lemma being a kind of bract in PO. The text only denies extra bracts below the glumes.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X00376",
+  "decision": "absence_misread",
+  "target": "terminal spine on the costa or leaf apex (no PO class; PO:0025173 'spine leaf' is a whole leaf turned into a spine, which is wrong here) + absent. Drop it until a class exists.",
+  "fix": "'terminal spine absent' / 'without a terminal spine' is about a spine at the tip of the costa or leaf, never the leaf. Do not map it to PO 'spine leaf' or 'leaf'.",
+  "reason": "The leaves are present and concave. Brachythecium descriptions note whether the costa ends in a terminal spine.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00377",
+  "decision": "absence_misread",
+  "target": "spore capsule annulus (PO:0025093) + non-deciduous (PATO:0001732), meaning it stays on and does not separate. The capsule is sporangium (PO:0025094).",
+  "fix": "'annulus not separating / persistent / not revoluble' gives spore capsule annulus (PO:0025093) non-deciduous. It is not an absence, and certainly not of the capsule.",
+  "reason": "The capsule is present and reddish orange. The clause describes how the annulus behaves.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00378",
+  "decision": "absence_misread",
+  "target": "flowering stem (stem PO:0009047 in flowering stage PO:0007616, or the peduncle/scape) without leaves; leaves are present elsewhere (basal or on sterile shoots) and sessile",
+  "fix": "'<part> leafless' ('flowering stem leafless', 'scape leafless') is a quality of that part. It means no leaves are borne on it, not that the taxon has no leaves. Never map it to leaf absent or to the whole-plant leafless class (FLOPO:0985035).",
+  "reason": "This is a cushion or rosette plant with sessile leaves and a bare flowering stem.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00379",
+  "decision": "absence_misread",
+  "target": "adaxial pad of cells on the costa (no class) + absent. Drop it until a class exists; the costa (PO:0030072) is present.",
+  "fix": "'lacking a <structure> of cells' / 'without <structure>' is the absence of that structure. The part it would sit on stays present. Without a class for the structure, reject rather than fall back to the host part.",
+  "reason": "The costa is described (distally narrow). Only a cell pad on its adaxial side is missing.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00380",
+  "decision": "absence_misread",
+  "target": "costa (PO:0030072), abaxial (dorsal) side, NOT protruding (PATO:0001598)",
+  "fix": "'X not projecting / not prominent on the dorsal side' negates a protruding quality on that side of X. It is not an absence.",
+  "reason": "The costa is present and ends well below the apex. The clause only says it does not stand out on the back of the leaf.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00381",
+  "decision": "both_true",
+  "target": "probably different flowers or zones of the spadix: staminodes absent from the pistillate (female, PATO:0000383) flowers, while 'truncate' describes staminodes (or stamens) of another zone. Check the source; if 'truncate' belongs to the stamens, this is present_misread.",
+  "fix": "In Araceae, staminode statements must carry their flower or spadix-zone context (pistillate flowers, sterile interstice, staminate zone). An absence in one flower type must not be asserted of the taxon.",
+  "reason": "Homalomena spadices have separate flower types and zones, and staminodes vary between them. Without the full text it is uncertain which part 'truncate' belongs to.",
+  "confidence": 0.45
+ },
+ {
+  "id": "X00382",
+  "decision": "absence_misread",
+  "target": "no absence: fertile leaves (sporophyll PO:0009026) are known only from cultivated plants, not from natural populations. If kept, the present statement belongs to sporophyll (PO:0009026), as smaller than the sterile leaves (vascular leaf PO:0009025, sterile PATO:0000956).",
+  "fix": "'X not known from natural populations / from the wild' means X is unknown in one setting, not absent. Emit no absence, or scope it with a cultivated-versus-wild context.",
+  "reason": "Osmunda ×ruggii is a hybrid whose fertile fronds are known from cultivated material. 'Not known' was read as absent, and fertile was read as plain leaf.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00383",
+  "decision": "both_true",
+  "target": "sterile (PATO:0000956) stems absent: only fertile stems occur. The present statement also lost its negation: 'not dendroid' means stem NOT dendritic (PATO:0002045).",
+  "fix": "'sterile <part> absent' (sterile stems, sterile fronds) gives absence of the sterile form only, using the 'sterile' context word. The fertile form remains. Also, 'not <adjective>' must stay negated.",
+  "reason": "Plagiomnium venustum has erect fertile stems. The flora notes that sterile (creeping) stems are lacking. The 'dendritic' statement is a separate negation error.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X00384",
+  "decision": "absence_misread",
+  "target": "leaf (PO:0025034) NOT increased size (PATO:0000586) toward the stem apex; a negated quality along the stem",
+  "fix": "'not enlarged toward <position>' negates increased size along a gradient. It is not an absence.",
+  "reason": "The leaves are present and concave. The clause says distal leaves are not larger.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00385",
+  "decision": "absence_misread",
+  "target": "leaf base (PO:0020040) NOT decurrent (PATO:0001984)",
+  "fix": "'not decurrent' negates decurrent (PATO:0001984) on the leaf or leaf base. It never means the bearer is absent.",
+  "reason": "The leaf base is present and green. The negated quality was turned into an absence.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00386",
+  "decision": "absence_misread",
+  "target": "awn (PO:0025349) + absent (PATO:0000462), not costa absent. Any remaining conflict with 'costal awns smooth' is probably between different leaves (perichaetial vs stem); check the source.",
+  "fix": "'awn absent' gives awn (PO:0025349) absent, not the costa it continues. When an awn is the excurrent costa, the costa is still present. Absence statements must use the part named in the clause.",
+  "reason": "The costa is present in both statements. The awn absence was attached to the wrong bearer, and the awn statements may refer to different leaves.",
+  "confidence": 0.65
+ },
+ {
+  "id": "X00387",
+  "decision": "absence_misread",
+  "target": "asexual propagule (FLOPO:0986119) + absent (PATO:0000462)",
+  "fix": "'Specialized asexual reproduction absent' gives asexual propagule (FLOPO:0986119) absent, never whole plant (PO:0000003) absent.",
+  "reason": "The plant exists and is autoicous. Only gemmae and similar propagules are missing.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00388",
+  "decision": "both_true",
+  "target": "frequency 'rarely' (rarement): stipules are usually present and persistent and only rarely absent. This is not a taxon-level absence.",
+  "fix": "'rarely / sometimes / occasionally absent' (rarement, parfois, quelquefois absent) is a variant, not the default. Keep present as the main statement; drop the absence or mark it as a rare alternative.",
+  "reason": "The genus description gives usual and exceptional states. Both hold across its species.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00389",
+  "decision": "both_true",
+  "target": "the absent ovary is in the male flowers (flower PO:0009046 + male PATO:0000384); the conical ovary is in the female flowers (female PATO:0000383)",
+  "fix": "In the flower description of a dioecious or unisexual genus, 'ovaire absent' / 'ovary absent' under the male (staminate) flower holds only for that flower. Carry the sex context from the section heading ('fleurs mâles', 'male flowers') onto every statement in it.",
+  "reason": "Allanblackia (Clusiaceae) is dioecious. Male flowers lack an ovary or pistillode, and female flowers have a conical ovary.",
+  "confidence": 0.85
+ }
+]

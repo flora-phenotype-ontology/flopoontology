@@ -1,0 +1,212 @@
+[
+ {
+  "rule_id": "R2271",
+  "decision": "constrain",
+  "target": "flower|flowers|inflorescence|inflorescences",
+  "reason": "PO_0025323 is a flower cluster, a second order inflorescence. The rule's own evidence is all 'flowers in fascicles' or 'inflorescences fascicles'. The previous review rejected bare 'fascicle' because the whole is missing (leaf, branch and Sphagnum fascicles exist), so it should apply only when the whole is a flower or an inflorescence.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2272",
+  "decision": "constrain",
+  "target": "flower|flowers|inflorescence|inflorescences",
+  "reason": "Singular of R2271, with the same limit: only flower or inflorescence clusters are flower fascicles.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2273",
+  "decision": "constrain",
+  "target": "fleur|fleurs|inflorescence|inflorescences",
+  "reason": "French form of R2271. 'Fascicules' of leaves or stamens are not PO_0025323, so it applies only when the whole is a flower or an inflorescence.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2274",
+  "decision": "constrain",
+  "target": "fleur|fleurs|inflorescence|inflorescences",
+  "reason": "Plural of R2273, with the same limit.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2275",
+  "decision": "keep",
+  "target": "",
+  "reason": "PO defines a peristome tooth as 'a single lobe of a peristome', which covers inner segments as well as outer teeth, so this is a correct parent class and not a wrong merge. Mapping to the FLOPO endostome class (FLOPO_0986064) would lose the segment, along with its counts and its shape. The inner position can be kept with endostome FLOPO_0986064 as the container.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2276",
+  "decision": "keep",
+  "target": "",
+  "reason": "Plural of R2275: peristome tooth is the right parent class, and endostome (FLOPO_0986064) can serve as the container.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2277",
+  "decision": "keep",
+  "target": "",
+  "reason": "Same as R2275: an endostome segment is a peristome lobe (PO_0030043). Endostome FLOPO_0986064 can serve as the container.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2278",
+  "decision": "keep",
+  "target": "",
+  "reason": "Same as R2275: an inner peristome segment is a peristome tooth in PO's sense, and 'inner' can be kept through the endostome container FLOPO_0986064.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2279",
+  "decision": "keep",
+  "target": "",
+  "reason": "po_lexicon lists 'sporophyte' as a synonym of whole plant, and PO made the old sporophyte class obsolete. A moss sporophyte is still a whole organism of one generation, even though it depends on the gametophyte. Most statements are 'not seen' or 'absent', which fit. A constraint naming fern parts would not match these statements, because their whole is not given.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2280",
+  "decision": "keep",
+  "target": "",
+  "reason": "Plural of R2279; it is a PO synonym of whole plant.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2296",
+  "decision": "keep",
+  "target": "",
+  "reason": "PO itself lists cross-vein as a synonym of secondary, tertiary, quaternary and higher order leaf vein (PO_0020140, PO_0008021-23). Leaf lamina vein is their common parent, as with the earlier veinlet rule. Insect wings do not appear in plant floras.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2297",
+  "decision": "keep",
+  "target": "",
+  "reason": "Plural of R2296. The common parent of the PO classes whose synonym is cross-vein.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2298",
+  "decision": "keep",
+  "target": "",
+  "reason": "Spelling variant of R2296.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2299",
+  "decision": "constrain",
+  "target": "stem|shoot|twig|plant|tree|trunk",
+  "reason": "PO lists 'secondary axis' as a synonym of branch (PO_0025073), but many examples are inflorescences. There a secondary axis is a second order inflorescence axis (PO_0006321), not a branch. Only the vegetative use should map to branch.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2300",
+  "decision": "constrain",
+  "target": "stem|shoot|twig|plant|tree|trunk",
+  "reason": "Plural of R2299, with the same limit.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2312",
+  "decision": "keep",
+  "target": "",
+  "reason": "In French floras 'probractée' is a noun formed like 'bractée' ('présence de probractées', 'probractées présentes' in FDAC). 'Having bracts' would be 'bractéé', so the word names a part. The English 'probract' rule already maps it to bract.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2313",
+  "decision": "keep",
+  "target": "",
+  "reason": "Plural noun of R2312, as in 'présence de probractées'. A probract is a bract.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2314",
+  "decision": "keep",
+  "target": "",
+  "reason": "In the floras, 'geniculum' as a noun is the aroid joint at the top of the petiole ('geniculum thicker and paler than petiole', '5-7 cm long', 'fissured'). That is a petiole pulvinus. Grasses use the adjective 'geniculate', not this noun. Statements usually give no petiole whole, so a constraint would stop the rule from matching.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2315",
+  "decision": "keep",
+  "target": "",
+  "reason": "Plural of R2314; same use, as the joint of the petiole.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2317",
+  "decision": "keep",
+  "target": "",
+  "reason": "In orchid and graminoid floras 'tubular sheaths' are counted on the stem or scape ('stem with 2-3 tubular sheaths'). They are bladeless cataphylls, i.e. scale leaves. A leaf sheath (PO_0020104) is part of a bladed leaf, so retargeting there would be wrong for these statements. Plain 'sheath' stays rejected.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2318",
+  "decision": "keep",
+  "target": "",
+  "reason": "Plural of R2317: bladeless tubular cataphylls on stem or scape.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2319",
+  "decision": "drop",
+  "target": "",
+  "reason": "It is ambiguous. A 'sterile sheath' may be a bladeless basal leaf (scale leaf), a sterile bract on an orchid or Eriocaulaceae peduncle (bract), or a sheath around a sterile part. No single existing class is safe.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2331",
+  "decision": "keep",
+  "target": "",
+  "reason": "In flora usage (Flora Malesiana style), 'primary nerves' are counted per side ('5-7 primary nerves on each side'), so they are the main lateral veins, i.e. secondary leaf veins. This follows the earlier rules for 'lateral nerve' and 'primary lateral vein'. PO's primary leaf vein (PO_0025413) is the midvein or veins from the base, so per-side counts would be wrong there.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2333",
+  "decision": "keep",
+  "target": "",
+  "reason": "The sarcotesta is the outer fleshy part of the testa, and PO has no class for it (exotesta is only the epidermis). Floras themselves say 'testa fleshy' for these seeds, and its colour is what one sees of the testa. A rule to testa is better than a new term.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2334",
+  "decision": "keep",
+  "target": "",
+  "reason": "Plural of R2333.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2339",
+  "decision": "keep",
+  "target": "",
+  "reason": "This follows the accepted gland → PO_0005656 rule. Disc gland (FLOPO_0986045) is too specific, and flower nectary would claim a function that is not stated. The position between the stamens can be added as a position (pattern), so it is not a reason to drop the bearer.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2340",
+  "decision": "keep",
+  "target": "",
+  "reason": "French form of R2339.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2348",
+  "decision": "keep",
+  "target": "",
+  "reason": "'Vein' is a PO synonym of vascular bundle, which is right for longitudinal veins of any part: leaf, bract, glume, lemma, sepal. The proposed constraint would exclude the many glume, lemma and bract uses. 'Longitudinal' can be added as an orientation (PATO:0005024), as in C337.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2349",
+  "decision": "keep",
+  "target": "",
+  "reason": "French form of R2348: vascular bundle fits any part.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2353",
+  "decision": "retarget",
+  "target": "pseudostaminode (FLOPO_0986080)",
+  "reason": "FLOPO now has a pseudostaminode anatomy class (FLOPO_0986080, already used by rules R3465 and R3466 for 'pseudostaminode(s)'). The hyphenated spelling should map there, not to staminode, which PO defines as a sterile stamen.",
+  "confidence": "high"
+ }
+]

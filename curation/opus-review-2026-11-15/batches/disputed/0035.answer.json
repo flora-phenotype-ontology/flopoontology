@@ -1,0 +1,212 @@
+[
+ {
+  "rule_id": "R3542",
+  "decision": "retarget",
+  "target": "staminate zone of inflorescence (FLOPO_0986106)",
+  "reason": "FLOPO_0986106 is the general class and FLOPO_0986101 is its spadix subclass, as the review of the new definitions found. That review also said the general word 'staminate zone' belongs on FLOPO_0986106. Pointing the rule there is right for Araceae and for Typha, Euphorbiaceae and other spikes, and needs no spadix context.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3548",
+  "decision": "retarget",
+  "target": "staminate zone of inflorescence (FLOPO_0986106)",
+  "reason": "French 'zone mâle' is the same general word as 'male zone' and 'staminate zone'. Point it to the general inflorescence class, which already covers the spadix.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3554",
+  "decision": "drop",
+  "target": "",
+  "reason": "'Syngenesious' says the anthers are fused into a tube. That is a quality of the anthers (connate), not the name of a part. Mapping it to anther tube loses the fusion statement. Handle it as anther plus a connate quality, by a pattern.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3564",
+  "decision": "constrain",
+  "target": "spadix",
+  "reason": "There is no general pistillate-zone class, and the target is spadix-specific. 'Female zone' is also used for Typha, Sparganium and catkins. A pistillate zone is on the spadix, not the spathe, so require spadix only.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3565",
+  "decision": "constrain",
+  "target": "spadix",
+  "reason": "Same as R3564. The target is right only in a spadix context.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3566",
+  "decision": "constrain",
+  "target": "spadix",
+  "reason": "Same as R3564.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3567",
+  "decision": "constrain",
+  "target": "inflorescence|spadix|spike|catkin|raceme|panicle|head|capitulum|ament",
+  "reason": "Staminate portion of an inflorescence fits the target. Without an inflorescence context it may mean part of a flower or a plant. The spathe is not the bearer of the zone, so drop it from the list.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3568",
+  "decision": "constrain",
+  "target": "inflorescence|spadix|spike|catkin|raceme|panicle|head|capitulum|ament",
+  "reason": "Same as R3567. 'Male portion' is vague outside an inflorescence.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3569",
+  "decision": "constrain",
+  "target": "stem|branch|branchlet|trunk|bark|leaf|leaflet|petiole|rachis|midrib|pedicel|peduncle|calyx|hypanthium|fruit|axis",
+  "reason": "As a part, 'emergence' means a prickle-like outgrowth from the epidermis and cortex. The singular can also mean the process of emergence, so require a bearing organ. The list adds organs that commonly carry emergences, such as the calyx or hypanthium in Rosaceae, and pedicels.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3570",
+  "decision": "keep",
+  "target": "",
+  "reason": "The plural 'emergences' in a description always names outgrowths, not the process. The rule fires only on a part (bearer) word, so the process sense does not arise. A list of allowed organs would only lose real cases.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3573",
+  "decision": "drop",
+  "target": "",
+  "reason": "Palms have an adaxial and an abaxial hastula, and they often differ: one present and the other absent, or of different shape. Mapping both to the same 'hastula' makes 'adaxial hastula present, abaxial absent' contradict itself. This needs subclasses or a position qualifier, not this rule.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3574",
+  "decision": "drop",
+  "target": "",
+  "reason": "Same as R3573. Losing the position creates false contradictions.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3578",
+  "decision": "constrain",
+  "target": "stipe|petiole|rachis|frond|leaf|pinna|costa",
+  "reason": "In fern descriptions, pneumathodes (lines along the stipe) are aerophores. The word is also used for pores on roots and bark, which are a different structure, so require a fern leaf part.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3581",
+  "decision": "constrain",
+  "target": "corolla",
+  "reason": "A bare 'throat' also belongs to the calyx (Lamiaceae), the perianth (monocots, Aristolochia) and the hypanthium. Map it to corolla throat only with a corolla context.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3589",
+  "decision": "constrain",
+  "target": "pollinarium|pollinia|pollinium|translator|gynostegium|stigma head",
+  "reason": "Corpuscle means the corpusculum only in Asclepiadoideae pollinaria. Elsewhere it is any small body. 'Flower' and 'corona' are too wide as context and would catch other corpuscles.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3591",
+  "decision": "constrain",
+  "target": "pollinarium|pollinia|pollinium|translator|gynostegium",
+  "reason": "Retinaculum means the corpusculum only in Apocynaceae. In Acanthaceae it is the hooked seed support, and in orchids the viscidium. A 'flower' context would let the orchid sense in, so leave it out.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3599",
+  "decision": "drop",
+  "target": "",
+  "reason": "Corolla appendages include coronas, ligules and scales outside the throat, so 'faucal' is too narrow. No existing general class for corolla appendages was found (only connective appendage and anther theca appendage). A new class is needed, not this rule.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3609",
+  "decision": "drop",
+  "target": "",
+  "reason": "Bare 'propagule' also means a fruit or seed diaspore (PO has 'propagule' as a synonym of fruit, PO_0009001) and the viviparous seedling of mangroves. It is ambiguous. The specific forms 'vegetative propagule' and 'brood body' are enough.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3614",
+  "decision": "constrain",
+  "target": "leaf|phyllid|lamina|costa|branch leaf|stem leaf",
+  "reason": "Chlorophyllose cells as a cell type belong to the leaves of Sphagnum and Leucobryum (and their costa). Elsewhere the phrase only describes cells with chlorophyll. Requiring a leaf context is the practical limit, since flowering-plant floras rarely use the phrase.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3615",
+  "decision": "constrain",
+  "target": "leaf|phyllid|lamina|costa|branch leaf|stem leaf",
+  "reason": "Same as R3614.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3617",
+  "decision": "drop",
+  "target": "",
+  "reason": "'Green cells' is vague. It is not the specific chlorophyllose cell type of Sphagnum or Leucobryum.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3623",
+  "decision": "drop",
+  "target": "",
+  "reason": "'Dorsal wing' is used for seed, fruit, calyx and keel wings, and only sometimes for the Fissidens dorsal lamina. Even with a leaf context it is doubtful, so reject it. The rule 'dorsal lamina' covers the moss sense.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3624",
+  "decision": "constrain",
+  "target": "endocarp|fruit|drupe|pyrene|stone|putamen|seed",
+  "reason": "The condyle is the inward bulge of the endocarp (Menispermaceae), and the seed curves around it. Add 'seed' and 'drupe' to the context list so these common phrasings are not lost.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3625",
+  "decision": "constrain",
+  "target": "endostome|peristome|capsule",
+  "reason": "In moss descriptions 'basal membrane' is the standard term for the lower part of the endostome. The phrase is generic elsewhere, so require a peristome context.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3626",
+  "decision": "drop",
+  "target": "",
+  "reason": "The marginal cell of a lamella is a cell, not the lamella, so the target is wrong. Mapping it to a plain cell of the lamella would lose 'marginal', and the shape of the marginal cell (retuse, papillose, and so on) is the key Polytrichaceae character. Statements would be given to all lamella cells. This needs its own class or a pattern.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3627",
+  "decision": "keep",
+  "target": "",
+  "reason": "In flora descriptions the vascular-plant blade is called 'lamina', not 'leaf lamella'. 'Leaf lamellae' is the standard Polytrichaceae and Pottiaceae term. A context constraint could not work anyway: the context words would be taxon names or 'leaf', which is already in the phrase.",
+  "confidence": "low"
+ },
+ {
+  "rule_id": "R3645",
+  "decision": "retarget",
+  "target": "floret callus (FLOPO_0986120)",
+  "reason": "In flora descriptions 'basal callus' mostly means the hardened base of a grass floret or lemma, so floret callus is the better target. The cypsela carpopodium sense is rarer. A cypsela/achene-only rule to carpopodium could be added separately.",
+  "confidence": "low"
+ },
+ {
+  "rule_id": "R3647",
+  "decision": "constrain",
+  "target": "flower|corolla|calyx|perianth|petal|sepal|tepal|lip|labellum",
+  "reason": "Calcar is a floral spur when it is on a flower part. A spur on a short shoot is a different structure (PO short shoot has 'spur' as a synonym). Keep floral spur rather than PO petal or corolla spur, because the part bearing the spur varies.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3648",
+  "decision": "constrain",
+  "target": "flower|corolla|calyx|perianth|petal|sepal|tepal|lip|labellum|fleur|corolle|calice|périanthe|pétale|sépale|tépale|labelle",
+  "reason": "French 'éperon' also means a short-shoot spur. Require a flower part, and add the French part names because this word appears in French floras.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3674",
+  "decision": "retarget",
+  "target": "plant cell (PO_0009002)",
+  "reason": "Keep plant cell as the part, but its container should be phyllid lamella (FLOPO_0986126), which now exists, instead of costa (PO_0030072). Polytrichaceae lamellae are separate plates on the upper side of the costa, so 'cell part of costa' is not right.",
+  "confidence": "medium"
+ }
+]

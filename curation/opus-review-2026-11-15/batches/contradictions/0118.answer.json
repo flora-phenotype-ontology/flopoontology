@@ -1,0 +1,242 @@
+[
+ {
+  "id": "X03540",
+  "decision": "absence_misread",
+  "target": "no absence of stem PO:0009047. 'Caudex absent' says only that the woody perennial stem base is missing. The aerial flowering stems are present, and 'solid' (PATO:0001736 solid configuration) applies to them correctly.",
+  "fix": "'caudex absent' / 'without a caudex' -> no stem absence. PO lists caudex only as a synonym of stem (PO:0009047), so an absence of a caudex must not be grounded to stem. Drop it, or ground it to a caudex class if one is added. The synonym is fine for describing a caudex, not for its absence.",
+  "reason": "An annual Eriogonum with no caudex still has stems, and the same description gives them. Because caudex is a synonym of the whole stem, its absence was turned into 'stem absent'.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X03541",
+  "decision": "absence_misread",
+  "target": "cauline leaf PO:0000013 absent (PATO:0000462). The cotyledon statement (PO:0020030, incumbent) is about the seed embryo and does not conflict.",
+  "fix": "'Cauline leaves absent' / 'stem leaves absent' -> cauline leaf PO:0000013 absent, never leaf/vascular leaf absent. The modifier 'cauline' (and 'basal'/'radical' -> rosette leaf PO:0000014) must be kept when the bearer is grounded.",
+  "reason": "This is an acaulescent crucifer with basal leaves only. Only the stem leaves are missing, but the modifier was dropped so all leaves became absent, which then clashes with every leaf-like part, cotyledons included.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X03542",
+  "decision": "absence_misread",
+  "target": "no annotation. 'Flowers not known' means the flowers have not been collected or described, not that the plant has none. Flower PO:0009046 is not absent.",
+  "fix": "'flowers not known / not seen / unknown / not yet described', and the same with fruits or other parts, is a statement about the material, not the plant. Never read it as absence. Add these phrases to the context words as 'no annotation'.",
+  "reason": "The species has cymes with 1 fruit, so it certainly flowers. The flora only lacks flowering material.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03543",
+  "decision": "absence_misread",
+  "target": "'leafless' describes a particular axis (e.g. flowering branches or the lower stem), so it means no leaves on that axis (cauline leaf PO:0000013 absent on that stem), not a whole plant without leaves. The plant's leaves are present, and 'glabrescent' applies to them.",
+  "fix": "A bare 'leafless' after an axis word (stem, branch, scape, peduncle, 'below', 'in lower part') describes that axis. Read it as no leaves on that axis, not as whole-plant leaf absence. Use whole-plant leafless (FLOPO_0985035) only when 'leafless' describes the plant or habit ('Leafless shrub', 'Plant leafless').",
+  "reason": "Zataria are leafy shrublets. A statement on leaf hairs in the same taxon shows the leaves exist, so 'leafless' must refer to part of the shoot (older or flowering branches).",
+  "confidence": 0.55
+ },
+ {
+  "id": "X03544",
+  "decision": "absence_misread",
+  "target": "no annotation. 'Flowers not seen' means no flowering material was available, not that flowers are absent.",
+  "fix": "'flowers not seen / not known / unknown' -> no annotation (a statement about the material, not the plant). Never read as flower PO:0009046 absent.",
+  "reason": "The species has axillary inflorescences. The author only had fruiting or sterile specimens.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03545",
+  "decision": "both_true",
+  "target": "different bracts of the fig: no external (lateral) bracts on the fig wall, but the basal bracts at the fig base (bract PO:0009055, orbicular) are present",
+  "fix": "In Ficus and similar descriptions, 'sans bractées externes / latérales' (without external or lateral bracts) is the absence of one kind of bract only. Keep the qualifier, or drop the statement. It must never become bract PO:0009055 absent when 'bractées basilaires' or 'ostiolaires' (basal or ostiolar bracts) are described.",
+  "reason": "Fig descriptions separate basal, lateral (external) and ostiolar bracts. The absence concerns lateral bracts only.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X03546",
+  "decision": "absence_misread",
+  "target": "the dots on the leaf surface are absent (leaf lamina PO:0020039 not punctate PATO:0001512 / not gland-dotted FLOPO:0991174). The leaf is not absent. This is a negated quality, so it may be left unannotated.",
+  "fix": "'dots / hairs / glands / papillae / scales absent' is the absence of a surface feature on the part under discussion. Ground it to that feature (or a negated quality), never to the part that bears it. If the feature has no class, drop the statement rather than move the absence to the bearer.",
+  "reason": "In Myristica the 'dots' are small dots on the leaf underside. The leaves themselves are described at length.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X03547",
+  "decision": "absence_misread",
+  "target": "no stem absence. The caudex (stem base) is absent, and the aerial flowering stems are present and erect.",
+  "fix": "Same as X03540: 'caudex absent' must not become stem PO:0009047 absent through the caudex synonym.",
+  "reason": "Erect aerial flowering stems are described in the same taxon.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X03548",
+  "decision": "absence_misread",
+  "target": "cauline leaf PO:0000013 absent; the basal leaves are rosette leaves PO:0000014 (rosulate)",
+  "fix": "Same as X03541: 'Cauline leaves absent' -> cauline leaf PO:0000013 absent. 'Basal / radical leaves' -> rosette leaf PO:0000014.",
+  "reason": "Basal rosette leaves and no stem leaves is a normal combination.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03549",
+  "decision": "absence_misread",
+  "target": "no annotation. Flowers are unknown (not collected), not absent.",
+  "fix": "Same as X03542: 'Flowers not known' -> no annotation.",
+  "reason": "Fascicled inflorescences (or infructescences) are described, so the plant flowers.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03550",
+  "decision": "absence_misread",
+  "target": "'leafless' describes an axis (e.g. stems leafless in the lower part, or a leafless peduncle), so it means no leaves on that axis, not a whole plant without leaves. Leaves are present and cauline.",
+  "fix": "Same as X03543: 'leafless' after an axis word describes that axis. Use whole-plant leafless only for 'Plant(s) leafless' or 'Leafless herb/shrub'.",
+  "reason": "Erigeron breweri has cauline leaves. 'Leafless' must refer to the peduncles or a part of the stem.",
+  "confidence": 0.65
+ },
+ {
+  "id": "X03551",
+  "decision": "absence_misread",
+  "target": "no annotation. 'Flowers not seen' is about the material.",
+  "fix": "Same as X03544.",
+  "reason": "A cymose inflorescence is described, so flowers exist.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03552",
+  "decision": "both_true",
+  "target": "no external (lateral) bracts on the fig body, while the basal bracts are present (persistent at the base and connate into a disc)",
+  "fix": "Same as X03545: in Ficus, 'sans bractées externes' covers lateral bracts only. Keep it apart from the basal bracts.",
+  "reason": "The basal bracts form a disc. Only the lateral bracts are missing.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X03553",
+  "decision": "absence_misread",
+  "target": "the dots on the leaf surface are absent. Leaves are present (brown below).",
+  "fix": "Same as X03546: 'dots absent' is the absence of a surface feature, never of the leaf.",
+  "reason": "The leaf colour beneath is described in the same taxon.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X03554",
+  "decision": "absence_misread",
+  "target": "no stem absence. The caudex is absent, and the aerial stems are present and not fistulose (not hollow).",
+  "fix": "Same as X03540.",
+  "reason": "The stems are described as not hollow, so they exist.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X03555",
+  "decision": "absence_misread",
+  "target": "no annotation. Flowers are unknown, not absent.",
+  "fix": "Same as X03542.",
+  "reason": "Axillary inflorescences (or infructescences) are described.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03556",
+  "decision": "absence_misread",
+  "target": "cauline leaf PO:0000013 absent. The leaves with rounded apex are the basal (rosette) leaves.",
+  "fix": "Same as X03541: keep 'cauline' when grounding an absence.",
+  "reason": "Megadenia has basal leaves only. Their shape is described, while the stem leaves are absent.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X03557",
+  "decision": "absence_misread",
+  "target": "the scape or stem is leafless, i.e. cauline leaf PO:0000013 absent. The radical leaves are rosette leaves PO:0000014 (rosulate).",
+  "fix": "Same as X03543: 'leafless' after a stem or scape word means cauline leaf absent. 'Radical leaves' -> rosette leaf PO:0000014.",
+  "reason": "Radical leaves in a rosette plus a leafless scape is a common habit. Only the stem is leafless.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X03558",
+  "decision": "absence_misread",
+  "target": "no annotation for the flowers (not seen, i.e. not collected). Separately, the other statement should be infructescence PO:0006342 terminal, not inflorescence.",
+  "fix": "Same as X03544. Also, 'infructescence(s)' must be grounded to infructescence PO:0006342, not to inflorescence PO:0009049.",
+  "reason": "The plant was described from fruiting material only. The flowers are unseen, not absent, and the infructescence was also misgrounded to inflorescence.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X03559",
+  "decision": "both_true",
+  "target": "no external (lateral) bracts on the fig body, while the basal bracts are present (partly caducous, i.e. falling early)",
+  "fix": "Same as X03545.",
+  "reason": "Basal bracts and missing lateral bracts are different members.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X03560",
+  "decision": "absence_misread",
+  "target": "the dots on the lower leaf surface are absent. Leaves are present (lower surface grey).",
+  "fix": "Same as X03546.",
+  "reason": "The leaf surface colour is described in the same taxon.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X03561",
+  "decision": "absence_misread",
+  "target": "no stem absence. The caudex is absent, and the aerial stems are present and glabrous.",
+  "fix": "Same as X03540.",
+  "reason": "Hairless (glabrous) stems are described in the same taxon.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X03562",
+  "decision": "absence_misread",
+  "target": "no annotation. Flowers are unknown, not absent.",
+  "fix": "Same as X03542.",
+  "reason": "Cymes with 1 fruit are described, so the plant flowers.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03563",
+  "decision": "absence_misread",
+  "target": "cauline leaf PO:0000013 absent. The heart-shaped (cordate) base belongs to the basal leaf blades.",
+  "fix": "Same as X03541.",
+  "reason": "The leaf blade shape of the basal leaves is described, while only the stem leaves are absent.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X03564",
+  "decision": "both_true",
+  "target": "no external (lateral) bracts on the fig body, while the basal bracts are present and connate into a disc",
+  "fix": "Same as X03545.",
+  "reason": "Different kinds of bract on the fig.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X03565",
+  "decision": "absence_misread",
+  "target": "the dots on the leaf surface are absent. Leaves are present (membranous).",
+  "fix": "Same as X03546.",
+  "reason": "The leaf texture is described in the same taxon.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X03566",
+  "decision": "absence_misread",
+  "target": "the leaves are reduced, not absent: vascular leaf PO:0009025 vestigial PATO:0000588 (or scale leaf PO:0006003 present)",
+  "fix": "'Leafless' in the habit of orchids, parasites and stem succulents usually means the foliage leaves are reduced to scales. When the same taxon mentions vestigial, scale-like or reduced leaves, read 'leafless' as leaf vestigial PATO:0000588, not absent.",
+  "reason": "Leafless Vanilla species have small, brownish, vestigial leaves. The flora uses 'leafless' in the usual botanical sense of no foliage leaves.",
+  "confidence": 0.75
+ },
+ {
+  "id": "X03567",
+  "decision": "absence_misread",
+  "target": "no annotation. 'Flowers not seen' is about the material.",
+  "fix": "Same as X03544.",
+  "reason": "An unnamed species ('sp. a') known from incomplete material, with an axillary inflorescence described.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03568",
+  "decision": "absence_misread",
+  "target": "no stem absence. The caudex is absent, and the aerial flowering stems are present and erect.",
+  "fix": "Same as X03540.",
+  "reason": "Erect aerial stems are described in the same taxon.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X03569",
+  "decision": "absence_misread",
+  "target": "no annotation. Flowers are unknown, not absent.",
+  "fix": "Same as X03542.",
+  "reason": "Inflorescences (or infructescences) on first- to second-year branchlets are described.",
+  "confidence": 0.95
+ }
+]

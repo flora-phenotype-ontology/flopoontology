@@ -1,0 +1,202 @@
+[
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_a3f1cfc4141853c36e3afa20049801b0",
+  "decision": "wrong_grounding",
+  "target": "PATO_0040026",
+  "fix": "quality PATO_0000690 -> PATO_0040026 structurally discontinuous; bearer is the indumentum (PO_0000282 trichome), not the leaf",
+  "reason": "PATO_0000690 discontinuous is under occurrence (PATO_0000057), a quality of a single process, so the process-quality-on-plant-part GCI makes it unsatisfiable. 'Indumentum discontinuous' means a patchy hair cover, which is a structural gap.",
+  "confidence": 0.75
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_4b4e0c67b316db97bd9e7ba72426e266",
+  "decision": "wrong_grounding",
+  "target": "new FLOPO value 'structurally continuous' (opposite of PATO_0040026, under PATO_0001241)",
+  "fix": "If the source context gives no character, reject. Otherwise remap to a structural 'continuous' value. PATO has only a structural discontinuous (PATO_0040026), not a structural continuous.",
+  "reason": "PATO_0000689 continuous is under occurrence (process quality), so it is unsatisfiable on a tissue. The example is the bare word 'continus', so it is unclear what is continuous.",
+  "confidence": 0.55
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_2fecdb85a1e4089392b4483f92658440",
+  "decision": "wrong_grounding",
+  "target": "FLOPO_0991231",
+  "fix": "quality PATO_0000082 -> FLOPO_0991231 fugacious (synonym caducous)",
+  "reason": "PATO_0000082 persistence is a rhythm quality (process: repetitiveness of a rhythm). 'Caduques' is caducous, falling early, which FLOPO_0991231 covers.",
+  "confidence": 0.85
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_7059504220dac1789df0ef995f3bbd30",
+  "decision": "wrong_grounding",
+  "target": "FLOPO_0991231",
+  "fix": "quality PATO_0000082 -> FLOPO_0991231 fugacious (caducous)",
+  "reason": "Persistence (PATO_0000082) is a rhythm quality of a process. 'Caducs' petals fall early: FLOPO_0991231.",
+  "confidence": 0.85
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_bcab6a144f9cb27e2f697b2ea365980e",
+  "decision": "wrong_grounding",
+  "target": "PATO_0001732",
+  "fix": "quality PATO_0000082 -> PATO_0001732 non-deciduous (any body part)",
+  "reason": "Botanical 'persistent' means not shed, a shedability disposition (PATO_0001729 branch), not PATO's process rhythm 'persistence'.",
+  "confidence": 0.8
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_7384d1b7958151d5cbff54a90ef6dccc",
+  "decision": "wrong_statement",
+  "target": "PO_0000282 + PATO_0002237",
+  "fix": "bearer leaf -> trichome (PO_0000282); quality PATO_0000365 down -> PATO_0002237 retrorse",
+  "reason": "The hairs point downward, not the leaf, so the split took the wrong bearer. Bare direction 'down' (PATO_0000365) is unsatisfiable on plant parts (rejected in the 2026-11-08 review as unsatisfiable_directional_quality). The botanical term for downward-pointing hairs is retrorse.",
+  "confidence": 0.75
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_28d5207d1bc354680f241315379151c9",
+  "decision": "wrong_statement",
+  "target": "",
+  "fix": "reject: bare 'continuus' with no part was assigned to the fallback bearer whole plant",
+  "reason": "A whole plant is not 'continuous' in any botanical sense. The word belongs to some part the split lost, and the quality is also the process-only PATO_0000689.",
+  "confidence": 0.7
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_6ba923ce59fa1412fdeccc484ca60135",
+  "decision": "wrong_grounding",
+  "target": "FLOPO_0991250",
+  "fix": "quality PATO_0000297 arrested -> FLOPO_0991250 abortive",
+  "reason": "PATO_0000297 arrested is a quality of a process ending early (decreased occurrence, offset quality). A branch 'arrested, budlike' stopped developing and stays reduced, which is the definition of FLOPO_0991250 abortive.",
+  "confidence": 0.8
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_766d08192e7c14d43294ccd9627fa3dd",
+  "decision": "wrong_grounding",
+  "target": "FLOPO_0991207",
+  "fix": "quality PATO_0000365 down -> FLOPO_0991207 descending",
+  "reason": "Bare direction 'down' is unsatisfiable on plant parts. 'Directed downward' is an orientation of the rostellum, and FLOPO_0991207 is 'directed obliquely downward'. Use PATO_0104353 reflexed if the source says bent back.",
+  "confidence": 0.6
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_cf86885c8f01588c0836e1a23841db4d",
+  "decision": "wrong_grounding",
+  "target": "PATO_0001732",
+  "fix": "quality PATO_0000082 -> PATO_0001732 non-deciduous (any body part)",
+  "reason": "'Leaves persistent' means not shed. PATO_0000082 is a process rhythm quality. PATO_0001733 evergreen inheres in the plant, so for the leaf bearer use PATO_0001732.",
+  "confidence": 0.8
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_1ab90a0113a0a618e6ddb6c1c2508d60",
+  "decision": "wrong_grounding",
+  "target": "PATO_0001164",
+  "fix": "quality PATO_0000044 frequency -> PATO_0001164 dense",
+  "reason": "PATO_0000044 frequency is a rate of occurrence (repeated actions per time), a process quality. 'Dense' hairs is PATO_0001164.",
+  "confidence": 0.85
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_9c7f9e11ffb09ef3227db5c445caa7a5",
+  "decision": "wrong_grounding",
+  "target": "PATO_0001732",
+  "fix": "quality PATO_0001309 duration -> PATO_0001732 non-deciduous (any body part)",
+  "reason": "PATO_0001309 duration is a physical quality of a process. '± persistantes' bracts are not shed.",
+  "confidence": 0.8
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_b57e0993f75a000152656d7e8b9582e0",
+  "decision": "wrong_grounding",
+  "target": "PATO_0040026",
+  "fix": "quality PATO_0000690 -> PATO_0040026 structurally discontinuous",
+  "reason": "An interrupted vein is a structural gap, and PATO_0040026 has the exact synonym 'structurally interrupted'. PATO_0000690 is a process quality.",
+  "confidence": 0.85
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_af1ef97d236360d7fca345312ec0d88e",
+  "decision": "wrong_grounding",
+  "target": "PATO_0002237",
+  "fix": "quality PATO_0000365 down -> PATO_0002237 retrorse",
+  "reason": "Downward-pointing spines are retrorse in botanical usage. Bare direction 'down' is unsatisfiable on plant parts.",
+  "confidence": 0.8
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_575a0e2e5e13bd079bde55d94cf181b0",
+  "decision": "wrong_grounding",
+  "target": "PATO_0002237",
+  "fix": "quality PATO_0000365 down -> PATO_0002237 retrorse",
+  "reason": "Downward-pointing (basal) lobes are retrorse lobes. Bare direction 'down' is unsatisfiable on plant parts.",
+  "confidence": 0.7
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_78443bcce39d2214015e5bc6533d285a",
+  "decision": "wrong_grounding",
+  "target": "PATO_0001732",
+  "fix": "quality PATO_0000082 -> PATO_0001732 non-deciduous (any body part)",
+  "reason": "A 'persistante' columella remains after dehiscence, so it is not shed. PATO_0000082 is a process rhythm quality.",
+  "confidence": 0.8
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_bd1213206172f02fa25d073385636638",
+  "decision": "wrong_grounding",
+  "target": "FLOPO_0991231",
+  "fix": "quality PATO_0000082 -> FLOPO_0991231 fugacious (caducous)",
+  "reason": "'Caduques' bud scales fall early. PATO_0000082 is a process rhythm quality.",
+  "confidence": 0.85
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_9a3c2b951d4e27cccaa74c57e7717bbf",
+  "decision": "wrong_grounding",
+  "target": "new FLOPO value 'structurally continuous' (opposite of PATO_0040026, under PATO_0001241)",
+  "fix": "quality PATO_0000689 -> structural 'continuous'. No existing class: PATO has only the structural discontinuous PATO_0040026.",
+  "reason": "A continuous spike (flowers not in separate clusters) is the structural opposite of an interrupted spike. PATO_0000689 is defined for a single process.",
+  "confidence": 0.65
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_9d0494bab56b79a2796681bbb530a326",
+  "decision": "wrong_grounding",
+  "target": "PATO_0040026",
+  "fix": "quality PATO_0000690 -> PATO_0040026 structurally discontinuous; check the source for the real bearer (a wing, ridge or fruiting axis rather than the fruit)",
+  "reason": "PATO_0000690 is a process quality. 'Occasionally interrupted' is a structural break, but a fruit as a whole being interrupted is odd, so the bearer may also be wrong.",
+  "confidence": 0.5
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_a92436bca973e7f66357ac477b9e4698",
+  "decision": "wrong_grounding",
+  "target": "PATO_0002238",
+  "fix": "quality PATO_0000370 up -> PATO_0002238 antrorse",
+  "reason": "Upward-pointing spines are antrorse. Bare direction 'up' is unsatisfiable on plant parts (2026-11-08 review: unsatisfiable_directional_quality).",
+  "confidence": 0.75
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_6c77053219bafba78372f656d44faed6",
+  "decision": "wrong_grounding",
+  "target": "new FLOPO value 'structurally continuous' (opposite of PATO_0040026, under PATO_0001241)",
+  "fix": "quality PATO_0000689 -> structural 'continuous'",
+  "reason": "Continuous (solid) pith versus chambered pith is a real structural character. PATO_0000689 is a process quality and PATO has no structural continuous term.",
+  "confidence": 0.65
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_01636b1581a4f2d030b7c9538b1c7124",
+  "decision": "wrong_grounding",
+  "target": "new FLOPO value 'structurally continuous', or reject",
+  "fix": "Check the source: if it means pinnae continuous with (decurrent onto) the rachis, use FLOPO_0991162/PATO_0001984 decurrent. If nothing is recoverable, reject.",
+  "reason": "PATO_0000689 is a process quality. The bare example 'continuous' does not show what is continuous.",
+  "confidence": 0.45
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_f5b0c79e1b4c53db78f39e274b3e75a3",
+  "decision": "wrong_grounding",
+  "target": "PATO_0001604",
+  "fix": "quality PATO_0001309 duration -> PATO_0001604 decreased life span",
+  "reason": "PATO_0001309 duration is a physical quality of a process. A flower lasting half a day has a short life span, and PATO_0001604 is an object quality (decreased object quality).",
+  "confidence": 0.75
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_3eaab2cb597cf454542db65bf626aee4",
+  "decision": "wrong_grounding",
+  "target": "new FLOPO value 'structurally continuous' (opposite of PATO_0040026, under PATO_0001241)",
+  "fix": "quality PATO_0000689 -> structural 'continuous'",
+  "reason": "Continuous submarginal veinlets (unbroken) are a structural character, the opposite of interrupted veins (PATO_0040026). PATO_0000689 is a process quality.",
+  "confidence": 0.6
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_7c1c53ebc6539e9566c168a57a66952a",
+  "decision": "wrong_grounding",
+  "target": "",
+  "fix": "reject. In floras 'precocious' means flowering before the leaves appear (hysteranthous), not PATO's peramorphic predisplaced growth. No existing FLOPO/PATO value fits.",
+  "reason": "PATO_0001754 predisplaced growth is a heterochronic growth (process) quality, so it is unsatisfiable on a plant. The botanical sense is a flowering-time relation that no current term covers.",
+  "confidence": 0.6
+ }
+]

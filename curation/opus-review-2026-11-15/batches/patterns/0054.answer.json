@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P02160",
+  "decision": "new_pattern",
+  "target": "continuum inside an alternative",
+  "fix": "Union of two operands on the leaf apex (PO:0020137 leaf apex via the shape-of-apex rule): acute PATO:0000389, and a continuum acuminate → obtuse PATO:0001935 (qualitative_value_relation inside one one_of operand). 'almost circular' is the shape of the blade (orbicular, approximately) and belongs to a separate operand on the leaf lamina. OWL: has_characteristic some (acute or acuminate or obtuse) on the apex; the continuum stays in RDF.",
+  "reason": "An 'X or Y to Z' list: the continuum is nested inside an alternative, which the union and continuum patterns do not combine. Acute is also a quality of the leaf apex, not of the leaf.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02161",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "Not a relation to another part. 'narrowed toward apex' is the shape tapered PATO:0001500 (or attenuate PATO:0001982) of the pseudobulb, and 'toward apex' is the region context word (apical region). It needs a rule 'narrowed' → tapered and the context-table row 'toward apex' (kind region).",
+  "reason": "'apex' is a region of the same organ, not a second part. The annotator read it as a relation.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02162",
+  "decision": "new_pattern",
+  "target": "negated alternatives",
+  "fix": "'not X or Y' means neither: two negated statements on the petiole, clasping PATO_0104363 negated and winged/alate PATO_0104354 negated, each with the single cue 'not'. OWL: two separate negated class expressions (not (has_characteristic some clasping)), not a negated union of the two operands.",
+  "reason": "The negation scopes over a disjunction. The alternatives pattern makes a positive union, and negation applies to one value only. Both terms exist.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02163",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Pattern 10 reads 'half the length of'. Add the fraction words 'three-quarters', 'one-third', 'two-thirds' and a range of fractions 'half to three-quarters' (ratio 0.5-0.75) towards the spikelet PO:0009051. The bearer is the lower glume.",
+  "reason": "This is the pattern's own example with a range of fractions. Not a missing unit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02164",
+  "decision": "new_pattern",
+  "target": "conjunction in a compound word",
+  "fix": "Split 'broadly ovate cordate' into leaf lamina broadly ovate (ovate PATO:0001891 with a 'broadly' width modifier, as in pattern 01's qualifier slot) and leaf base heart shaped/cordate PATO:0000948 on the leaf lamina base. These are two statements, not alternatives.",
+  "reason": "Two shape words in apposition (outline + base) were read as alternatives or a continuum. There is no 'or' or 'to'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02165",
+  "decision": "missing_term",
+  "target": "liane (volubile) — habit noun meaning a woody climbing plant (twining)",
+  "fix": "Rule for the habit noun 'liane' / 'liane volubile' → climbing FLOPO:0991108 on whole plant PO:0000003, as for 'climber' (P00077). Here it is the second operand of 'arbuste érigé ... ou liane volubile' (pattern 07). 'volubile' = twining stays at climbing unless a twining subclass is added later.",
+  "reason": "The term exists and lists 'liana' as a bearer word. Only the rule for the French noun is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02166",
+  "decision": "missing_term",
+  "target": "specialized asexual reproduction = gemmae / asexual propagules of a moss",
+  "fix": "Annotate as absence of gemma PO:0025614 on the whole plant (negated presence), with a rule 'specialized asexual reproduction' → gemma. FNA (Flora of North America) bryophyte treatments use this phrase for gemmae, brood bodies and propagula.",
+  "reason": "This is a structural trait stated as a process. Its bearer exists in PO, and it is a moss key character.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02167",
+  "decision": "new_pattern",
+  "target": "bound on the maximum",
+  "fix": "'to at least 100 cm' says the maximum length is at least 100 cm, not that the length is at most 100 cm. In RDF: the length of the leaf lamina with a lower bound on the maximum (value_max ≥ 100 cm, cue 'to at least'). In OWL: only length has some value, since a data range would misstate it. The width in the same phrase, 60 cm, is a plain upper bound.",
+  "reason": "'to at least' cannot be a plain upper bound, and the open list in the docs names 'a bound on the maximum'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02168",
+  "decision": "missing_term",
+  "target": "se desquamant (en plaques) — French for exfoliating (in plates)",
+  "fix": "Rule 'se desquamant' / 'desquamant' → exfoliating FLOPO:0991021 (definition already covers plates) on bark (rhytidome; FLOPO:0991021's bearer list), with 'en plaques quadrangulaires' kept as source text.",
+  "reason": "The term exists. Only the French verb rule is missing. Not a process outside the model.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02169",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Read '× as long as' (multiplication sign) like 'times as long as'. Ratio 0.2-1 of the stipe PO:0020121? (FLOPO stipe as grounded) towards the lamina, with the extreme (0.1-) by pattern 05.",
+  "reason": "This is a ratio with an extreme, which patterns 10 and 05 cover. The cue '×' is not recognised.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02170",
+  "decision": "new_pattern",
+  "target": "measured extent of state",
+  "fix": "Basal veins fused (PATO:0000642) with a measured extent: the length of the fused portion 0.5-6 cm (RDF: has magnitude/unit on the fused region; OWL: has_part some (vein and has_characteristic some fused)). The count split '1-3 free, others' belongs to count-of-parts.",
+  "reason": "A length gives how far a state extends. No pattern links a measure to the extent of a quality.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02171",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Re-transcribe the quality as conical PATO:0002021 on fruit PO:0009001 (capsule), not the attribute 'shape'. The measurements 1.5-2 × 1-1.5 cm are separate statements.",
+  "reason": "The text gives a value, conical, and the transcription recorded only the attribute. Then it was held as a measurement without a unit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02172",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Re-transcribe as floral bract ovate PATO:0001891 with the 'broadly' modifier, not the attribute 'shape'.",
+  "reason": "The text gives a value, and the transcription recorded only the attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02173",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Grounding rule: 'cincinni' → cincinnus inflorescence PO:0030132 (a listed synonym) as the container; 'each bearing' is the count cue. Count 6 of flower PO:0009046 with '±' as approximately (pattern 01).",
+  "reason": "The container is in PO under 'cincinni'. It was not grounded from the subject of the clause.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02174",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Let the region cue 'at the base' after an alternative scope over all its operands: the bearer is the leaf lamina base, rounded or (approximately, 'sub-') heart shaped PATO:0000948. annotation-context-patterns.md currently leaves a cue across an alternative alone. That rule needs to change.",
+  "reason": "The terms and patterns exist. The only block is the rule against a place cue across 'or'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02175",
+  "decision": "missing_term",
+  "target": "vine — habit noun meaning a climbing plant",
+  "fix": "Rule 'vine(s)' → climbing FLOPO:0991108 on whole plant PO:0000003 (vine is already in its bearer words), and 'woody' as a texture of the stem in a second statement.",
+  "reason": "The term exists. The habit noun has no rule.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02176",
+  "decision": "missing_term",
+  "target": "excentric (eccentric) — positioned off the centre (of the receptacle / flower axis)",
+  "fix": "Candidate FLOPO value under PATO:0000140 position, bearer floral disc. Also stop reading 'ex-' as a negation cue.",
+  "reason": "No PATO or FLOPO term for an off-centre position. The negation hold is spurious.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02177",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation)",
+  "fix": "Accept the privative prefix 'e-' in 'eglandular' as an in-word negation cue (span = the prefix within the word) → branch glandular PATO:0002117 negated. The same applies to 'ebracteate', 'exstipulate', 'epapillate'.",
+  "reason": "The negation sits inside the word, so the cue is not a separate token in the span.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02178",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Let coordinated comparatives share one second term: 'narrower and ... shorter than to exceeding the perigynia' → scale narrower towards perigynium PO:0009044, and length shorter → exceeding (continuum) towards the same.",
+  "reason": "The second term is in the clause, after the last comparative. The slot-3 reader only links a 'than X' that directly follows.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02179",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Re-transcribe as sepal carinate, with a rule carinate → keel-shaped PATO:0002522 (definition: longitudinal ridge) and 'strongly' as a degree.",
+  "reason": "The quality is a value, not the attribute 'shape'. The term exists.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02180",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "The source text is cut off: 'Plants to over 10' has no unit, and the parts cannot be recovered.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02181",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Re-transcribe the quality as the attribute thickness PATO:0000915 with 1 mm on pericarp. 'thick' follows a measure and is the attribute, not the value.",
+  "reason": "A plain measurement was transcribed as the value 'thick'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02182",
+  "decision": "existing_pattern",
+  "target": "docs/odp/12-part-of-qualified-whole.md",
+  "fix": "Context row 'on fertile branchlets' (section heading 'Leaves on fertile branchlets:') → leaf lamina part_of leaf part_of branch with fertile PATO:0000955. Then leathery applies.",
+  "reason": "This is heterophylly by shoot, a part of a qualified whole. It is not a growth stage.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02183",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The bearer is 'the second scale' (upper glume), not the spikelet, and 'scale' is not a quality. Re-transcribe as a count of veins 5 on the glume (pattern 03, 'N-nerved').",
+  "reason": "Entity and quality are both wrong.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02184",
+  "decision": "existing_pattern",
+  "target": "docs/odp/01-approximate-value.md",
+  "fix": "Ground 'standard' → banner petal PO:0025324 (a listed synonym), length 5.5 mm and width 5 mm with 'ca.' as approximately.",
+  "reason": "This is a plain measurement of the banner petal. The stage hold is spurious, and the bearer should be the banner petal, not 'petal'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02185",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept 'to ±' as an upper bound with approximately (as 'to c.' is), giving length ≤ 3.5 cm and width ≤ 8 mm. Each bound pair is tied to its shape operand, so in RDF it goes with the narrowly elliptic operand.",
+  "reason": "The cue 'to ±' is missing from the bound cue list.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02186",
+  "decision": "existing_pattern",
+  "target": "docs/odp/08-alternative-with-frequency.md",
+  "fix": "Read a comma-separated 'rarely X and Y' after the main shapes as an operand with frequency rarely: leaflet oblong PATO:0000946 ('narrowly' modifier) and leaflet apex acuminate. The operand holds two values joined by 'and'.",
+  "reason": "This is an alternative with its own frequency, introduced by a comma, not 'or'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02187",
+  "decision": "existing_pattern",
+  "target": "docs/odp/01-approximate-value.md",
+  "fix": "Apply the 'sub-' rule to amplexicaul FLOPO:0991066. 'subamplexicaul or amplexicaul' becomes one_of(amplexicaul approximately, amplexicaul), which collapses to amplexicaul.",
+  "reason": "The 'sub-' prefix rule does not reach this FLOPO value.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02188",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept 'to 18 by 7 cm' (with 'by' for ×) as upper bounds of length and width. Ground 'the most apical' through the kind D position upper/apical (pattern 04) and 'usually' as frequency. 'the largest' is a comparison within a series and is not annotated.",
+  "reason": "The bound with 'by' and the series-member bearer are not read.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02189",
+  "decision": "new_pattern",
+  "target": "length of free portion",
+  "fix": "Bearer: the free distal tip of the bract-scale complex (BSPO distal region of the ovuliferous scale and of the cone bract, two coordinated bearers). Quality: length 2-3.5 mm of that region. OWL: has_part some (distal region and part_of some cone scale and has_characteristic some length).",
+  "reason": "'distal projections' measures the free tip, not the whole bract. The stage hold is spurious.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02190",
+  "decision": "missing_term",
+  "target": "remote — synonym of distant (widely spaced leaves)",
+  "fix": "Add 'remote' as a synonym of distant FLOPO:0991189. 'scattered' → distributed PATO:0001566 (synonym exists). Then pattern 07 makes the union on leaf, with 'along the stem' as an unscoped place.",
+  "reason": "The alternatives pattern applies once 'remote' maps. The term exists under another label.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02191",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "The pollination mode is an ecological interaction, not a morphological quality of the flower. It is doubtful as a FLOPO term.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02192",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Add the fractions 'one-third' and 'half' as a range ('one-third to half as long as' → ratio 0.33-0.5) towards spikelet PO:0009051 on the lower glume.",
+  "reason": "Same as P02163: the fraction words are not read.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02193",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Let 'N-xed' accept a range prefix: '3-5-nerved' → a count of veins 3-5 on the glume.",
+  "reason": "The count-in-word split fails on a range before the suffix.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02194",
+  "decision": "new_pattern",
+  "target": "part present at a place",
+  "fix": "Presence of persistent leaf sheath remnants on the rhizome: leaf sheath with persistent (remnants), located on the rhizome. OWL: rhizome and (has_part some leaf sheath) (or 'adjacent to'), with 'densely' and 'brown' as qualities of the remnants. RDF keeps 'relicts'.",
+  "reason": "A part of another organ borne on the bearer. There is no comparison and the term is not missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02195",
+  "decision": "new_pattern",
+  "target": "part present at a place",
+  "fix": "Presence of scale leaf PO:0006003 at the stem base (rigid, split as qualities of the scales). OWL: stem base and has_part / surrounded_by some (scale leaf and has_characteristic some rigid).",
+  "reason": "This describes parts borne at a place. 'protected by' is not a quality of the stem base.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02196",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "Let the series word 'outer' that opens the clause ('outer elliptic-oblong, ... obtuse') apply to every value of that clause: the bearer is petal with the FLOPO outer position value, and obtuse goes on its apex.",
+  "reason": "Kind D (outer) exists since 2026-11-14. The stage hold comes from the context word standing at the head of the clause.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02197",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (continuum)",
+  "fix": "Continuum vertical PATO:0001854 → horizontal PATO:0001855 on the rhizome. Both terms exist, so check that the rules for 'vertical' and 'horizontal' take the rhizome as bearer.",
+  "reason": "The terms and the continuum pattern both exist, and the annotator missed them.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02198",
+  "decision": "missing_term",
+  "target": "denticulate — margin with very small teeth (finely dentate)",
+  "fix": "Candidate FLOPO value under PATO dentated, parallel to serrulate FLOPO:0991081, or a rule denticulate → dentated with a fine-degree qualifier. The bearer is the leaf lamina margin (the 'margin' cue), inside a union (pattern 07).",
+  "reason": "Pattern 07 covers the structure. Denticulate has no PATO or FLOPO term, which the context doc names as the usual cause of these holds.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02199",
+  "decision": "missing_term",
+  "target": "climber — habit noun meaning a climbing plant",
+  "fix": "Rule 'climber(s)' → climbing FLOPO:0991108 on whole plant PO:0000003, the same rule as P00077.",
+  "reason": "The term exists. Only the noun rule is missing.",
+  "confidence": "high"
+ }
+]

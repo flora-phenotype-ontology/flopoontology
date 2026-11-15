@@ -1,0 +1,202 @@
+[
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_26bbbfb24cc5b8ebe132b05c7d5b26d4",
+  "decision": "wrong_statement",
+  "target": "PO_0000031 lenticel + PATO_0001609 sparse",
+  "fix": "bearer stem -> PO_0000031 lenticel; quality PATO_0000428 sporadic -> PATO_0001609 sparse",
+  "reason": "The lenticels are sporadic, not the stem, so the split took the wrong bearer. PATO_0000428 sporadic is under occurrence (PATO_0000057), a quality of a single process. The FLOPO rule against process qualities on plant parts makes it unsatisfiable. 'Sporadic' lenticels are few and widely spaced, which is sparse.",
+  "confidence": 0.7
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_d303a6e276324fef30ab526afbf1c49e",
+  "decision": "wrong_grounding",
+  "target": "none (reject)",
+  "fix": "Reject. 'Thecae opening downwards' is the direction in which the anther opens. No PATO or FLOPO value covers a downward-facing slit or pore. Introrse/extrorse (FLOPO_0991164/0991165) refer to the flower's centre, not to up and down.",
+  "reason": "Bare direction 'down' (PATO_0000365) is unsatisfiable on plant parts (2026-11-08 review: unsatisfiable_directional_quality). The statement is about how the theca opens, and no existing term fits.",
+  "confidence": 0.5
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_cf354b419e8ffa5859270958104244a9",
+  "decision": "wrong_grounding",
+  "target": "FLOPO_0991250",
+  "fix": "bearer bud -> PO_0004713 terminal bud; quality PATO_0000297 arrested -> FLOPO_0991250 abortive",
+  "reason": "PATO_0000297 arrested is a quality of a process that ends early, so it is unsatisfiable on a structure. An arrested apical bud has stopped developing and stays reduced, which matches FLOPO_0991250 abortive. 'Apical bud' is the terminal bud.",
+  "confidence": 0.65
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_e65d7cd6723e9bcbf11998f00c51e9eb",
+  "decision": "wrong_grounding",
+  "target": "PATO_0002238",
+  "fix": "quality PATO_0000370 up -> PATO_0002238 antrorse",
+  "reason": "Upward-pointing teeth are antrorse in botanical usage. Bare direction 'up' is unsatisfiable on plant parts (2026-11-08 review).",
+  "confidence": 0.75
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_beba82a570fb1636963297d68101a195",
+  "decision": "wrong_grounding",
+  "target": "PATO_0002237",
+  "fix": "quality PATO_0000365 down -> PATO_0002237 retrorse",
+  "reason": "Downward-pointing prickles are retrorse. Bare direction 'down' is unsatisfiable on plant parts.",
+  "confidence": 0.8
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_37e881844eb82f390e6cb8d2d76b6ab5",
+  "decision": "wrong_grounding",
+  "target": "FLOPO_0991207",
+  "fix": "quality PATO_0000365 down -> FLOPO_0991207 descending; use PATO_0104353 reflexed only if the source says bent back",
+  "reason": "'Directed downwards' describes the lobe's posture. Bare 'down' is unsatisfiable on plant parts. This follows the earlier batches.",
+  "confidence": 0.6
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_1b083da9bcaf9602907572d741e0cc52",
+  "decision": "wrong_grounding",
+  "target": "PATO_0104355",
+  "fix": "quality PATO_0000370 up -> PATO_0104355 ascending",
+  "reason": "A leaf 'somewhat pointing upwards' is ascending, at an angle and not fully erect. Bare 'up' is unsatisfiable on plant parts.",
+  "confidence": 0.65
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_719fec59f56ed111caf3148e47a0b597",
+  "decision": "wrong_grounding",
+  "target": "PATO_0040026",
+  "fix": "quality PATO_0000690 -> PATO_0040026 structurally discontinuous",
+  "reason": "PATO_0000690 discontinuous is a quality of a single process (under occurrence), so it is unsatisfiable on a structure. Arms of the arilloid 'interrupted at the base' have a structural gap. PATO_0040026 has the exact synonym 'structurally interrupted'.",
+  "confidence": 0.7
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_03ceb98420a8e945d59207873dbbc6c2",
+  "decision": "wrong_grounding",
+  "target": "GO_0040007",
+  "fix": "Use the plant process pattern (FLOPO_0980423): lateral shoot participates in GO_0040007 growth, and the growth has PATO_0000911 decreased rate. If that pattern is not used for flora statements, leave it out.",
+  "reason": "PATO_0000911 decreased rate is a quality of a process. 'Slow growing' is true of the growth, not of the stem, and the FLOPO rule against process qualities on plant parts is correct here.",
+  "confidence": 0.6
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_7b26ebea303ccbc32ac4bbb446ea0cc6",
+  "decision": "wrong_grounding",
+  "target": "PATO_0104357",
+  "fix": "quality PATO_0000044 frequency -> PATO_0104357 lanate (woolly); 'occasionally' only qualifies how often it happens; white is a separate colour value",
+  "reason": "PATO_0000044 frequency is a rate of repeated actions, a process quality. The word 'occasionally' was grounded as the quality, but the trait is a white-woolly stem.",
+  "confidence": 0.75
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_56b020716ba756ccaa07c0acfe526ca1",
+  "decision": "wrong_grounding",
+  "target": "PATO_0040026",
+  "fix": "quality PATO_0000690 -> PATO_0040026 structurally discontinuous",
+  "reason": "An interrupted inflorescence axis bears clusters separated by bare stretches. That is a structural gap, not an interrupted process.",
+  "confidence": 0.7
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_b3b8235d3535af98149ef0b52f5af9c1",
+  "decision": "wrong_grounding",
+  "target": "FLOPO_0991067",
+  "fix": "quality PATO_0000689 -> FLOPO_0991067 connate (spine shields joined into a continuous margin); alternatively the proposed structural 'continuous' value",
+  "reason": "PATO_0000689 continuous is a quality of a single process. Spine shields 'forming a continuous horny margin' are joined to one another. Choosing an existing term over a new one gives connate.",
+  "confidence": 0.5
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_d44ef215f4da49eaf32671a3ba2a1264",
+  "decision": "wrong_grounding",
+  "target": "PATO_0040026",
+  "fix": "quality PATO_0000690 -> PATO_0040026 structurally discontinuous; the bearer is the disc ring (annulus) rather than one gland",
+  "reason": "An 'interrupted annulus' is a ring with gaps, which is a structural break. PATO_0000690 is a process quality.",
+  "confidence": 0.65
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_86600724ed5d4541e1fb2eb64d68c2b9",
+  "decision": "wrong_grounding",
+  "target": "PATO_0000622",
+  "fix": "quality PATO_0000370 up -> PATO_0000622 erect",
+  "reason": "A fruit directed upwards is erect. Bare 'up' is unsatisfiable on plant parts (2026-11-08 review).",
+  "confidence": 0.65
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_adffb64db9a1ebcbce7618cd4b68c86a",
+  "decision": "wrong_grounding",
+  "target": "PATO_0104355",
+  "fix": "quality PATO_0000370 up -> PATO_0104355 ascending; use PATO_0000406 curved if the source says upcurved",
+  "reason": "A keel that points upwards is turned upward at an angle. Bare 'up' is unsatisfiable on plant parts.",
+  "confidence": 0.5
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_b2e741b608a55d577f45905b1996a410",
+  "decision": "wrong_statement",
+  "target": "none (reject)",
+  "fix": "Reject. 'the blad. rate' is a garbled or truncated transcription (Dutch 'blad', leaf). The word 'rate' was matched to PATO_0000161.",
+  "reason": "No trait can be read from the text, and PATO_0000161 rate is a process quality.",
+  "confidence": 0.8
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_a7bc856ca577f7b6540691f7c94d9794",
+  "decision": "unclear",
+  "target": "PATO_0040026 (if structural)",
+  "fix": "Check the source. If a calyx rim or ring is broken, use PATO_0040026 structurally discontinuous on the right part. Otherwise reject.",
+  "reason": "A whole calyx being 'interrupted' is odd, and the example has no context. PATO_0000690 is a process quality and cannot stay either way.",
+  "confidence": 0.4
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_58a8645d72486ef5098fae2a3d50baff",
+  "decision": "wrong_grounding",
+  "target": "new FLOPO value 'structurally continuous' (opposite of PATO_0040026, under PATO_0001241)",
+  "fix": "quality PATO_0000689 -> structural 'continuous'; check whether the real bearer is a margin border or intramarginal vein running to the apex",
+  "reason": "'Continuous to the apex' describes something that runs unbroken in space. PATO_0000689 is a process quality, and PATO has no structural 'continuous'. Earlier batches proposed this value.",
+  "confidence": 0.55
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_7098d93cc88c9861e92dafc6b3cef0f8",
+  "decision": "wrong_grounding",
+  "target": "PATO_0001732",
+  "fix": "quality PATO_0000082 -> PATO_0001732 non-deciduous (any body part)",
+  "reason": "A persistent peristome stays and is not shed. PATO_0000082 persistence is a rhythm quality of a process. This follows the earlier batches.",
+  "confidence": 0.75
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_7508846f0df0905f85b7495ac1c08bbb",
+  "decision": "wrong_grounding",
+  "target": "PATO_0000622",
+  "fix": "quality PATO_0000370 up -> PATO_0000622 erect; the bearer may be the flower (PO_0009046) if the source describes the flower's posture",
+  "reason": "An upward-pointing corolla is erect. Bare 'up' is unsatisfiable on plant parts.",
+  "confidence": 0.55
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_83a4ff042f7a89ccdc07a506f5b79222",
+  "decision": "wrong_grounding",
+  "target": "none (reject)",
+  "fix": "Reject. In floras 'precocious' means appearing before the leaves (hysteranthous), not PATO's peramorphic predisplaced growth. No existing value fits a peduncle.",
+  "reason": "PATO_0001754 is a growth-heterochrony quality of a process. Earlier batches rejected 'precocious' the same way.",
+  "confidence": 0.6
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_6eb278ba8acb2b8638408a8003be6c2d",
+  "decision": "wrong_grounding",
+  "target": "new FLOPO value 'structurally continuous' (opposite of PATO_0040026, under PATO_0001241)",
+  "fix": "quality PATO_0000689 -> structural 'continuous'",
+  "reason": "A continuous panicle (branches not in separate clusters) is the structural opposite of an interrupted one. PATO_0000689 is a process quality.",
+  "confidence": 0.6
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_6e0bc28200912c0f819fb39d3c416f18",
+  "decision": "wrong_grounding",
+  "target": "PATO_0040026",
+  "fix": "quality PATO_0000690 -> PATO_0040026 structurally discontinuous",
+  "reason": "'Intermittent' secretory tissue (ducts or bands broken into segments) is a structural gap. PATO_0000690 is a process quality.",
+  "confidence": 0.6
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_5a5d2b3f039f95fa00bf305feaa503c3",
+  "decision": "wrong_grounding",
+  "target": "PATO_0002237",
+  "fix": "quality PATO_0000365 down -> PATO_0002237 retrorse",
+  "reason": "Downward-facing hairs are retrorse. Bare 'down' is unsatisfiable on plant parts.",
+  "confidence": 0.8
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_068f7339862f460da5cd02e1916d4175",
+  "decision": "wrong_statement",
+  "target": "none (reject)",
+  "fix": "Reject. 'Usually every other year thereafter' describes how often cones are produced, which is timing of the life cycle, not a quality of the cone. 'Usually' was matched as the quality.",
+  "reason": "PATO_0000044 frequency is a process quality and cannot inhere in a strobilus. The statement is about reproductive timing, which needs a process annotation if it is kept at all.",
+  "confidence": 0.7
+ }
+]

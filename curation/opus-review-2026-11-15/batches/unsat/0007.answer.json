@@ -1,0 +1,26 @@
+[
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_b4ff20c6bcc92a5324a44b797f4efa98",
+  "decision": "wrong_grounding",
+  "target": "bearer: the root growth process (no 'root growth' class in the local GO; nearest GO:0048364 root development) with PATO_0000911 decreased rate; not PO_0009005 root",
+  "fix": "Do not annotate PO_0009005 root with PATO_0001492 growth rate. Either attach the rate to the process of root growth (process bearer) or drop the statement: it is a comparative remark about seedling root growth, not a phenotype of the root as a structure.",
+  "reason": "PATO_0001492 growth rate is_a PATO_0000161 rate, which PATO defines as 'a quality of a single process'. FLOPO's GCI (has-part some (Thing and has-quality some process quality) SubClassOf Nothing) correctly forbids a process quality on an anatomical entity. The axiom is right. The quality belongs to the growth process, not to the root.",
+  "confidence": 0.75
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_866293742286c863326a0cafc30a0f72",
+  "decision": "wrong_grounding",
+  "target": "PATO_0001961 in contact with (relational; towards the supraalar cells)",
+  "fix": "Re-ground 'continuous with' as a spatial relation: alar cell (PO_0030057) + PATO_0001961 in contact with, towards the supraalar cell region. Do not use PATO_0000689.",
+  "reason": "PATO_0000689 continuous is_a PATO_0000057 occurrence and is defined as 'a quality of a single process ... uninterrupted in time, sequence', so it is a process quality and is unsatisfiable on a cell under the FLOPO process-quality GCI. In the moss leaf the phrase means the alar cell group grades without a break into the lax supraalar cells, which is spatial adjacency (contiguity), not a process. Earlier union-pair reviews also flagged 'continuous' as a doubtful grounding for static structures.",
+  "confidence": 0.7
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_9b17a9d68a280f11a7c1b96c757af54f",
+  "decision": "wrong_statement",
+  "target": "PO_0009006 shoot system (or the whole plant PO_0000003) + PATO_0000402 branched",
+  "fix": "Re-split the statement: 'branches' is the verb (the plant/stem branches) and 'frequently' means 'much', so annotate shoot system + branched (much-branched), not branch + frequency.",
+  "reason": "PATO_0000044 frequency is_a PATO_0050000 rate of occurrence is_a PATO_0000161 rate, a process quality ('number of the bearer's repetitive actions in a particular time'), so it cannot inhere in PO_0025073 branch. The error is in the split: the verb 'branches' was read as the noun bearer and the adverb 'frequently' as a temporal frequency. Botanically the sentence says the plant is much-branched. The FLOPO process-quality axiom is correct.",
+  "confidence": 0.8
+ }
+]

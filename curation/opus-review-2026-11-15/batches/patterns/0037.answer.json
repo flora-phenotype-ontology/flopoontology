@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P01480",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read 'd.b.h.' / 'dbh' as diameter PATO:0000915? no: diameter PATO:0001334 of the trunk, bearer stem PO:0009047 (synonym trunk), not whole plant; then 'to' right after the abbreviation is the usual inclusive upper-bound cue (value_high 40 cm).",
+  "reason": "'to 40 cm' is a plain inclusive upper bound; the cue fails only because the abbreviation for diameter at breast height sits between the bearer and 'to' and has no reading.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01481",
+  "decision": "existing_pattern",
+  "target": "docs/flora-annotation-playbook.md",
+  "fix": "Habit-noun rule (playbook rule 6; flopo2/ingest/ncvc_normalization.tsv Q13): 'vine' = whole plant PO:0000003 has characteristic climbing FLOPO:0991108, instead of the signature-less FLOPO_0985032. 'leafy' and 'tangled' are separate statements.",
+  "reason": "The term (climbing) exists; only the vine noun lacks an EQ reading. Same treatment as climber/liana in the 2026-11-14 review.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01482",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Ground 'chamber' to locule PO:0025263 and read 'in each chamber' as a count position (a per-locule kind, landmark locule); bearer seed PO:0009010, amount 1-2, container fruit. No phenotype class, as for other position counts.",
+  "reason": "A count per locule is a count at a place, not of the whole fruit; the place word 'chamber' is not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01483",
+  "decision": "new_pattern",
+  "target": "order of division",
+  "fix": "Slots: bearer leaf lamina, kind of division (lobed / parted / dissected, as union), and the number of orders low-high (1-6). OWL: only the kind of division (lobed PATO:0001979 or its alternatives); RDF: fb:divisionOrder low/high with the source words.",
+  "reason": "'1-6×-lobed' in FNA means divided to the 1st-6th order, not a count of lobes and not a measurement; no pattern holds the order of division.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01484",
+  "decision": "new_pattern",
+  "target": "range across stages",
+  "fix": "Slots: the continuum reflexed PATO:0104353 to spreading PATO:0104356 on sepal PO:0009031, and two stage contexts. Add a row 'in flower and fruit' to config/flora_context_words.tsv that names both the flowering stage PO:0007616 and the fruit development stage PO:0001002. The record then has present_during both stages, or two records, one per stage.",
+  "reason": "Both values and both stages have terms. The coordinated stage phrase is not in the context table, so the stage qualifier holds the row.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01485",
+  "decision": "transcription_error",
+  "target": "periderm, exfoliating, when dry",
+  "fix": "Bearer periderm PO:0005046 part of petiole PO:0020038, quality exfoliating FLOPO:0991021 (synonym flaking), with specimen_condition dry (pattern 06) for 'when dry'.",
+  "reason": "'bark' is not a quality and the petiole has no bark; the statement says the periderm flakes off on drying.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01486",
+  "decision": "existing_pattern",
+  "target": "docs/odp/01-approximate-value.md",
+  "fix": "Grounding rule: a number with a unit followed by 'thick' is the attribute thickness PATO:0000915, not the value 'thick'; 'ca.' is the approximately cue. Rhizome PO:0004542, thickness 3 cm, approximately.",
+  "reason": "The transcriber gave the adjective 'thick' as the quality of a measurement; the attribute exists.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01487",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'apex' as a region of the organ of the sentence (slot 1, kind C: BSPO apical region of lemma PO:0009037), not as a count position; '2-toothed' splits to tooth, amount 2, container lemma.",
+  "reason": "'apex 2-toothed' is a count of teeth of the lemma apex; the apex is the region of the bearer, not a repeated position.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01488",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md",
+  "fix": "Accept the prefix 'non-' inside the word as the negation cue (like '-less'): bearer trichome PO:0000282 part of the organ, glandular PATO:0002117 negated. Check the organ: the visible clause belongs to the petiole/leaf blade, not certainly the stem.",
+  "reason": "The negation is inside the word 'nonglandular', so no separate cue stands in the span. The negation pattern exists.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01489",
+  "decision": "existing_pattern",
+  "target": "docs/odp/01-approximate-value.md",
+  "fix": "Same grounding rule as P01486: 'N mm thick' is thickness PATO:0000915 of branch PO:0025073 (twig), 2-3 mm. 'solid' and 'puberulous' are separate statements.",
+  "reason": "A numeric 'thick' is the attribute thickness, which exists.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01490",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Take the container from the organ of the sentence, the perigynium PO:0009044 (the description runs on from it); 'ribbed' → rib by config/flora_counted_parts.tsv, amount 2.",
+  "reason": "The 2-ribbed perigynium is a plain count in a compound word; only the container was not found.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01491",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'follicles unknown' says the fruit has not been seen. It is not absence and not a phenotype.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01492",
+  "decision": "transcription_error",
+  "target": "abaxial (lower) lip of corolla, trilobed",
+  "fix": "Bearer corolla PO:0009059 lip with the FLOPO position value lower (kind D), quality trilobed (playbook rule 6, three-lobed = trilobed), not a count.",
+  "reason": "'abaxial lip lobes' is not a quality; the text says the abaxial lip is 3-lobed.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01493",
+  "decision": "existing_pattern",
+  "target": "docs/flora-annotation-playbook.md",
+  "fix": "Habit-noun rule for French 'liane' (ncvc_normalization Q14): whole plant PO:0000003 has characteristic climbing FLOPO:0991108 only. French 'liane' includes herbaceous climbers (here 'Liane: herbacée'), so woodiness must come from its own word.",
+  "reason": "The class FLOPO_0900035 has no EQ signature. Climbing exists, and herbaceous is a separate statement.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01494",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Bearer vitta FLOPO_0986042, amount 3, container mericarp PO:0020075, count_position 'in each furrow' (kind at_region or a per-interval kind); '4 on commissure' is a second record at the commissure.",
+  "reason": "A count per furrow is a count at a position; the cue 'in each furrow' and the vitta bearer are not read.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01495",
+  "decision": "transcription_error",
+  "target": "whole plant mat-forming; colour dark green or brown",
+  "fix": "Whole plant PO:0000003 mat-forming FLOPO:0991010; colour dark green or brown as a union (pattern 07); 'rigid' a separate record.",
+  "reason": "'present' does not match 'plants in mats'; the habit and colours are in the text.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01496",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read 'pedicellate (to 2 mm)' as pedicel PO:0030112 (of the capsule) length ≤ 2 mm, accepting the 'to' cue inside the parenthesis after the word that names the part; 'sessile or' is the alternative over attributes (pattern 07).",
+  "reason": "An inclusive upper bound exists as a pattern; the parenthesis after 'pedicellate' hides the cue.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01497",
+  "decision": "new_pattern",
+  "target": "projection beyond another part",
+  "fix": "Slots: bearer (ray corolla limb, NOT PO:0020105 leaf ligule), quality exserted PATO:0000623 towards the implied involucre, and the length of the projecting portion 1-3 mm. OWL: exserted only; RDF: fb:projectionLength low/high with unit.",
+  "reason": "The number measures how far the ligule projects, not its length; no pattern holds a measured projection.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01498",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read the suspended hyphen '3- or 4-parted' as the range 3-4 (the '4 or 5' rule) of lobe ('parted' → lobe), bearer the lower lip of the corolla (kind D lower); 'spreading flat' is spreading PATO:0104356 as a second record.",
+  "reason": "This is a count with two numbers, not a disjunction of values. The elided hyphen blocks the range rule.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01499",
+  "decision": "new_pattern",
+  "target": "alternative with its own scope",
+  "fix": "Slots: an alternative of a preceding list ('entire' bracts) as the scope, then the values (lanceolate or linear-lanceolate) that hold only within that scope. OWL: (bract and entire) has characteristic (lanceolate or linear-lanceolate); RDF: fb:scopeOf points to the alternative, with the anaphor 'latter' as cue.",
+  "reason": "'latter' refers back to the entire bracts only; stated of all bracts the values would be false for the pinnatisect ones.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01500",
+  "decision": "new_pattern",
+  "target": "weak degree",
+  "fix": "Slots: value acuminate PATO:0002228 with degree qualifier 'hardly' (barely or not), cue with offsets. RDF only: the degree is kept as an annotation, with no class assertion, since 'hardly' is close to negation.",
+  "reason": "'hardly' is neither a negation nor an approximation ('±'); no pattern holds a weakened degree.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01501",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Container from the organ of the sentence: 'Scales' (Carex pistillate scales) → bract PO:0009055 (synonym scale); 'veined' → vein, amount 3.",
+  "reason": "A plain compound-word count; the container stands at the start of the sentence.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01502",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Accept the unhyphenated 'several seeded' like 'several-seeded': seeded → seed, count_word several, container fruit PO:0009001? (fruit), presence only.",
+  "reason": "Pattern 13 lists exactly this compound; only the space instead of the hyphen blocks it.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01503",
+  "decision": "transcription_error",
+  "target": "trichome length",
+  "fix": "Bearer trichome PO:0000282 part of stem PO:0009047, quality length PATO:0000122, 0.5-1 mm.",
+  "reason": "'hairs' is the bearer, not a quality; the number is the length of the hairs.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01504",
+  "decision": "new_pattern",
+  "target": "spacing of like parts",
+  "fix": "Slots: bearer leaflet PO:0020049, distance PATO:0000040 towards the same kind of part, 1-3 cm, along the leaf rachis PO:0020055. OWL: has characteristic (distance and towards some leaflet); numbers in RDF (fb:low/fb:high).",
+  "reason": "Distance between neighbouring leaflets; the spacing pattern is listed as open in the context-patterns review.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01505",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Map the transcribed quality 'number' to the count reading: bearer capitulum inflorescence PO:0030121, count_word many, container the synflorescence (panicle).",
+  "reason": "'Capitula many' is the indefinite count of pattern 13; the transcriber's 'number' quality was not taken as a count.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01506",
+  "decision": "new_pattern",
+  "target": "bound on the maximum",
+  "fix": "Slots: bearer spike inflorescence PO:0030117 (the longest of the fascicle), length ≤ 4.5 cm and width ≤ 1.5 cm, each approximately ('±'). RDF only, flagged as a statistic of the largest member (fb:statistic 'max member'); no OWL class, since it does not bound every spike.",
+  "reason": "'the longest to 4.5 cm' states the size of the largest member of a set. That is not a bound on each part, and the bearer is the spike, not the inflorescence's width.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01507",
+  "decision": "new_pattern",
+  "target": "count per unit length",
+  "fix": "First correct the OCR ('per era.' = 'per cm.', 'nun.' = 'mm.'). Slots: bearer leaf lamina tooth PO:0025518, count 2-4, per unit length cm along the leaf margin PO:0020128; RDF only (fb:perUnitLength), no class.",
+  "reason": "A rate of teeth per cm is held by pattern 14 ('rates are held'), and the source wording is garbled.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01508",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Add the French cue 'de chaque côté' (kind each_side), also when it stands before the count in the clause; bearer leaf lamina tooth PO:0025518, amount 12-20, container leaf lamina PO:0020039.",
+  "reason": "This is the 'teeth N per side' example of pattern 14 in French, and the cue precedes the number.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01509",
+  "decision": "existing_pattern",
+  "target": "docs/flora-annotation-playbook.md",
+  "fix": "English 'liana' habit-noun rule: whole plant PO:0000003 has characteristic climbing FLOPO:0991108 and ligneous PATO:0002348 (two records), instead of the signature-less FLOPO_0900035. 'rarely sarmentose shrub' is an alternative with frequency (pattern 08).",
+  "reason": "The terms exist; the habit class lacks an EQ signature, as decided for liana in the 2026-11-14 review.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01510",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "The bearer is the panicle axis = inflorescence axis PO:0020122 ('axis 8-12 cm, shorter than'), decreased length PATO:0000574 towards raceme inflorescence PO:0030115 (ground plural 'racemes'); 'or subequaling lowest racemes' is the equality alternative (pattern 10), kind D lower on the target.",
+  "reason": "The second term ('racemes') is in the text, so the reason given is wrong. The bearer and the plural target were not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01511",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Resolve 'each containing' to the locules of the same sentence: seed PO:0009010 amount 1, count_position per locule (landmark locule PO:0025263), container fruit; 'Locules 2' is a separate count.",
+  "reason": "A count per locule is a count at a position; the anaphoric 'each' was not tied to the locules.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01512",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "French 'de chaque côté' as each_side with landmark leaf midvein PO:0020139 ('nervure médiane'); bearer secondary veins (vein), amount 5-9, container leaf lamina. 'obliques ascendantes' are separate records (OCR joined the words).",
+  "reason": "This is the pattern's own example (veins N on each side of the midrib) in French.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01513",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md",
+  "fix": "Apply the clause rule: the stage words 'les plus jeunes' stand in a later clause ('les plus jeunes ± velus') and do not qualify the colour. Branch PO:0025073 colour dark purple, no stage.",
+  "reason": "The colour has no stage. A stage word from a neighbouring clause was attached to it.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01514",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'3-lobed' is not split, because it has the term trilobed (playbook rule 6). Bearer anther PO:0009066 with the apex as region (slot 1, kind C: apical region; in Aframomum the anther crest), quality trilobed.",
+  "reason": "The transcriber split a word that has its own term into a count, and the apex region was not used.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01515",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Add a rule 'racemose-paniculate' → panicle inflorescence PO:0030123 present (a panicle with racemose branches), beside racemose → raceme inflorescence PO:0030115 present (ncvc_normalization Q45/Q51). The two presences then form a one_of union over statements.",
+  "reason": "Both readings are entity presences that have rules except the hyphenated compound; the union pattern exists.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01516",
+  "decision": "existing_pattern",
+  "target": "docs/odp/08-alternative-with-frequency.md",
+  "fix": "Read 'sparsely or densely pubescent' as pubescent PATO:0001320 (the degree words span the range, like 'glabrous or nearly so'), plus 'rarely glabrous' as an alternative with frequency rarely.",
+  "reason": "Alternatives of density do not change the value. With the 'rarely' operand this is pattern 08.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01517",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Bearer rule for NAF grass terminology: 'second scale' → glume PO:0009039 (upper glume), 'third scale' → sterile lemma PO:0009040; two records, each vein amount 3 ('nerved' → vein).",
+  "reason": "A compound-word count whose containers are ordinal 'scales' that the bearer rules do not ground.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01518",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Allow degree words ('a little', 'slightly', 'much') before 'shorter than'; lemma PO:0009037 decreased length PATO:0000574 towards glume PO:0009039.",
+  "reason": "This is a textbook comparison of the pattern; the degree adverb blocked the reading of the target.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01519",
+  "decision": "missing_term",
+  "target": "ovary process (ovarian crest process of Allium): an outgrowth on each ovary lobe",
+  "fix": "With a bearer term, 'central' is the FLOPO position value median, relative to the ovary lobe; '2 per lobe' is a count at a position (pattern 14).",
+  "reason": "The structure is a position of a part on its lobe, but the Allium ovary process has no PO or FLOPO class.",
+  "confidence": "low"
+ }
+]

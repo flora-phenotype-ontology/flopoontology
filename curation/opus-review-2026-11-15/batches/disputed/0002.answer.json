@@ -1,0 +1,212 @@
+[
+ {
+  "rule_id": "R0228",
+  "decision": "keep",
+  "target": "",
+  "reason": "In flora usage, anisophylly almost always means the leaves of a pair or node differ in size. That is exactly FLOPO unequal (FLOPO:0991101), a size quality of a set of like parts. It says nothing about how many forms there are, so it adds nothing false. The rule already moves whole-plant statements to the leaves. Differences in shape are rare and stay in the source words.",
+  "confidence": 0.65
+ },
+ {
+  "rule_id": "R0230",
+  "decision": "keep",
+  "target": "",
+  "reason": "Monadelphous filaments are fused with one another, so connate (FLOPO:0991067) is true. The rule only applies to stamens, filaments and androecium. Mapping to the parent class loses 'one bundle' but asserts nothing wrong, the same as rolled → curled. Monadelphous (99 statements) is a good candidate for a later class next to diadelphous (FLOPO:0991259). Until then the parent is the right fallback.",
+  "confidence": 0.6
+ },
+ {
+  "rule_id": "R0234",
+  "decision": "constrain",
+  "target": "hair|trichome|indumentum|pubescence|margin|leaf|lamina|petal|sepal|bract|lip",
+  "reason": "Curly hairs ('poils frisés') are crisped hairs in standard glossary use. FLOPO crisped already lists trichome bearers, so the first check's list wrongly leaves out the main use. Curly stems, tendrils and twigs mean bent or coiled axes, not a crisped edge, so leave them out. Crisped's edge-shape parent (PATO:0002267) should be widened for hairs, as the rule's own note says.",
+  "confidence": 0.6
+ },
+ {
+  "rule_id": "R0237",
+  "decision": "constrain",
+  "target": "vein|nerve|midrib|midvein|venation|costa|rib|reticulation|areole|tooth|teeth|margin|gland|stipe|petiole",
+  "reason": "'Well defined' means clearly visible and marked off. That matches how the earlier review mapped 'distinct' to conspicuous (C176), and C176 was limited to veins and similar features. Limiting this rule the same way avoids cases where 'well defined' means separate or free, which belongs to C177.",
+  "confidence": 0.55
+ },
+ {
+  "rule_id": "R0240",
+  "decision": "constrain",
+  "target": "connective|midrib|midvein|costa|nerve|vein|rachis|axis",
+  "reason": "Most cases are 'connective not prolonged above the thecae' or a midrib or rachis not continued beyond the apex. That is exactly not excurrent (FLOPO:0991162: extending beyond the apex of the structure it runs through). On other parts (corolla tube, style, lobes), 'not prolonged' means not elongated, and excurrent is wrong there.",
+  "confidence": 0.6
+ },
+ {
+  "rule_id": "R0241",
+  "decision": "constrain",
+  "target": "leaf|lamina|petal|sepal|tepal|bract|lip|labellum|scale|seed|receptacle|disc|surface|face",
+  "reason": "'Hollowed abaxially' or 'deeply hollowed' on flat or surface parts means curving inward: PATO concave. On trunks, stems or fruits, 'hollowed' means an inner cavity, which is PATO hollow (PATO:0002078). Those parts are left out.",
+  "confidence": 0.65
+ },
+ {
+  "rule_id": "R0252",
+  "decision": "keep",
+  "target": "",
+  "reason": "Gamopetalous only ever describes the corolla (its petals fused to one another), so the word cannot mean anything else. Connate (FLOPO:0991067) is right, as for 'united' (C171). A bearer limit adds nothing. The rule already puts the corolla's petals as the bearer.",
+  "confidence": 0.7
+ },
+ {
+  "rule_id": "R0254",
+  "decision": "constrain",
+  "target": "leaf|lamina|midrib|midvein|petiole|stem|culm|sheath|scape|rhizome",
+  "reason": "On leaves, midribs and stems, 'lacunose' means having lacunae (air spaces). PO plant anatomical space lists lacuna as an exact synonym, so a presence statement fits. A lacunose receptacle, endocarp or seed is pitted, which is foveate (C179), so surface parts are left out.",
+  "confidence": 0.5
+ },
+ {
+  "rule_id": "R0260",
+  "decision": "constrain",
+  "target": "margin|leaf|lamina|petal|sepal|tepal|bract|calyx|corolla|sheath|stipule|ligule|spathe|lobe",
+  "reason": "Lacerate (FLOPO:0991115) is a margin cut irregularly as if torn, which fits flat parts and sheaths. On fruit valves or bark, or for specimen damage ('leaves often torn'), 'torn' means splitting or damage, not a margin shape.",
+  "confidence": 0.6
+ },
+ {
+  "rule_id": "R0265",
+  "decision": "constrain",
+  "target": "vein|nerve|midnerve|midrib|venation|costa|rib|reticulation|areole|vitta|gland",
+  "reason": "This follows the earlier split of 'distinct'. On veins and similar parts it means clearly visible (C176), so 'not distinct' there is inconspicuous, like 'indistinct' (C175). On stamens, petals, styles and lobes, 'distinct' means free (C177), so 'not distinct' would mean connate. Those parts must not get inconspicuous.",
+  "confidence": 0.6
+ },
+ {
+  "rule_id": "R0267",
+  "decision": "constrain",
+  "target": "vein|nerve|secondary vein|lateral vein|venation|leaf|lamina|leaflet",
+  "reason": "Secondary veins looping before the margin are brochidodromous venation (PATO:0001970). Looping stems, branches or tendrils mean a curved axis, not venation.",
+  "confidence": 0.7
+ },
+ {
+  "rule_id": "R0275",
+  "decision": "keep",
+  "target": "",
+  "reason": "Divided means split into parts, and PATO split is the parent of laciniate, pedate and parted. 'Irregularly' describes manner, not a separate quality, and the earlier reviews treat such words as dropped detail. Mapping to the parent is true. A narrower class like laciniate would add details the text does not give.",
+  "confidence": 0.55
+ },
+ {
+  "rule_id": "R0286",
+  "decision": "keep",
+  "target": "",
+  "reason": "This is the negation of R0032 'rooting' → shoot-borne root present (synonym adventitious root), which has no bearer limit. 'Not rooting' is only said of stems, stolons, nodes, branches or whole plants, and roots from any shoot part count as shoot-borne. A limit would make it inconsistent with R0032.",
+  "confidence": 0.6
+ },
+ {
+  "rule_id": "R0298",
+  "decision": "keep",
+  "target": "",
+  "reason": "'Narrowed (to the base or apex)' is mapped to PATO tapered by the accepted rule C172 (2394 statements). Its negation is therefore not tapered. The first check's idea that 'narrowed' means constricted is not how floras use it. Constricted cases use 'constricted' or 'abruptly narrowed' (FLOPO:0991316).",
+  "confidence": 0.7
+ },
+ {
+  "rule_id": "R0300",
+  "decision": "constrain",
+  "target": "filament|style|stigma|connective|petiole|stipe|claw|base|apex",
+  "reason": "C181 maps 'expanded' to dilated only for the widened-base sense (filament base, style apex), so 'not expanded' is not dilated there. On buds, leaves, corollas and flowers, 'not expanded' means not yet unfolded or opened, a stage of development. Dilated is wrong for those parts.",
+  "confidence": 0.5
+ },
+ {
+  "rule_id": "R0329",
+  "decision": "constrain",
+  "target": "pith|cortex|mesophyll|tissue|ground tissue|pericarp|mesocarp|endocarp|wall|stem|root",
+  "reason": "For tissues and organs, 'parenchymatous' means made of parenchyma. Parenchyma present (PO synonym 'portion of parenchymatous tissue') is a weaker but true statement. In bryology, 'cells parenchymatous' describes cell shape (short and blunt-ended rather than elongate and pointed), and presence is wrong there. So cells are left out.",
+  "confidence": 0.45
+ },
+ {
+  "rule_id": "R0330",
+  "decision": "constrain",
+  "target": "corolla|corolla lobe|limb|petal|sepal|floret|ray floret|ray flower|ray",
+  "reason": "This negates C189 (ligulate = strap-shaped), which was set for corollas, petals and sepals. In grasses, sedges and some ferns, 'ligulate' means having a ligule (PO_0020105). For leaves, sheaths, stipules and lemmas, 'not ligulate' means ligule absent, not 'not strap-shaped', so lemma is left out too.",
+  "confidence": 0.65
+ },
+ {
+  "rule_id": "R0332",
+  "decision": "drop",
+  "target": "",
+  "reason": "Heterophylly means leaves of different forms on one plant, and there can be more than two. FLOPO dimorphic (FLOPO:0991092) states exactly two forms, which adds a claim the text does not make. No existing parent class means 'of several forms', so this needs a new class (a parent of dimorphic and sibling of monomorphic) rather than a rule.",
+  "confidence": 0.55
+ },
+ {
+  "rule_id": "R0336",
+  "decision": "keep",
+  "target": "",
+  "reason": "Incurving is curving gradually inward. PATO curved is a true parent class, as already accepted for arcuate (C185). Inflexed (FLOPO:0991145) is an abrupt bend and involute is a rolled margin, so neither fits. Losing the direction is acceptable until an 'incurved' class exists.",
+  "confidence": 0.65
+ },
+ {
+  "rule_id": "R0340",
+  "decision": "drop",
+  "target": "",
+  "reason": "In 'stipe-like base' or 'stipe-like internode', the bearer is the stalk-like part itself. Stipitate (FLOPO:0991065, borne on a stalk) would wrongly say that part is carried on a stalk. FLOPO deals with resemblance words through 'X-like' shape classes (petiole-like FLOPO:0991298, stolon-like). Stipe-like would need its own class.",
+  "confidence": 0.6
+ },
+ {
+  "rule_id": "R0343",
+  "decision": "constrain",
+  "target": "disc|calyx|corona|cupule|perianth|gland|annulus",
+  "reason": "A rim-like disc or calyx is a low ring round the receptacle or ovary. An annular disc is a standard phrase, and PATO ring shaped has annular as an exact synonym. On other parts, 'rim-like' means a raised edge or margin, not a ring.",
+  "confidence": 0.55
+ },
+ {
+  "rule_id": "R0345",
+  "decision": "keep",
+  "target": "",
+  "reason": "Well-spaced flowers, lobes or veins are clearly and fairly widely separated, which matches FLOPO distant (widely separated from the nearest structures of its kind). 'Well-spaced' does not say the spacing is even, so evenly spaced (FLOPO:0991365) would add a claim.",
+  "confidence": 0.6
+ },
+ {
+  "rule_id": "R0346",
+  "decision": "keep",
+  "target": "",
+  "reason": "'Narrowly' is a degree word. The earlier review accepted the same treatment for 'narrowly oval' and 'narrowly cylindric' (R0271, R0264). The shape is PATO elliptic, and any stated length-to-width ratio goes to pattern 11.",
+  "confidence": 0.75
+ },
+ {
+  "rule_id": "R0347",
+  "decision": "keep",
+  "target": "",
+  "reason": "The surface is canescent (FLOPO:0991079). 'Appressed' describes the hairs, not the surface, and can be added as appressed (FLOPO:0991064) on the trichomes. The rule asserts nothing wrong and keeps the main content.",
+  "confidence": 0.7
+ },
+ {
+  "rule_id": "R0350",
+  "decision": "constrain",
+  "target": "petal|sepal|tepal|bract|lip|limb|base",
+  "reason": "In these floras, 'ungulate' is a misspelling of unguiculate ('base long ungulate'; French 'onguiculés'), so clawed (FLOPO:0991169, synonym unguiculate) is right for perianth parts and bracts. Limiting it to those parts keeps out the real meaning, 'hoof-shaped', on other parts.",
+  "confidence": 0.6
+ },
+ {
+  "rule_id": "R0352",
+  "decision": "keep",
+  "target": "",
+  "reason": "Stems, achenes and fruits with blunt angles are angular (PATO:0001977). 'Obtusely' is the degree of the angle, which PATO does not split, so this is the same degree-word treatment as narrow-elliptic.",
+  "confidence": 0.7
+ },
+ {
+  "rule_id": "R0359",
+  "decision": "constrain",
+  "target": "petal|lip|labellum|corolla",
+  "reason": "PO has petal spur (PO_0025511) and corolla spur, but no general spur class. Spurless sepals, calyx, anthers or whole flowers (where a sepal spur may be meant, as in Tropaeolum or Delphinium) cannot be expressed as 'petal spur absent'.",
+  "confidence": 0.65
+ },
+ {
+  "rule_id": "R0364",
+  "decision": "keep",
+  "target": "",
+  "reason": "'Ecostate' is mainly a moss term (69 statements in 6 floras, nearly all moss leaves). PO costa (PO_0030072) is the non-vascular leaf midrib and has phyllid costa and midrib as synonyms, so the target fits the main use. The first check's angiosperm and fern sense is rare for this word.",
+  "confidence": 0.65
+ },
+ {
+  "rule_id": "R0366",
+  "decision": "constrain",
+  "target": "bark|trunk|stem|branch|twig|axis",
+  "reason": "Fissured (FLOPO:0991022) is defined for bark and axes and has cracked as a related synonym. Cracking capsules or fruits are splitting open, which belongs to dehiscent (FLOPO:0991149) and its children, not fissured.",
+  "confidence": 0.75
+ },
+ {
+  "rule_id": "R0370",
+  "decision": "keep",
+  "target": "",
+  "reason": "When 'indument' appears in the quality field ('leaves with indument', 'indument of stellate hairs'), the statement asserts the covering is there, so indumentum present (FLOPO:0986003) is right. 'Indument absent' puts 'indument' in the bearer field and 'absent' in the quality field, so this rule cannot fire there. The first check's worry does not apply.",
+  "confidence": 0.6
+ }
+]

@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P02760",
+  "decision": "new_pattern",
+  "target": "alternative with its own bearer",
+  "fix": "Each operand of the alternative carries its own bearer: glume (PO:0009039) has 3 veins, or the lower glume (PO:0006002; 'the first' = first glume) has 5 veins. OWL: a union of two has_part expressions, each a count (pattern 03, has number of PATO:0001555 of vein). RDF: one_of operands, each with its own fb:bearer and the cue 'the first'.",
+  "reason": "The 'or' switches from all glumes to one member of the pair. Pattern 07 only allows alternatives of values on one bearer.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02761",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add 'to a height of' as an upper-bound cue. Whole plant PO:0000003, height up to 18 m (60 feet converted, with source_unit kept). 'climbs by tendrils' is a separate statement: climbing FLOPO:0991108 and tendrilous PATO:0015005.",
+  "reason": "This is a plain upper bound on height. Only the wording of the cue is unknown to the parser.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02762",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/flora_review_rules.tsv R0006 (naked) + region 'lower part' in config/flora_context_words.tsv",
+  "fix": "The branch is a panicle branch: ground it to inflorescence branch PO:0009081, not shoot branch. On inflorescence branches 'naked' means without spikelets, not leafless. Add a bearer-restricted reading: spikelet absent (PATO:0000467, negated presence) in the proximal region (slot 1, 'lower part').",
+  "reason": "Rule R0006 reads 'naked' on a branch as leaf absent. That is wrong for a grass panicle branch, and that wrong reading is why the negation cue failed.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02763",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Smooth PATO:0000701 and plicate PATO:0104365 are under different attributes, so 'to' cannot be a continuum. Read it as the secondary union: the pair is already accepted in config/flora_union_pairs.tsv (row 283). Put 'scarcely' on the plicate operand as a weak-degree qualifier (RDF only). Put 'when dry' in specimen_condition (pattern 06).",
+  "reason": "Both terms and the reviewed pair exist. The annotator kept the row because it tried the continuum reading.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02764",
+  "decision": "missing_term",
+  "target": "monoclinous: having bisexual (perfect) flowers; a lexicon rule to hermaphrodite PATO:0001340 on whole plant PO:0000003",
+  "fix": "Add the word rule. The statement is then pattern 08: one_of dioecious FLOPO:0991072, or hermaphrodite with frequency_qualifier 'rarely'.",
+  "reason": "The structure is exactly pattern 08 ('dioecious or rarely monoecious'). No rule maps the word 'monoclinous'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02765",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv Q12 (twining)",
+  "fix": "Q12 sends 'twining' to the bare phenotype class FLOPO_0985034. Ground it to climbing FLOPO:0991108 instead, as rules R0318 (twiner) and R0610 (voluble) already do, or give FLOPO_0985034 that EQ signature. 'up to 6 m' is a separate stem length bound (pattern 02).",
+  "reason": "The definition of climbing covers twining, and the sibling words already go to it. Only Q12 still points at a class with no EQ signature.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02766",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Read numeric fractions ('1/5-1/4 the width of X') as ratio_low 0.2 and ratio_high 0.25. Costa PO:0030072, decreased width, towards the leaf (target the base region of the leaf: 'at base').",
+  "reason": "Pattern 10 already covers 'half the length of'. The parser does not know numeric fractions, so it looked for a unit.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02767",
+  "decision": "existing_pattern",
+  "target": "docs/odp/12-part-of-qualified-whole.md",
+  "fix": "Read a sex adjective in front of a part ('carpellate bracts', 'staminate bracts') as the qualified whole: bract PO:0009055 belonging to (subtending) a female flower (PATO:0000383), length 6-35 mm. Add carpellate/staminate as prefix readings in config/flora_context_words.tsv.",
+  "reason": "The sex belongs to the flowers the bract goes with, not to a growth stage of the bract. Pattern 12 handles this but only reads the 'in male flowers' wording.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02768",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add 'enveloped in' to the cues for surrounded by PATO:0005016, towards perigynium PO:0009044 (the lower half is a proximal-region target). 'loosely' is a degree qualifier in RDF. Ground 'achene' to fruit, not seed.",
+  "reason": "This is the 'enclosed by' row of pattern 09 with an unlisted verb. The bearer was also transcribed as seed, but the text says achene.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02769",
+  "decision": "new_pattern",
+  "target": "comparison with an implied second term",
+  "fix": "Stamen count in flowers that are cleistogamous (FLOPO:0991176; the whole as in pattern 12), compared with the stated count: the number of stamens is below 6 (value_high 5, has number of PATO:0001555). RDF keeps 'fewer' and a link to the reference statement ('stamens 6'). OWL gets the upper bound only.",
+  "reason": "'fewer' compares with the count in the other (chasmogamous) flowers and does not repeat it. The doc lists this construction as open.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02770",
+  "decision": "transcription_error",
+  "target": "quality should be 'carinate', not 'shape'",
+  "fix": "Bract PO:0009055, keel-shaped PATO:0002522 (rule C221 carinate), in the apical region ('toward the apex': context row 127).",
+  "reason": "The quality was transcribed as the generic 'shape' and sent to measurement handling. The source word, the rule and the region reading all exist.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02771",
+  "decision": "transcription_error",
+  "target": "entity should be hilum PO:0020063, quality terminal PATO:0002476",
+  "fix": "Re-transcribe as bearer hilum (part of seed) with quality terminal. No relation slot is needed.",
+  "reason": "'hilum terminal' is a simple EQ of the hilum. It was transcribed as seed + 'hilum terminal'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02772",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "The counted part is leaf, not 'per ultimate branch'. Add a count_position cue 'per ultimate branch' (a per_branch kind, landmark branch/shoot PO:0004545): leaf count 3-7 per ultimate branchlet.",
+  "reason": "This is a count per place ('flowers 1-3 per node'). The position cue is missing, and that is why the container was transcribed as the entity.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02773",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'4-6-dentate' gives a tooth count 4-6 through the dentate → tooth row. The container is the rim (margin) of the staminode's disc-shaped lamina (staminode PO:0009077, margin region by slot 1). 'indistinctly' is a weak-degree qualifier in RDF.",
+  "reason": "The compound count word is in the table. Only the 'rim' container and the degree word blocked it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02774",
+  "decision": "missing_term",
+  "target": "deflexed (Latin deflexus, -is): bent or turned abruptly downward; a rule to reflexed PATO:0104353 or a FLOPO child of it",
+  "fix": "Add the Latin/English rule. Capsule (and pedicel 'in fructu') deflexed; the pedicel reading takes the fruiting stage context.",
+  "reason": "This is an orientation quality, not a process. No rule exists for 'deflexed' or its Latin forms.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02775",
+  "decision": "new_pattern",
+  "target": "comparison with an implied second term",
+  "fix": "Bearer: sepal with lateral position FLOPO:0991380. Quality: decreased width (PATO), towards the sibling named in the previous clause (sepal with median position FLOPO:0991381, the dorsal sepal). RDF keeps 'slightly' and marks the target as implied.",
+  "reason": "The second term (the dorsal sepal) is understood from context and not written. The doc lists this construction as open (76 statements).",
+  "confidence": "high"
+ },
+ {
+  "id": "P02776",
+  "decision": "missing_term",
+  "target": "mauve: pale violet; a rule to desaturated violet PATO:0001703 (exact synonym 'pale violet', which the text itself glosses)",
+  "fix": "Add the colour rule. Then: corolla lobe, adaxial surface (slot 1), one_of lilac PATO:0001943 or desaturated violet. Drop the 'vs.' part, which describes another taxon.",
+  "reason": "The union pattern and the surface reading exist. 'mauve' has no rule.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02777",
+  "decision": "transcription_error",
+  "target": "the bearer is the involucre (not named in the garbled source), not the flower; the quality is a count",
+  "fix": "Lobe count 5 (pattern 03, lobed → lobe) plus unequal FLOPO:0991101 of the lobes, on the involucre. If the involucre cannot be grounded from the clause, hold the row.",
+  "reason": "'tubular-campanulate, unequally 5-lobed', followed by 'perianth', describes the involucre in Mirabilis. The flower bearer and the bare 'lobed' quality lose the count.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02778",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add French cues ('s'insérant à l'intérieur de', 's'insérant sur/dans') for inserted into PATO:0000624. Ground 'tube' in a stamen clause to the staminal tube (connate filaments), towards it.",
+  "reason": "This is the 'inserted at/in' row of pattern 09. The cue list is English only.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02779",
+  "decision": "new_pattern",
+  "target": "bound on the maximum",
+  "fix": "'to more than 60 cm' says the largest laminas exceed 60 cm, not that all are under or over 60. RDF only: fb:maxLowerBound 60 cm on the lamina (PO:0025060, fertile frond) length. Nothing in OWL.",
+  "reason": "'to' plus 'more than' bounds the maximum from below. Pattern 02 has no reading for that.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02780",
+  "decision": "new_pattern",
+  "target": "alternative with its own bearer",
+  "fix": "Union of two operands with different bearers: has_part some (flower and solitary FLOPO:0991003), or has_part some (cyme with 2-3 flowers (pattern 03), contracted, secund FLOPO:0991146). RDF: one_of operands, each with its own bearer and its own conjunction of values.",
+  "reason": "The alternatives are a single flower and a whole cyme with several qualities. A union of values on one bearer cannot express this.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02781",
+  "decision": "transcription_error",
+  "target": "entity should be the hairs of the fruit (trichome, container fruit); 'hairs' is not a quality",
+  "fix": "Trichome with container fruit (fixed-whole bearer, pattern 12 'Limits'): scurfy FLOPO:0991127, and length 0.1 mm with the extreme 0.2 mm (pattern 05).",
+  "reason": "The bearer noun was transcribed as the quality, so the numbers had no attribute.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02782",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Ridge count 1 on the fruit, count_position kind at_region with the ventral side (BSPO ventral) as cue, parallel to '3 dorsal ridges'. The ridge needs a bearer rule (a rib/ridge of the fruit). The 3-4 teeth on the ridge are a separate count with the ridge as container.",
+  "reason": "'ventral' marks where the counted ridge is, not a quality of the ridge.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02783",
+  "decision": "new_pattern",
+  "target": "alternatives of combined values",
+  "fix": "Union of intersections on one bearer (lobe): (rectangular and apex bilobed) or (falcate and margin entire). OWL: has_characteristic expressions joined as (A and B) or (C and D). RDF: one_of operands, each holding several (quality, value) pairs, with region cues.",
+  "reason": "Each alternative is a group of several qualities. Patterns 07 and 08 join only single values.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02784",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Count of veins 7. The container is the subject of the clause, 'the third' (glume), which in old Digitaria/Syntherisma terms is the sterile lower lemma. Take the container from the clause subject and add a bearer rule for 'third glume'.",
+  "reason": "The count word is in the table. The container is the ellipted 'third (glume)', which was not grounded.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02785",
+  "decision": "transcription_error",
+  "target": "quality should be 'papery', not 'texture'",
+  "fix": "Leaf lamina, papyraceous PATO:0104010 (exact synonym 'papery').",
+  "reason": "The value word was replaced by its attribute and treated as a measurement. The term exists.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02786",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Add the count_position cue 'per ultimate branch' (kind per_branch, landmark shoot-borne shoot system PO:0004545): leaf count 2-5 per ultimate branchlet.",
+  "reason": "Same construction as 'flowers 1-3 per node'. Only the cue is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02787",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Expand the suspended compound '3-lobed or -dentate' to '3-lobed or 3-dentate'. Then a union of two counts on the leaf lamina margin (pattern 03: lobe 3 | tooth 3), as the secondary union across attributes.",
+  "reason": "This is not a count at a position. The elided number of the second compound word blocked both the count and the union.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02788",
+  "decision": "existing_pattern",
+  "target": "config/flora_counted_parts.tsv (pattern 03)",
+  "fix": "Add the row septate → septum PO:0000030. Ovary has 3 septa. 'imperfectly' (septa not reaching the centre, so the ovary stays 1-loculed) goes in RDF as an incomplete qualifier.",
+  "reason": "The 'N-xed' count pattern covers this, but the suffix 'septate' has no table row.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02789",
+  "decision": "transcription_error",
+  "target": "entity should be calyptra lobe (part of calyptra); quality length relative to the calyptra, not 'amount'",
+  "fix": "Pattern 10: lobe with container calyptra, decreased length towards the calyptra, ratio below 0.5 ('less than 1/2'). Fractions need the same cue extension as P02766.",
+  "reason": "'calyptra length' / 'amount' mixes up the bearer and the reference. The statement is a ratio, not a count.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02790",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Accept an en-dash range before the suffix ('1–3-nerved'). Vein count 1-3 on the leaf lamina (nerved → vein).",
+  "reason": "'nerved' is in the counted-parts table. The range with an en dash was not split, so a unit was looked for.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02791",
+  "decision": "new_pattern",
+  "target": "comparison with an implied second term",
+  "fix": "Laminal cell with upper position FLOPO:0991376, decreased length towards the cells of the middle of the leaf (the sibling given in the previous clause). RDF marks the target as implied from context.",
+  "reason": "'shorter' has no stated second term. It means shorter than the middle cells just described.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02792",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv Q14 (liana)",
+  "fix": "Ground 'liana' to whole plant PO:0000003 + climbing FLOPO:0991108 (+ ligneous PATO:0002348), as the previous review decided for P00134/P00355. 'usually' is the frequency, and 'shrubs or small trees' is the other alternative (pattern 08).",
+  "reason": "Q14 sends liana to FLOPO_0900035, which has no EQ signature, so the statement cannot become an EQ.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02793",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Add the cue 'per segment' (landmark the ultimate segment/pinnule) and read 'pairs' with collection size 2: sorus count 2-4 pairs (4-8) per segment.",
+  "reason": "This is a count per place. The cue and the 'pairs' multiplier are not read.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02794",
+  "decision": "new_pattern",
+  "target": "bound on the maximum",
+  "fix": "'to over 1 mm' says the longest peristome teeth (PO:0030043) exceed 1 mm. RDF only: fb:maxLowerBound 1 mm on length. Nothing in OWL.",
+  "reason": "Same construction as P02779. Pattern 02 does not read it.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02795",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Vein count 3. The container is the pistillate scale (Carex scale, as glume PO:0009039 by the existing bearer rules), with the central (median) region as slot 1. 'green' is a separate colour statement of that region.",
+  "reason": "'3-nerved' is a table word. The container ('scales', subject of the clause) and the region 'center' were not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02796",
+  "decision": "new_pattern",
+  "target": "order of division",
+  "fix": "Number of branching orders of the inflorescence, 0-2. RDF: fb:orderLow 0 and fb:orderHigh 2. OWL only what follows: unbranched or branched (PATO:0000402) as a union, since 0 is allowed.",
+  "reason": "'0–2-branched' gives orders of branching, not a count of a part, and 'branched' is not in the counted-parts table. Reading it as a count of branches is less likely.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02797",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "In palm inflorescences, ground 'rachillae' to inflorescence branch PO:0009081 (not spikelet rachilla). Add 'in number' as a count cue and read '±' as approximately (pattern 01): count ≈ 50.",
+  "reason": "The count is plain. The palm sense of 'rachilla' and the 'N in number' wording blocked it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02798",
+  "decision": "transcription_error",
+  "target": "entity should be the leaf sheath base of old (previous years') leaves, not leaf",
+  "fix": "Leaf sheath, basal region (slot 1), papyraceous PATO:0104010, in leaves of previous years (pattern 12 / state old). The negation 'do not readily disintegrate' belongs to a separate persistence statement, not to 'papery'.",
+  "reason": "The bearer is the sheath bases, and the negation cue is from the next clause.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02799",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv Q10 (climber)",
+  "fix": "Ground 'climber' to whole plant PO:0000003 + climbing FLOPO:0991108 (+ ligneous PATO:0002348 for 'woody'), as in the earlier review (P00053, P00334). Leave the doubtful '? a shrub' of Madagascar out.",
+  "reason": "Q10 sends the habit noun to FLOPO_0985031, which has no EQ signature. The terms exist.",
+  "confidence": "high"
+ }
+]

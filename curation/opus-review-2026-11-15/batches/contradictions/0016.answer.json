@@ -1,0 +1,242 @@
+[
+ {
+  "id": "X00480",
+  "decision": "absence_misread",
+  "target": "no absence; staminate flower (PO_0025600) is unknown (not observed in the material), so it gets no annotation; flower (PO_0009046) present; inflorescence (PO_0009049) puberulous stays",
+  "fix": "'<part> not observed / not seen / not known / unknown / not collected' says the material is missing, not that the part is absent. It must never yield '<part> absent'. Drop it, or record it as 'not observed' outside the phenotype annotation.",
+  "reason": "Neea is dioecious. The flora only had female material. Male flowers exist but were not seen.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00481",
+  "decision": "absence_misread",
+  "target": "bract (PO_0009055) absent only at the place the clause names (most likely the peduncle or the inflorescence base); the floral bracts of the spike are present and glandular (PATO_0002117)",
+  "fix": "A bare 'without bract(s)' inside a clause about one structure (peduncle, pedicel, spike base) is a local absence on that structure. Attach it to the clause's subject as its location, and never as taxon-level 'bract absent' when bracts are described elsewhere for the same taxon.",
+  "reason": "Peperomia spikes have a small peltate, often gland-dotted floral bract under each flower, so bracts are present. The bare 'without bract' must refer to another place, probably the peduncle. The snippet is too short to be sure.",
+  "confidence": 0.5
+ },
+ {
+  "id": "X00482",
+  "decision": "both_true",
+  "target": "leaf lamina (PO_0020039) sometimes absent, early and on some leaves (the outer or old leaf sheaths lose their blades); the blades that are present are pale green",
+  "fix": "'sometimes (soon) bladeless' / 'blades soon falling' is a frequency- and stage-qualified absence (or a deciduous lamina). Carry 'sometimes' and the stage, or annotate leaf lamina deciduous; never assert taxon-level 'leaf lamina absent'.",
+  "reason": "In this Tillandsia the blades of some leaves fall early and leave bladeless sheaths. Other leaves keep their pale green blades.",
+  "confidence": 0.75
+ },
+ {
+  "id": "X00483",
+  "decision": "absence_misread",
+  "target": "plant latex (FLOPO_0980431) absent (PATO_0000462) from the bark slash (bark PO_0004518 as location); bark present, grey",
+  "fix": "'<part A> without <substance/part B>' asserts that B is absent on A, never that A is absent. The object of 'without' is what is absent; the subject is where.",
+  "reason": "The bark is described as grey. The text only says the bark exudes no white latex, so the bark itself was wrongly made absent.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00484",
+  "decision": "absence_misread",
+  "target": "no absence; staminate inflorescence (PO_0025601) is unknown (not seen); pistillate inflorescence (PO_0025598) axillary (the axillary statement belongs on the pistillate inflorescence, not the plain inflorescence)",
+  "fix": "'<sex> <part> not seen / not known' is missing material, not absence. Also keep the sex qualifier ('pistillate/female', 'staminate/male') on the bearer: pistillate inflorescence PO_0025598, staminate inflorescence PO_0025601.",
+  "reason": "Artocarpus is monoecious. Male heads exist and were just not available to the author.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00485",
+  "decision": "absence_misread",
+  "target": "bract (PO_0009055) with context 'interfloral' (the peltate bracts among the flowers of the head) absent (PATO_0000462); the other, scale-like bracts are present",
+  "fix": "A kind or position qualifier before 'bracts' ('interfloral', 'lateral', 'basal', 'involucral', 'floral') limits the absence to that set of bracts. Keep the qualifier as a context word (add 'interfloral' to flora_context_words.tsv) and never extend the absence to plain 'bract'.",
+  "reason": "Artocarpus sections differ in whether peltate interfloral bracts are present among the flowers. A. kemando lacks them, but other bracts (scale-like) are described.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00486",
+  "decision": "absence_misread",
+  "target": "no absence; stipule (PO_0020041) caducous/deciduous only",
+  "fix": "'(early) caducous (not seen)' / 'caducous, not seen' means the part falls early and so is missing on specimens. The parenthesis gives the reason it was not seen. Annotate only 'deciduous/caducous' and drop the 'not seen'; never derive 'absent'.",
+  "reason": "The same sentence gives both readings. The stipules exist but fall early, which is why they were not seen.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00487",
+  "decision": "both_true",
+  "target": "petal (PO_0009032) present, with ciliate claws; rarely absent (frequency 'rarely')",
+  "fix": "An absence qualified by 'rarely / sometimes / occasionally / often / in some flowers' is a frequency-qualified variant. Keep the qualifier (or drop rare variants) and never assert unqualified taxon-level absence.",
+  "reason": "Cerastium glomeratum normally has petals. Apetalous flowers occur rarely, so both statements hold.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00488",
+  "decision": "both_true",
+  "target": "plant latex (FLOPO_0980431) absent from bark/twigs (bark PO_0004518 location); present in the cotyledons (cotyledon PO_0020030 location), white",
+  "fix": "Latex statements are tied to the organ they come from ('bark without latex', 'cotyledons with white latex', 'fruit with milky latex'). Annotate latex with that organ as its location, never as one plant-level latex present/absent value.",
+  "reason": "In Meliaceae the bark and twigs usually have no latex, but some seeds or fruits contain latex. The two statements are about different organs.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00489",
+  "decision": "both_true",
+  "target": "plant latex (FLOPO_0980431) not conspicuous in bark/twigs; present, milky, in the pericarp (PO_0009084 location)",
+  "fix": "Latex statements are tied to the organ they come from. Also, 'no conspicuous <X>' / 'without obvious <X>' is a hedged statement (X inconspicuous), not a firm absence; do not assert PATO_0000462 from it.",
+  "reason": "Dysoxylum bark shows no notable latex, but the fruit wall has milky latex. These are different organs, and the absence is hedged anyway.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00490",
+  "decision": "absence_misread",
+  "target": "bract (PO_0009055) with context lateral (FLOPO_0991380) absent on the fig receptacle (fruit PO_0009001 location); basal bracts (bract + basal FLOPO_0991002) present, 3, whorled",
+  "fix": "'without lateral bracts' / 'lateral bracts absent' in Ficus limits the absence to the bracts on the side wall of the receptacle. Keep 'lateral' (FLOPO_0991380) as context; basal (ostiolar or peduncular) bracts are a separate set and stay present.",
+  "reason": "Ficus figs have basal bracts at the stalk base and, in some species, lateral bracts on the receptacle wall. This species lacks only the lateral ones.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00491",
+  "decision": "absence_misread",
+  "target": "no 'leaf lamina absent'; cystoliths absent in the lamina (no PO class for cystolith; leave unannotated, or later as cystolith presence on leaf lamina PO_0020039); lamina present, ± scabrous",
+  "fix": "'<cell inclusion/microstructure> absent' (cystoliths, dots, glands, hairs, lenticels, raphides) negates that structure. When that structure has no bearer class, drop the statement; never move the absence onto the part described in the surrounding clause.",
+  "reason": "Ficus descriptions note whether the leaf has cystoliths. The leaf blade obviously exists, and it is described as scabrous.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00492",
+  "decision": "absence_misread",
+  "target": "trichome (PO_0000282) absent (PATO_0000462) on the inner surface of the fig (fruit PO_0009001 location, context 'internal'); fig present, stipitate",
+  "fix": "'internal/inner hairs absent' or 'hairs absent inside' negates the hairs on the inner surface of the bearer. The bearer is the location, and the absent part is trichome.",
+  "reason": "Ficus descriptions record whether hairs grow among the flowers inside the receptacle. The fig itself is described as stipitate.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00493",
+  "decision": "absence_misread",
+  "target": "bract (PO_0009055) with context lateral (FLOPO_0991380) absent on the fig receptacle (fruit PO_0009001 location); fig present, subglobose",
+  "fix": "'<part A> without <part B>' asserts that B is absent on A, never that A is absent; and 'lateral bracts' keeps the context lateral (FLOPO_0991380).",
+  "reason": "This is the standard Ficus statement that the fig wall bears no lateral bracts. The fig is described.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00494",
+  "decision": "absence_misread",
+  "target": "portion of secretory tissue (PO_0005656, 'gland') + waxy (PATO_0002384) absent (PATO_0000462) at the stem node (PO_0020141 location); stem present",
+  "fix": "'without <qualified part>' (here 'nodal waxy glands') negates the head noun 'glands'. The adjective 'nodal' gives the location (stem node), and 'waxy' is a quality of the glands. Neither turns the absence onto the stem.",
+  "reason": "Ficus species differ in having waxy glands at the nodes. The plant is a tree with stems.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00495",
+  "decision": "both_true",
+  "target": "vascular leaf (PO_0009025) absent on the fig-bearing branchlets (branch PO_0025073 location, figs on leafless branchlets of the trunk or older wood); leaves present on the leafy twigs",
+  "fix": "'(figs/flowers) on leafless branchlets / leafless shoots' describes special flowering shoots with no leaves (cauliflory, ramiflory). Scope the absence to those branchlets; never make it taxon-level 'leaf absent'.",
+  "reason": "F. erinobotrya bears its figs on leafless branchlets from the older wood. Its ordinary twigs are leafy, and the leaves are described.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00496",
+  "decision": "absence_misread",
+  "target": "portion of secretory tissue (PO_0005656, 'gland') + waxy (PATO_0002384) absent on the leaf lamina (PO_0020039 location, vein axils); lamina present, upper surface glabrous",
+  "fix": "'waxy glands absent' negates the glands. The leaf part named in the clause is only the location; never make it the absent part.",
+  "reason": "In Ficus the presence of waxy glands in the axils of the basal veins is a diagnostic character. The lamina exists and is described.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00497",
+  "decision": "absence_misread",
+  "target": "bract (PO_0009055) with context lateral (FLOPO_0991380) absent on the fig receptacle (fruit PO_0009001 location); fig present, subglobose to obovoid",
+  "fix": "'lateral bracts absent' in a fig (receptacle) clause limits the absence to the lateral bracts of the receptacle. The bearer of the clause is the location, never the absent part.",
+  "reason": "This is the Ficus statement about receptacle bracts. Grounding it to 'fruit' made the fig itself absent.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00498",
+  "decision": "both_true",
+  "target": "vascular leaf (PO_0009025) absent on the long (up to c. 1 m), branched fig-bearing branchlets (branch PO_0025073 location); foliage leaves present, upper surface sparsely strigillose",
+  "fix": "'(figs) on ... leafless branchlets' describes special flowering shoots with no leaves. Scope the absence to those branchlets; never make it taxon-level 'leaf absent'.",
+  "reason": "F. flagellaris bears its figs on long leafless runner-like branchlets near the trunk base. Its leafy shoots carry the described leaves.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00499",
+  "decision": "present_misread",
+  "target": "'apex convex' belongs to the fig (fruit PO_0009001, apex) and not to bract; separately, 'without distinct basal bracts' should read as basal bracts (bract + basal FLOPO_0991002) indistinct or inconspicuous, not absent",
+  "fix": "In a fig description, 'apex convex/umbonate/flat' after the receptacle clause describes the fig apex (ostiole region). Do not carry over the last-named part (bracts). Also, 'without distinct <part>' is a hedged 'part indistinct', not absence.",
+  "reason": "The convex apex is a standard feature of the fig receptacle. The basal bracts are only indistinct, so both annotations were wrong in different ways.",
+  "confidence": 0.6
+ },
+ {
+  "id": "X00500",
+  "decision": "absence_misread",
+  "target": "no absence; bract (PO_0009055) + basal (FLOPO_0991002) caducous/deciduous",
+  "fix": "'<part> not seen' next to 'caducous/early deciduous' means the part fell before collection. Annotate only 'deciduous'; 'not seen' never yields 'absent'.",
+  "reason": "The basal bracts exist but fall early, so the author did not see them.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00501",
+  "decision": "absence_misread",
+  "target": "no absence; stipule (PO_0020041) caducous/deciduous",
+  "fix": "'<part> not seen' is missing material, not absence. Together with 'caducous' it explains why the part was not seen; annotate only 'deciduous'.",
+  "reason": "Ficus always has stipules, which here fall early. They were not seen on the specimens.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00502",
+  "decision": "absence_misread",
+  "target": "trichome (PO_0000282) absent on the leaf/lamina surface (leaf PO_0025034 location), i.e. the leaf is glabrous; leaf present",
+  "fix": "'<kind> hairs absent' ('superficial', 'glandular', 'simple', 'internal') negates the hairs (trichome PO_0000282) of that kind on the bearer named in the clause. The bearer is the location, never the absent part.",
+  "reason": "The statement and 'glabrous' say the same thing. The hair absence was misplaced onto the leaf.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00503",
+  "decision": "absence_misread",
+  "target": "no absence; bract (PO_0009055) caducous/deciduous",
+  "fix": "'<part> not seen' next to 'caducous/early deciduous' means the part fell before collection. Annotate only 'deciduous'; 'not seen' never yields 'absent'.",
+  "reason": "The bracts of Horsfieldia are caducous. They exist, but they were missing on the studied material.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00504",
+  "decision": "absence_misread",
+  "target": "leaf lamina (PO_0020039) not punctate (negated PATO_0001512) or dots absent; lamina present, base attenuate",
+  "fix": "'dots absent / without dots / not punctate' negates the punctation (PATO_0001512 punctate) of the bearer named in the clause. Annotate it as 'not punctate', never as the bearer being absent.",
+  "reason": "Myristicaceae keys use whether the lower leaf surface is dotted. The lamina obviously exists.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00505",
+  "decision": "absence_misread",
+  "target": "lenticel (PO_0000031) absent (PATO_0000462) on the fruit (pericarp PO_0009084 location); fruit present, beaked (rostrum 2-3 mm)",
+  "fix": "'<part A> without <part B>' asserts that B is absent on A, never that A is absent. Here 'fruit without lenticels' means lenticel absent on the fruit.",
+  "reason": "The fruit is described with a rostrum. Only lenticels are absent.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00506",
+  "decision": "absence_misread",
+  "target": "leaf (PO_0025034) / leaf lamina (PO_0020039) not punctate (negated PATO_0001512) or dots absent; leaf present, oblong to (ob)lanceolate",
+  "fix": "'dots absent / without dots / not punctate' negates the punctation (PATO_0001512) of the bearer; annotate it as 'not punctate', never as the bearer being absent.",
+  "reason": "This is the same Myristicaceae dots character as X00504. The leaf exists and its shape is described.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00507",
+  "decision": "absence_misread",
+  "target": "no absence; pistillate flower (PO_0025599) and fruit (PO_0009001) unknown; flowers present (the hair statement is about the staminate flowers PO_0025600 that are known)",
+  "fix": "'<part(s)> not known / unknown / not seen' is missing material, not absence. Drop it, and when one sex is unknown, place the described flower statements on the other sex.",
+  "reason": "Knema is dioecious, and this variety is known only from male material. Female flowers and fruits exist but were not described.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00508",
+  "decision": "absence_misread",
+  "target": "bracteole (PO_0009043) absent on the flower pedicel (PO_0030113 location); subtending bracts (bract PO_0009055) present and persistent",
+  "fix": "'bracts absent on <axis>' / '<axis> ebracteate' is an absence at the place named (pedicel, which means bracteoles). Map it to bracteole with that axis as location; never to plain 'bract absent' when subtending bracts are described.",
+  "reason": "The flowers have persistent subtending bracts but no further bracts on the pedicel. The absence concerns another set of bracts at another place.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00509",
+  "decision": "both_true",
+  "target": "sorus (PO_0025359) present, superficial, in the areoles between the costa and margin; absent from the marginal and costal areoles (position-scoped absence on the frond, vascular leaf PO_0009025)",
+  "fix": "'absent from <region> / not in <region> / lacking near <landmark>' is a position-scoped absence: keep the region (marginal, costal, basal, apical) as context and never assert taxon-level absence of the part.",
+  "reason": "Microsorum biseriatum has sori in rows between costa and margin. The text only says which areoles have none.",
+  "confidence": 0.9
+ }
+]

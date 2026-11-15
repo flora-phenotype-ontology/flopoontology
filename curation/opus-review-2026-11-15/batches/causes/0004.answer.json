@@ -1,0 +1,329 @@
+[
+ {
+  "cause": "When a part with a qualifier is said to be absent (cauline leaves, phyllodia, lower glume, wings and keel, rudimentary ovary, external bracts, axillary leaf clusters, calyculus, caudex), the annotator records the absence on a broader class through a PO synonym or the head noun, which contradicts the parts that are described.",
+  "count": 19,
+  "ids": [
+   "con-X03690",
+   "con-X03163",
+   "con-X03000",
+   "con-X03019",
+   "con-X00826",
+   "con-X02172",
+   "con-X03486",
+   "con-X02490"
+  ],
+  "step": "annotator",
+  "remedy": "Absence guard in ncvc_annotate.py: an absent (PATO_0000462) record must ground to the class that exactly matches the whole noun phrase, qualifiers included. It may never be reached by dropping a modifier, by falling back to the head noun or by a broad synonym (cauline leaf PO_0000013, phyllode leaf PO_0025335, lower glume, wing/keel/banner petal, pistillode PO_0009078, epicalyx PO_0009063 for 'calyculus'). If a qualifier (cauline, stem, lower, upper, first, external, lateral, ostiolar, rudimentary, axillary, secondary, outer, and Latin/French equivalents) is left ungrounded, reject the record instead of keeping it on the broader class. 'without A and B' gives one absence per item, each grounded on its own.",
+  "detectable": "yes: an absence row whose source words keep a modifier before the absent noun that the bearer label lacks, or whose bearer is a superclass of a class the source noun matches. A conflict check also flags an absent bearer when a subclass or part of it has positive records in the same taxon.",
+  "example": "'Cauline leaves absent' beside 'basal leaves rosulate' -> cauline leaf PO_0000013 absent, not leaf absent."
+ },
+ {
+  "cause": "When a clause denies a feature on a part ('<part> without <feature>', '<feature> absent' inside the part's description, or a 'Hairs: absent' heading line), the absence is recorded on the part or organ of the record instead of the feature.",
+  "count": 15,
+  "ids": [
+   "con-X03330",
+   "con-X01591",
+   "con-X00038",
+   "con-X02510",
+   "con-X02460",
+   "con-X00521",
+   "con-X03137",
+   "con-X00322"
+  ],
+  "step": "annotator",
+  "remedy": "Rule: in '<subject> without <feature>', in '<feature> absent' within a subject's description, and in a '<Feature>: absent' / '<Feature>; absent' heading line, the absent bearer is the feature (dots, sheath, thorn, spine, wing, peg, annulus, syrinx, bundle sheath, hairs), with the subject as container. If the feature has a negated quality (dots -> not punctate PATO_0001512; spines -> not spiny), use that on the subject. If the feature has no class, drop the record. The subject itself is never the absent bearer.",
+  "detectable": "yes: an absence row whose bearer matches the grammatical subject or section heading while the source words hold 'without'/'sans'/'absent' after a different noun, or whose bearer also has positive qualities in the same record.",
+  "example": "'Branches without thorns' -> thorn absent on branch (or nothing), never branch absent."
+ },
+ {
+  "cause": "A privative adjective attached to an axis, sheath or other named part (bladeless, leafless, ebracteate, awnless) is turned into a taxon-wide absence of the denied organ.",
+  "count": 15,
+  "ids": [
+   "con-X02523",
+   "con-X01911",
+   "con-X01129",
+   "con-X01584",
+   "con-X00445",
+   "con-X00272",
+   "con-X00939",
+   "con-X02528"
+  ],
+  "step": "table",
+  "remedy": "Add reviewed rows for privative adjectives with their subject. 'bladeless' with a sheath subject (sheaths, basal, sub-basal, lowest) -> scale leaf PO_0006003, or culm + aphyllopodic FLOPO:0991233, with the colour on leaf sheath PO_0020104. 'leafless <axis>' (stalk, scape, branches, culm) -> that axis, no leaves on it. 'leafless except at X' -> leaf position X. '<part> ebracteate' / '<part> awnless' -> that part bears no bract or awn. Annotator check: a privative adjective may give '<organ> absent' only when its subject is the whole plant.",
+  "detectable": "yes: an absence row whose source words hold '-less', 'e<part>ate' or 'awnless' together with a different subject noun (sheath, stalk, branches, peduncle, glume).",
+  "example": "'basal sheaths maroon, bladeless' -> scale leaf / culm aphyllopodic, not leaf lamina absent."
+ },
+ {
+  "cause": "In some plant groups a part word has its own meaning (bamboo auricle, Apiaceae bracteole, Rosaceae bractlet, moss stem, old grass 'flowering scale', lemma keel, gymnosperm pollen sac, pistils of an apocarpous flower), but the annotator uses the generic PO match.",
+  "count": 12,
+  "ids": [
+   "con-X03102",
+   "con-X03321",
+   "con-X02541",
+   "con-X01995",
+   "aud-A02887",
+   "aud-A00699",
+   "pat-P01439",
+   "aud-A05399"
+  ],
+  "step": "table",
+  "remedy": "Add a taxon-scoped bearer table (family/group or flora -> word -> PO id) that is checked before the generic lexicon. Poaceae/bamboo: auricle -> leaf sheath auricle PO_0020106, oral setae -> trichome at the sheath mouth, culm sheath -> leaf sheath, never stipule. Apiaceae: bracts -> involucral bract PO_0009045, bracteoles -> bracteole PO_0009043. Rosaceae: bractlets next to sepals -> epicalyx PO_0009063. Mosses: stem -> gametophore stem PO_0030022. Grasses: flowering scale -> lemma, keel -> lemma keel, never keel petal PO_0025327. Gymnosperms: pollen-sac -> microsporangium PO_0025202. 'pistils N' with N > 1 -> carpel.",
+  "detectable": "yes: the record's family or flora (Poaceae, Apiaceae, Rosaceae, Bryophyta, gymnosperms) together with a bearer from a known clash list (stipule in Poaceae, bract from 'bracteole', vascular stem in a moss flora, keel petal outside Fabaceae, gynoecium count > 1).",
+  "example": "Bamboo 'auricles and oral setae absent' -> leaf sheath auricle absent, not stipule absent."
+ },
+ {
+  "cause": "A quality said of a sub-part or surface named in the clause (margin, apex, keel, abaxial/adaxial side, cotyledons, petiole, base of the corolla tube) is placed on the whole heading organ.",
+  "count": 11,
+  "ids": [
+   "aud-A06113",
+   "aud-A04540",
+   "aud-A05714",
+   "aud-A04518",
+   "aud-A01109",
+   "aud-A04400",
+   "aud-A02346",
+   "aud-A04665"
+  ],
+  "step": "annotator",
+  "remedy": "Scope rule: if the clause names a sub-part (margin, apex, base, keel, teeth, cotyledon, petiole) or a surface adverb (abaxially, adaxially), the bearer becomes that sub-part of the heading organ: <organ> margin, <organ> apex, <organ> abaxial surface. This applies to every organ, as it already does for leaves. A place word after a list of values scopes all of them. A trailing quality in 'apex X, not fragile' goes to the last part named. Bare 'lobes', 'base' or 'margin' resolve within the organ of the sentence (corolla lobe, leaf lamina base PO_0008019), never to a default organ.",
+  "detectable": "yes: the source words hold a sub-part noun or a surface adverb that the bearer label lacks.",
+  "example": "'Sepals ... margin narrowly membranous' -> sepal margin membranous, not sepal membranous."
+ },
+ {
+  "cause": "Cues for bounds and extremes are missing ('reaching', 'atteignant', 'jusqu'à', 'not commonly exceeding', 'N or more', 'to' after '×' or 'by', '0(–6)', 'occasionally N', a bare 'N mm thick'), so the parser records an exact value or none.",
+  "count": 9,
+  "ids": [
+   "aud-A01417",
+   "aud-A01771",
+   "pat-P02250",
+   "pat-P00259",
+   "pat-P03009",
+   "pat-P02188",
+   "pat-P00942",
+   "aud-A03205"
+  ],
+  "step": "annotator",
+  "remedy": "Add these to the bound cues. 'reaching/atteignant/jusqu'à/up to X' -> inclusive maximum, no minimum. 'not (commonly) exceeding X' -> maximum with frequency. 'N or more' -> minimum. 'L × to W' and 'to L by W' -> maximum on each dimension. 'a(–b)' with a = 0 -> usual 0, extreme b. '1-loculed, occasionally 2-loculed' -> usual 1, rare maximum 2. 'N unit thick' -> thickness PATO:0000915. 'sous le fruit' / 'in fruit' after a measure -> fruiting stage.",
+  "detectable": "yes: a regex over the source words for these cues when the row has min = max or a disjunction.",
+  "example": "'lobes atteignant 1 cm de long' -> length ≤ 1 cm, not 1–1 cm."
+ },
+ {
+  "cause": "Phrases that are not plain absence (missing material: 'not known', 'not seen'; hedged degree: 'nearly/almost leafless', 'without well-developed') are recorded as absent PATO_0000462.",
+  "count": 8,
+  "ids": [
+   "con-X03818",
+   "con-X03351",
+   "con-X03703",
+   "con-X03807",
+   "con-X01998",
+   "con-X02855",
+   "con-X02369",
+   "con-X00112"
+  ],
+  "step": "annotator",
+  "remedy": "Add a blocklist to the absence gate. 'not known', 'not seen', 'unknown', 'non connu', 'ignotus' -> no annotation (missing data). 'nearly/almost/sub-<privative>', 'subaphyllous', 'not well developed', 'without well-developed' -> never absent: record decreased amount or size on the named axis, or nothing.",
+  "detectable": "yes: an absence row whose source words match 'not (known|seen)|unknown|nearly|almost|sub|well[- ]developed'.",
+  "example": "'Flowers not known' -> no record, not flower absent."
+ },
+ {
+  "cause": "Context words are misrouted: a degree adverb or participle is taken as a stage or process, a specimen condition goes down the stage path, a shoot kind ('flowering branchlets') is made a stage, soft hyphens break the cue match, and a stage plus a transition in one clause holds the whole clause.",
+  "count": 7,
+  "ids": [
+   "pat-P00968",
+   "pat-P02995",
+   "pat-P01611",
+   "pat-P01284",
+   "pat-P00599",
+   "aud-A04484",
+   "pat-P02602"
+  ],
+  "step": "annotator",
+  "remedy": "Normalise U+00AD before matching cues. Check specimen_condition rows before stage rows. Degree adverbs (shallowly, deeply, irregularly) become qualifiers, never stages. Participles that have a value rule (anastomosing -> FLOPO:0991128) take the value path, not process_or_event. 'flowering/fruiting <shoot noun>' names the shoot kind, not a time. Allow a state and a surface together, and let 'young X ... becoming Y' split into a state record and a transition. Add a 'when splitting/dehiscing' stage row to flora_context_words.tsv.",
+  "detectable": "yes: rows held as stage or process whose context word is a -ly adverb, a specimen-condition row, or a word directly before a shoot noun; any span holding U+00AD.",
+  "example": "'dark green after drying' -> leaf lamina dark green, specimen condition dried, not a stage."
+ },
+ {
+  "cause": "A value word or sign that has a term or a clear reading is missing from the value lexicon (climber, liane, falciforme, sub-<value>, '∞', comose-foliate), so the record carries a bare attribute or nothing.",
+  "count": 7,
+  "ids": [
+   "pat-P03015",
+   "pat-P03032",
+   "pat-P02531",
+   "aud-A01037",
+   "aud-A00546",
+   "pat-P00906",
+   "aud-A02168"
+  ],
+  "step": "table",
+  "remedy": "Add rows. Habit nouns climber/liane/lianes -> whole plant + climbing FLOPO:0991108 (liane also ligneous PATO:0002348). falciforme -> falcate. French 'sub<value>' -> <value> + approximately. '∞' -> INDEFINITE_AMOUNTS many. comose-foliate -> leaves clustered at the stem apex, not leafy FLOPO:0991012. Annotator check: never emit a bare attribute (shape, texture) when the source holds an unmatched value word.",
+  "detectable": "yes: records whose quality is an attribute class (shape, texture) with no value, or whose source holds '∞' or a 'sub' prefix.",
+  "example": "'pétales légèrement falciformes' -> petal falcate, not petal shape."
+ },
+ {
+  "cause": "A count in 'N-flowered', 'N-seeded', 'one-seeded achene', 'venose' or 'veined with <colour>' loses the unit it is counted in (inflorescence, fruit, petal), so it reads as a count or presence for the whole plant.",
+  "count": 6,
+  "ids": [
+   "aud-A04496",
+   "aud-A06074",
+   "aud-A03677",
+   "aud-A03785",
+   "aud-A00871",
+   "aud-A01960"
+  ],
+  "step": "annotator",
+  "remedy": "When an 'N-<part>ed' or 'venose/veined' word is said of a named organ or unit (umbel, cyme, head, capsule, achene, pod, petal), fill the container slot with that organ (pattern 03). Read 'veined with <colour>' as vein colour inside the organ, and 'venose' as conspicuous veins inside it. Never emit a count or 'present' with no container when the clause names one.",
+  "detectable": "yes: count or vascular-bundle-present records with an empty container whose source words hold '-flowered', '-seeded', 'venose' or 'veined'.",
+  "example": "'umbels 4- or 5-flowered' -> flower amount 4–5 per umbel."
+ },
+ {
+  "cause": "A position word that picks out a subset of members (lower, inner, outer, posterior, anterior pair) is dropped, so the trait is claimed for all members.",
+  "count": 6,
+  "ids": [
+   "aud-A00848",
+   "aud-A04879",
+   "aud-A05408",
+   "aud-A05689",
+   "aud-A05948",
+   "aud-A02393"
+  ],
+  "step": "transcription",
+  "remedy": "Prompt: 'Copy a position word that limits the part (lower, upper, inner, outer, posterior, lateral, anterior pair, the N inner) into the position field. Values after it hold only for those members.' Annotator: ground it through the pattern-04 position slot, and reject a record when a position word in the source is left unused.",
+  "detectable": "yes: a position word from flora_context_words.tsv appears in the source words while the position slot is empty.",
+  "example": "'the 3 inner obovate-elliptic' -> sepal (position inner) obovate-elliptic."
+ },
+ {
+  "cause": "A sex or variant qualifier from a section heading or a leading word ('Female flowers:', 'Pistillate inflorescences:', 'staminate X; pistillate Y', 'in the seedless forms') is not carried to the statements under it.",
+  "count": 6,
+  "ids": [
+   "aud-A01761",
+   "pat-P01742",
+   "aud-A04465",
+   "aud-A02521",
+   "aud-A02216",
+   "aud-A03531"
+  ],
+  "step": "annotator",
+  "remedy": "Carry the heading: a sex heading fills the whole slot (part of some flower/inflorescence and has characteristic female PATO_0000383 / male) for every row up to the next heading. An inline 'staminate/pistillate/male/female <part>' does the same for its clause. 'dans les formes ...' marks a variant: drop the record or tag it, never assign it to the whole taxon.",
+  "detectable": "yes: rows whose source paragraph has a sex heading or word before the clause while the whole/state slot is empty.",
+  "example": "'Pistillate inflorescences: sessile' -> inflorescence of female flowers sessile."
+ },
+ {
+  "cause": "Lists of alternatives or joined values are parsed wrongly: in 'A or B to C' the first value is dropped, 'entire and dentate' keeps only one value, an 'or' fragment is cut off, a range with the same term at both ends is held, and a pair mixing a value with a measurement is refused.",
+  "count": 5,
+  "ids": [
+   "aud-A02595",
+   "aud-A05793",
+   "pat-P00445",
+   "pat-P00912",
+   "pat-P02837"
+  ],
+  "step": "annotator",
+  "remedy": "Parse value lists as a tree: 'A or B to C' = A ∪ range(B, C). 'X and Y' on one part = both states, kept together, never the first alone. Transcription keeps the whole 'A or B' span. Collapse a range whose two ends ground to the same term into one value. Allow a measurement as one side of a pattern-05 pair and add (vestigial, length) to flora_union_pairs.tsv.",
+  "detectable": "yes: the source holds 'or'/'and'/'to' with more value words than the record grounds, or the source starts with 'or'.",
+  "example": "'cylindric or narrowly obconic to campanulate' -> cylindric | obconic–campanulate."
+ },
+ {
+  "cause": "Some negation cues are not recognised: a negation built into the word (acaulescent, stemless, eglandular), 'neither … nor', and 'sans <qualified> poils X', which gets negated twice through 'glabrous'.",
+  "count": 4,
+  "ids": [
+   "pat-P00633",
+   "pat-P00351",
+   "pat-P01403",
+   "aud-A06239"
+  ],
+  "step": "annotator",
+  "remedy": "Add 'acaulescent', 'stemless', the privative prefix 'e-' (eglandular -> not glandular PATO:0002117) and 'neither … nor' (one negated record per value) to NEGATION_EVIDENCE. 'sans <adj> poils <type>' -> not <type> (not woolly), never 'not glabrous'.",
+  "detectable": "yes: a regex for these forms over held or negated rows.",
+  "example": "'neither constricted nor inflated below' -> corolla not constricted + not inflated."
+ },
+ {
+  "cause": "The transcription puts a part noun (hairs, utricle, valve, stipe) in the quality field, so a relation or quality is built from a part name.",
+  "count": 4,
+  "ids": [
+   "pat-P02061",
+   "pat-P01667",
+   "pat-P02651",
+   "pat-P01963"
+  ],
+  "step": "transcription",
+  "remedy": "Prompt: 'The quality field never holds a plant part. If the words name a part (hairs, valves, stipe, utricle), that part is the bearer (or a counted part) and its adjectives are the qualities. \"base contracted into a stipe\" is the quality stipitate of the organ itself.' Annotator: hold rows whose quality matches po_lexicon.tsv.",
+  "detectable": "yes: the quality text matches a label or synonym in po_lexicon.tsv.",
+  "example": "'hairs sparse, cobweb-like, less than 0.1 mm' -> trichome length < 0.1 mm, sparse, arachnoid."
+ },
+ {
+  "cause": "A bearer word is missing from the lexicon or gets the wrong sense (albumen = endosperm, 'partition' = leaf dissection, 'd.b.h.' = trunk diameter, 'orifice' of the utricle beak), so the record lands on the wrong part.",
+  "count": 4,
+  "ids": [
+   "aud-A06707",
+   "aud-A03330",
+   "pat-P02855",
+   "pat-P02224"
+  ],
+  "step": "table",
+  "remedy": "Add bearer rows: albumen -> endosperm; 'd.b.h.' -> stem PO:0009047 + diameter PATO:0001334 (keep 'at breast height' in RDF); 'orifice' in a Carex utricle -> perigynium beak (container). Block 'partition/division' -> septum PO_0000030 when it follows leaves and size words.",
+  "detectable": "partly: an unmatched abbreviation, or septum/seed amount records whose source holds 'partition' or 'albumen'.",
+  "example": "'albumen peu abondant' -> endosperm decreased amount, not seed decreased amount."
+ },
+ {
+  "cause": "A hyphenated compound shape (ovate-cordate, oblong-cordate, obtuse-apiculate, ovate-orbicular) is split into a range or cut down to its last word.",
+  "count": 3,
+  "ids": [
+   "aud-A00878",
+   "aud-A07200",
+   "aud-A07045"
+  ],
+  "step": "annotator",
+  "remedy": "A hyphen inside a shape word is never a range connector; only 'to', '–' between whole words, and 'or' are. Look up the whole compound first. If it has no term, split it as outline + base or apex part ('ovate-cordate' = ovate lamina + cordate base; 'obtuse-apiculate' = obtuse apex + apiculate). In 'X-Y to Z' the range runs from X-Y to Z.",
+  "detectable": "yes: a range or base-less shape record whose source holds a hyphenated pair of shape words.",
+  "example": "'oblong-cordate to narrowly sagittate' -> range from oblong-cordate to sagittate."
+ },
+ {
+  "cause": "A number inside a compound word ('1-cuspidate', '3–5-veined', '10-nerved') is taken as a measurement with no unit and is held.",
+  "count": 3,
+  "ids": [
+   "pat-P00103",
+   "pat-P02405",
+   "pat-P03000"
+  ],
+  "step": "annotator",
+  "remedy": "Before the unit check, look up 'N-<word>' in the compound-quality terms (1-cuspidate -> unicuspidate PATO:0005021, 3-lobed -> trilobed). Otherwise split it with flora_counted_parts.tsv (veined/nerved -> vein, count N, container = the organ). Read '±' as approximately.",
+  "detectable": "yes: rows with a number and no unit whose source holds 'digit-letters' with a suffix in flora_counted_parts.tsv or a PATO compound.",
+  "example": "'± 10-nerved' -> vein count ≈10 in the capsule."
+ },
+ {
+  "cause": "Count-at-position cues are missing ('at each node', 'beside each leaf', Latin 'nodiis unifoliatis'), and the count_position_without_count rule blocks count words such as 'several'.",
+  "count": 3,
+  "ids": [
+   "pat-P00187",
+   "pat-P02219",
+   "pat-P03043"
+  ],
+  "step": "annotator",
+  "remedy": "Add per_node cues 'at each node', 'beside each [leaf]' (landmark leaf axil PO:0009023), 'a pair of' = 2, and Latin 'unifoliat-' with nodus. Let a pattern-13 count word stand in place of a number in count_position (RDF only).",
+  "detectable": "yes: a regex for these cues on held rows.",
+  "example": "'flowers usually several at each node' -> flower count several per node, usually."
+ },
+ {
+  "cause": "The FLOPO GCIs on the direction qualities up and down make sound statements unsatisfiable.",
+  "count": 2,
+  "ids": [
+   "uns-60",
+   "uns-90"
+  ],
+  "step": "ontology",
+  "remedy": "Remove the up/down (PATO_0000370 and down) GCIs from FLOPO and rerun DeprecateDumbClasses. Meanwhile, map 'facing upwards' on flowers to erect PATO_0000622.",
+  "detectable": "yes: records on classes that ELK finds equivalent to owl:Nothing.",
+  "example": "'rostellum lobes directed downward' becomes unsatisfiable only through the GCI."
+ },
+ {
+  "cause": "other: in a stemless or acaulescent taxon, statements about a stalk are given to the stem instead of the scape, peduncle or petiole.",
+  "count": 1,
+  "ids": [
+   "con-X00192"
+  ],
+  "step": "annotator",
+  "remedy": "When the taxon has 'stemless'/'acaulescent', send stalk-position hair and size statements to the scape, peduncle or petiole, never to the stem.",
+  "detectable": "yes: stem records in a taxon that also has a stem-absent record.",
+  "example": "Chirita 'stemless' + 'puberulent' stalk -> peduncle puberulent."
+ }
+]

@@ -1,0 +1,202 @@
+[
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_3285fe19920c0062e218ef65eeba58f0",
+  "decision": "wrong_grounding",
+  "target": "PATO_0040026 structurally discontinuous",
+  "fix": "Ground 'discontinuous'/'interrupted' of structures to PATO_0040026. The Rhododendron example (eflora-foc) is about the indumentum and should move to that bearer; the powo-kew example is about a subepidermal sclerenchyma layer.",
+  "reason": "PATO_0000690 is an occurrence quality of a process. A lamina 'interrupted leaving a bare stretch of midrib' is a gap in a structure, which is PATO_0040026, a quality of a continuant.",
+  "confidence": 0.85
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_4d21ba92a6c472632b6069cb32faaa44",
+  "decision": "wrong_grounding",
+  "target": "PATO_0001732 non-deciduous (any body part)",
+  "fix": "Map 'persistent' to PATO_0001732, as the union reviews already do.",
+  "reason": "PATO_0000082 persistence is a rhythm quality of a process. A persistent calyx is one that is not shed, a shedability quality.",
+  "confidence": 0.9
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_e7fa2b8b493d2b67ba5877066bf3173e",
+  "decision": "wrong_grounding",
+  "target": "PATO_0000467 present, with frequency modifier 'often'",
+  "fix": "Record 'Gemmae frequent' as gemma present and keep 'frequent' as the frequency modifier, following the 2026-11-14 decision on 'frequent' (rejected as a quality).",
+  "reason": "PATO_0000044 frequency is the rate of a repeated process. 'Gemmae frequent' says how often gemmae are found, not a quality of the gemma.",
+  "confidence": 0.8
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_c57200fae7e99697894c8ab18602ad60",
+  "decision": "wrong_grounding",
+  "target": "bearer FLOPO_0986133 floral spur; quality PATO_0000365 down once the 'down' GCI is removed",
+  "fix": "Stop the bare word 'spur' from going to PO_0004701 in orchid descriptions (Orchis alpestre). Use floral spur and remove the GCI that bans 'down' (see the stigma item).",
+  "reason": "'spur' is a synonym of PO short shoot (a bud spur), but in Orchis the spur pointing downward is the nectar spur of the lip. The class is unsatisfiable only because of the FLOPO GCI on 'down'.",
+  "confidence": 0.7
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_aeef0525ed8be940e4ecad30c257f735",
+  "decision": "wrong_statement",
+  "target": "none (process phenotype: rate of the plant's growth)",
+  "fix": "Do not annotate as a whole-plant structure quality. Keep it out, or record it as a process annotation (growth + PATO_0000911 decreased rate) once there is a process slot.",
+  "reason": "Growth rate is a quality of the growth process. The FLOPO rule against process qualities on structures is correct, and the earlier review rejected 'slow-growing' for the same reason.",
+  "confidence": 0.8
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_d7f3c8ec145fd7a96da67453e6612838",
+  "decision": "wrong_grounding",
+  "target": "PATO_0000467 present, with frequency modifier ('assez fréquentes' = fairly often)",
+  "fix": "Treat 'fréquent(e)s' as a frequency modifier on presence, not as a quality.",
+  "reason": "'Fleurs assez fréquentes' says how often flowers are found. PATO_0000044 is a process rate and cannot apply to a flower.",
+  "confidence": 0.6
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_b8734a130239b507d3adabef595068ed",
+  "decision": "wrong_axiom",
+  "target": "GCI in ontology/flopo.owl: has_part some (has_quality some PATO_0000370 up) SubClassOf owl:Nothing",
+  "fix": "Remove the GCIs on up (PATO_0000370) and down (PATO_0000365). If they were meant to block 'upper'/'lower' being grounded to up/down, block that in the lexicon instead.",
+  "reason": "'Upward-pointing tubercles' is a sound orientation statement. PATO up is a direction quality, a physical object characteristic, so nothing in PATO forbids it on a structure. Only the FLOPO GCI does.",
+  "confidence": 0.65
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_04d8e4ef6155b368b9348fbee5c1f984",
+  "decision": "wrong_grounding",
+  "target": "PATO_0040026 structurally discontinuous",
+  "fix": "Ground 'interrupted' of inflorescences to PATO_0040026, and update the accepted union pairs that use PATO_0000690 (e.g. 'interrupted or condensed').",
+  "reason": "An interrupted raceme has gaps between groups of flowers along the axis, a gap in a structure. PATO_0000690 is a quality of a process.",
+  "confidence": 0.85
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_7806703cd4419f5ecbc97d02e5dbb21f",
+  "decision": "wrong_grounding",
+  "target": "new FLOPO value 'structurally continuous' (sibling and opposite of PATO_0040026, under PATO_0001241)",
+  "fix": "Add a structural 'continuous' class and map 'continuous' of structures to it. Also request it from PATO next to structurally discontinuous.",
+  "reason": "PATO has only a process sense of 'continuous' (PATO_0000689, occurrence). A vitta continuous about the seed is an unbroken structure, and PATO has a term for the opposite but not this one.",
+  "confidence": 0.75
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_395f5060c62a1f059db128433951aa15",
+  "decision": "wrong_grounding",
+  "target": "new FLOPO value 'structurally continuous' (opposite of PATO_0040026)",
+  "fix": "Same as for vitta: map 'continuous' of structures to the structural class.",
+  "reason": "A continuous seed wing (Streptanthus) is unbroken around the seed, a structural quality. PATO_0000689 is a quality of a process.",
+  "confidence": 0.75
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_a2a491250fdb828bef64f40a518a4b81",
+  "decision": "wrong_axiom",
+  "target": "GCI in ontology/flopo.owl: has_part some (has_quality some PATO_0000365 down) SubClassOf owl:Nothing",
+  "fix": "Remove the up/down GCIs (see the tubercle item).",
+  "reason": "'Rostellum lobes directed downward' is a sound statement, correctly grounded to the direction quality 'down'. Only the FLOPO GCI makes it unsatisfiable.",
+  "confidence": 0.65
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_892ad36f7f7fc440d9c6bc4056aacc7d",
+  "decision": "wrong_grounding",
+  "target": "PATO_0040026 structurally discontinuous",
+  "fix": "Change the 2026-11-14 rule 'intermittent' -> PATO_0000690 to PATO_0040026.",
+  "reason": "Veins 'intermittent below' are interrupted along their length, a structural gap. The rule chose the process quality, whose synonym 'interrupted' misled it.",
+  "confidence": 0.85
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_5edcbe64cbeda9cc865d2e89c084d437",
+  "decision": "wrong_grounding",
+  "target": "PATO_0040026 structurally discontinuous",
+  "fix": "Ground 'interrupted' of spikes and other inflorescences to PATO_0040026.",
+  "reason": "An interrupted spike has gaps between flower clusters along the axis. This is structural, not a process quality.",
+  "confidence": 0.85
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_c50d9d3a7867ca3499131826c40e659f",
+  "decision": "wrong_statement",
+  "target": "none (process phenotype: flowering + PATO_0000695 synchronous)",
+  "fix": "Do not put this on the flower. Keep it out, or record it as a process annotation once there is a process slot.",
+  "reason": "'Flowering synchronous' describes the flowering process, so PATO synchronous is right for it. The bearer 'flower' is wrong, and the rule against process qualities on structures is correct.",
+  "confidence": 0.8
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_91659fe1760879d929687e2a55d2a0e7",
+  "decision": "wrong_grounding",
+  "target": "PATO_0104353 reflexed",
+  "fix": "Map 'downturned' to reflexed rather than 'down', keeping the frequency 'often'.",
+  "reason": "'Downturned' bracts are bent downward. PATO reflexed ('abruptly bent backward or abaxially downward') is the botanical term and is not hit by the up/down GCI.",
+  "confidence": 0.65
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_4f7264efcdc2f228a77c5c4470a07924",
+  "decision": "wrong_grounding",
+  "target": "PATO_0040026 structurally discontinuous",
+  "fix": "Ground 'interrupted' of pith to PATO_0040026.",
+  "reason": "Interrupted pith, broken by gaps or diaphragms at the nodes, is a gap in a structure, not a quality of a process.",
+  "confidence": 0.8
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_fd2d96503e3c8c8ae66b026ba89ec67f",
+  "decision": "wrong_statement",
+  "target": "bearer: leaf indumentum (Rhododendron); quality: new FLOPO 'structurally continuous'",
+  "fix": "Re-split: in Rhododendron, 'continuous' qualifies the indumentum of the lower leaf surface, not the leaf. The fdac 'ininterrompues' example needs its context checked.",
+  "reason": "A leaf is not 'continuous'. The word describes a covering or series on it, and PATO_0000689 is a process quality anyway.",
+  "confidence": 0.5
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_6409b76c55f0a8ca6553bba21b50199b",
+  "decision": "wrong_statement",
+  "target": "bearer FLOPO_0986073 connective appendage (or FLOPO_0986131 anther theca appendage, depending on the taxon); quality PATO_0000365 down once the GCI is removed",
+  "fix": "Put the direction on the appendage, not on the anther, and remove the up/down GCI.",
+  "reason": "'Anthers with an ovate, downwardly directed appendage' describes the appendage, so the split moved its quality onto the anther. The class is also blocked by the FLOPO GCI on 'down'.",
+  "confidence": 0.7
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_e1a4fa8f3d877c43ea175d041f0a8756",
+  "decision": "wrong_statement",
+  "target": "bearer PO_0025073 branch; quality PATO_0000365 down once the GCI is removed",
+  "fix": "Put the direction on the shoots or branches the stem carries, not on the stem.",
+  "reason": "'Stems with shoots facing downward' says the shoots face downward, so the split gave their quality to the stem. The class is also blocked by the FLOPO GCI on 'down'.",
+  "confidence": 0.65
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_b03b738961455d208d3177c441f5d460",
+  "decision": "wrong_statement",
+  "target": "none (process phenotype: flower opening / anthesis + PATO_0095006 nocturnal)",
+  "fix": "Do not put 'nocturnal' on the corolla. Keep it out, or record it as a process annotation once there is a process slot.",
+  "reason": "'Corolla nocturnal' means the corolla opens at night. PATO_0095006 is a process quality, rightly not allowed on a structure. The bearer should be the opening process.",
+  "confidence": 0.75
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_312407ad770ea2e9f81c6950543b621c",
+  "decision": "wrong_axiom",
+  "target": "GCI in ontology/flopo.owl: has_part some (has_quality some PATO_0000365 down) SubClassOf owl:Nothing",
+  "fix": "Remove the up/down GCIs. Guard 'upper'/'lower' -> up/down in the lexicon if that was why they were added.",
+  "reason": "'Stigma pointing downward' is sound and correctly grounded to PATO 'down', a direction quality of a continuant. The GCI forbids any plant part from having a direction of up or down, which is too strong.",
+  "confidence": 0.65
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_05e3e8fdc1232117cb34bc15068650c2",
+  "decision": "wrong_grounding",
+  "target": "bearer PO_0025094 sporangium (moss capsule); quality PATO_0000467 present, with frequency modifier 'often'",
+  "fix": "In moss floras, map 'capsule' to sporangium, and treat 'common' as a frequency modifier on presence.",
+  "reason": "The examples are mosses (Sphagnum, Paraleucobryum), so 'capsule' is the spore capsule, not a capsule fruit. 'Capsules common' says how often sporophytes are found; PATO frequency is a process rate.",
+  "confidence": 0.8
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_25d2c5df24f4ce0ab087d70a43bcda1b",
+  "decision": "wrong_grounding",
+  "target": "new FLOPO value 'structurally continuous' (opposite of PATO_0040026)",
+  "fix": "Map 'continuous' of structures to the structural class.",
+  "reason": "A limbidium (leaf border) continuous on the upper leaves is an unbroken structure, not a quality of a process.",
+  "confidence": 0.75
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_e48baf92720a7da51c8acde804855054",
+  "decision": "wrong_statement",
+  "target": "PATO_0001629 aggregated (clumped), with frequency modifier 'often'",
+  "fix": "Split 'often' off as the frequency modifier. 'In extensive patches' becomes whole plant + aggregated, or is dropped as a note about where it grows.",
+  "reason": "'Often' was grounded as the quality 'frequency', but it is the frequency modifier. The real content is growth in patches.",
+  "confidence": 0.6
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_4f6331ec44390011db9adc0397ed297a",
+  "decision": "wrong_grounding",
+  "target": "PATO_0040026 structurally discontinuous",
+  "fix": "Ground 'interrupted' to PATO_0040026. The bearer is better the abaxial cell layer of the costa if that class exists.",
+  "reason": "'The abaxial layer interrupted by several enlarged cells' is a break in a cell layer, a structural gap, not a quality of a process.",
+  "confidence": 0.75
+ }
+]

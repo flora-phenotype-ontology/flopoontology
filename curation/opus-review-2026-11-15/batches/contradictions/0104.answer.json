@@ -1,0 +1,242 @@
+[
+ {
+  "id": "X03120",
+  "decision": "absence_misread",
+  "target": "basal bladeless sheaths: scale leaf PO:0006003 (or leaf sheath PO:0020104 + basal FLOPO:0991002); foliage leaf lamina PO:0020039 present, flat PATO:0000407",
+  "fix": "'bladeless sheaths' / 'basal sheaths bladeless' describes the lowest leaves reduced to sheaths (cataphylls); it is never 'leaf lamina absent' for the taxon. Map to scale leaf PO:0006003 or a basal-qualified leaf sheath",
+  "reason": "Carex has basal bladeless sheaths and flat blades on its foliage leaves; this is the case the doc names.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X03121",
+  "decision": "absence_misread",
+  "target": "cauline leaf PO:0000013 + absent PATO:0000462; basal leaves (rosette leaf PO:0000014) present, sessile",
+  "fix": "'<cauline|stem|basal|upper|lower> leaves absent' = absence of the qualified member (PO:0000013 cauline leaf, PO:0000014 rosette leaf, or leaf + FLOPO:0991117/0991002/0991376/0991377); the bare part PO:0025034 may not be annotated absent",
+  "reason": "The qualifier 'cauline' was dropped. Draba cachemirica is a cushion plant with a basal rosette.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03122",
+  "decision": "absence_misread",
+  "target": "stem/scape leafless: cauline leaf PO:0000013 + absent PATO:0000462; basal leaves (rosette leaf PO:0000014) present, sessile or subsessile",
+  "fix": "'leafless' inside a stem/scape clause ('stems leafless', 'scapes leafless') = cauline leaves absent, not leaves absent for the plant; 'leafless' takes its bearer from the clause subject",
+  "reason": "The same text describes basal leaves, so 'leafless' must refer to the flowering stems.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X03123",
+  "decision": "present_misread",
+  "target": "'culm sheaths deciduous' = culm sheath (scale leaf PO:0006003 / leaf sheath PO:0020104 of the culm leaf) + deciduous (generic) PATO:0001730; the absence is leaf sheath auricle PO:0020106 + trichome PO:0000282 (oral setae) absent, not stipule",
+  "fix": "In grass/bamboo descriptions 'culm sheath' maps to the sheath of the culm leaf (PO:0006003 or PO:0020104), 'auricle(s)' to PO:0020106 leaf sheath auricle and 'oral setae' to trichomes at the sheath mouth; none of them maps to PO:0020041 stipule",
+  "reason": "Both statements were mapped to stipule. Once the parts are right, the sheath is deciduous and its auricles are absent, which do not conflict.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X03124",
+  "decision": "absence_misread",
+  "target": "no annotation (flowers unrecorded, missing data); inflorescence fasciculate stays",
+  "fix": "'not known', 'not seen', 'unknown', 'not observed', 'inconnu(es)', 'non vu(es)' = missing data, never PATO:0000462 absent",
+  "reason": "The description was made from fruiting material. Fasciculate infructescences or inflorescences are described.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03125",
+  "decision": "absence_misread",
+  "target": "no annotation (flowers unrecorded, missing data); compound corymbs (from fruiting material) stay",
+  "fix": "Same as X03124: 'flowers not seen' is missing data, never absence",
+  "reason": "This is missing data. The corymbs were described from infructescences.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03126",
+  "decision": "absence_misread",
+  "target": "capitulum not calyculate: outer supplementary bracts (bract PO:0009055 + outer FLOPO:0991379) absent; phyllaries (involucral bract PO:0009045) present, linear-lanceolate",
+  "fix": "In Asteraceae 'involucre not bracteate', 'ecalyculate', 'without bracteoles' = no calyculus bracts outside the phyllaries, never absence of PO:0009045 involucral bract; the phyllary statements must be mapped to PO:0009045",
+  "reason": "Tephroseris involucres are ecalyculate. The linear-lanceolate bracts are the phyllaries.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X03127",
+  "decision": "present_misread",
+  "target": "'ligule truncate' = ligule PO:0020105 + truncated PATO:0000936; the absence is leaf sheath auricle PO:0020106 absent, not stipule",
+  "fix": "In grass/bamboo descriptions 'ligule' maps to PO:0020105 and 'auricle' to PO:0020106; neither maps to stipule PO:0020041, so ligule and auricle statements never share a bearer",
+  "reason": "Both statements were mapped to stipule. The ligule and the auricles are different parts.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X03128",
+  "decision": "absence_misread",
+  "target": "leaf PO:0025034 reduced (scale-like), connate into a short cup; no absence",
+  "fix": "Hedged absences ('almost', 'nearly', 'subleafless', '± leafless', 'apparently') are not PATO:0000462 absent; read as reduced size/number, or drop",
+  "reason": "In Haloxylon the leaves are reduced to small scales connate in pairs. 'Almost leafless' and 'connate into a short cup' say the same thing.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03129",
+  "decision": "absence_misread",
+  "target": "external/lateral bracts on the fig receptacle (bract PO:0009055 + outer FLOPO:0991379 or lateral FLOPO:0991380) absent; basal bracts present, caducous",
+  "fix": "'sans bractées externes/latérales', 'without lateral bracts' (Ficus) = absence of the qualified bract member only; basal bracts are a different member",
+  "reason": "The qualifier 'externes' was dropped. The basal bracts are described as caducous.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X03130",
+  "decision": "both_true",
+  "target": "ray florets (neuter): style absent; disc florets: style present, branches recurved",
+  "fix": "In Asteraceae, statements about ray (ligulate, neuter/female) florets and disc florets belong to different members; keep 'fleurs ligulées/du rayon' vs 'fleurs du disque/tubuleuses' as bearer context on the absence",
+  "reason": "Melanthera rays are neuter and have no style. Disc florets have styles with recurved branches.",
+  "confidence": 0.75
+ },
+ {
+  "id": "X03131",
+  "decision": "absence_misread",
+  "target": "lateral bracts of the fig (bract PO:0009055 + lateral FLOPO:0991380) absent; basal bracts present, verticillate",
+  "fix": "Same as X03129: a positional qualifier (lateral, external, basal) restricts the absence to that member",
+  "reason": "The qualifier 'lateral' was dropped.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X03132",
+  "decision": "absence_misread",
+  "target": "leaf lamina PO:0020039 not punctate (negation of PATO:0001512 punctate); no part absence",
+  "fix": "'<surface feature> absent' (dots, glands, pellucid dots, papillae, hairs) = absence of the feature, or negation of its quality (punctate, glabrous), never absence of the organ described",
+  "reason": "Myristicaceae leaves are described for dots beneath. The leaf itself is present and glabrescent.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03133",
+  "decision": "absence_misread",
+  "target": "leaf lamina PO:0020039 not punctate (negation of PATO:0001512)",
+  "fix": "Same as X03132",
+  "reason": "'Dots absent' does not mean the lamina is absent. The lamina is papillose.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03134",
+  "decision": "absence_misread",
+  "target": "lower glume PO:0006002 + absent PATO:0000462; upper glume PO:0006004 attenuate",
+  "fix": "'lower/upper/first/second glume' map to PO:0006002 lower glume / PO:0006004 upper glume; an absence of an ordinal member must not be annotated on PO:0009039 glume",
+  "reason": "Eriochloa has its lower glume suppressed. The attenuate glume is the upper one.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03135",
+  "decision": "absence_misread",
+  "target": "scape/peduncle without bracts (bract PO:0009055 absent on the scape); involucral bracts PO:0009045 present, lanceolate",
+  "fix": "'ebracteate' in a scape/peduncle clause = no bracts on the axis; in Asteraceae it never means phyllaries absent",
+  "reason": "Gerbera is scapose. The phyllaries are described as lanceolate.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X03136",
+  "decision": "both_true",
+  "target": "lower sterile florets: palea absent (palea + lower FLOPO:0991377, sterile PATO:0000956); fertile florets: palea bowed outwards",
+  "fix": "GrassBase 'Basal sterile florets ... without significant palea' belongs to the sterile floret; keep the floret context (lower FLOPO:0991377, sterile PATO:0000956) on the absence",
+  "reason": "Chasmanthium has 1–4 sterile lower florets with no palea. Fertile florets have a palea.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X03137",
+  "decision": "absence_misread",
+  "target": "trichome PO:0000282 absent on the leaf (leaf glabrous PATO:0000453); stomatal complex PO:0002000 paracytic",
+  "fix": "Character-state headings ('Hairs: absent', 'Indumentum: absent', 'Stomata: paracytic') name the part; the state belongs to that part (trichome, stomatal complex), not to the organ of the record",
+  "reason": "This is structured anatomy data. The heading names the part, and the leaf is present.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03138",
+  "decision": "absence_misread",
+  "target": "caudex absent (stems arise from the taproot); aerial stems PO:0009047 present, solid",
+  "fix": "Do not treat 'caudex' as a synonym of PO:0009047 stem for absence statements: 'caudex absent' means the stems arise directly from the taproot. Remove or restrict the caudex synonym in config/po_lexicon.tsv",
+  "reason": "The PO lexicon lists 'caudex' as a synonym of stem, so 'caudex absent' became 'stem absent'.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X03139",
+  "decision": "absence_misread",
+  "target": "axillary leaf fascicles (leaf + axillary FLOPO:0991000, on short shoots) absent; main leaves present, bases forming a loose scarious-to-herbaceous sheath (leaf sheath PO:0020104 + loose PATO:0001802)",
+  "fix": "'axillary leaves/fascicles absent' (Caryophyllaceae) = absence of leaves on axillary short shoots only, not of the leaf",
+  "reason": "The qualifier 'axillary' was dropped. The loose sheath also belongs to the leaf base, not to the leaf as a whole.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X03140",
+  "decision": "absence_misread",
+  "target": "bladeless sheaths on the scape/stem: scale leaf PO:0006003 (cauline bracts/sheaths); basal foliage leaf lamina PO:0020039 present, lanceolate",
+  "fix": "'bladeless' attached to sheaths, scape leaves or cauline bracts = reduced sheathing leaves (cataphylls), never 'leaf lamina absent' for the taxon; take the bearer from the clause subject",
+  "reason": "Spiranthinae orchids have basal leaves with blades and bladeless sheaths on the scape.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X03141",
+  "decision": "absence_misread",
+  "target": "basal bladeless sheaths: scale leaf PO:0006003; foliage leaf lamina PO:0020039 present, flat PATO:0000407",
+  "fix": "Same as X03120",
+  "reason": "Same Carex pattern as X03120.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X03142",
+  "decision": "absence_misread",
+  "target": "cauline leaf PO:0000013 + absent PATO:0000462; basal leaves (rosette leaf PO:0000014) present, base subobtuse",
+  "fix": "Same as X03121",
+  "reason": "The qualifier 'cauline' was dropped. 'Base subobtuse' should also be annotated on the leaf base, not the whole leaf.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03143",
+  "decision": "present_misread",
+  "target": "'leathery' = culm sheath (scale leaf PO:0006003 / leaf sheath PO:0020104) + coriaceous PATO:0104032; the absence is leaf sheath auricle PO:0020106 + oral setae (trichome PO:0000282) absent, not stipule",
+  "fix": "Same as X03123: bamboo culm-sheath statements keep the sheath as bearer; 'auricle' maps to PO:0020106, never to stipule",
+  "reason": "In Fargesia the culm sheaths are leathery. That does not conflict with the auricles being absent.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X03144",
+  "decision": "absence_misread",
+  "target": "no annotation (flowers unrecorded, missing data); inflorescence axillary stays",
+  "fix": "Same as X03124",
+  "reason": "This is missing data, not absence.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03145",
+  "decision": "absence_misread",
+  "target": "flowering stem/scape leafless: cauline leaf PO:0000013 absent; basal leaves present, falcate PATO:0002215",
+  "fix": "Same as X03122: 'leafless' takes its bearer from the clause subject (stem, scape, flowering stem)",
+  "reason": "Iris curvifolia has falcate basal leaves. 'Leafless' must describe the flowering stem.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X03146",
+  "decision": "absence_misread",
+  "target": "no annotation (flowers unrecorded); infructescence PO:0006342 terminal (not inflorescence)",
+  "fix": "Same as X03124; also 'infructescence(s)' maps to PO:0006342 infructescence, not to inflorescence",
+  "reason": "The flowers are not known, and the description is from fruit. The present statement is about the infructescence.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X03147",
+  "decision": "absence_misread",
+  "target": "calyculus bracts (bract PO:0009055 + outer FLOPO:0991379) absent; phyllaries (involucral bract PO:0009045) herbaceous",
+  "fix": "Same as X03126",
+  "reason": "Same taxon and wording as X03126.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X03148",
+  "decision": "present_misread",
+  "target": "ligule PO:0020105 + glabrous PATO:0000453; leaf sheath auricle PO:0020106 absent",
+  "fix": "Same as X03127",
+  "reason": "This is the glabrous ligule, not a stipule.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X03149",
+  "decision": "absence_misread",
+  "target": "leaf PO:0025034 reduced, connate in pairs into a short cup (PATO:0002227 cup-shaped, of the fused leaf pair); no absence",
+  "fix": "Same as X03128: hedged absences ('almost leafless') are not PATO:0000462 absent",
+  "reason": "Same taxon and wording as X03128.",
+  "confidence": 0.9
+ }
+]

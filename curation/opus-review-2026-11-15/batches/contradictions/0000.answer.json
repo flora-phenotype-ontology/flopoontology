@@ -1,0 +1,242 @@
+[
+ {
+  "id": "X00000",
+  "decision": "present_misread",
+  "target": "stipule PO:0020041 + absent PATO:0000462 (Annonaceae have no stipules); the 'stipule: present' record should be dropped",
+  "fix": "In trait-database fields, a bare value 'Absent', 'None', 'Not present' or '0' means absent PATO:0000462. It must never fall back to the field's default quality 'present'.",
+  "reason": "Both records are the same text, 'Absent', yet it was labelled 'present'. The value was read as 'the field is filled in', not as its meaning.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00001",
+  "decision": "both_true",
+  "target": "alternatives on thorn PO:0025172: absent OR present and branched (varies between plants)",
+  "fix": "In a value 'A/B' or 'A or B', the slash means 'or': the parts make one union (flora_union_pairs), not two separate statements. 'Absent/<described>' must not create a taxon-wide absence.",
+  "reason": "The source says spines are either absent or branched. These are alternatives within the species, not a contradiction.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00002",
+  "decision": "source_contradiction",
+  "target": "stipule PO:0020041: a hedged 'apparently absent' in one field and 'black' in another",
+  "fix": "Hedged absence ('apparently absent', 'absent?', 'seemingly absent', 'not seen') should not become an absence assertion. Keep it as uncertain, or drop it when another field of the same record describes the part.",
+  "reason": "The database gives both a hedged absence and a colour for the same stipules. Olinia stipules are tiny, black and fall early, so the 'absent' field probably reflects shed stipules. Still, the record contradicts itself.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X00003",
+  "decision": "absence_misread",
+  "target": "shoot axis trichome PO:0005003 (simple, non-glandular hairs) + absent PATO:0000462; only that kind of hair is missing, since glandular or stellate hairs are described",
+  "fix": "'without/lacking/devoid of <noun>' means the noun after 'without' is absent, not the subject being described (here the stem). A qualified noun ('simple hairs') limits the absence to that kind.",
+  "reason": "Simple hairs are absent from the stem; the stem itself is there and erect.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00004",
+  "decision": "both_true",
+  "target": "bract PO:0009055 absent only on allomorphic pistillate flowers; bracts of normal pistillate flowers are present and smooth",
+  "fix": "'<part> of <qualified member> absent' ('bracts of allomorphic flowers absent') limits the absence to that member. It is not a taxon-wide absence of the part; drop it, or attach it only to that member.",
+  "reason": "Acalypha has bracts on its normal pistillate flowers. Only the odd allomorphic flowers lack them.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00005",
+  "decision": "absence_misread",
+  "target": "absence of the allomorphic pistillate flowers (a special flower kind, pistillate flower PO:0025599 qualified 'allomorphic'). No class exists: reject this absence",
+  "fix": "'<modifier(s)> <head noun> absent' is the absence of the qualified kind, never of the bare head noun. Do not fall back to the head noun (flower) when a limiting modifier ('allomorphic', 'staminate', 'secondary', 'rhizomal', 'basal') is present.",
+  "reason": "The taxon obviously has flowers. Only the allomorphic kind is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00006",
+  "decision": "both_true",
+  "target": "bract PO:0009055 absent only on allomorphic flowers; pistillate bracts are present and pubescent",
+  "fix": "Same as X00004: '<part> of <qualified member> absent' limits the absence to that member.",
+  "reason": "The two statements are about bracts of different flower kinds.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00007",
+  "decision": "both_true",
+  "target": "bract PO:0009055 absent on staminate (male PATO:0000384) inflorescences PO:0009049; pistillate bracts are present and linear",
+  "fix": "'on staminate/pistillate <organ> absent' and 'in male/female flowers absent' limit the absence to that sex. Use the context words staminate/pistillate (flora_context_words) as the scope of the absence.",
+  "reason": "Bracts are missing on male inflorescences but present on female ones.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00008",
+  "decision": "absence_misread",
+  "target": "leaf lamina lobe PO:0025517: not incised (negation of cut PATO:0001978), or entire PATO:0104359 if the margin is meant",
+  "fix": "'incisions/notches/sinuses absent' and 'not incised' describe the shape of the part (not cut). Incisions are not a part, so this must not become an absence of the lamina.",
+  "reason": "Incisions are cuts in the lamina, not the lamina. The lamina is described (basal sinus narrow).",
+  "confidence": "medium"
+ },
+ {
+  "id": "X00009",
+  "decision": "absence_misread",
+  "target": "offset bulbs (bulbels) at the base of the bulb, absent. PO has no class separate from bulb PO:0025356 ('bulblet' is a synonym of bulb), so reject this absence",
+  "fix": "'without (basal) bulbels/bulblets/bulbils/offsets' is the absence of small daughter bulbs. It must never be mapped to the parent bulb that bears them. Diminutive part names should not map to the parent organ when they are absent.",
+  "reason": "The plant has an ovoid bulb. Only the small basal bulbels are missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00010",
+  "decision": "present_misread",
+  "target": "rhizome PO:0004542 + absent PATO:0000462 stays; drop the 'rhizome: present' record",
+  "fix": "A noun inside a negated relation ('not clustered on rhizomes', 'not borne on X') is not asserted present. Do not emit 'present' for nouns in the scope of 'not'.",
+  "reason": "'Not clustered on stout primary rhizomes' agrees with 'rhizomes absent'. It does not say rhizomes exist.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00011",
+  "decision": "absence_misread",
+  "target": "bulb PO:0025356 is present and not clustered on a rhizome. This is an arrangement, not an absence, so drop the absence",
+  "fix": "'not <participle> on/with X' ('not clustered on', 'not attached to') negates the relation, not the existence of the subject. 'not' + verb is never an absence of the subject.",
+  "reason": "The negation is about how the bulbs are arranged, not about whether bulbs exist.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00012",
+  "decision": "absence_misread",
+  "target": "lamina PO:0025060 that is part of petal PO:0009032, absent (the petal is all spur). PO has no petal-blade class, so if no part-of expression is allowed, reject. 'stout' belongs to the spur, not the whole petal",
+  "fix": "'blade absent' inside a petal/sepal/bract description is the absence of that organ's lamina, never of the organ. 'blade' must take the organ currently being described as its whole.",
+  "reason": "Aquilegia eximia petals have a spur but a reduced or missing blade; the petals themselves are present.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X00013",
+  "decision": "absence_misread",
+  "target": "syrinx (the ring inside the perianth tube) absent. There is no class and 'annulus' is already rejected as generic, so reject the absence. Also, 'limb purplish' belongs on perianth PO:0009058, not corolla",
+  "fix": "In Aristolochiaceae descriptions, 'syrinx', 'annulus', 'utricle' and 'limb' are parts of the single perianth (calyx) tube. Their absence must not hit corolla or calyx, and 'limb' must map to perianth, not corolla.",
+  "reason": "Aristolochia has no corolla. What is absent is a ring inside the tube.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00014",
+  "decision": "absence_misread",
+  "target": "fruit septum PO:0025268: not attached to the valves. This is a relation and cannot be expressed, so drop the absence. 'septa entire' belongs on fruit septum PO:0025268 + entire PATO:0104359, not on fruit",
+  "fix": "Same as X00011: 'not attached to X' is a negated relation, not an absence. 'septa ...' must bind to fruit septum, not fruit.",
+  "reason": "The text describes how the septa connect to the valves. The fruit is present.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00015",
+  "decision": "absence_misread",
+  "target": "syrinx absent: no class, reject (see X00013). The calyx (perianth) is present and curved",
+  "fix": "Same as X00013.",
+  "reason": "The syrinx is a ring inside the perianth tube, not the calyx.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00016",
+  "decision": "absence_misread",
+  "target": "annulus (ring at the mouth of the perianth tube) absent: no class, reject. The spots belong on perianth PO:0009058, not corolla",
+  "fix": "Same as X00013: 'annulus absent' in a flower description is a part of the perianth tube, not corolla or calyx.",
+  "reason": "Aristolochia has no corolla. Only the ring is absent.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00017",
+  "decision": "absence_misread",
+  "target": "fruit septum PO:0025268 + entire PATO:0104359; 'not attached to valves' is a relation, not an absence",
+  "fix": "Same as X00011 and X00014.",
+  "reason": "The globose capsule is the fruit. The text describes its septa.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00018",
+  "decision": "absence_misread",
+  "target": "fruit septum PO:0025268 + absent PATO:0000462",
+  "fix": "'septa absent' inside a fruit description is the absence of fruit septum (PO lists 'septa' as a synonym of septum PO:0000030; prefer fruit septum). It must not fall back to the whole being described (fruit).",
+  "reason": "The capsule is present. Only its septa are absent.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00019",
+  "decision": "absence_misread",
+  "target": "colleter FLOPO:0986023 that is part of leaf lamina PO:0020039, absent PATO:0000462",
+  "fix": "'<organ-adjective> <part> absent' ('laminar colleters', 'petiolar glands', 'stipular spines') is the absence of the part, located on the organ. The adjective gives the location, not the bearer of the absence.",
+  "reason": "The colleters are missing; the lamina is chartaceous.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00020",
+  "decision": "absence_misread",
+  "target": "column foot FLOPO:0986081 + absent PATO:0000462. In orchids, 'column' is gynostemium FLOPO:0986015, never style",
+  "fix": "Match the longest phrase first: 'column foot' before 'column'. In orchid descriptions 'column' means gynostemium, not style.",
+  "reason": "Only the foot of the column is absent. The column is present, since the lip is joined to it.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00021",
+  "decision": "both_true",
+  "target": "secondary bracts (usually absent) vs floral bracts (persistent), both bract PO:0009055 of different orders; 'generally' is a frequency",
+  "fix": "An absence of a qualified series member ('secondary', 'primary', 'floral', 'inner', 'outer' bracts) applies only to that member. 'generally/usually/sometimes absent' is not a fixed absence.",
+  "reason": "Two different bract kinds are described, and the absence is only usual.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00022",
+  "decision": "both_true",
+  "target": "rhizomal leaves (leaves from the rhizome) absent vs cauline leaf PO:0000013 petiolate",
+  "fix": "Add 'rhizomal' to the series-member context words, like 'basal'. 'Rhizomal/basal/cauline leaves absent' limits the absence to that leaf kind.",
+  "reason": "Cardamine descriptions treat rhizomal, basal and cauline leaves separately. Only rhizomal leaves are missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00023",
+  "decision": "both_true",
+  "target": "rhizomal and basal (FLOPO:0991002, rosette leaf PO:0000014) leaves absent vs cauline leaf PO:0000013 petiolate",
+  "fix": "Same as X00022: position-qualified leaf kinds limit the absence; the petiolate leaves are cauline.",
+  "reason": "Only cauline leaves are present, and they are the petiolate ones.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00024",
+  "decision": "both_true",
+  "target": "leaf lamina PO:0020039 absent only on the basal sheaths (lowest leaves, basal FLOPO:0991002); upper leaves have flat blades",
+  "fix": "In Carex/Poaceae, 'basal sheaths bladeless' or 'sheaths ... bladeless' scopes the absence to the basal sheath leaves. Annotate it with the basal context, never as a taxon-wide 'leaf lamina absent'.",
+  "reason": "This is the known 'bladeless sheaths' case from km-classification.md. Lower sheaths have no blade; other leaves do.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00025",
+  "decision": "absence_misread",
+  "target": "leaf lamina PO:0020039 + absent PATO:0000462, limited to the basal sheaths (basal FLOPO:0991002); the leaf is present and pilose",
+  "fix": "'bladeless' means lamina absent, never leaf absent. Its bearer is leaf lamina, scoped to the member (sheath) it describes.",
+  "reason": "Mapping 'bladeless' to 'leaf' is a wrong bearer. The lamina is missing only on the basal sheaths.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00026",
+  "decision": "absence_misread",
+  "target": "awn PO:0025349 that is part of the pistillate scale (bract PO:0009055), absent PATO:0000462",
+  "fix": "'awns absent', 'mucro absent' or 'beak absent' in an organ's description is the absence of that appendage, never of the organ that bears it.",
+  "reason": "The pistillate scales are present and yellow-brown. Only their awns are missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00027",
+  "decision": "absence_misread",
+  "target": "vascular bundle PO:0005020 that is part of perigynium PO:0009044, absent (veinless perigynia). The 'midvein prominent' statement is probably about the scale or perigynium, not the leaf",
+  "fix": "'veinless/nerveless/ecostate' after an organ means that organ's veins are absent. The bearer is vein part_of that organ, not a taxon-wide vascular bundle.",
+  "reason": "Only the perigynia lack veins. Veins elsewhere are described.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00028",
+  "decision": "both_true",
+  "target": "leaf lamina PO:0020039 absent on the basal sheaths (basal FLOPO:0991002); upper blades are glabrous on the adaxial surface",
+  "fix": "Same as X00024: 'basal sheaths ..., bladeless' scopes the absence to the basal sheath leaves.",
+  "reason": "The basal sheaths have no blade; the other leaves' blades are described.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00029",
+  "decision": "absence_misread",
+  "target": "leaf sheath PO:0020104 not spotted (negation of spotted PATO:0000333). This is a negated quality, so drop the absence",
+  "fix": "'lacking/without spots, dots, markings, glands, papillae' means the bearer lacks that feature, which is a negated quality (or the absence of the small feature). The bearer being described is never absent.",
+  "reason": "The sheath fronts are smooth and lack spots. The sheath is present.",
+  "confidence": "high"
+ }
+]

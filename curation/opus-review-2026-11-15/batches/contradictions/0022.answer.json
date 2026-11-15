@@ -1,0 +1,242 @@
+[
+ {
+  "id": "X00660",
+  "decision": "both_true",
+  "target": "Annotate the absence on wing petal (PO_0025325) as absent (PATO_0000462), marked 'apparently' (uncertain). The cordate blade belongs to the banner (standard), which is a petal (PO_0009032). This flower has a banner but no wings.",
+  "fix": "'wings / keel / banner (standard) lacking or absent' in a papilionoid flower refers to that one petal type: wing petal PO_0025325, keel petal PO_0025326, banner = petal. Never emit 'petal absent' for it. 'apparently' hedges the statement and does not widen it to every petal.",
+  "reason": "Dalea (Parosela) flowers can lack wing petals while the banner is present. Both statements were mapped to the generic petal.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00661",
+  "decision": "both_true",
+  "target": "leaf lamina (PO_0020039) absent only on the outer leaves (outer, FLOPO_0991379). The other leaves have linear-lanceolate blades.",
+  "fix": "'the outer (inner, lower, basal) ones bladeless' restricts the absence to that member of the series (config/flora_context_words.tsv bearer_quality). Annotate the qualified bearer, or drop it. Never emit 'leaf lamina absent' for the taxon.",
+  "reason": "Outer leaves in Pitcairnia are often reduced to bladeless sheaths or spines. The main leaves have blades.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00662",
+  "decision": "absence_misread",
+  "target": "whole plant acaulescent (FLOPO_0980080), not stem (PO_0009047) absent. 'slender' most likely describes the scape. That is the inflorescence stalk, peduncle (PO_0009053), so it should not go on the stem either.",
+  "fix": "'Plant stemless' and 'acaulescent' mean there is no elongated, leafy aerial stem. Read them as whole plant acaulescent (FLOPO_0980080), never as stem PO_0009047 absent. Stem synonyms such as scape and caudex would otherwise always contradict it.",
+  "reason": "A stemless rosette bromeliad still has a scape or a short rhizome. The lexicon maps 'scape' to stem, which creates the clash.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X00663",
+  "decision": "both_true",
+  "target": "leaf (PO_0025034) present and linear. The plant becomes nearly leafless later, through early leaf fall. At most, a stage-bound statement: leaves deciduous (PATO_0001730) or few at the fruiting stage.",
+  "fix": "'soon becoming leafless', 'nearly leafless' and 'leafless at anthesis/in fruit' describe a later stage or a near-absence. Do not emit 'leaf absent' for the taxon. Use a stage context or 'deciduous' instead.",
+  "reason": "'soon becoming nearly leafless' implies that leaves were present first. Both statements hold, at different stages.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00664",
+  "decision": "absence_misread",
+  "target": "aril (PO_0009090) present and pilose. Only its dorsal lobe is lacking, so at most aril lobed (PATO_0001979) with the dorsal lobe absent. There is no PO term for an aril lobe.",
+  "fix": "'the <position> lobe (tooth, wing, appendage) lacking' negates that sub-part, not the organ named before it. Never emit '<organ> absent' from such a clause. If there is no class for the sub-part, emit nothing.",
+  "reason": "Polygala arils are typically 2- or 3-lobed. Losing the dorsal lobe leaves a hairy aril.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00665",
+  "decision": "both_true",
+  "target": "leaf (PO_0025034) present and revolute. Only some short branches (branch, PO_0025073 / shoot axis PO_0025029) are leafless.",
+  "fix": "'<qualified> leafless branches/stems' ('short', 'flowering', 'old', 'lower') describes those branches. Do not emit 'leaf absent' for the taxon. At most annotate the qualified branch, or drop the clause.",
+  "reason": "A plant that also has leafless short shoots still has leaves.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00666",
+  "decision": "absence_misread",
+  "target": "leaf midvein (PO_0020139) present. Lateral veins (secondary leaf vein PO_0020140) are absent or obscure on that organ. Not vascular bundle (PO_0005020) absent.",
+  "fix": "'veinless except for the midnerve (midrib)' means the midvein is present and only the lateral veins are lacking. Emit 'midvein present' and 'secondary leaf vein absent or inconspicuous'. Never emit 'vein absent'. Check which organ each vein statement belongs to (sepal, wing, leaf).",
+  "reason": "The 'except' clause states that a vein is present. 'venose' probably refers to another organ (e.g. the wing sepals).",
+  "confidence": 0.8
+ },
+ {
+  "id": "X00667",
+  "decision": "both_true",
+  "target": "Basal leaves (leaf PO_0025034, basal FLOPO_0991002) are present and villous beneath. Only the flowering stems (peduncle/scape) are nearly leafless: cauline leaf (PO_0000013) few or absent.",
+  "fix": "'flowering stems (scapes) leafless or nearly leafless' is about cauline leaves. Annotate cauline leaf PO_0000013 (absent or few) or drop the clause. Never emit 'leaf absent' for a taxon with basal leaves. 'nearly' never yields 'absent'.",
+  "reason": "Potentilla vahliana is a cushion plant with basal leaves and nearly leafless flowering stems.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00668",
+  "decision": "both_true",
+  "target": "prickle (PO_0025169), not thorn (PO_0025172): straight, terete, present on some stems. The 'unarmed' clause applies to other branches (e.g. flowering branchlets or upper stems), or it is a frequency variant.",
+  "fix": "In Rosa, Rubus and similar genera, 'prickles' are epidermal outgrowths: map them to prickle PO_0025169, never thorn. 'unarmed' with a qualifier ('flowering branches unarmed', 'often unarmed', 'unarmed above') restricts the absence to that member, or marks it as variable.",
+  "reason": "Rosa macounii (R. woodsii group) often has unarmed upper or flowering branches and straight prickles below. The excerpt has lost the qualifier.",
+  "confidence": 0.6
+ },
+ {
+  "id": "X00669",
+  "decision": "absence_misread",
+  "target": "peduncle (PO_0009053) very short (decreased length PATO_0000574), not absent. 'glabrescent' may describe the inflorescence axis.",
+  "fix": "'<part> essentially (practically, almost, nearly, virtually) lacking/absent' describes a very reduced part. Emit 'decreased length', or nothing, never 'absent'. Hedges such as 'essentially', 'nearly' or 'apparently' block an absence annotation.",
+  "reason": "A part that is described as glabrescent exists. 'essentially lacking' means it is very short.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X00670",
+  "decision": "absence_misread",
+  "target": "whole plant acaulescent (FLOPO_0980080). The caudex (stem PO_0009047 synonym) is present and sparingly long-hairy.",
+  "fix": "'acaulescent' and 'stemless' mean there is no elongated aerial leafy stem. Use FLOPO_0980080 and never 'stem absent': a caudex, rhizome or scape is still a stem in PO.",
+  "reason": "Acaulescent Tetraneuris has a woody caudex. Both statements hold, but 'acaulescent' was read as 'stem absent'.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00671",
+  "decision": "both_true",
+  "target": "Accessory bracts (outer calyculus bracts below the involucre, part of involucre PO_0009100) absent. Bracteoles (PO_0009043) on the peduncle present and minute.",
+  "fix": "'without accessory (supplementary, calycular, outer) bracts' in Asteraceae negates the calyculus only. Do not emit generic 'bract absent'. Map 'bracteolate' to bracteole PO_0009043, not to bract.",
+  "reason": "In Thymophylla the involucre may lack calyculus bracts while the peduncles bear small bracteoles. These are different structures.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X00672",
+  "decision": "both_true",
+  "target": "leaf lamina (PO_0020039) absent only on the outer leaves (outer, FLOPO_0991379). The blades of the other leaves are stiff.",
+  "fix": "'the outer bladeless' restricts the absence to the outer member of the series. Annotate the qualified bearer, or drop it. Never emit 'leaf lamina absent' for the taxon.",
+  "reason": "This is the same bromeliad pattern as the outer bladeless sheaths.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00673",
+  "decision": "both_true",
+  "target": "bud (PO_0000055) present and densely pubescent. The absence is a frequency variant ('frequently absent'), probably of some accessory bud or structure. It is not an absence for the taxon.",
+  "fix": "'frequently / often / sometimes / occasionally absent' marks a variable character. Do not emit '<part> absent' for the taxon. Keep the presence, or mark the character as variable. Also check that the subject of 'absent' is the part that was annotated.",
+  "reason": "A frequency qualifier means the part is often present. The described bud cannot be wholly absent.",
+  "confidence": 0.55
+ },
+ {
+  "id": "X00674",
+  "decision": "both_true",
+  "target": "Only leafy bracts at the base of the inflorescence or capitulescence are absent (bract PO_0009055, basal FLOPO_0991002, leafy). The brownish paleae are receptacle bracts (chaff) of the head, a different structure.",
+  "fix": "'without <modifier> bracts at <position>' ('leafy bracts at the base') negates that kind of bract at that place. Never emit generic 'bract absent'. In Asteraceae, 'paleae' are receptacle scales and should not trigger a conflict with a negated bract elsewhere.",
+  "reason": "The modifier ('leafy') and the position ('at the base') restrict the absence. Paleae are present on the receptacle of Espeletiinae.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X00675",
+  "decision": "absence_misread",
+  "target": "secondary leaf vein (PO_0020140) not visible: inconspicuous (PATO_0000464). Not leaf lamina absent.",
+  "fix": "'<veins / venation> not visible (obscure, invisible, inconspicuous)' is the quality inconspicuous on the vein class. It is never an absence, and never an absence of the organ that bears the veins.",
+  "reason": "The lamina is described as chartaceous to coriaceous. Only its secondary venation cannot be seen.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00676",
+  "decision": "absence_misread",
+  "target": "petiole (PO_0020038) absent (pseudopetiole absent, the leaf base is not narrowed into a stalk). The leaf is present and spreading.",
+  "fix": "'not <part>-ate / <part>-less' ('not pseudopetiolate', 'epetiolate', 'exstipulate') negates the named sub-part (petiole or pseudopetiole, stipule), not the bearer of the adjective.",
+  "reason": "'not pseudopetiolate' is about the leaf base. The leaves themselves are described.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00677",
+  "decision": "absence_misread",
+  "target": "whole plant (PO_0000003) glabrous (PATO_0000453).",
+  "fix": "'Indumentum absent' and 'without indumentum' mean glabrous (PATO_0000453) on the bearer in context. Indumentum is a covering of hairs, not a plant part, so never emit '<bearer> absent'.",
+  "reason": "'Indumentum absent' was read as an absence of the whole plant.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00678",
+  "decision": "absence_misread",
+  "target": "No annotation for inflorescence (PO_0009049): it is missing data. The woody spike is the infructescence (PO_0006342) and stands.",
+  "fix": "'<part> not seen / not known / not observed / unknown' means the part has not been observed. Emit no phenotype for it, neither absent nor present. Map 'infructescence' to PO_0006342, not to an inflorescence type.",
+  "reason": "The male and female inflorescences were simply not collected. The fruiting spike is described.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00679",
+  "decision": "absence_misread",
+  "target": "style head (FLOPO_0986079) without a terminal appendage. Not style absent. The 'concave' statement probably also belongs to the style head.",
+  "fix": "'<part> appendage (tip, beak, wing) absent' negates the appendage, not the part. With compound bearers ('style-head appendage'), the head noun is the absent thing. If there is no class for it, emit nothing.",
+  "reason": "In Asclepiadoideae the style head is present and may or may not have an apical appendage.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00680",
+  "decision": "absence_misread",
+  "target": "portion of secretory tissue (PO_0005656, gland) absent on the branch, i.e. oil glands absent. The branch is present and smooth.",
+  "fix": "'<glands / hairs / lenticels / dots> absent' on a part negates those structures on that part, never the part itself. The subject of 'absent' is the noun immediately before it.",
+  "reason": "This is the part of the sentence about branchlets: the oil glands are absent, not the branch.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00681",
+  "decision": "absence_misread",
+  "target": "staminal tube (FLOPO_0986013) absent: filaments free. The stamen (PO_0009029) is present and glabrous.",
+  "fix": "'filament tube / staminal tube / connate base absent' negates the fusion structure. Emit staminal tube FLOPO_0986013 absent, or filaments free. Never emit 'stamen absent' or 'filament absent'.",
+  "reason": "In Solanum, 'filament tube absent' means the filaments are not fused at the base.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00682",
+  "decision": "absence_misread",
+  "target": "stipule (PO_0020041) absent. The leaf is present and ciliate.",
+  "fix": "'without stipules' and 'exstipulate' put the absence on stipule PO_0020041, never on the leaf that is the subject of the sentence.",
+  "reason": "The negated noun is 'stipules'. It was attached to the leaf bearer.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00683",
+  "decision": "absence_misread",
+  "target": "The external teeth of the calyx (extra-calycine teeth of the hypanthium rim in Melastomataceae) are absent. The sepals and calyx (PO_0009031 / PO_0009060) are present and glabrous. There is no class for external teeth, so emit nothing.",
+  "fix": "'external (exterior, dorsal) teeth absent' in Melastomataceae calyx descriptions negates the extra teeth outside the calyx lobes. It is never 'sepal absent'.",
+  "reason": "Melastome calyces often have external teeth alternating with the lobes. Their absence leaves the sepals intact.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00684",
+  "decision": "absence_misread",
+  "target": "stipel (PO_0020051) absent (apparently). The stipules (PO_0020041) are present and linear.",
+  "fix": "Map 'stipel', 'stipels' and 'estipellate' to stipel PO_0020051, not to stipule. A part noun with a diminutive suffix (stipel, bracteole, leaflet, pinnule) is a separate part.",
+  "reason": "Stipels (at the leaflet bases) and stipules are different structures. Brunellia has both.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00685",
+  "decision": "both_true",
+  "target": "leaf (PO_0025034) present and pubescent. The plant only seems leafless (rush-like stems with few, reduced cauline leaves, cauline leaf PO_0000013). This is not an absence.",
+  "fix": "'seemingly / apparently / almost / nearly leafless' (also misspelt 'seemly') is a hedged near-absence. Never emit 'leaf absent'. At most, cauline leaves reduced or few.",
+  "reason": "Cephalaria juncea has rush-like, almost leafless stems, but its leaves are described.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00686",
+  "decision": "both_true",
+  "target": "bract (PO_0009055) present and triangular on one part of the inflorescence. 'lacking bracts' probably refers to another part (e.g. the sterile part of the scape or some nodes). Check the source sentence.",
+  "fix": "'<qualified part> lacking bracts' ('scape', 'lower nodes', 'upper flowers') restricts the absence to that part. Annotate the qualified bearer or drop it. Never emit a taxon-wide 'bract absent' beside a described bract.",
+  "reason": "In Chlorophytum, flowers are subtended by bracts, while scapes or some nodes lack sterile bracts. The excerpt has lost the subject.",
+  "confidence": 0.5
+ },
+ {
+  "id": "X00687",
+  "decision": "both_true",
+  "target": "Only the higher-order bracts and the bracteoles (PO_0009043) are absent. The lower bracts (ovate sheaths, bract PO_0009055) are present.",
+  "fix": "'higher-order / secondary / upper bracts absent' restricts the absence to that order or member (upper FLOPO_0991376). Never emit generic 'bract absent'.",
+  "reason": "The lower-order bracts are described as ovate sheaths. The higher orders are missing.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00688",
+  "decision": "both_true",
+  "target": "The leafy shoot is bladeless only in its basal 1/3 to 1/2: the basal leaves (basal FLOPO_0991002) are bladeless sheaths. The upper leaves have acuminate laminas (leaf lamina PO_0020039).",
+  "fix": "'bladeless (leafless) in the basal/lower <fraction>' restricts the absence to the basal members of the shoot. Annotate the qualified bearer or drop it. Never emit 'leaf lamina absent' for the taxon.",
+  "reason": "In Zingiberaceae (Meistera), the lower part of the leafy shoot carries bladeless sheaths. The blades above are described.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00689",
+  "decision": "absence_misread",
+  "target": "stipule (PO_0020041) deciduous (PATO_0001730) only. 'not seen' means missing data, not absent.",
+  "fix": "'<part> not seen, caducous' (or 'not seen' alone) means the part has not been observed, usually because it falls early. Emit only 'caducous' (deciduous PATO_0001730) and never 'absent'.",
+  "reason": "The flora explains that the stipules were not seen because they are caducous. They exist.",
+  "confidence": 0.95
+ }
+]

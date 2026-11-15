@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P03000",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Split '10-nerved' with the counted-parts row nerved → vein (count 10 of vein, part of the fruit/capsule) before the unit check, and read '±' as value_qualifier approximately (pattern 01).",
+  "reason": "A count inside a word, not a measurement with a missing unit; the table already has 'nerved'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03001",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "The N-xed split must take a range 'N-M-veined' (count 3-5 of vein). The bearer is the inner phyllary (involucral bract, position 'inner' as in pattern 04), not any bract.",
+  "reason": "A count range inside a word, and 'veined' is in flora_counted_parts.tsv.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03002",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "'to' is already an upper-bound cue. Add 'd.b.h.' (diameter at breast height) as an attribute word: PATO diameter of the trunk/stem, upper bound 20 cm.",
+  "reason": "The bound is standard. Only the abbreviation that names the attribute is not known.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03003",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "The text has no negation, so drop the false negation flag. Read 'median' and 'cauline' as position values of the leaf (FLOPO median, cauline FLOPO:0991117), and 'linear to linear-lanceolate' as a continuum.",
+  "reason": "A plain shape statement about a member of a series; the negation check fired wrongly.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03004",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md",
+  "fix": "Add 'in mature bud' to config/flora_context_words.tsv as a stage (kind A, flower bud stage). Read 'weakly' as value_qualifier approximately on clavate PATO:0001883.",
+  "reason": "Stage qualifier with no reading in the context table.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03005",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "'many' is listed as a count word. Route count_or_non_length_measurement rows with a bare 'many'/'numerous' after the part to pattern 13 (seed, count_word many).",
+  "reason": "Exactly the 'stamens many' wording of pattern 13.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03006",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add the cue 'similar to X but smaller/larger': decreased size towards X (here bract), with X taken from 'similar to'. 'Similar' itself gives no class.",
+  "reason": "The second term is in the clause ('similar to bracts'), so slot 3 'towards' can be filled.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03007",
+  "decision": "new_pattern",
+  "target": "count-per-unit",
+  "fix": "Count of tooth (3-5) on the leaf margin per unit: fb:perUnit with magnitude 2 cm (density 1.5-2.5 per cm in RDF). OWL keeps only 'margin has part some tooth' (dentate). 'env.' = approximately.",
+  "reason": "A density along a length, which neither a plain count nor a count at a position covers.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03008",
+  "decision": "existing_pattern",
+  "target": "docs/flora-annotation-playbook.md",
+  "fix": "Reviewed habit rule (rule 6) and an EQ signature for the FLOPO class: liana = whole plant PO:0000003 ligneous PATO:0002348 and climbing FLOPO:0991108. Height 'up to 15 m' by pattern 02.",
+  "reason": "Same as the earlier review P00117: both terms exist, only the noun rule is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03009",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept 'to' after '×' as an inclusive upper bound on the second dimension (calyx width ≤ 7 mm). 'in flower' as stage kind A.",
+  "reason": "A known upper-bound cue inside an 'L × W' construction the parser does not split.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03010",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Read 'may reach X' after a usual range (2-10.6 m) as value_max_extreme 20 m on that record, with frequency 'occasionally' (tree form). Not as the usual bound. Feet are converted by the existing rule.",
+  "reason": "A rare maximum that goes with the usual range given just before it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03011",
+  "decision": "existing_pattern",
+  "target": "docs/odp/01-approximate-value.md",
+  "fix": "Rule like 'glabrous or nearly so': 'à peine ou pas X' / 'scarcely or not X' = negated X with value_qualifier approximately. Ground 'évasé' to flared (PATO lexicon).",
+  "reason": "A set phrase meaning 'not or barely flared', not a true disjunction of two states.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03012",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Union of suborbicular (orbicular, approximately; pattern 01) and ovate-orbicular (continuum ovate FLOPO:0991024 – orbicular). 'Lateral' as a position value of the sepal.",
+  "reason": "Two shape values of one attribute; both can be grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03013",
+  "decision": "existing_pattern",
+  "target": "docs/flora-annotation-playbook.md",
+  "fix": "Habit rule: climber = whole plant climbing FLOPO:0991108. 'Mostly glabrous' is a separate statement (glabrous, frequency/approximately). The height goes to pattern 02.",
+  "reason": "The term exists; only the noun rule is missing (earlier P00053).",
+  "confidence": "high"
+ },
+ {
+  "id": "P03014",
+  "decision": "new_pattern",
+  "target": "order of division",
+  "fix": "Lamina pinnatifid FLOPO (existing) in OWL. The order of division 2-3 is an RDF count (division_order low/high) with its cue. A full model would state pinnatifid of the pinna as a part of the lamina for order 2.",
+  "reason": "Listed as open in the review ('2-3-pinnatisect'). This is not a measurement with a missing unit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03015",
+  "decision": "existing_pattern",
+  "target": "docs/flora-annotation-playbook.md",
+  "fix": "Habit rule climber → climbing FLOPO:0991108 on whole plant. 'or sometimes erect' is an alternative with its own frequency (pattern 08), with erect PATO:0000622.",
+  "reason": "The term exists; only the noun rule is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03016",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The bearer is the style base (tubercle), not 'achene width'; the quality is width as a ratio 1/3 towards the achene (pattern 10). 'small' and 'conic' are separate statements.",
+  "reason": "The transcribed entity and quality ('achene width', 'amount') do not match the sentence.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03017",
+  "decision": "existing_pattern",
+  "target": "docs/flora-annotation-playbook.md",
+  "fix": "Habit rule: 'woody climber' = whole plant ligneous PATO:0002348 and climbing FLOPO:0991108 (same as liana). 'to 12 m' by pattern 02.",
+  "reason": "Both terms exist; the compound noun needs a rule.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03018",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md",
+  "fix": "'abaxially' is in the context table (surface). Allow the surface/region reading for vein prominence: midvein raised PATO:0001369 with a BSPO abaxial-side part restriction (and impressed adaxially). Today it is limited to colours, hairs and smooth/rough.",
+  "reason": "A place on the part (kind C), not a stage; the qualities that the surface reading allows are too few.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03019",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read 'N mm or less' as an inclusive upper bound (bracteole length ≤ 1 mm), not as a disjunction. 'caducous' is a separate statement with FLOPO caducous (exists). Female flower context by pattern 12.",
+  "reason": "'or less' is a bound cue, wrongly treated as an 'or' list.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03020",
+  "decision": "existing_pattern",
+  "target": "docs/flora-annotation-playbook.md",
+  "fix": "Habit rule for French 'liane' = whole plant climbing FLOPO:0991108 only. Woodiness comes from its own word: here 'herbacée' = herbaceous. Do not map 'liane' to ligneous.",
+  "reason": "The term exists. French 'liane' covers herbaceous climbers, as this sentence shows.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03021",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Count 1-4 of cilium (hair) with bearer_part the leaf lamina base, max extreme 6 (pattern 05), frequency 'souvent' (often). 'filiformes' is a shape of the cilia.",
+  "reason": "A count of parts at a place on the organ, with a parenthesised extreme.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03022",
+  "decision": "existing_pattern",
+  "target": "docs/flora-annotation-playbook.md",
+  "fix": "Habit rules 'sarmenteux' → climbing/scandent FLOPO:0991108 and 'liane' → climbing. The union 'arbrisseau sarmenteux ou liane' as habit alternatives (pattern 07, growth-form exception of rule 4).",
+  "reason": "Terms exist; only the noun rules are missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03023",
+  "decision": "existing_pattern",
+  "target": "docs/flora-annotation-playbook.md",
+  "fix": "Habit rule vine = whole plant climbing FLOPO:0991108. 'Suffruticose' = suffrutescent (growth form, rule 4). 'to 30 m high' by pattern 02.",
+  "reason": "Terms exist; the noun rule is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03024",
+  "decision": "new_pattern",
+  "target": "description by reference",
+  "fix": "At the taxon level, copy the annotations of the referenced part (petal part_of male flower) to the new bearer (petal part_of female flower), with value_qualifier approximately for '±'. The RDF keeps a link to the source record. OWL only for the copied classes.",
+  "reason": "The statement holds no value itself; it points to another description of the same taxon.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03025",
+  "decision": "missing_term",
+  "target": "subpercurrent: a positional quality of a costa or vein that ends below the apex of the structure it runs through (sibling of percurrent FLOPO:0991163 and excurrent FLOPO:0991162)",
+  "fix": "Bearer costa (leaf midvein of the moss leaf), quality subpercurrent. The transcribed quality 'costa' is the bearer.",
+  "reason": "A standard bryological state with no term. Percurrent and excurrent exist.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03026",
+  "decision": "existing_pattern",
+  "target": "docs/flora-annotation-playbook.md",
+  "fix": "Habit rule climber → climbing FLOPO:0991108 on whole plant. 'tall' is too vague and is left out.",
+  "reason": "Term exists; noun rule missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03027",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md",
+  "fix": "Add 'à la fructification' as stage kind A (fruiting stage). Read 'à peine allongés' as negated elongated with approximately (as P03011): inflorescence not or scarcely elongated in fruit.",
+  "reason": "A stage-qualified state with a 'scarcely' modifier, not an open process.",
+  "confidence": "low"
+ },
+ {
+  "id": "P03028",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Read 'N (or M)' like 'N(-M)': count 3 of tooth part_of capsule, value_max_extreme 4. The splitting into 6 (or 8) is a second, 'sometimes' statement or is left out.",
+  "reason": "A count with a parenthesised extreme, not a free disjunction.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03029",
+  "decision": "new_pattern",
+  "target": "depth of division",
+  "fix": "Ground 'fourth scale' to the lemma of the upper floret. Its count 2 of lobe by pattern 03. The depth as a ratio 0.25 of the bearer's length in RDF (unit ratio, cue 'for about one quarter of its length'; approximately). OWL keeps bilobed.",
+  "reason": "Depth of incision relative to the part's length is open in the review ('divided 1/3-2/5').",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03030",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept 'to' after '×' as an inclusive upper bound on the width (≤ 1.5 cm); the length 1.5-2.5 cm as usual.",
+  "reason": "Same construction as P03009.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03031",
+  "decision": "new_pattern",
+  "target": "depth of division",
+  "fix": "Bearer perianth of the female flower bud, lobed; depth ratio 0.5 of its length in RDF ('c.' = approximately). OWL keeps lobed only.",
+  "reason": "Depth of division as a fraction, not a measurement missing its unit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03032",
+  "decision": "existing_pattern",
+  "target": "docs/flora-annotation-playbook.md",
+  "fix": "Habit rule liane → climbing FLOPO:0991108. 'Arbuste ou liane' as a union of habits (pattern 07, growth-form exception).",
+  "reason": "Terms exist; noun rule missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03033",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md",
+  "fix": "Temporal transition: 'spreading, reflexed by morning' = spreading becoming reflexed (qualitative_value_relation, reflexed PATO:0104353), with 'by morning' as the transition cue.",
+  "reason": "The same construction as 'white becoming pink'; a time of day, not a growth stage.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03034",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Bearer palea part_of upper floret (pattern 12), with 'as long as' the lemma (equality, pattern 10, towards lemma). 'palea' is not a quality.",
+  "reason": "The transcription puts the part as the quality and the floret as the entity.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03035",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md",
+  "fix": "Bearer leaflet base (region, kind C). Read 'X to broadly X' as X (cuneate, PATO lexicon): the continuum collapses to one value, and 'broadly' needs no term.",
+  "reason": "A continuum within one value; terms and the region slot exist.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03036",
+  "decision": "existing_pattern",
+  "target": "docs/flora-annotation-playbook.md",
+  "fix": "Habit rule liana = ligneous PATO:0002348 and climbing FLOPO:0991108 on whole plant; 'suffruticose' = suffrutescent.",
+  "reason": "Terms exist; noun rule missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03037",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add the cue 'to as much as' (inclusive upper bound). The bearer is shoot axis internode, not stem. 'usually short' / 'sometimes to 1 cm' as a frequency on the bound (or max extreme, pattern 05).",
+  "reason": "An unknown upper-bound cue; the bearer also needs correcting.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03038",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md",
+  "fix": "'apex' is a bare place word (added 2026-11-14) → apex region of the lamina. 'long' before 'acuminate' is a degree modifier (long-acuminate), not a stage: acuminate PATO with the modifier in RDF.",
+  "reason": "A region plus a degree word, misread as a stage.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03039",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Cue 'similar to X but smaller': decreased size towards X (leaf).",
+  "reason": "Same construction as P03006; the second term is in the clause.",
+  "confidence": "medium"
+ }
+]

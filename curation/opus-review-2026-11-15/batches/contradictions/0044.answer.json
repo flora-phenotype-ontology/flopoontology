@@ -1,0 +1,242 @@
+[
+ {
+  "id": "X01320",
+  "decision": "both_true",
+  "target": "Calyx PO:0009060 absent only in the staminate flower PO:0025600. In the bisexual or pistillate flowers (pistillate flower PO:0025599) the calyx is present and persistent in fruit (deciduous PATO:0001730 negated / persistent)",
+  "fix": "'Staminate (male) flowers without <part>' and 'female flowers without <part>' make an absence that belongs to that flower sex only (bearer staminate flower PO:0025600 or pistillate flower PO:0025599). They never give an absence for the taxon as a whole.",
+  "reason": "Fraxinus is polygamous. Male flowers lack a calyx, and the other flowers have a calyx that stays on the fruit.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01321",
+  "decision": "both_true",
+  "target": "The two vein statements belong to different organs of the bamboo (for example a sheath or auricle that is not veined, and a leaf blade or palea that is 7-veined). Vascular bundle PO:0005020 is not the bearer: the bearer is the organ named in each clause",
+  "fix": "'not veined', 'veinless' and '<n>-veined' are qualities of the organ in the clause (glume, lemma, palea, sheath, blade). They never become 'vascular bundle absent' or 'vascular bundle present' for the whole taxon.",
+  "reason": "Bamboo descriptions count veins on many organs. One organ can lack visible veins while another has 7. The text gives no sign the flora is inconsistent.",
+  "confidence": "low"
+ },
+ {
+  "id": "X01322",
+  "decision": "both_true",
+  "target": "Two kinds of fruit: the normal pods have oblong to elliptic seeds (seed PO:0009010 oblong); the small, curved, sterile pods have no seeds. Context: the dwarf (sterile) fruit form",
+  "fix": "'<fruit form> without seeds' ('pods of the second kind without seeds', 'sterile pods seedless') is a quality of that fruit form (fruit PO:0009001, seedless). It is never 'seed absent' for the taxon.",
+  "reason": "Gleditsia sinensis has normal seeded pods and also small sickle-shaped pods with no seeds. The seed description belongs to the normal pods.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X01323",
+  "decision": "absence_misread",
+  "target": "Peduncle (scape) PO:0009053 without bracts. Nothing on the capitulum is absent: involucral bract PO:0009045 present and lanceolate",
+  "fix": "'<axis> not bracteate', 'ebracteate' and 'without bracts', said of a scape, peduncle or stem, are a quality of that axis (no bracts along it). They never give 'bract absent' (bract PO:0009055) for the taxon, because involucral bracts and floral bracts are bracts too.",
+  "reason": "The scape has no bracts, but the head has a lanceolate involucre.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01324",
+  "decision": "absence_misread",
+  "target": "Peduncle PO:0009053 cylindric, with no sterile bracts. The floral bracts (bract PO:0009055) are present, apex acuminate",
+  "fix": "Same rule as X01323: 'peduncle ebracteate' describes the peduncle (no sterile bracts on it). It never means 'bract absent' for the taxon.",
+  "reason": "Orchid descriptions separate sterile bracts on the peduncle from the floral bracts. The floral bracts are described as acuminate.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01325",
+  "decision": "absence_misread",
+  "target": "Sterile flowers absent: flower PO:0009046 with the quality sterile PATO:0000956 is absent. The fertile flowers and the inflorescence PO:0009049 are present",
+  "fix": "'sterile flowers absent', 'sterile florets none' and 'ray (sterile) flowers absent' deny only the flowers with that quality (sterile PATO:0000956, or ray/marginal). They never give 'flower absent'.",
+  "reason": "Hydrangea candida has no showy marginal sterile flowers. It still has fertile flowers in an inflorescence.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01326",
+  "decision": "absence_misread",
+  "target": "No annotation: 'not known' means the flowers have not been collected. The inflorescence (or infructescence) is axillary on current year's branchlets",
+  "fix": "'<part> not known', 'not seen', 'unknown' and 'not observed' report missing material. They are never an absence; drop them.",
+  "reason": "The flora is describing the material it had. It is not saying the plant has no flowers.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01327",
+  "decision": "absence_misread",
+  "target": "No annotation: the male flowers have not been collected. The female cymes, 1-flowered (cyme inflorescence PO:0030113 or the pistillate inflorescence), are present",
+  "fix": "Same rule: '<sex> flowers not known' reports missing material. It is never an absence of flowers, and certainly not of all flowers.",
+  "reason": "Only female material is known. Nothing is absent from the plant.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01328",
+  "decision": "unclear",
+  "target": "Probably bracts absent in one inflorescence (or one sex), with 'acute' belonging to another bract-like part (bracteoles or calyx lobes). The available text cannot settle which",
+  "fix": "A one-word quality ('acute') attached to 'bract' must come from a clause that names the bract. If the nearest named part is a bracteole, sepal or calyx lobe, attach the quality there. 'bracts absent' must keep its context (male/female inflorescence) if the clause gives one.",
+  "reason": "Ilex inflorescences are often described separately by sex. The bare word 'acute' may belong to bracteoles or sepals, but the excerpt is too short to tell.",
+  "confidence": "low"
+ },
+ {
+  "id": "X01329",
+  "decision": "absence_misread",
+  "target": "No annotation for the fruit: 'not known' means no fruiting material. 'stout' belongs to another part in its clause (for example branchlets or the male peduncle), not fruit PO:0009001",
+  "fix": "'<part> not known' reports missing material and is never an absence. A quality from the same description can't be attached to a part the flora says is unknown; attach it to the part named in its own clause.",
+  "reason": "The fruit was never described, so 'stout' cannot be about the fruit.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01330",
+  "decision": "absence_misread",
+  "target": "Petal PO:0009032 present (the lateral united petals or the upper petal) with no basal auricle (not auriculate). Apex emarginate",
+  "fix": "'auricle absent', 'without auricles' and 'exauriculate' deny the auricle of the part in the clause. They never give an absence of the petal, leaf or sheath that bears it.",
+  "reason": "In Impatiens the lateral united petals often have a dorsal auricle. This species has none, and its petals are described.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01331",
+  "decision": "absence_misread",
+  "target": "Stem (scape) PO:0009047 with few leaves: almost leafless, with a single cauline leaf. Leaf PO:0025034 present",
+  "fix": "'± leafless', 'nearly leafless', 'subleafless' and 'almost without leaves' mean few leaves on the stem. They are never 'leaf absent'. 'leafless', said of a stem or scape, is a quality of that stem (no cauline leaves) and never denies the basal leaves.",
+  "reason": "The same sentence says the stem is ± leafless 'and a single leaf'. That is a stem with one leaf, not a plant without leaves.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01332",
+  "decision": "absence_misread",
+  "target": "The stalk at the base of the frond is present: it is a thin white stipe, not green. Neither statement is about leaf PO:0025034 (a Lemna frond is a thallus, not a leaf)",
+  "fix": "'without <colour> <part>' ('without green stalk') denies the colour, not the part, when the description names the part elsewhere. Lemna and other duckweed 'fronds' and 'stipes' are never mapped to leaf.",
+  "reason": "The flora contrasts this species' white stipe with the green stalk of related species. Both statements describe the same stipe.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01333",
+  "decision": "absence_misread",
+  "target": "Branch PO:0025073 (older branches) leafless, reddish brown. The leaves on the other shoots are present, narrowed at the base",
+  "fix": "'leafless branches', 'leafless stems' and 'leafless shoots' are a quality of those axes, often older or eroded ones. They never give 'leaf absent' for the taxon.",
+  "reason": "The moss often has old branches that have lost their leaves. Its leaves are described in detail.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01334",
+  "decision": "absence_misread",
+  "target": "Awn PO:0025349 absent (lemma awnless). Lemma PO:0009037 present and glabrous",
+  "fix": "'awnless', 'muticous', 'without an awn' and 'unawned' map to awn PO:0025349 absent (PATO:0000462). They never give an absence of the lemma, glume or other part that would carry the awn.",
+  "reason": "An awnless lemma is still a lemma, and it is described as glabrous.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01335",
+  "decision": "absence_misread",
+  "target": "Only the submarginal (intramarginal) vein is absent. Leaf midvein PO:0020139 and the lateral veins (vascular bundle PO:0005020) are present and raised abaxially",
+  "fix": "'<qualifier> vein absent' ('submarginal vein', 'intramarginal vein', 'marginal vein', 'tertiary veins') denies only that kind of vein. It is never 'vascular bundle absent'. With no PO class for the vein kind, keep the qualifier as context or drop the absence.",
+  "reason": "The leaf has a raised midrib and lateral veins. Only the vein that runs along the margin is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01336",
+  "decision": "absence_misread",
+  "target": "Bract PO:0009055 present and caducous (deciduous PATO:0001730). 'not seen' only means the bracts had fallen off in the specimens",
+  "fix": "'caducous, not seen', 'early deciduous and not seen' and 'falling early, not seen' mean the part is present and falls early. Record deciduous and never record 'absent'.",
+  "reason": "The flora explains why the bracts were not seen: they fall early.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01337",
+  "decision": "absence_misread",
+  "target": "No annotation for flowers or inflorescence: they have not been collected. The terminal, cymose infructescence belongs to infructescence PO:0006342, not cyme inflorescence",
+  "fix": "'not seen' reports missing material and is never an absence; drop it. Map 'infructescence' to PO:0006342, never to an inflorescence class.",
+  "reason": "Only fruiting material is known. The cymose description is about the infructescence.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01338",
+  "decision": "absence_misread",
+  "target": "No annotation for the inflorescence: it has not been seen. The axillary position belongs to infructescence PO:0006342",
+  "fix": "Same rule as X01337: 'not seen' is never an absence, and 'infructescence' maps to PO:0006342.",
+  "reason": "Only fruiting material is known. The 'axillary' statement describes the infructescence.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01339",
+  "decision": "absence_misread",
+  "target": "No annotation: the female flowers have not been collected. The male flowers in terminal umbels (umbel inflorescence) are present",
+  "fix": "'<sex> flowers not known' reports missing material. It is never an absence of flowers.",
+  "reason": "Myristica is dioecious, and only male material is known here.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01340",
+  "decision": "absence_misread",
+  "target": "Stipule PO:0020041 present and caducous (deciduous PATO:0001730). 'not seen' means they had already fallen",
+  "fix": "Same rule as X01336: 'caducous ... not seen' gives deciduous, never absent. A bare 'not seen' is never an absence.",
+  "reason": "The stipules fall early, so they are missing from the specimens but not from the plant.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01341",
+  "decision": "absence_misread",
+  "target": "No annotation for the male spikes: they have not been seen. The female spike inflorescence (PO:0030117) is present and leaf-opposed",
+  "fix": "'<sex> spikes not seen' reports missing material and is never an absence.",
+  "reason": "Piper is dioecious, and only female material is known.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01342",
+  "decision": "absence_misread",
+  "target": "Petal PO:0009032 present (the keel petals curved), with no basal auricles",
+  "fix": "Same rule as X01330: 'without auricles' denies the auricle of the petal (wing, keel, standard). It never denies the petal.",
+  "reason": "In legume flowers the wing or keel petals may or may not have a basal auricle. The petals themselves are present.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01343",
+  "decision": "absence_misread",
+  "target": "Trichome PO:0000282 (strap-shaped setae) absent on leaf lamina margin PO:0025009. Leaf lamina PO:0020039 present. The abaxial scales are lepidote (overlapping scales), not 'pubescent'",
+  "fix": "'<part> margin lacking <hairs>' and 'without setae' deny the hairs (trichome PO:0000282) on that part. They never deny the part. In Rhododendron, 'scales' on the leaf surface are lepidote and must not be recorded as pubescent.",
+  "reason": "The margin lacks a kind of seta. The blade is present and has overlapping scales underneath.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01344",
+  "decision": "absence_misread",
+  "target": "Only the small prickles and bristles (acicles) are absent. The large prickles are present, sparse to numerous. Bearer: prickle PO:0025169, not thorn PO:0025172",
+  "fix": "'small <part> absent' and '<part> of the second kind absent' deny only the kind named. In Rosa, 'prickles' map to prickle PO:0025169, never thorn (a thorn is a modified shoot).",
+  "reason": "Rosa stems often carry large prickles together with small prickles or bristles. This species has only the large prickles.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01345",
+  "decision": "absence_misread",
+  "target": "Scale leaf PO:0006003 (the bladeless basal leaves or sheaths) present. Leaf lamina PO:0020039 of the foliage leaves present, glabrous or rarely pubescent",
+  "fix": "'bladeless leaves' and 'bladeless sheaths' at the base of a shoot map to scale leaf PO:0006003 (present). They never give 'leaf lamina absent'.",
+  "reason": "Roscoea has a few bladeless sheaths at the base of the pseudostem. The foliage leaves have blades.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01346",
+  "decision": "absence_misread",
+  "target": "Only the glands at the junction of blade and petiole are absent. Leaf lamina PO:0020039 present and coriaceous",
+  "fix": "'glands at <position> absent' and 'eglandular' deny the glands only. They never deny the part named in the position phrase (blade, petiole, margin).",
+  "reason": "Scolopia species are told apart by these basal glands. The blade itself is described.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01347",
+  "decision": "absence_misread",
+  "target": "Only the sterile (non-flowering) stems are absent: stem PO:0009047 with the quality sterile PATO:0000956. The flowering stems are present and glabrous",
+  "fix": "'sterile stems absent' and 'sterile shoots none' deny only the stems with that quality (sterile PATO:0000956). They never give 'stem absent'.",
+  "reason": "Sedum descriptions separate sterile and flowering stems. This species has flowering stems only.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01348",
+  "decision": "both_true",
+  "target": "Palea PO:0009038 absent in one floret (the lower or barren floret, or one sex of spikelet). The palea of the other floret is present, with winged ciliate keels",
+  "fix": "'palea absent', in a clause about the lower floret, the barren floret or the male/female spikelet, belongs to that floret or spikelet only. Keep the floret or sex as context, and never record it as a palea absence for the whole taxon.",
+  "reason": "In Spinifex the male and female spikelets and their two florets are described separately. A palea can be missing in one floret and present in another.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X01349",
+  "decision": "both_true",
+  "target": "The two statements belong to different parts of the spikelet (for example the lower glume veinless and the lemma or upper glume very indistinctly veined). The bearer is the glume or lemma, not vascular bundle PO:0005020",
+  "fix": "'veinless', 'nerveless' and 'indistinctly veined' are qualities of the organ in the clause (glume PO:0009039, lemma PO:0009037, palea PO:0009038). Never record them as 'vascular bundle absent' or 'present'. 'very indistinctly veined' means faint veins, not absent veins.",
+  "reason": "Sporobolus glumes and lemmas are often 1-veined or veinless, and the flora describes each one separately. The two statements most likely do not refer to the same organ.",
+  "confidence": "medium"
+ }
+]

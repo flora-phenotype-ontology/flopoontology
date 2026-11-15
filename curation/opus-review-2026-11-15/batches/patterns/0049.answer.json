@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P01960",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Bearer is the hair (trichome PO:0000282), not the leaf blade. Quality is length PATO:0000122, 0.1-0.2 mm. The hairs sit on the lower surface: the whole is the leaf lamina abaxial epidermis (or the blade as bearer_container). Stellate-dendroid, scale-like and persistent are separate records.",
+  "reason": "'hairs' is not a quality. The measurement belongs to the hairs, not to the blade.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01961",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Bearer is trichome PO:0000282, with the fruit as the whole. Quality is length PATO:0000122, 0.2 mm; a bare size for hairs is their length by convention. Dense, mealy and grey-brown are separate records.",
+  "reason": "'hairs' is not a quality. The 0.2 mm is the size of the hairs on the fruit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01962",
+  "decision": "new_pattern",
+  "target": "growth form",
+  "fix": "Give the FLOPO habit classes an EQ signature. Liana = whole plant PO:0000003 has characteristic climbing FLOPO:0991108, plus a second record for ligneous PATO:0002348. 'grêle' (slender) is a separate record of the stem.",
+  "reason": "Habit noun with no EQ signature. The second-model review of 2026-11-14 already named this pattern.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01963",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The quality is stipitate FLOPO:0991065. The stipe is the narrowed base of the utricle itself, not another part. Bearer is the utricle (perigynium PO:0009044).",
+  "reason": "The relation to another part is spurious: 'base contracted into a stipe' is the standard Carex wording for a stipitate utricle.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01964",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Add a place kind 'per_spiral' (a spiral of flowers on the spadix, no PO landmark) with the cue 'per principal spiral'. Flowers 9-10, container = spadix. Keep 'visible' in the cue text. Drop the 'vs.' values, which belong to another species.",
+  "reason": "This is a count per repeated place. The place kind 'spiral' is missing. 'Visible' makes it a count of the flowers seen on the spadix surface.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01965",
+  "decision": "existing_pattern",
+  "target": "docs/odp/12-part-of-qualified-whole.md",
+  "fix": "Bearer stamen, part_of a flower with the quality male PATO:0000384 (cue 'staminate', already a bearer_quality in flora_context_words). Count 10. The 'perfect flowers ... 6 stamens' clause is a separate record with a whole that is bisexual.",
+  "reason": "Stamen count of the staminate flowers. Pattern 12 covers it; the annotator read 'staminate' as a stage.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01966",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'per segment' as the container, like '3 seeds per fruit': bearer veinlet, bearer_container = the pinna segment (leaflet/pinnule class). Read 'N pairs' as a count with unit pair, or as 20-22 veinlets.",
+  "reason": "The veinlets are parts of each segment. The container word 'segment' and the word 'pairs' were not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01967",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add a row: 'at the end(s) of', 'terminating' -> terminal PATO:0002476, towards = the other part (branch PO:0025073). Bearer is the capitulum (head), not a generic inflorescence quality 'head'.",
+  "reason": "This is a position relative to another part. Table 09 lacks the terminal row.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01968",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Split the clause. Stipule appendiculate FLOPO:0991216 holds without the 'or'. 'appendices égaux ou inégaux' applies to the appendages only and lists both values (equal FLOPO:0991102 / unequal FLOPO:0991101), so it says nothing and is dropped. 'obliquement' stays in the cue.",
+  "reason": "The 'or' covers the appendages, not the stipule. The annotator held the whole statement.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01969",
+  "decision": "existing_pattern",
+  "target": "config/flora_context_words.tsv",
+  "fix": "Add 'narrowed to the base' (also 'tapering to the base') as a region cue that gives leaf base PO:0020040 with attenuate PATO:0001982. Do not read 'to the base' as a stage.",
+  "reason": "This is the base shape of the blade, kind C (region), not a stage.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01970",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md",
+  "fix": "'adaxially' is in flora_context_words as a surface (slot 1, kind C). Apply it: bearer = leaf lamina adaxial epidermis, quality glabrous. The cue stands once in the clause, so the reading should have fired. The routing to the stage branch is the bug.",
+  "reason": "This is the surface reading, already implemented. It was sent to the stage hold by mistake.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01971",
+  "decision": "new_pattern",
+  "target": "measurement at a position along a part",
+  "fix": "A measurement with bearer_part = a region of the part found by a landmark: the distal end of the petiole, near its insertion on the lamina. Width 6 cm, approximately ('±'). This is a point value, not an upper bound. OWL: the width of the distal region; RDF keeps the landmark text and the gradient from the base value (10 cm).",
+  "reason": "'tapering to' gives the width at another place, not a bound. Read as a bound, it would be wrong.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01972",
+  "decision": "new_pattern",
+  "target": "alternative kinds of a part",
+  "fix": "This is a union of bearer classes, not of values: has_part some (panicle inflorescence PO:0030123 or raceme inflorescence PO:0030115). 'laxly' (lax) is a separate record of the inflorescence.",
+  "reason": "'paniculate' and 'racemose' name kinds of inflorescence (PO classes), not PATO values, so the union of values in pattern 07 does not apply.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01973",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Add the French cue 'nombreux/nombreuses' (= numerous) to the indefinite-count cues. Bearer ovule, count indefinite (many).",
+  "reason": "'ovules nombreux' is exactly 'seeds numerous'. Only the French cue is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01974",
+  "decision": "new_pattern",
+  "target": "projection beyond another part",
+  "fix": "Filament exserted PATO:0000623, plus a measurement of the projecting portion: length 4-5 mm of the filament region beyond the perianth. The perianth is the implied reference part (towards). OWL: exserted; RDF: the length of the free portion with its cue.",
+  "reason": "The number is the length of the exserted part, not of the filament or a value of 'exserted'. Already proposed by the second-model review.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01975",
+  "decision": "missing_term",
+  "target": "acaulescent: a whole-plant habit with no evident aerial stem, the leaves arising at or near ground level (stem much reduced, not absent)",
+  "fix": "Add a FLOPO value on whole plant PO:0000003. Do not model it as the negated presence of a stem: botanically the stem is reduced, not absent, and this Viola has a rhizome and stolons.",
+  "reason": "A negated stem would be botanically wrong, and the negation cue is inside the word anyway.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01976",
+  "decision": "new_pattern",
+  "target": "growth form",
+  "fix": "As P01962: liana = whole plant has characteristic climbing FLOPO:0991108, plus ligneous PATO:0002348, as two records.",
+  "reason": "Habit noun with no EQ signature.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01977",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'Fruit unknown' reports a gap in the material, not the absence of fruit. It is not a phenotype.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01978",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'Female flowers, fruits and seeds unknown' reports missing material, not a trait of the taxon.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01979",
+  "decision": "existing_pattern",
+  "target": "docs/odp/12-part-of-qualified-whole.md",
+  "fix": "The heading 'Female flowers:' gives the whole: a flower with female PATO:0000383. Bearer calyx lobe, count 6. The section heading must be accepted as the cue of the whole when it opens the clause group.",
+  "reason": "This is the calyx of the female flowers, pattern 12. The heading was read as a stage.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01980",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Bearer is the utricle (perigynium PO:0009044), not the fruit; the nutlet is the fruit. Quality stipitate FLOPO:0991065. 'short' and 'bent' are qualities of the stipe (separate records, whole = utricle).",
+  "reason": "Wrong entity, and the whole phrase was taken as the quality. The stipe is part of the utricle.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01981",
+  "decision": "new_pattern",
+  "target": "measured extent of a state",
+  "fix": "Scape surrounded by PATO:0005016 towards leaf sheath PO:0020104 (pattern 09), plus RDF: the extent of the state = 1/4 of the scape length, approximately ('ca.'). OWL only the relation; the fraction stays in RDF.",
+  "reason": "The second term is named, but the fraction of the length has no slot.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01982",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Same row as P01967: 'terminating' -> terminal PATO:0002476, towards the lateral shoot (branch PO:0025073).",
+  "reason": "This is a position relative to another part. The relation words are missing from table 09.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01983",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "Read 'the most apical' as the series member terminal (bearer context: terminal leaflet). Then 'to 18 by 7 cm' gives two inclusive upper bounds (pattern 02): length ≤ 18 cm, width ≤ 7 cm, with frequency 'usually'. 'the largest' is an implied comparison and is dropped.",
+  "reason": "This is a size of the terminal leaflet. The member cue 'the most apical' is not in the table, so the bound was rejected.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01984",
+  "decision": "new_pattern",
+  "target": "exception for a region of the bearer",
+  "fix": "Bearer leaf lamina adaxial epidermis. Union (07) of glabrous-approximately ('sub-') and pubescent with degree sparse. The first operand carries an exception region (the veins: not glabrous), kept in RDF as fb:except with a vein class; OWL only the union.",
+  "reason": "The 'except along veins' scope blocks the ordinary union of alternatives.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01985",
+  "decision": "new_pattern",
+  "target": "distance from a landmark",
+  "fix": "Bearer intramarginal vein; quality distance PATO:0000040 towards leaf margin PO:0020128; 2 mm, approximately ('ca.'). OWL: distance towards margin with magnitude; RDF: landmark and cue.",
+  "reason": "This is the 'spacing and distance from a landmark' construction, listed as open.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01986",
+  "decision": "missing_term",
+  "target": "pilulose: minutely or sparsely pilose (with fine soft hairs)",
+  "fix": "Prefer a rule over a class: map 'pilulose' to pilose FLOPO:0991048 with value_qualifier approximately (a diminutive, like 'sub-'). Then the union with puberulent FLOPO value (pattern 07) and 'young' as the bearer state (04) work as they are.",
+  "reason": "The structure (alternatives on young twigs) is covered. 'pilulose' has no grounding.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01987",
+  "decision": "new_pattern",
+  "target": "alternative with its own scope",
+  "fix": "A union over attributes (07): operand 1 = blade with 2-4 lobes (count in the word, 03); operand 2 = serrate with degree coarse, restricted to the apical region (bearer_part BSPO apical). Each operand needs its own scope slot, which 07 lacks. The 'missing unit' reason is a misroute.",
+  "reason": "The second alternative has its own region, so the plain union over attributes cannot hold it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01988",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add 'paler/darker than' (-> high brightness PATO:0000665 / decreased brightness) to the comparison rows. Bearer leaf lamina abaxial epidermis, towards leaf lamina adaxial epidermis. Resolve the elliptical 'adaxial' to the surface of the same organ.",
+  "reason": "The second term is stated ('than adaxial'). Only the colour comparison row and the surface target grounding are missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01989",
+  "decision": "missing_term",
+  "target": "rounded: an apex or base shape whose outline forms a broad continuous convex arc (no grounding found in pato_lexicon or flopo_flora_value_terms)",
+  "fix": "With 'rounded' grounded, 'subrounded' is rounded with approximately (pattern 01). The continuum cuneate PATO:0001955 to rounded on leaf base PO:0020040 then follows from the existing continuum representation.",
+  "reason": "The continuum structure exists. The end value is ungrounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01990",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add 'may reach' (and 'can reach') as an inclusive upper-bound cue. Stem (trunk) diameter PATO:0001334 ≤ 2 m: take the metric value in parentheses, or convert 6.5 ft with the factor.",
+  "reason": "'reaching' is a cue; 'may reach' is not.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01991",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Add the rule: when one operand is a narrower form of the other ('broadly ovate' under ovate PATO:0001891), the union is the broader value. Bracts of the female catkin: whole = female catkin (pattern 12).",
+  "reason": "'broadly ovate' is a kind of ovate, so the 'or' resolves to ovate.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01992",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The quality should be the value, not the attribute 'color': 'blanc crème' is already in botanical_colour_synonyms (FLOPO:0988009, white tending to cream). With 'ou roses' it is a union of colours of the petal (pattern 07). The 'missing unit' reason is a misroute.",
+  "reason": "The attribute was transcribed in place of the stated value.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01993",
+  "decision": "new_pattern",
+  "target": "comparison within a series",
+  "fix": "Bearer: the lateral awns (lateral position FLOPO value, pattern 04). Decreased length PATO:0000574 towards the median awn (same kind of part, another member), with frequency 'parfois' and degree 'un peu'. The towards target is a member of the bearer's own series, which 09 forbids.",
+  "reason": "The second term is a sibling member, which pattern 09 excludes.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01994",
+  "decision": "new_pattern",
+  "target": "measurement at a position along a part",
+  "fix": "As P01971: stem (trunk) diameter PATO:0001334 of about 30 cm at the region just below the first dichotomy (landmark). Point value with 'about'; the decrease from 40 cm at the base is kept as a gradient in RDF.",
+  "reason": "A value at a place found by a landmark, not a stage and not a bound.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01995",
+  "decision": "new_pattern",
+  "target": "growth form",
+  "fix": "Liana = whole plant climbing FLOPO:0991108 + ligneous PATO:0002348. 'to 10 m' is a separate upper bound (02) on the length of the whole plant.",
+  "reason": "Habit noun with no EQ signature. The bound is already covered.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01996",
+  "decision": "missing_term",
+  "target": "1-geniculate (once-geniculate): bent at a single knee; child of bent PATO:0000617, sibling of 2-geniculate",
+  "fix": "Grass awns are described as once- or twice-geniculate. The knee is not a PO part, so a count of parts (03) does not fit. Add the two values under bent.",
+  "reason": "The structure is a plain EQ (awn + value). The number of bends is a character state with no term.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01997",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'2-lobed' is a count in the word (lobed -> lobe), count 2, with bearer_container leaf base PO:0020040 (ground 'leaf-base' with the hyphen) and degree 'slightly'. Expanded, membranous and stem-clasping are separate records.",
+  "reason": "This is a count in a word on a named container, not a count at a position. The hyphenated 'leaf-base' was not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01998",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add a row 'obscuring, concealing, hiding' -> overlapping PATO:0002488 towards pedicel and flower (two targets). 'even at maturity' is a stage (mature PATO:0001701, already in flora_context_words).",
+  "reason": "The bract covers other parts. It is a relation to named parts, not a process.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01999",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The quality is the value ellipsoid = elliptic PATO:0000947 (synonym ellipsoid), not the attribute 'shape'. 'ca. 1.5 mm' is a separate length record with 'approximately'.",
+  "reason": "The attribute was transcribed in place of a value that already has a term. The 'missing unit' reason is a misroute.",
+  "confidence": "high"
+ }
+]

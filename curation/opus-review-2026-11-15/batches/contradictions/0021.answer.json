@@ -1,0 +1,242 @@
+[
+ {
+  "id": "X00630",
+  "decision": "absence_misread",
+  "target": "no annotation: the fruit (berry) of this taxon has not been collected, so it is missing data, not PO_0009001 fruit absent. The 'berry fruit: present' annotation from the same sentence is also unfounded and should go.",
+  "fix": "'<part> not known', 'unknown', 'not seen', 'not observed', 'not collected' mean the part has not been observed: emit no phenotype for that part, neither absent (PATO_0000462) nor present (PATO_0000467).",
+  "reason": "'Berry not known' is a standard flora phrase for missing material. It was read as an absence and also as a presence.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00631",
+  "decision": "absence_misread",
+  "target": "no annotation for flower (PO_0009046), fruit or seed: they are unknown, not absent. The inflorescence (PO_0009049) obtriangular statement stands.",
+  "fix": "'<parts> not known' -> no phenotype (missing data). This also applies to every item in a list joined by commas or 'and'.",
+  "reason": "The flowers have not been collected. That does not conflict with a description of the head (inflorescence).",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00632",
+  "decision": "absence_misread",
+  "target": "bract (PO_0009055): no whorled arrangement. The negation is of the arrangement, not of bracts. Bracts are sometimes present, scattered and lanceolate.",
+  "fix": "'whorls / rings / clusters / tufts of <part> absent' negates the arrangement, not the part. Do not emit '<part> absent'. A following 'but sometimes ...' clause marks the part as variably present.",
+  "reason": "The text itself goes on to say that scattered lanceolate bracts sometimes occur. Only whorled bracts are absent.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00633",
+  "decision": "both_true",
+  "target": "leaf lamina (PO_0020039) absent only on the outer leaves (outer, FLOPO_0991379). The other leaves have acute blades.",
+  "fix": "A series qualifier in front of the part (outer, inner, lower, lowest, basal, upper: config/flora_context_words.tsv bearer_quality) restricts an absence to that member. Annotate the absence on the qualified bearer, or drop it, but never on the part in general.",
+  "reason": "In Aechmea the outer leaves are often reduced to bladeless sheaths. The blades of the main leaves are described as acute.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00634",
+  "decision": "both_true",
+  "target": "awn (PO_0025349) usually present. Awnless occurs only rarely (a frequency qualifier).",
+  "fix": "'rarely / sometimes / occasionally <part>-less' (or '... absent') describes a rare variant. Do not emit '<part> absent' for the taxon. Keep the presence, or mark the character as variable.",
+  "reason": "'rarely awnless' means that the awn is normally present, which agrees with the description of the awn's length.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00635",
+  "decision": "both_true",
+  "target": "spike inflorescence (PO_0030117) with the qualifier basal (FLOPO_0991002): absent. The terminal staminate (male, PATO_0000384) spike is present and sessile.",
+  "fix": "'basal <part> absent' restricts the absence to the basal members (FLOPO_0991002). Never annotate the plain part as absent. 'staminate' or 'pistillate' in front of a part likewise picks out a member.",
+  "reason": "In Carex, 'basal spikes' are long-stalked spikes arising from the base. Their absence says nothing about the other spikes.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00636",
+  "decision": "both_true",
+  "target": "leaf lamina absent or nearly so only on the lower sheaths or leaves (lower, FLOPO_0991377), which is the usual Carex wording. The blades of the other leaves are stiff.",
+  "fix": "'bladeless or nearly so' is hedged. Emit no absence for it. If the subject that went before (lower sheaths, lowest leaves) has been lost, drop the statement rather than attaching it to the leaf lamina in general.",
+  "reason": "Without its subject the phrase cannot be about all leaves, because blades are described elsewhere for the same taxon. Most likely it refers to the basal sheaths.",
+  "confidence": 0.6
+ },
+ {
+  "id": "X00637",
+  "decision": "both_true",
+  "target": "leaf lamina (PO_0020039) absent only in the lower leaves (lower, FLOPO_0991377), which are reduced to sheaths (PO_0020104). The other blades are light green.",
+  "fix": "'<leaves> reduced to bladeless sheaths' -> those leaves have only a sheath. Restrict it to the leaves named or implied (lower or basal). It is never a whole-taxon 'leaf lamina absent'.",
+  "reason": "Carex descriptions typically read 'lower leaves reduced to bladeless sheaths'. The upper leaves have blades.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00638",
+  "decision": "absence_misread",
+  "target": "bract (PO_0009055) without a blade: the bracts are sheathing and bladeless. The leaf lamina (PO_0020039) is present: thick, light green.",
+  "fix": "'<part> bladeless' assigns the absence of a blade to that named part (bract, sheath, cataphyll). Never move it to the foliage leaf lamina PO_0020039.",
+  "reason": "The text says the bracts are bladeless, not the leaves.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00639",
+  "decision": "both_true",
+  "target": "leaf lamina absent only on the lowest leaves or sheaths (lowest, FLOPO_0991377). The blades of the other leaves are erect or ascending.",
+  "fix": "'the lowest / the lower bladeless' (a qualifier with an elided noun) refers back to the leaves or sheaths of the series. Restrict the absence to that member.",
+  "reason": "A qualifier for one member of a series. The blades described belong to the other leaves.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00640",
+  "decision": "absence_misread",
+  "target": "bract (PO_0009055): the sheath is bladeless (Carex eburnea has sheathing bracts that are bladeless or nearly so). The foliage leaf lamina is present and roughened.",
+  "fix": "'the sheath bladeless' describes the sheath just mentioned (a bract sheath or a basal leaf sheath). Attach it to that sheath's owner, and never to the leaf lamina of the taxon in general.",
+  "reason": "'the sheath' points back to a structure just named, most likely the bract. The foliage blades are described.",
+  "confidence": 0.55
+ },
+ {
+  "id": "X00641",
+  "decision": "both_true",
+  "target": "leaf lamina absent only on the lower leaves or sheaths (lower, FLOPO_0991377). The other blades are roughened.",
+  "fix": "'the lower bladeless' -> restrict the absence to the lower members of the series (FLOPO_0991377).",
+  "reason": "A qualifier for one member of a series. The blades described belong to the upper leaves.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00642",
+  "decision": "both_true",
+  "target": "leaf lamina absent only on the lower leaves of the season (lower, FLOPO_0991377), which are reduced to sheaths. The other blades are light green.",
+  "fix": "'the lower leaves ... reduced to bladeless sheaths' -> an absence on the lower leaves only.",
+  "reason": "The text names the members explicitly.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00643",
+  "decision": "both_true",
+  "target": "spike inflorescence (PO_0030117) with the qualifier basal (FLOPO_0991002): absent. The terminal staminate (PATO_0000384) spike is present, solitary and sessile.",
+  "fix": "'basal <part> absent' -> an absence of the basal members only (FLOPO_0991002).",
+  "reason": "Same pattern as Carex albicans. Basal spikes are a separate kind of spike.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00644",
+  "decision": "both_true",
+  "target": "blade absent only on the lower sheaths (lower, FLOPO_0991377; leaf sheath PO_0020104). The other leaves have yellowish-green blades.",
+  "fix": "'the lower sheaths bladeless' -> restrict the absence to the lower members. Never apply it to the leaf lamina of the taxon in general.",
+  "reason": "Only the lower sheaths lack blades.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00645",
+  "decision": "present_misread",
+  "target": "drop 'stolon: length'. The sentence states only an absence: stolon (PO_0003024) absent, at least long horizontal ones. Nothing is measured.",
+  "fix": "An adjective inside an absence phrase ('long', 'large', 'horizontal' <part> absent) specifies what is absent. It must not also produce a quality annotation on the part. One negated phrase yields at most one absence statement.",
+  "reason": "Both annotations come from the same negated sentence. The length annotation is an artefact.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00646",
+  "decision": "both_true",
+  "target": "leaf lamina absent only on the very lowest leaves (lowest, FLOPO_0991377). Note too that 'prominent midrib' belongs on the leaf midvein (PO_0020139), not on the leaf lamina.",
+  "fix": "'very lowest leaves bladeless' -> an absence on the lowest members only. Separately: '<quality> midrib' gives the bearer leaf midvein (PO_0020139), or costa (PO_0030072) in mosses.",
+  "reason": "The absence is restricted to some members. The present statement is also on a slightly wrong bearer, but that is not the cause of the contradiction.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00647",
+  "decision": "both_true",
+  "target": "leaves absent only on the flowering stems (stem PO_0009047, scape). The basal leaves are present and hispid-ciliate on the margin (leaf margin PO_0020128).",
+  "fix": "'flowering branches / stems / scapes leafless' is a quality of that stem: there are no leaves along it. It does not mean 'leaf absent' for the taxon, which usually has basal leaves.",
+  "reason": "A scapose saxifrage: the leaves are basal and the flowering stems bare.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00648",
+  "decision": "absence_misread",
+  "target": "capsule: not ribbed (a negation of ribbed, FLOPO_0991062). Also, a moss capsule is sporangium (PO_0025094, synonym 'moss capsule'), not capsule fruit.",
+  "fix": "'not <quality>' negates the quality on the current bearer and never produces '<bearer> absent'. Separately: in moss floras, 'capsule' maps to PO_0025094.",
+  "reason": "'not ribbed' was turned into an absence of the capsule, which the same description describes as short-ovate.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00649",
+  "decision": "absence_misread",
+  "target": "no absence. The stipels (PO_0020051, not the stipule PO_0020041) were not seen and are probably early deciduous and minute. The stipules are present and brown.",
+  "fix": "'not seen' means not observed (missing data): emit nothing. Keep 'stipel' (PO_0020051) apart from 'stipule' (PO_0020041) when matching words.",
+  "reason": "Two errors: 'not seen' was read as absent, and stipel was mapped to stipule.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00650",
+  "decision": "absence_misread",
+  "target": "no absence for petal (PO_0009032). The petals were not seen by the author. The emarginate standard comes from another description and is reported as such.",
+  "fix": "'<part> not seen' -> missing data, not absence. A hedged second-hand report ('described as') may be kept as a presence, with low weight.",
+  "reason": "The author lacked flowering material. The plant does not lack petals.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00651",
+  "decision": "absence_misread",
+  "target": "no annotation: the basal leaves are unknown (not collected). 'probably turgid' is hedged and should also be dropped or kept with low weight.",
+  "fix": "'<part> not known' -> missing data. Never emit an absence for it.",
+  "reason": "An unknown part, not an absent one.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00652",
+  "decision": "absence_misread",
+  "target": "no annotation. The antheridial (male) flowers, i.e. perigonia bearing antheridia (PO_0025125), are unknown. The whole plant is obviously present and caespitose (FLOPO_0991007).",
+  "fix": "'antheridial / male / pistillate flowers not known' -> missing data for that sexual structure. It is never an absence of the whole plant or of the general flower class.",
+  "reason": "A phrase about unknown material was mapped to an absence of the whole plant.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00653",
+  "decision": "absence_misread",
+  "target": "stereid band (FLOPO_0986117) absent, in the costa (PO_0030072) of the moss leaf (non-vascular leaf PO_0025075).",
+  "fix": "'no <structure>' or 'without <structure>' makes <structure> absent. When the structure has no lexicon entry, drop the statement instead of falling back to the bearer of the sentence.",
+  "reason": "The negation is about the stereid band, not about the leaf.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00654",
+  "decision": "absence_misread",
+  "target": "sclerenchyma (PO_0005427, strengthening tissue) absent in the fruit (PO_0009001) or mericarp. The fruit is present, with obtuse ribs.",
+  "fix": "'<tissue/cell type> absent' (strengthening cells, oil ducts, vittae, stereids) refers to that tissue within the current organ. Never fall back to '<organ> absent'.",
+  "reason": "In Hydrocotyle the absence of strengthening tissue in the mericarp is a classic character. The fruit is described.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00655",
+  "decision": "absence_misread",
+  "target": "venation not keeled: a negation of keel-shaped (PATO_0002522) on the bearer of the sentence, most likely the involucral bract or the achene. No absence of the vascular bundle (PO_0005020).",
+  "fix": "'not <adverb>ly veined / nerved / ribbed' negates the manner of venation and never the vein itself.",
+  "reason": "'not carinately veined' describes how the veins appear, not whether there are any. Veins are described as reticulate.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X00656",
+  "decision": "absence_misread",
+  "target": "no annotation: the peristome (PO_0030042) and the spores are unknown (not seen). The 'peristome: present' annotation from the same sentence should also go.",
+  "fix": "'<parts> not seen' -> missing data. Emit neither absent nor present.",
+  "reason": "One 'not seen' sentence produced both an absence and a presence.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00657",
+  "decision": "absence_misread",
+  "target": "prickle (PO_0025169) absent on the stem (and no thorns, PO_0025172). The stem is present: prostrate or ascending.",
+  "fix": "'unarmed' / 'inermis' means that prickles, thorns and spines are absent on the bearer. It is never '<bearer> absent'.",
+  "reason": "'unarmed' describes the lack of armature, which in Mimosa means prickles.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00658",
+  "decision": "absence_misread",
+  "target": "no annotation: the pistillate flowers (PO_0025599) and the fruit are unknown. The staminate cymes are described, many-flowered.",
+  "fix": "'pistillate / staminate flowers not known' -> missing data for that sex only. It never produces a general 'flower absent'.",
+  "reason": "Two errors: unknown was read as absent, and the sex-specific flower was widened to all flowers.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00659",
+  "decision": "both_true",
+  "target": "leaves absent along the flowering stem (stem PO_0009047), except just below the inflorescence. The rosette leaves are present and oblanceolate.",
+  "fix": "'leafless except ...' or '<stem> leafless' is a quality of the stem segment named. It is not a 'leaf absent' for the taxon. An 'except' clause shows that the part does occur.",
+  "reason": "Pachyphytum has a leafy rosette and bare flowering stems.",
+  "confidence": 0.85
+ }
+]

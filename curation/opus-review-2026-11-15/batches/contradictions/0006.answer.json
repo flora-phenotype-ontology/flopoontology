@@ -1,0 +1,242 @@
+[
+ {
+  "id": "X00180",
+  "decision": "absence_misread",
+  "target": "stem PO_0009047 aphyllopodic FLOPO:0991233 (only the basal leaf sheaths PO_0020104 lack blades); not leaf lamina PO_0020039 absent",
+  "fix": "'bladeless sheaths' / 'bladeless sheathed at base' = the basal sheaths have no blade (culm aphyllopodic), never 'leaf lamina absent' for the taxon",
+  "reason": "Carex basal sheaths are bladeless while the foliage leaves have grey-green blades; the doc names this exact error",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00181",
+  "decision": "absence_misread",
+  "target": "stem PO_0009047 aphyllopodic FLOPO:0991233 (basal sheaths bladeless)",
+  "fix": "'<part> bladeless sheathed at base' describes the basal sheaths of the culm, not absence of leaf lamina",
+  "reason": "The culm base has bladeless sheaths; the leaves have scabrous blades 1-3 mm wide",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00182",
+  "decision": "absence_misread",
+  "target": "bract PO_0009055 inconspicuous PATO_0000464 (no leaf-like involucral bract); no absence",
+  "fix": "'without distinct X' = X inconspicuous or not leaf-like, not X absent; drop the absence when 'distinct', 'conspicuous' or 'evident' qualifies the part",
+  "reason": "'Without distinct bract leaf' means the bracts are small and scale-like, not missing; the hyaline margins may also belong to glumes",
+  "confidence": 0.75
+ },
+ {
+  "id": "X00183",
+  "decision": "absence_misread",
+  "target": "stem PO_0009047 aphyllopodic FLOPO:0991233 (basal sheaths PO_0020104 bladeless)",
+  "fix": "'bladeless sheaths' = basal sheaths without blades, never leaf lamina absent",
+  "reason": "Basal sheaths are bladeless, but the leaves have linear blades",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00184",
+  "decision": "absence_misread",
+  "target": "bract PO_0009055 not sheathing (has no sheath); no presence/absence annotation of the bract",
+  "fix": "'<part> without sheaths' / 'sheathless' = the part has no sheath (an absent sub-part), not the part absent",
+  "reason": "In Carex 'bracts without sheaths' is a standard character; the bracts exist. The glume-hairy statement does not bear on it",
+  "confidence": 0.8
+ },
+ {
+  "id": "X00185",
+  "decision": "absence_misread",
+  "target": "stolon PO_0003024 absent PATO_0000462",
+  "fix": "'without stolons' / 'estoloniferous' = stolon PO_0003024 absent; never map 'stolon' to rhizome in an absence",
+  "reason": "The rhizome is short and present; only stolons are missing",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00186",
+  "decision": "absence_misread",
+  "target": "bract PO_0009055 not lobed at base (negation of lobed PATO_0001979); bract present",
+  "fix": "'without <sub-part>' (lobe, tooth, auricle, gland) after a part = that part lacks the sub-part; the part's presence is unchanged",
+  "reason": "Carpinus fruit bracts are semiovate and simply lack a basal lobe",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00187",
+  "decision": "present_misread",
+  "target": "bracteole PO_0009043 decreased length PATO_0000574 (shorter than rays/pedicels)",
+  "fix": "In Apiaceae, after 'Bracts absent;' the next size or number clause usually belongs to 'bracteoles' (involucel); attach it to the nearest named part, not back to 'bracts'",
+  "reason": "An umbel description has 'bracts absent; bracteoles ... shorter than ...'. The size clause was given to the absent bracts",
+  "confidence": 0.6
+ },
+ {
+  "id": "X00188",
+  "decision": "absence_misread",
+  "target": "whole plant PO_0000003 leafless phenotype FLOPO_0985035 / vascular leaf PO_0009025 not green: leaves reduced to non-green scale-like sheaths, so not 'leaf absent'",
+  "fix": "'lacking green leaves' / 'without green leaves' = leaves reduced, scale-like and non-photosynthetic (mycoheterotroph), not leaf absent; the colour word limits the negation",
+  "reason": "Cephalanthera calcarata has sheathing scale leaves; 'apex acute' fits these sheaths or a tepal",
+  "confidence": 0.65
+ },
+ {
+  "id": "X00189",
+  "decision": "both_true",
+  "target": "culm sheath (auricles and ligule absent) vs foliage leaf sheath (ligule conspicuous)",
+  "fix": "In bamboo descriptions, statements under 'Culm sheaths' and under 'Leaves/leaf sheaths' are about different organs; carry the section header as context and do not merge ligule/auricle statements across them",
+  "reason": "Bamboo floras describe culm-sheath and foliage-leaf ligules separately; one can be absent while the other is conspicuous",
+  "confidence": 0.6
+ },
+ {
+  "id": "X00190",
+  "decision": "present_misread",
+  "target": "leaf sheath auricle PO_0020106 absent PATO_0000462 (both statements)",
+  "fix": "In 'X and Y absent' the trailing 'absent' covers every conjunct; never emit 'present' for a part named in a coordinated absence list",
+  "reason": "Both texts say auricles absent; the 'present' annotation comes from the coordination being misparsed",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00191",
+  "decision": "both_true",
+  "target": "culm sheath (auricles, oral setae, ligule absent) vs foliage leaf sheath ligule (ciliate)",
+  "fix": "Keep the bamboo section context (culm sheath vs leaf sheath vs branch sheath) on every ligule/auricle statement",
+  "reason": "Chimonobambusa culm sheaths lack a ligule; the foliage-leaf ligule is described separately",
+  "confidence": 0.55
+ },
+ {
+  "id": "X00192",
+  "decision": "present_misread",
+  "target": "peduncle PO_0009053 (or petiole PO_0020038) puberulous; stem absent stays (acaulescent rosette herb)",
+  "fix": "For 'stemless'/'acaulescent' taxa, hair and size statements in the stalk position belong to the peduncle/scape or petiole, not the stem",
+  "reason": "Chirita rosette herbs have no stem; the puberulent statement belongs to another axis",
+  "confidence": 0.65
+ },
+ {
+  "id": "X00193",
+  "decision": "present_misread",
+  "target": "peduncle PO_0009053 or petiole PO_0020038 puberulous",
+  "fix": "Same as for 'stemless': after 'Stem absent', following indumentum belongs to leaves, petioles or peduncles",
+  "reason": "Rosette Chirita with no stem; 'puberulent' was attached to the stem",
+  "confidence": 0.65
+ },
+ {
+  "id": "X00194",
+  "decision": "absence_misread",
+  "target": "branch PO_0025073, context sterile (sterile shoots), absent PATO_0000462; stem present and branched",
+  "fix": "'sterile branches/shoots absent' = sterile branch absent; a modifier (sterile, basal, lateral, flowering) stays on the absent part and never collapses to 'stem absent'",
+  "reason": "Chrysosplenium descriptions contrast sterile branches with flowering stems; the stems exist",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00195",
+  "decision": "absence_misread",
+  "target": "style PO_0009074 branch apex: no terminal tuft of papillae; no stigma presence/absence annotation",
+  "fix": "'terminal tuft absent' (Asteraceae style branches) = the style-branch apex has no tuft of papillae or hairs; neither the stigma nor the style is absent",
+  "reason": "In Cissampelopsis the style-branch apex has or lacks a terminal tuft; the stigma is present",
+  "confidence": 0.8
+ },
+ {
+  "id": "X00196",
+  "decision": "absence_misread",
+  "target": "style PO_0009074 branch apex: no terminal tuft of papillae; style present",
+  "fix": "Same as X00195: 'tuft absent' negates the tuft, not its bearer",
+  "reason": "The style-branch apex lacks a tuft; the style is present",
+  "confidence": 0.8
+ },
+ {
+  "id": "X00197",
+  "decision": "absence_misread",
+  "target": "no annotation (flowers unknown, not absent)",
+  "fix": "'not known', 'unknown', 'not seen', 'not described' = missing data; emit nothing, never 'absent'",
+  "reason": "The flowers have not been collected; the infructescence shows that the plant flowers",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00198",
+  "decision": "both_true",
+  "target": "lower part of stem PO_0009047 leafless; leaves present above",
+  "fix": "'below without leaves' / 'leafless in lower part' / 'lower part without leaves' = the stem has no leaves in that region (bare lower stem); keep the position as context and do not emit 'leaf absent' for the taxon",
+  "reason": "The leaves are present higher on the stem and are sessile",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00199",
+  "decision": "absence_misread",
+  "target": "cauline leaf PO_0000013 absent PATO_0000462 (stem/scape leafless); radical leaves present",
+  "fix": "'stem without leaf' / 'scape leafless' beside basal or radical leaves = cauline leaf absent, not leaf absent",
+  "reason": "Radical leaves are described; only the stem is leafless",
+  "confidence": 0.8
+ },
+ {
+  "id": "X00200",
+  "decision": "both_true",
+  "target": "lower part of stem leafless; leaves (shortly stalked) on the upper part",
+  "fix": "Same as X00198: a position phrase (lower part, below, base) limits the absence to that region of the axis",
+  "reason": "The absence is local to the lower stem",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00201",
+  "decision": "both_true",
+  "target": "cauline leaf PO_0000013 few or absent (hedged 'almost', 'if present')",
+  "fix": "'almost/nearly/subleafless', '± absent' = reduced or few, not absent; emit decreased number or the union absent-or-few, never a plain absence",
+  "reason": "The flora itself says stem leaves are few when present; 'almost leafless' is not an absence",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00202",
+  "decision": "absence_misread",
+  "target": "inflorescence bract PO_0009054, context coma (sterile apical bracts of the spike), absent; the fertile bracts are present (pubescent)",
+  "fix": "'coma bracts absent' (Zingiberaceae) = the sterile apical coma bracts are absent; keep 'coma' as context and do not map to bract absent or to PO_0020061 coma (a hair tuft)",
+  "reason": "Curcuma spikes have fertile bracts; only the coloured coma at the tip is missing",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00203",
+  "decision": "absence_misread",
+  "target": "basal leaf sheaths PO_0020104 bladeless (stem aphyllopodic FLOPO:0991233); upper leaf blades stiff",
+  "fix": "'basal ones bladeless' refers back to the leaves/sheaths at the base; the absence is limited to the basal ones",
+  "reason": "The upper leaves have stiff blades; only the basal sheaths lack them",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00204",
+  "decision": "absence_misread",
+  "target": "peduncle PO_0009053 decreased length PATO_0000574",
+  "fix": "'almost absent', 'nearly absent', '± absent', 'obsolete' = very short or reduced, not absent",
+  "reason": "The flora says the peduncle is very short",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00205",
+  "decision": "both_true",
+  "target": "peduncle PO_0009053: range, decreased length PATO_0000574 or absent PATO_0000462 (variation between flowers or plants)",
+  "fix": "'very short to absent' is a range; annotate decreased length, or the union with absent, never the absence alone",
+  "reason": "One phrase gives both ends of a range; there is no conflict in the plant",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00206",
+  "decision": "both_true",
+  "target": "petiole PO_0020038: range, decreased length or absent",
+  "fix": "A bare 'to absent' continues a range ('very short to absent'); annotate the shorter end or the union, never a plain absence",
+  "reason": "'Petiole very short ... to absent' is a range",
+  "confidence": 0.8
+ },
+ {
+  "id": "X00207",
+  "decision": "absence_misread",
+  "target": "petiole PO_0020038 decreased length PATO_0000574 (leaves subsessile)",
+  "fix": "'± absent' = nearly absent, i.e. very short or subsessile, not absent",
+  "reason": "A glabrous petiole is described, so it exists but is very short",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00208",
+  "decision": "absence_misread",
+  "target": "leaf sheath auricle PO_0020106 absent PATO_0000462 (culm or leaf sheath); the 'stipule hispid' record is also wrong (likely the culm sheath)",
+  "fix": "In Poaceae/bamboo, 'auricles' = leaf sheath auricle PO_0020106; never map 'auricle' to stipule in grasses",
+  "reason": "Bamboos have no stipules; both statements were sent to 'stipule'",
+  "confidence": 0.8
+ },
+ {
+  "id": "X00209",
+  "decision": "both_true",
+  "target": "lower part of stem leafless; leaves present above (puberulent)",
+  "fix": "'leafless in lower part' limits the absence to that part of the stem; never 'leaf absent' for the taxon",
+  "reason": "The leaves exist higher on the stem",
+  "confidence": 0.85
+ }
+]

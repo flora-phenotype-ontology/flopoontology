@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P00400",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add a row for 'clustered' to config/flora_counted_parts.tsv. Read it backwards: the number is how many flowers are in each cluster, so the counted part is the flower of the sentence and the container is the flower cluster (inflorescence PO:0009049). Read 'or solitary' as 1, giving a count of 1-3.",
+  "reason": "Gives the number of flowers per cluster, with 'solitary' as the count 1. This is a plain count of parts, not a quality of size or shape.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00401",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground the container from the subject of the clause, 'fruiting bract': bract PO:0009055, with 'fruiting' read as the stage 'in fruit'. Then 3-veined is 3 veins of the bract.",
+  "reason": "The 'nerved/veined' row exists. Only the container went ungrounded, and the clause names it.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00402",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'wanting, or of 1 or 2' as the count range 0-2 of involucral bracts, with the involucre as container. 'wanting' counts as 0, extending the rule that reads '4 or 5' as a range. 'small' is a separate size statement.",
+  "reason": "The alternatives are all values of one count (0, 1, 2), so a range covers them.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00403",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Apply the existing 'cleft' row (lobe) to get 2-4 lobes with the leaflet as container. Run the count split before the unit check. Keep 'to the base' as depth of division, which is open, and leave it in the source words.",
+  "reason": "'N-cleft' is in the counted-parts table. The row was held because of a unit check that does not apply.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00404",
+  "decision": "new_pattern",
+  "target": "growth form",
+  "fix": "A table maps habit nouns to an EQ statement on the whole plant (PO:0000003): 'vine' becomes climbing (FLOPO:0991108). The adjective with the noun adds a second EQ: 'suffruticose' becomes semi-woody (FLOPO:0991309, synonym suffrutescent) or the suffrutescent habit (FLOPO_0987003). OWL: whole plant has characteristic some climbing, and the same for semi-woody.",
+  "reason": "Habit nouns are listed as still open in annotation-context-patterns.md. The terms exist, but nothing maps the noun to an EQ.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00405",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "When a place cue comes after the whole list ('rounded or obtuse at the apex'), apply it to every value. The bearer becomes the leaf apex (PO:0020137), with the union rounded or obtuse (PATO:0001935). Today such a cue is left alone.",
+  "reason": "Both values are shapes with terms. Only the place cue that applies to the whole list blocked the union.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00406",
+  "decision": "missing_term",
+  "target": "vitta: an oil duct (secretory canal) in the fruit wall of Apiaceae, running under the furrows and the commissure (the face where the two half-fruits meet)",
+  "fix": "Add a FLOPO anatomy class for vitta, part of the mericarp. Then use pattern 14 with a new cue 'in each furrow' (count per furrow, landmark: the furrow between the ribs) and 'on commissure' as a place.",
+  "reason": "PO has no vitta or furrow. The count-at-a-position pattern fits once the part exists. The transcribed 'vitae' is a misspelling.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00407",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'apex ... with 6-10 teeth': count teeth (6-10) with the apex of the branch leaf as container (leaf apex PO:0020137 / phyllid apex). The apex is a part that has the teeth, not a place to count at, so no count position is needed.",
+  "reason": "The teeth belong to the apex. Holding it as a count per position was wrong.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00408",
+  "decision": "missing_term",
+  "target": "ending below the apex (subpercurrent): a midrib or vein that stops before reaching the leaf apex",
+  "fix": "Add a FLOPO position value under PATO:0000140, next to percurrent (FLOPO:0991163) and excurrent. Use it for costa (PO:0030072) and for leaf midveins.",
+  "reason": "This is a position quality, not a process. Percurrent and excurrent exist, but the state that stops short of the apex does not.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00409",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "Where PO has a class for the series member, use it: 'upper glume' is PO:0006004, so prefer it to glume plus FLOPO upper. Read 'apex' as a place (the apex row exists), giving upper glume apex obtuse (PATO:0001935).",
+  "reason": "'upper' and 'apex' are both in the context table. The reading was not used.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00410",
+  "decision": "new_pattern",
+  "target": "part present at a position",
+  "fix": "Slots: bearer (nectary gland), the part present (scale), and that part's own quality (membranous). OWL: gland and has part some (scale and has characteristic some membranous). 'covered with' is the cue, and the RDF keeps it.",
+  "reason": "'covered with scales' says that scales are present on the gland. It is not a comparison, and no pattern covers parts borne on a part.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00411",
+  "decision": "new_pattern",
+  "target": "part present at a position",
+  "fix": "Rooting at nodes means adventitious roots (PO:0000042) are present at the stem nodes (PO:0005004). Slots: bearer stem, part root, place node, negated. In RDF the record is negated with its cue 'not'. In OWL it is the complement, not has part some (root and attached to some node), which the gate exports only as negation.",
+  "reason": "The docs list 'rooting at the nodes' as presence of a part at a place (slot 1). That pattern is still open.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00412",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground the container to the subject of the clause, 'scales' (the pistillate scale of Carex, a floral bract). Count 3 veins. 'center' is the middle strip of the scale (a place on the part). Also annotate the scale's center as green.",
+  "reason": "'nerved' is in the table. The container went ungrounded because the word next to it was 'center'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00413",
+  "decision": "transcription_error",
+  "target": "spur: cylindrical (PATO:0001873)",
+  "fix": "Transcribe the quality as cylindrical (PATO:0001873), not the attribute 'shape'. There is no measurement.",
+  "reason": "The text gives a shape value with a term. 'shape' plus a missing unit is a mistake in the transcription.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00414",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (kind C, region)",
+  "fix": "Add the context word 'near the ligule(s)': a region of the leaf sheath, distal. Give split (PATO:0001786) of the sheath's distal region, with the frequency 'usually'. 'closed' (PATO:0000608) stays its own statement.",
+  "reason": "This is a state of the upper sheath, not a process. Only the place cue is missing from the table.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00415",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (kind C, region)",
+  "fix": "Add 'basal portion' (and 'basal part') to config/flora_context_words.tsv as a region at the base. That gives a puberulous (FLOPO:0991049) basal region of the style, with 'sparsely' as a modifier.",
+  "reason": "'lower portion' and 'near the base' exist, but 'basal portion' does not. It is not a stage.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00416",
+  "decision": "new_pattern",
+  "target": "comparison with an implied second term",
+  "fix": "'darker above, cinereous below': the bearer is the adaxial epidermis of the lamina, with low brightness (PATO:0000327) towards the abaxial epidermis of the same lamina. The second term is the opposite surface named by the paired cue above/below. Use the towards slot, with the target taken from the paired cue instead of a 'than' phrase.",
+  "reason": "'darker' with no 'than' was rejected as a term. The open pattern for an implied second term covers it, and here the second term is even in the sentence.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00417",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Split '3-nerved' with the existing row: 3 veins with the perianth segment (tepal PO:0009033 in Lauraceae, not sepal) as container, part of a male flower (pattern 12). Do not route it to the unit check.",
+  "reason": "'nerved' is in the table. The row was held for a missing unit, which does not apply to a count word.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00418",
+  "decision": "existing_pattern",
+  "target": "docs/odp/01-approximate-value.md",
+  "fix": "Map a dimension adjective plus a number to its attribute: 'N mm thick' is thickness (PATO:0000915) of the capsule (fruit). 'about' is the approximation cue.",
+  "reason": "This is an ordinary measurement with 'about'. Only the mapping from 'thick' to thickness is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00419",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add 'paired' to config/flora_counted_parts.tsv with collection size 2, as for 'jugate'. Then 4 pairs of main lateral (secondary) veins with the leaf lamina as container. '(lowermost weak)' is a separate note about the lowest pair.",
+  "reason": "This counts pairs of veins, the same structure as 'N-jugate'. Only a table row is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00420",
+  "decision": "existing_pattern",
+  "target": "docs/odp/08-alternative-with-frequency.md",
+  "fix": "flat or (occasionally) mammillate (FLOPO:0991217), with 'occasionally' as the frequency of the second value. 'low-' is a degree modifier before mammillate and should be stripped (like 'shallowly').",
+  "reason": "Both values have terms. 'low-mammillate' was not matched to mammillate.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00421",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Extend the comparison reader to 'similar to X but [slightly] smaller'. The target X (bract) stands once in the clause, giving bracteole decreased size (PATO:0000587) towards bract, with 'slightly' as a degree.",
+  "reason": "The second term is stated in the clause, just without 'than'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00422",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add 'denticulate' (and 'denticled') to config/flora_counted_parts.tsv as tooth. That gives 3 teeth with the ray-floret lamina (ligule) as container, part of a ray flower (PO:0025331). The transcribed bearer should be that lamina, not the whole corolla.",
+  "reason": "This is a count word like 'toothed' and 'dentate', which are already in the table.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00423",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add 'septate' to config/flora_counted_parts.tsv as septum (cross-wall), as the note in flora_rejected_bearer_words.tsv already says. That gives 0-1 septa with the hyaline cell as container, frequency 'mostly'.",
+  "reason": "This is a count word naming a part. Its row is missing, so it went to the unit check.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00424",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Add the French cue 'de chaque côté' as each side, with the landmark from 'nervure médiane' (leaf midvein). That gives veins 4-9 on each side, container the leaf lamina.",
+  "reason": "Pattern 14 covers exactly this, but its cue list is English only.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00425",
+  "decision": "missing_term",
+  "target": "mouth: the opening (orifice) of a tubular or saccate organ, here of the saccate lower sepal of Impatiens",
+  "fix": "Add 'mouth' as a region of the organ: a FLOPO region class, or a context word if a BSPO opening class can be pinned. Read 'lower' with the lower position value (FLOPO_0991377), then mouth oblique on the lower sepal.",
+  "reason": "'mouth' is not a stage. It is a part of the sepal that has no PO or context-table term.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00426",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (kind C, region)",
+  "fix": "Annotate leaf margin hairy (PATO:0000454) with 'at margins', a region row that exists. Leave the number '(1–2 mm)' out: it does not say whether it is hair length or the width of the hairy band.",
+  "reason": "The quality with its place can be annotated. The number in brackets names no attribute and is too vague.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00427",
+  "decision": "transcription_error",
+  "target": "bearer: hair (trichome, dendroid/branched) part of the inflorescence; quality: length 0.5-1 mm",
+  "fix": "Make the hair (trichome PO:0000282, or a dendroid-hair class) the bearer with length (PATO:0000122) 0.5-1 mm and the inflorescence as container. Hair density ('± dense, woolly') is a separate statement about the inflorescence.",
+  "reason": "The length is the hairs' length, not a quality called 'hairs' of the inflorescence.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00428",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept 'to ±' as an upper-bound cue combined with approximately. Split 'L × W mm' into length ≤4 mm and width ≤2 mm. The bearer is the scale-like leaf (cataphyll), not the leaf blade.",
+  "reason": "'to' and '±' are each supported, but not together, and the bearer should be the scale leaf.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00429",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (kind C, surface)",
+  "fix": "'rough above' is its own clause after the comma. 'above' on blade is the adaxial surface (that row exists), giving leaf lamina adaxial epidermis rough (PATO:0000700). Don't let the earlier cues ('on the innovations', 'on the stem', 'beneath') block the reading.",
+  "reason": "The surface cue 'above' exists for blades. The row was held because the sentence has several context cues.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00430",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Annotate the count: bracteoles 2, container the pedicel (PO:0030112). The alternative is only about where they sit ('at base or middle'). Keep it as a position statement in RDF, or drop it. It is not a disjunction of counts.",
+  "reason": "The 'or' is about where the bracteoles sit, not how many there are, so the count can be annotated.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00431",
+  "decision": "new_pattern",
+  "target": "projection beyond another part",
+  "fix": "Slots: bearer (stamen; also stigma, as a second bearer), exserted (PATO:0000623) towards the perianth, and the length of the part that sticks out (10-12 mm). OWL: bearer has characteristic some exserted. RDF: the projection length as a measurement of the exserted part, with its cue.",
+  "reason": "The number measures how far the part sticks out beyond another part, which has no slot. 'exserted' alone is annotatable.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00432",
+  "decision": "missing_term",
+  "target": "acaulescent: having no visible above-ground stem, the leaves arising at ground level (stem very short or underground)",
+  "fix": "Add a FLOPO value for the whole plant (PO:0000003) under a shape or growth-form quality, with synonyms stemless and acaulous. Do not read it as 'stem absent': acaulescent plants have a short stem.",
+  "reason": "This is a habit term, not a negation, and it has no term in the config.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00433",
+  "decision": "existing_pattern",
+  "target": "docs/odp/12-part-of-qualified-whole.md",
+  "fix": "The heading 'Ray florets' gives the whole: corolla part of some ray flower (PO:0025331), length 7-11 mm. Do the same for disc florets (PO:0025332).",
+  "reason": "'Ray' is not a stage. It names the whole the corolla belongs to, and PO has that class.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00434",
+  "decision": "existing_pattern",
+  "target": "docs/odp/11-ratio-of-two-dimensions.md",
+  "fix": "Read 'length-width quotient' as the cue for length/width. Annotate the usual range 0.6-1.1 on the cauline leaf, frequency 'usually'. Store 'average 0.9' as a mean value in RDF only (SDD has mean), with no class.",
+  "reason": "This is a ratio of two dimensions plus a mean. It is not a process.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00435",
+  "decision": "new_pattern",
+  "target": "part present at a position",
+  "fix": "Negated presence: the capitulum is not surrounded by bracts that are spiny/pectinate. The bracts (leafy bracts beneath the head) are the part, the capitulum is the place, and 'not' is the negation cue. The 'or' belongs to the count of capitula ('(1 or) few to many'), not to this statement.",
+  "reason": "The transcription dropped the 'not', and the statement is about whether a part surrounds the head, which has no pattern.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00436",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'unknown' means the nutlets have not been seen. It is not a phenotype.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00437",
+  "decision": "new_pattern",
+  "target": "bound on the maximum",
+  "fix": "Root system depth (PATO:0001595), with a maximum of 2 m stored as an observed extreme (not a range for every plant), cue 'may reach'. Keep the soil condition ('on deep well-drained soils') as context in RDF. No OWL class, as with extremes of ranges.",
+  "reason": "'may reach' gives a maximum that holds under certain soils. The docs list a bound on the maximum as open.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00438",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'margins 3–5-lobed' counts lobes of the blade: lobe 3-5, container the leaf lamina, read with the 'lobed' row. 'margins' is the word the lobing is said of, not a counting position. '(lobes rounded)' is a separate shape statement.",
+  "reason": "This is a plain count word. It was wrongly held as a count per position.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00439",
+  "decision": "new_pattern",
+  "target": "position of the widest part",
+  "fix": "Slots: bearer (lobe/pinna), and where along its length it is widest (base, below the middle, middle, above the middle). A continuum between two positions ('at base to below the middle') is a range. OWL via FLOPO shape values for each position (widest at base, widest below middle), the continuum as in pattern 07. RDF keeps the cue.",
+  "reason": "The docs list the position of greatest width as open. It is not a relation to another part.",
+  "confidence": "medium"
+ }
+]

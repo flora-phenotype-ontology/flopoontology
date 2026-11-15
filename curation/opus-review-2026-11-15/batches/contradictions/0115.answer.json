@@ -1,0 +1,242 @@
+[
+ {
+  "id": "X03450",
+  "decision": "absence_misread",
+  "target": "no annotation: 'Flowers not known' says the flowers have not been seen. Nothing is absent. Drop flower (PO_0009046) absent (PATO_0000462); the inflorescence was described from fruit.",
+  "fix": "'flowers/fruits/X not known', 'not seen', 'unknown', 'not observed', 'not available' and 'not collected' are statements about what has been seen, not absences. Never emit PATO_0000462 from them.",
+  "reason": "Taxon described from fruiting material only; the axillary inflorescence is real.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03451",
+  "decision": "absence_misread",
+  "target": "leaf sheath auricle (PO_0020106) absent (PATO_0000462); oral setae (no PO term) absent. The present side is also misread: ligule (PO_0020105) pale yellow-green, not stipule.",
+  "fix": "In grasses and bamboos, 'auricle(s)' maps to PO_0020106 and 'ligule' to PO_0020105, never to stipule (PO_0020041). In a list like 'A and B absent', the absence goes to each listed part and to nothing else.",
+  "reason": "Neither auricles nor the ligule are stipules. Both statements were put on the wrong part, which made them collide.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03452",
+  "decision": "absence_misread",
+  "target": "no annotation: 'Flowers not seen' says the flowers have not been seen. Nothing is absent.",
+  "fix": "'flowers/fruits/X not known', 'not seen', 'unknown', 'not observed', 'not available' and 'not collected' are statements about what has been seen, not absences. Never emit PATO_0000462 from them.",
+  "reason": "Described from fruiting material (infructescences); flowers exist.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03453",
+  "decision": "absence_misread",
+  "target": "stem/scape (PO_0009047) without leaves: cauline leaf (PO_0000013) absent (PATO_0000462). Basal leaves are present.",
+  "fix": "'leafless' applies to the axis it follows (stem, scape, flowering stem, branch) and means its cauline leaves are absent. Never emit 'leaf absent' for the whole plant when basal or rosette leaves are described.",
+  "reason": "Rosette plant whose stems are leafless; the basal leaves are spatulate.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03454",
+  "decision": "both_true",
+  "target": "external (lateral) bracts on the fig receptacle are absent; the basal bracts (on the peduncle at the fig base) are present and puberulous outside",
+  "fix": "In Ficus, 'sans bractées externes/latérales' or 'without lateral bracts' means bracts on the body of the receptacle are absent. It must not become 'bract absent'. Keep the qualifier, or emit nothing, when basal or ostiolar bracts are described.",
+  "reason": "Basal, lateral and ostiolar bracts are different sets of bracts on a fig. Only the lateral ones are absent.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03455",
+  "decision": "both_true",
+  "target": "lateral bracts on the receptacle are absent; the basal bracts are present and verticillate",
+  "fix": "In Ficus, 'sans bractées externes/latérales' or 'without lateral bracts' means bracts on the body of the receptacle are absent. It must not become 'bract absent'. Keep the qualifier, or emit nothing, when basal or ostiolar bracts are described.",
+  "reason": "Different bracts on the same fig.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03456",
+  "decision": "absence_misread",
+  "target": "leaf lamina (PO_0020039) not punctate (negated PATO_0001512): dots on the lower surface absent. The present side is also misread: 'not papillose' was annotated as papillose; it should be negated or skipped.",
+  "fix": "'dots/glands/papillae/hairs/scales absent' describes the surface of the part named before it. Read it as the negated surface quality (punctate, glandular, papillose, hairy) of that part, never as the part itself absent. 'not Q' must never yield Q.",
+  "reason": "Dots are a surface feature of the leaf, not the leaf.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03457",
+  "decision": "absence_misread",
+  "target": "some leaves (lower sheaths or scale leaves, PO_0006003) lack a blade; the taxon's leaf lamina (PO_0020039) is present, glabrous and flat",
+  "fix": "'bladeless' qualifies the sheaths or leaves it follows ('lower sheaths bladeless', 'bladeless sheaths'). It means those leaves are reduced to sheaths, not that the taxon lacks a leaf lamina. Narrow the 'bladeless' entity-absence rule (C350) so that it does not fire when a blade is described for the same taxon.",
+  "reason": "Grass with bladeless basal sheaths and normal leaf blades elsewhere.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X03458",
+  "decision": "absence_misread",
+  "target": "basal sheaths bladeless (scale leaf PO_0006003 / leaf sheath PO_0020104); the leaf lamina of the other leaves is present, with recurved margins",
+  "fix": "'bladeless sheaths' describes the basal sheaths only. Never emit 'leaf lamina absent' for the taxon (narrow C350).",
+  "reason": "Carex has bladeless basal sheaths beside bladed leaves. This is the doc's own example.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03459",
+  "decision": "absence_misread",
+  "target": "palea of the lower floret reduced or vestigial: palea decreased size (PATO_0000587), not absent; the hyaline palea is that of the other floret",
+  "fix": "'without significant / well-developed / conspicuous X' and 'X obscure/vestigial' mean X is reduced (PATO_0000587). It is not absent.",
+  "reason": "Hedged wording; the palea is present but tiny in one floret.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X03460",
+  "decision": "absence_misread",
+  "target": "no caudex (a perennial stem base): the plant is annual. Emit nothing on stem (PO_0009047), or emit stem base (PO_0008039) absent. The aerial stems are present.",
+  "fix": "Remove 'caudex/caudices' from the stem synonyms (PO_0009047) in po_lexicon. 'caudex absent' must never become 'stem absent'.",
+  "reason": "Eriogonum pusillum is an annual without a caudex; its flowering stems are described.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03461",
+  "decision": "absence_misread",
+  "target": "cauline leaf (PO_0000013) absent (PATO_0000462); the sessile basal leaves are present",
+  "fix": "Keep the adjective before the part: 'cauline/basal/upper/lower leaves absent' goes to that leaf class (PO_0000013, rosette leaf PO_0000014), never to leaf (PO_0009025).",
+  "reason": "The qualifier 'cauline' was dropped.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03462",
+  "decision": "absence_misread",
+  "target": "no annotation: flowers not known (not observed)",
+  "fix": "'flowers/fruits/X not known', 'not seen', 'unknown', 'not observed', 'not available' and 'not collected' are statements about what has been seen, not absences. Never emit PATO_0000462 from them.",
+  "reason": "Fruiting cymes show that the flowers exist.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03463",
+  "decision": "absence_misread",
+  "target": "leaf sheath auricle (PO_0020106) absent; ligule (PO_0020105) notched or laciniate. Neither is a stipule.",
+  "fix": "In grasses and bamboos, 'auricle(s)' maps to PO_0020106 and 'ligule' to PO_0020105, never to stipule (PO_0020041). In a list like 'A and B absent', the absence goes to each listed part and to nothing else.",
+  "reason": "Same wrong mapping as X03451.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03464",
+  "decision": "absence_misread",
+  "target": "no annotation: flowers not seen",
+  "fix": "'flowers/fruits/X not known', 'not seen', 'unknown', 'not observed', 'not available' and 'not collected' are statements about what has been seen, not absences. Never emit PATO_0000462 from them.",
+  "reason": "Fruiting cymes are described.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03465",
+  "decision": "absence_misread",
+  "target": "cauline leaf (PO_0000013) absent on the scape; the basal leaves are present, with an attenuate base",
+  "fix": "'leafless' applies to the axis it follows (stem, scape, flowering stem, branch) and means its cauline leaves are absent. Never emit 'leaf absent' for the whole plant when basal or rosette leaves are described.",
+  "reason": "Same as X03453.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03466",
+  "decision": "both_true",
+  "target": "external bracts on the receptacle are absent; the basal bracts are triangular to suborbicular",
+  "fix": "In Ficus, 'sans bractées externes/latérales' or 'without lateral bracts' means bracts on the body of the receptacle are absent. It must not become 'bract absent'. Keep the qualifier, or emit nothing, when basal or ostiolar bracts are described.",
+  "reason": "Different bracts on the same fig.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03467",
+  "decision": "both_true",
+  "target": "lateral bracts are absent; the basal bracts are present and verticillate",
+  "fix": "In Ficus, 'sans bractées externes/latérales' or 'without lateral bracts' means bracts on the body of the receptacle are absent. It must not become 'bract absent'. Keep the qualifier, or emit nothing, when basal or ostiolar bracts are described.",
+  "reason": "Different bracts on the same fig.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03468",
+  "decision": "absence_misread",
+  "target": "leaf lamina (PO_0020039) not punctate (negated PATO_0001512); the leaves are present and chartaceous",
+  "fix": "'dots/glands/papillae/hairs/scales absent' describes the surface of the part named before it. Read it as the negated surface quality of that part, never as the part itself absent.",
+  "reason": "Same as X03456.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03469",
+  "decision": "absence_misread",
+  "target": "lower sheaths bladeless; the leaf lamina is present and flat",
+  "fix": "'bladeless' qualifies the sheaths or leaves it follows ('lower sheaths bladeless', 'bladeless sheaths'). It means those leaves are reduced to sheaths, not that the taxon lacks a leaf lamina. Narrow the 'bladeless' entity-absence rule (C350) so that it does not fire when a blade is described for the same taxon.",
+  "reason": "Same as X03457.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X03470",
+  "decision": "absence_misread",
+  "target": "basal sheaths bladeless (PO_0006003 / PO_0020104); the leaf lamina is present, acute to short-acuminate",
+  "fix": "'bladeless sheaths' describes the basal sheaths only. Never emit 'leaf lamina absent' for the taxon (narrow C350).",
+  "reason": "Same as X03458.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03471",
+  "decision": "absence_misread",
+  "target": "no caudex (annual); the aerial stems are present and glabrous",
+  "fix": "Remove 'caudex/caudices' from the stem synonyms (PO_0009047) in po_lexicon. 'caudex absent' must never become 'stem absent'.",
+  "reason": "Same as X03460.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03472",
+  "decision": "absence_misread",
+  "target": "cauline leaf (PO_0000013) absent; the basal leaves are present, with a subobtuse base",
+  "fix": "Keep the adjective before the part: 'cauline/basal/upper/lower leaves absent' goes to that leaf class (PO_0000013, rosette leaf PO_0000014), never to leaf (PO_0009025).",
+  "reason": "Same as X03461.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03473",
+  "decision": "absence_misread",
+  "target": "no annotation: flowers not known",
+  "fix": "'flowers/fruits/X not known', 'not seen', 'unknown', 'not observed', 'not available' and 'not collected' are statements about what has been seen, not absences. Never emit PATO_0000462 from them.",
+  "reason": "The inflorescence is described from fruit.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03474",
+  "decision": "absence_misread",
+  "target": "no annotation: flowers not seen",
+  "fix": "'flowers/fruits/X not known', 'not seen', 'unknown', 'not observed', 'not available' and 'not collected' are statements about what has been seen, not absences. Never emit PATO_0000462 from them.",
+  "reason": "Described from infructescences.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03475",
+  "decision": "absence_misread",
+  "target": "cauline leaf (PO_0000013) absent on the scape; the basal leaves are present and undivided",
+  "fix": "'leafless' applies to the axis it follows (stem, scape, flowering stem, branch) and means its cauline leaves are absent. Never emit 'leaf absent' for the whole plant when basal or rosette leaves are described.",
+  "reason": "Same as X03453.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03476",
+  "decision": "both_true",
+  "target": "external bracts on the receptacle are absent; the basal bracts are present",
+  "fix": "In Ficus, 'sans bractées externes/latérales' or 'without lateral bracts' means bracts on the body of the receptacle are absent. It must not become 'bract absent'. Keep the qualifier, or emit nothing, when basal or ostiolar bracts are described.",
+  "reason": "The text itself names the 'bractées basilaires'.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03477",
+  "decision": "both_true",
+  "target": "lateral bracts are absent; the apical (ostiolar) bracts are present and small",
+  "fix": "In Ficus, 'without lateral bracts' means bracts on the body of the receptacle are absent. It must not become 'bract absent'. Keep the qualifier, or emit nothing, when basal or ostiolar/apical bracts are described.",
+  "reason": "Different bracts on the same fig.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03478",
+  "decision": "absence_misread",
+  "target": "leaf lamina (PO_0020039) not punctate (negated PATO_0001512); the leaves are present and reddish brown",
+  "fix": "'dots/glands/papillae/hairs/scales absent' describes the surface of the part named before it. Read it as the negated surface quality of that part, never as the part itself absent.",
+  "reason": "Same as X03456.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03479",
+  "decision": "absence_misread",
+  "target": "basal sheaths bladeless; the leaf lamina is present and flat",
+  "fix": "'bladeless sheaths' describes the basal sheaths only. Never emit 'leaf lamina absent' for the taxon (narrow C350).",
+  "reason": "Same as X03458.",
+  "confidence": "high"
+ }
+]

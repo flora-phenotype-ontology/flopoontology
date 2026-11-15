@@ -1,0 +1,242 @@
+[
+ {
+  "id": "X00570",
+  "decision": "both_true",
+  "target": "Styles are missing only in the sterile ray florets (ray flower PO_0009331? no: ray flower PO_0025331). The disc florets have styles (style PO_0009074). The pappus statement is about another part and does not touch the style.",
+  "fix": "'<sterile/ray/outer> florets ... without styles' gives style absent (PO_0009074, PATO_0000462) only inside the ray flower (PO_0025331) context. It never gives a style absence for the whole taxon.",
+  "reason": "In Aspilia the ray florets are neuter, with no style. The disc florets are fertile and have a style. The pappus cupule is a different part.",
+  "confidence": 0.6
+ },
+ {
+  "id": "X00571",
+  "decision": "absence_misread",
+  "target": "Only female florets are missing: the head has bisexual florets only, flower PO_0009046 with female PATO_0000383 absent. Do not annotate flower absent.",
+  "fix": "'<sex or kind> florets/flowers absent' (female, male, ray, marginal) means that kind of flower is missing. Read it as a qualified absence, or as the head being homogamous. Never read it as flower PO_0009046 absent.",
+  "reason": "The glomerules are made of florets. Only the female florets are missing.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00572",
+  "decision": "both_true",
+  "target": "Petal (PO_0009032) absent only in the lower flowers, rarely in all of them. The other flowers have petals with a ciliate claw.",
+  "fix": "'<some/lower/upper/occasional> flowers without <part>' is a partial absence restricted to those flowers. It should not become an absence for the whole taxon.",
+  "reason": "C. glomeratum often has apetalous lower flowers. Petals are present elsewhere.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00573",
+  "decision": "both_true",
+  "target": "Awnless: the uppermost rudimentary (sterile) floret, a clavate scale. Awned (2-awned): the fertile lemma and the first sterile floret (lemma, awn PO_0025349).",
+  "fix": "'awnless <scale/rudiment/upper floret>' in a grass spikelet applies to that floret only. An awn absence needs the awnless floret named as its bearer.",
+  "reason": "In Chloris gayana the fertile and lower sterile lemmas are awned. The top rudiment is an awnless clavate scale.",
+  "confidence": 0.75
+ },
+ {
+  "id": "X00574",
+  "decision": "absence_misread",
+  "target": "No annotation. This is missing data (flowers not observed), not flower PO_0009046 absent.",
+  "fix": "'<part> not known / not seen / unknown / not available / not described' is missing data. Drop it (or record it as not observed). It is never PATO_0000462 absent.",
+  "reason": "The taxon is known from material without flowers. An inflorescence was described, so the flowers exist.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00575",
+  "decision": "absence_misread",
+  "target": "staminode PO_0009077 absent (PATO_0000462). The stamens are present, and 'flattened' stays on the stamen or filament.",
+  "fix": "'staminodes absent' is an absence of staminode PO_0009077, not stamen PO_0009029. Lexical matching must not reduce staminode/staminodia to stamen.",
+  "reason": "Many Chrysophyllum lack staminodes but have fertile stamens.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00576",
+  "decision": "both_true",
+  "target": "Leafless only at times (the leaves fall early, so the stems are often bare): whole plant leafless phenotype FLOPO_0985035 qualified by 'frequently'. Leaves fleshy when present.",
+  "fix": "'frequently/often/usually/sometimes leafless' and 'leafless when flowering' are partial or stage-bound absences. Attach the frequency or stage context. Never read them as a plain leaf absent.",
+  "reason": "C. quadrangularis has early-deciduous leaves on its succulent stems. Leaves exist and are described.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00577",
+  "decision": "absence_misread",
+  "target": "Gland at the petal base absent: flower nectary PO_0009056 (petal-base gland) absent, PATO_0000462. Petals present.",
+  "fix": "'<part> ... without <subpart> at the base/apex' is an absence of the subpart named after 'without'. It is not an absence of the subject part.",
+  "reason": "Clutia petals often carry basal glands. This species' petals lack them. The petals themselves are described as spathulate.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00578",
+  "decision": "absence_misread",
+  "target": "Absence of the fruit's apical peg (the receptacle remnant at the fruit apex). PO has no class for it, so leave it unannotated. The fruit is present.",
+  "fix": "'<feature> absent' after a fruit or organ subject is an absence of that feature, here 'apical peg', 'beak' or 'stipe'. If the feature has no term, drop it. Never move the absence onto the organ.",
+  "reason": "A Combretum fruit 'apical peg' is a small apical structure. The fruit is described (apex retuse).",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00579",
+  "decision": "both_true",
+  "target": "Leafless only on the long whiplike shoot ends (shoot axis PO_0025029). The rest of the branches are leafy.",
+  "fix": "'leafless <shoots/branches/stems>' is a quality of those shoots, or a partial absence in their context. It is not leaf absent for the taxon.",
+  "reason": "The plant has leaves, but the main branches end in leafless whip shoots. The lepidote statement was linked to the leaf, and may be about other parts.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X00580",
+  "decision": "both_true",
+  "target": "Ovary (PO_0009072) completely absent in the male flowers (no pistillode, PO_0009078). Female flowers have a glabrous ovary.",
+  "fix": "In dioecious or unisexual-flower descriptions, a part absence inside the ♂ or ♀ flower paragraph ('ovary completely absent', 'pistillode absent') belongs to that sex's flowers (male PATO_0000384 / female PATO_0000383 context).",
+  "reason": "Commiphora is dioecious. The text itself says '♀ flowers with a glabrous ovary'.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00581",
+  "decision": "both_true",
+  "target": "No spines on the branches (thorn PO_0025172 absent in the branch context). Spines reported on the main stem by one collector.",
+  "fix": "'without <part> on the <member>' restricts the absence to that member (branches, twigs, young stems). It is not an absence for the whole plant.",
+  "reason": "The statements are about different members, and the spines rest on one collector's note. If anything this is a weak contradiction in the source.",
+  "confidence": 0.7
+ },
+ {
+  "id": "X00582",
+  "decision": "both_true",
+  "target": "Corolla (PO_0009059) absent in the marginal female florets. Disc florets have a tubular corolla.",
+  "fix": "In Asteraceae, 'without a corolla' after 'female/marginal/outer florets' is a corolla absence only in that floret kind.",
+  "reason": "Cotula's outer female florets lack a corolla. The disc florets have a 4-lobed tubular corolla.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00583",
+  "decision": "absence_misread",
+  "target": "No annotation for 'not seen' (missing data). The flora also has a real conflict here: it describes woolly fruit while saying fruits were not seen, so check whether the woolly part is the ovary or young fruit.",
+  "fix": "'<part> not seen' is missing data, never an absence (as for 'not known').",
+  "reason": "'Not seen' means unobserved. The hairy-fruit sentence suggests the description covers immature fruit, or comes from another source.",
+  "confidence": 0.75
+ },
+ {
+  "id": "X00584",
+  "decision": "both_true",
+  "target": "Only the secondary bracts are absent. The primary bracts (bract PO_0009055) are present and deciduous.",
+  "fix": "'<primary/secondary/floral/sterile> bracts absent' is an absence of that kind of bract. Without a term for it, keep it as a qualified absence or drop it. Never read it as all bracts absent.",
+  "reason": "Desmodium has primary bracts subtending the flower clusters and sometimes secondary bracts. Only the latter are missing.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00585",
+  "decision": "absence_misread",
+  "target": "aerial tuber PO_0004548 absent (PATO_0000462). The underground tuber (PO_0025522) is present, replaced annually.",
+  "fix": "'aerial tubers / bulbils absent' gives aerial tuber PO_0004548 absent. A modifier that has its own PO class must be kept, not stripped to 'tuber'.",
+  "reason": "Dioscorea has a subterranean tuber. Only bulbils on the stem are absent.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00586",
+  "decision": "absence_misread",
+  "target": "aril PO_0009090 absent. The seed is present. Also 'hilum minute' should go to hilum PO_0020063 with decreased size, not to the seed.",
+  "fix": "In a seed paragraph, '<subpart> absent' (aril, strophiole, caruncle) is an absence of that subpart. The paragraph subject does not inherit the absence.",
+  "reason": "The seed is described. Only the aril is missing.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00587",
+  "decision": "absence_misread",
+  "target": "bract PO_0009055 deciduous only. 'Not seen' is missing data (they fall early).",
+  "fix": "'<part> deciduous/caducous, not seen' is a deciduous part that is unobserved on the specimen, not an absence.",
+  "reason": "The same text says the bracts exist and fall off.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00588",
+  "decision": "absence_misread",
+  "target": "A negated quality of stipule PO_0020041: not aculeate (no prickly or spine tip). Drop it, or record that the stipule is unarmed. The stipule is present (orange-brown).",
+  "fix": "'not <quality-adjective>' (not aculeate, not spiny, not glandular) negates a quality. It never states an absence of the subject part.",
+  "reason": "Erythrococca stipules are often spinescent. This species' stipules are not.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00589",
+  "decision": "absence_misread",
+  "target": "No annotation: 'style not seen' is missing data. The pappus statement is unrelated.",
+  "fix": "'<part> not seen' is missing data, not PATO_0000462.",
+  "reason": "The style was not observed in the material. It is not absent.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00590",
+  "decision": "both_true",
+  "target": "Stamens (PO_0009029) absent in the female flowers. Male flowers have sessile stamens.",
+  "fix": "In dioecious taxa, 'stamens absent' in the female-flower paragraph belongs to female flowers (PATO_0000383 context), and is not a taxon-level absence.",
+  "reason": "Garcinia is dioecious. Male flowers have sessile stamens. Female flowers lack stamens or have staminodes.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00591",
+  "decision": "both_true",
+  "target": "Pappus (PO_0025393) absent from most florets. Where present it is very scant (PATO_0001609).",
+  "fix": "'absent from most/some <members>' is a partial absence. Keep it with its quantifier, or drop it. It should not be a plain absence.",
+  "reason": "The two statements describe one variable, reduced pappus.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00592",
+  "decision": "absence_misread",
+  "target": "No annotation for 'not seen'. Also drop the speculative 'probably the roots' pubescence on root PO_0009005.",
+  "fix": "'not seen' is missing data. Hedged clauses ('probably', 'presumably', 'perhaps') should not yield annotations.",
+  "reason": "The roots were not observed. The present statement is a guess fragment.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00593",
+  "decision": "present_misread",
+  "target": "Erect stems ± absent (leaves arise from the rhizome PO_0004542 nodes). Drop the 'stem: erect' record, because it is the subject of the absence clause.",
+  "fix": "In '<modifier> <part> (±) absent' the modifier ('erect stems', 'aerial stems') names a kind of the part. Do not also emit '<part> <modifier>' as a present quality from the same phrase.",
+  "reason": "The 'erect stems' text is the same phrase cut short. Halophila has a creeping rhizome and almost no erect stems.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00594",
+  "decision": "absence_misread",
+  "target": "The plant has no leafy stems (acaulescent: aerial stem PO_0009047 absent or leafless). Leaves present and basal. Not leaf absent.",
+  "fix": "'without leafy stems' / 'leafless scape' says the stem has no leaves, or that there is no stem. It never says leaf absent.",
+  "reason": "The leaves are described as mostly basal and erect.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00595",
+  "decision": "both_true",
+  "target": "Axillary inflorescences not developed. The terminal inflorescence (PO_0009049) is present and green.",
+  "fix": "'<axillary/lateral/terminal> inflorescences absent/not developed' is an absence of that positional kind only.",
+  "reason": "The two statements are about different inflorescence positions.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X00596",
+  "decision": "both_true",
+  "target": "Primary (leafy) bracts absent. Secondary bracts (bract PO_0009055) present and lanceolate.",
+  "fix": "'primary/secondary bracts absent' is an absence of that bract kind, not all bracts.",
+  "reason": "The text names two bract kinds. One is absent and the other is described.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00597",
+  "decision": "both_true",
+  "target": "Awn (PO_0025349) absent on the pedicelled spikelet. The sessile spikelet has an awn with a pubescent column.",
+  "fix": "In Andropogoneae, 'muticous' or 'awnless' in the pedicelled-spikelet paragraph belongs to the pedicelled spikelet. The awn of the sessile spikelet stays.",
+  "reason": "Hyparrhenia sessile spikelets are awned (column pubescent). Pedicelled spikelets are muticous.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00598",
+  "decision": "both_true",
+  "target": "Pedicelled spikelet awnless. The sessile spikelet's awn column is fulvously pubescent.",
+  "fix": "Same rule: 'pedicelled spikelet muticous' restricts the awn absence to the pedicelled spikelet.",
+  "reason": "The two statements are about the two spikelet kinds of the pair.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00599",
+  "decision": "both_true",
+  "target": "Leafless only on the lower stem. The leaves are spirally arranged above.",
+  "fix": "'leafless below/above/at base' is a positional partial absence on the stem. Keep the position, or drop it. Never read it as leaf absent.",
+  "reason": "The leaves are described, so the stem is bare only in its lower part.",
+  "confidence": 0.9
+ }
+]

@@ -1,0 +1,242 @@
+[
+ {
+  "id": "X02940",
+  "decision": "absence_misread",
+  "target": "Only the caudex (the woody, perennial base of the stem) is absent. The aerial flowering stems (stem PO:0009047) are present and tomentose. PO has no separate caudex class ('caudex' is a synonym of stem PO:0009047), so make no absence annotation",
+  "fix": "'caudex absent', 'without a caudex' and 'caudex lacking' deny only the woody stem base. Because 'caudex' is a synonym of stem PO:0009047, never turn it into stem absent. Drop the absence, or keep it with context 'caudex' once there is a class for it.",
+  "reason": "In Eriogonum the caudex is the persistent woody base, and the aerial stems are described separately. A plant with tomentose stems still has stems.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02941",
+  "decision": "absence_misread",
+  "target": "Leaf (PO:0025034) absent (PATO:0000462), context axillary (FLOPO:0991000): the secondary leaf clusters in the axils are absent. The main leaves are present and acute",
+  "fix": "'axillary leaves absent' and 'without axillary fascicles' deny only the leaf clusters in the axils. Keep 'axillary' (FLOPO:0991000) as context and never record a plain leaf absent.",
+  "reason": "In Minuartia, axillary leaf fascicles are a standard character. The acute leaves are the main leaves.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02942",
+  "decision": "absence_misread",
+  "target": "Phyllodes (the flat, non-pitcher leaves of Sarracenia) are absent. The pitcher leaves (vascular leaf PO:0009025, synonym pitcher) are present. PO has no phyllode class, so make no absence annotation. The other statement is also misread: 'orifice round' describes the pitcher mouth, not the shape of the whole leaf ('orifice' is a rejected bearer word)",
+  "fix": "'phyllodia absent', 'phyllodes absent' and 'without phyllodes' deny one kind of leaf, never leaves as a whole. Without a phyllode class, drop the statement. Never fall back to leaf PO:0025034.",
+  "reason": "S. psittacina has pitchers and no flat phyllodes. A described pitcher orifice shows that leaves are present.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02943",
+  "decision": "absence_misread",
+  "target": "Leaf lamina (PO:0020039) absent (PATO:0000462) only for the basal sheaths: leaf sheath PO:0020104, context basal FLOPO:0991002. The blades of the foliage leaves are present and acuminate",
+  "fix": "'bladeless sheaths' and 'basal sheaths bladeless' describe the lowest sheaths of a Carex, which have no blade. Record them as a leaf sheath with context basal, never as a taxon-wide leaf lamina absent. This is the case named in docs/km-classification.md.",
+  "reason": "Sedges regularly have bladeless basal sheaths below the foliage leaves, which have blades.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02944",
+  "decision": "absence_misread",
+  "target": "Cauline leaf (PO:0000013) absent (PATO:0000462). Basal leaves are present and rosulate (rosette leaf PO:0000014)",
+  "fix": "'cauline leaves absent' denies only the stem leaves: map it to cauline leaf PO:0000013 (or leaf with context cauline FLOPO:0991117), never to leaf PO:0025034. The same goes for 'basal leaves absent' (rosette leaf PO:0000014 or context basal FLOPO:0991002).",
+  "reason": "Basal rosulate leaves are described in the same text, so only the stem leaves are missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02945",
+  "decision": "absence_misread",
+  "target": "Probably 'stem/scape leafless': cauline leaf (PO:0000013) absent (PATO:0000462), on the stem (PO:0009047). The basal leaves are present and linear",
+  "fix": "'leafless' in a stem or scape sentence ('stems leafless', 'scapes leafless') means no stem leaves: map it to cauline leaf PO:0000013 absent, never to leaf PO:0025034 absent, when leaves are described elsewhere in the same taxon.",
+  "reason": "Crepis species often have basal leaves and leafless or nearly leafless flowering stems. The snippet alone does not show the sentence subject.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X02946",
+  "decision": "absence_misread",
+  "target": "Leaf sheath auricle (PO:0020106) absent (PATO:0000462). Oral setae: trichome (PO:0000282) absent at the sheath summit, context 'oral'. Not a stipule. The other statement is also misread: 'white-gray, 3–4 mm' most likely describes the ligule (PO:0020105)",
+  "fix": "In grasses and bamboos, 'auricles' are leaf sheath auricles PO:0020106 and 'oral setae' are bristles (trichome PO:0000282) at the sheath mouth. Never map them to stipule PO:0020041. Grasses have no stipules.",
+  "reason": "Bamboos have no stipules, so both statements were sent to the wrong part, which created the clash.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02947",
+  "decision": "absence_misread",
+  "target": "No absence: the flowers are unknown (missing data). Make no flower annotation. The umbelliform inflorescence or infructescence stays",
+  "fix": "'flowers not known', 'flowers unknown', 'not seen' and 'not yet described' mean missing data, never absent (PATO:0000462). Drop these statements.",
+  "reason": "A taxon known only from fruit does not lack flowers.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02948",
+  "decision": "absence_misread",
+  "target": "Leaf lamina vein (PO:0020138) absent (PATO:0000462), context 'marginal' (an intramarginal or marginal vein running along the leaf lamina margin PO:0025009). The lamina is present and acuminate",
+  "fix": "'marginal vein absent', 'intramarginal vein absent' and 'without a marginal vein' deny a vein, never the lamina. Map them to a vein class with context 'marginal', with the lamina as location.",
+  "reason": "The lamina apex is described, so the lamina exists. Only a marginal vein is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02949",
+  "decision": "absence_misread",
+  "target": "No absence: the flowers were not seen (missing data). The infructescence statement should be infructescence (PO:0006342) with pubescent hairs, not inflorescence",
+  "fix": "'flowers not seen' and 'flowers unknown' are missing data. Never record them as absent. An 'Infructescence' bearer should map to PO:0006342, not to inflorescence PO:0009049.",
+  "reason": "The species was described from fruiting material. The flowers exist but were not collected.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02950",
+  "decision": "both_true",
+  "target": "Culm sheath (sheath of the culm leaf; scale leaf PO:0006003) auricles and oral setae absent. Foliage leaf sheath (PO:0020104) auricles (PO:0020106) and oral setae present",
+  "fix": "In bamboo descriptions, a 'Culm sheaths ...' sentence and a 'Leaf sheaths ...' sentence each describe auricles and oral setae. Keep the sentence subject (culm sheath vs. leaf sheath) as the context, and never merge both into one leaf sheath auricle record.",
+  "reason": "Phyllostachys descriptions regularly contrast culm sheaths, which have no auricles, with foliage leaf sheaths, which have developed auricles and oral setae.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02951",
+  "decision": "absence_misread",
+  "target": "Bract (PO:0009055) absent (PATO:0000462) on the scape (stem PO:0009047). The involucral bracts (PO:0009045) are present and linear",
+  "fix": "'scape ebracteate' and 'ebracteate' in a scape or peduncle sentence deny bracts along the stalk only. Keep the stalk as location, and never record a taxon-wide bract absent that clashes with the involucral bracts (a subclass of bract).",
+  "reason": "Piloselloides has naked scapes topped by a capitulum with linear involucral bracts.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X02952",
+  "decision": "both_true",
+  "target": "Culm sheath (scale leaf PO:0006003) auricles absent. Foliage leaf sheath auricles (leaf sheath auricle PO:0020106) present, with dense fimbriae (trichome PO:0000282). Both statements were also wrongly sent to stipule",
+  "fix": "In bamboos, keep the sentence subject (culm sheath vs. leaf sheath) as context for 'auricles', and map auricles to PO:0020106, never to stipule PO:0020041.",
+  "reason": "The epithet 'auriculatum' shows that auricles are present on some sheaths. The absence must belong to the other kind of sheath.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X02953",
+  "decision": "both_true",
+  "target": "Bracts (of the umbel, the involucre; bract PO:0009055) are usually absent and rarely 1, small (decreased size PATO:0000587). This is a frequency alternative, not two separate facts",
+  "fix": "'absent, rarely 1', 'absent or 1–2' and 'usually absent' are alternatives in one statement. Keep them together as a list of alternatives with frequency 'rarely', and never record a plain absence beside a description.",
+  "reason": "This is one phrase from the flora about variation between individuals, not a contradiction.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02954",
+  "decision": "absence_misread",
+  "target": "Probably 'involucre not bracteate' = calyculus absent: epicalyx (PO:0009063, synonym calyculus) absent (PATO:0000462). The linear bracts belong elsewhere (the phyllaries or the bracts on the peduncle)",
+  "fix": "In Asteraceae (Senecioneae), 'involucre not bracteate', 'ecalyculate' and 'without bracteoles at base' deny the calyculus. Map them to epicalyx PO:0009063 absent, never to bract absent.",
+  "reason": "Sinosenecio heads are often described as ecalyculate, while bracts are present elsewhere. The snippet does not show the subject.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X02955",
+  "decision": "absence_misread",
+  "target": "Leaves are present only at the stem apex (leaf PO:0025034 present, context upper FLOPO:0991376), and are lanceolate. Only the lower stem is leafless",
+  "fix": "'leafless except at apex', 'leafless below' and 'leafy only above' are restricted absences. The 'except' clause names where the part is present. Never drop it into a plain leaf absent.",
+  "reason": "The flora itself says the leaves are at the apex, and they are described there as lanceolate.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02956",
+  "decision": "absence_misread",
+  "target": "Not absent: cauline leaves (PO:0000013) are few and reduced (decreased size PATO:0000587)",
+  "fix": "'almost leafless', 'nearly leafless', 'subaphyllous' and 'scarcely leafy' are hedges. Never map them to absent (PATO:0000462). Record few or reduced cauline leaves, or drop them.",
+  "reason": "'Almost' means that some leaves are present. The other statement describes them as reduced.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02957",
+  "decision": "both_true",
+  "target": "Style (PO:0009074) absent in the ray florets (ray flower PO:0025331, which are sterile in Bidens). The style is shortly bifid in the disc florets (disk flower PO:0025332)",
+  "fix": "In Asteraceae, keep the floret type of the sentence ('fleurs ligulées' / 'ray florets' vs. 'fleurs du disque' / 'disc florets') as context for each floret part. 'style absent' in the ray floret paragraph is not a taxon-wide absence.",
+  "reason": "Bidens ray florets are neutral and have no style. Disc florets have a bifid style.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02958",
+  "decision": "absence_misread",
+  "target": "Bract (PO:0009055) absent (PATO:0000462), context outer/lateral (FLOPO:0991380) on the fig (syconium FLOPO_0986130). The basal bracts are present, with an undulate-lobed margin",
+  "fix": "In Ficus, 'sans bractées externes', 'sans bractées latérales' and 'without lateral bracts' deny only the bracts on the fig wall. Keep the qualifier as context, and keep the basal and ostiolar bracts separate.",
+  "reason": "The figs have basal bracts, and those are the lobed ones.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02959",
+  "decision": "absence_misread",
+  "target": "Bract (PO:0009055) absent (PATO:0000462), context lateral (FLOPO:0991380), on the fig (syconium FLOPO_0986130). The basal bracts (3, coriaceous) are present",
+  "fix": "In Ficus, 'without lateral bracts' denies only the bracts on the fig body. Keep 'lateral' as context, and never record a taxon-wide bract absent.",
+  "reason": "The other statement names basal bracts explicitly.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02960",
+  "decision": "absence_misread",
+  "target": "Cystoliths (a cell inclusion) are absent from the leaf lamina (PO:0020039). The lamina is present. There is no class for cystoliths, so make no absence annotation",
+  "fix": "'cystoliths absent' denies a cell inclusion, never the organ. Without a cystolith class, drop the statement. Never fall back to the leaf or leaf lamina.",
+  "reason": "The lamina is described as smooth or scabrous, so it exists. This is the same case as in the previous review.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02961",
+  "decision": "absence_misread",
+  "target": "Dots (minute dark or glandular dots on the lower leaf lamina surface) are absent. The leaf is present. There is no structure class for them ('dot' is a rejected bearer word), so make no absence annotation",
+  "fix": "In Myristicaceae (Knema, Myristica, Horsfieldia), 'dots absent' and 'without dots' describe dots on the lamina surface. Drop them, or record a surface pattern, but never leaf or leaf lamina absent.",
+  "reason": "A raised midrib is described, so the leaf exists.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02962",
+  "decision": "absence_misread",
+  "target": "Dots on the leaf lamina (PO:0020039) are absent. The lamina is present and oblong. Make no absence annotation",
+  "fix": "Same as for Knema: in Myristicaceae, 'dots absent' denies a surface dot pattern, never the lamina.",
+  "reason": "The lamina shape is described, so the lamina exists.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02963",
+  "decision": "absence_misread",
+  "target": "Lower glume (PO:0006002) absent (PATO:0000462). The upper glume (PO:0006004) is present and stiffly ciliate",
+  "fix": "'lower glume absent' and 'upper glume absent' map to lower glume PO:0006002 or upper glume PO:0006004. Never drop the qualifier into glume PO:0009039.",
+  "reason": "Digitaria often has a minute or missing lower glume, while the upper glume is well developed.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02964",
+  "decision": "both_true",
+  "target": "Different organs of the spikelet: probably the glumes are awnless while the lemmas (PO:0009037) are awned, or the fertile and sterile florets differ. The awn (PO:0025349) needs the organ that bears it",
+  "fix": "In grass descriptions, 'awnless' and 'awned' belong to the organ of the sentence (glume, lower or upper lemma, fertile or sterile floret). Keep that organ as the location of the awn, and never merge them into one taxon-wide awn record.",
+  "reason": "In Tetrapogon the lemmas are awned, while glumes or reduced florets may be awnless. The snippets do not show the subjects.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X02965",
+  "decision": "both_true",
+  "target": "Petals (PO:0009032) absent in the flowers of one sex, and very small in the other: female (PATO:0000383) vs. male (PATO:0000384) flower",
+  "fix": "In unisexual-flowered families (Eriocaulaceae and others), keep the 'staminate flowers' or 'pistillate flowers' paragraph as context for every floral part, and never record a taxon-wide petal absent.",
+  "reason": "Eriocaulon descriptions treat male and female flowers separately, and their petals often differ in this way.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X02966",
+  "decision": "both_true",
+  "target": "Palea (PO:0009038) of the lower (sterile) floret absent, context lower FLOPO:0991377. The palea of the upper (fertile) floret is present and involute",
+  "fix": "In Paniceae, 'lower floret without palea' and 'upper palea involute' belong to different florets. Keep lower or upper (FLOPO:0991377/0991376) as context. 'without significant palea' also means reduced, not strictly absent.",
+  "reason": "Paspalum has a sterile lower floret with no palea and a fertile upper floret with an involute palea.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02967",
+  "decision": "absence_misread",
+  "target": "Trichome (PO:0000282) absent (PATO:0000462) on the leaf (PO:0025034). The leaf is present",
+  "fix": "A heading-style 'Hairs: absent' (character: value) denies hairs on the organ of the enclosing section. Map it to trichome PO:0000282, with that organ as location, never to the organ itself.",
+  "reason": "The leaf surface is described as undulating, so only the hairs are missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02968",
+  "decision": "absence_misread",
+  "target": "The annulus (a ring at the mouth of the perianth tube) is absent. There is no class for it ('annulus' is a rejected bearer word), so make no absence annotation. The other statement is also misread: Aristolochia has no corolla, so 'lobe ovate' belongs to the perianth limb (perianth PO:0009058)",
+  "fix": "'annulus absent' denies a ring-shaped thickening of the perianth, never the corolla or perianth. Drop it while there is no class. In Aristolochia, map the floral tube and limb to perianth PO:0009058, not to corolla.",
+  "reason": "The perianth lobe is described, so the perianth exists. Only the annulus at its mouth is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02969",
+  "decision": "absence_misread",
+  "target": "Leaf lamina (PO:0020039) absent only on the basal sheaths: leaf sheath PO:0020104, context basal FLOPO:0991002. The foliage blades are present and glabrous",
+  "fix": "'bladeless', when said of Carex sheaths ('basal sheaths bladeless'), restricts the absence to those sheaths. Keep the sheath as the bearer with context basal, and never record a taxon-wide leaf lamina absent.",
+  "reason": "The blades are described as glabrous on both surfaces, so the blades exist. The bladeless ones are the lowest sheaths.",
+  "confidence": "high"
+ }
+]

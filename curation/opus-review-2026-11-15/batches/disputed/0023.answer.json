@@ -1,0 +1,212 @@
+[
+ {
+  "rule_id": "R2649",
+  "decision": "retarget",
+  "target": "leaf vascular system (PO_0000036)",
+  "reason": "French 'nervation' means the veins taken together. That is a vascular system, not one vascular bundle. PO lists 'leaf venation' as a synonym of PO_0000036. Pattern words (pinnate, reticulate) only make sense for the whole system, and words about how visible the veins are fit it too. PO_0000048 (lamina only) is narrower than needed. Statements about one named vein still go through the vein rules (nervure, veins).",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2650",
+  "decision": "retarget",
+  "target": "leaf vascular system (PO_0000036)",
+  "reason": "Same as R2649. 'Venation' is the vein system, and 'leaf venation' is a PO synonym of PO_0000036. Vascular bundle would put pattern qualities on a single vein.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2655",
+  "decision": "retarget",
+  "target": "stamen fascicle (FLOPO_0986097)",
+  "reason": "In Loasaceae a fasciclode is a whole stamen fascicle that has turned sterile: several fused staminodes that form one nectar scale. The FLOPO class stamen fascicle now exists and keeps the bundle, which is what the word names. Staminode would make it a single sterile stamen. That the bundle is sterile is lost, but that is better than losing that it is a bundle.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2656",
+  "decision": "retarget",
+  "target": "stamen fascicle (FLOPO_0986097)",
+  "reason": "Latin form of fasciclode (R2655). It gets the same target.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2657",
+  "decision": "constrain",
+  "target": "sheath|culm|ligule",
+  "reason": "PO_0020106 is only the auricle of a grass leaf sheath. Outside grasses, a 'leaf auricle' is a lobe at the base of the leaf blade, and PO has no class for it. The rejected 'ear' and the 'auricleless' rule R0883 follow the same rule: map to the sheath auricle only when a sheath, culm or ligule is the context.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2658",
+  "decision": "constrain",
+  "target": "sheath|culm|ligule",
+  "reason": "Bare 'auricles' also occur on stipules, petals, lips, pinnae and leaf bases. Earlier rules (R0597, R0625, R1566) say PO has no general auricle class. The rule should apply only with a grass sheath or culm. 'leaf' and 'blade' are too wide to use as constraints, because many non-grass blades have basal auricles.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2664",
+  "decision": "drop",
+  "target": "",
+  "reason": "In Passiflora the limen is a separate ring or cup at the base of the androgynophore. Its neighbours are the operculum and the nectary ring. It is not the series of corona filaments, which earlier rules mapped to corona lobe. Mapping it to floral corona would mix the limen's qualities with the corona's. It needs its own class or should stay unmapped.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2665",
+  "decision": "keep",
+  "target": "",
+  "reason": "When a flower has several coronas, each series (inner, outer, staminal) is itself a corona, so 'inner corona' is a kind of floral corona rather than a part of it. The corona-filament rules R2642–R2644 already leave inner and outer to context. In Apocynaceae and Amaryllidaceae the French inner corona is a true corona. In one Passiflora source it is the limen, which that source itself treats as a corona.",
+  "confidence": "low"
+ },
+ {
+  "rule_id": "R2666",
+  "decision": "constrain",
+  "target": "inflorescence|umbel|raceme|spike|fascicle|peduncle",
+  "reason": "In the examples (Loranthaceae and Viscaceae: 'pairs of opposite dyads', 'umbel of 2 dyads'), a dyad is a two-flowered partial inflorescence, a reduced cymule. PO lists cymule as a synonym of cyme inflorescence. Pollen dyads and pairs of spikelets are different things. So the rule should apply only when an inflorescence is the context, not dropped outright.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2667",
+  "decision": "constrain",
+  "target": "inflorescence|umbel|raceme|spike|fascicle|peduncle",
+  "reason": "Plural of R2666. It gets the same restriction to inflorescences, which leaves out pollen dyads.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2668",
+  "decision": "constrain",
+  "target": "inflorescence|ombelle|grappe|épi|pédoncule|umbel|raceme|spike",
+  "reason": "French form of R2666. It holds only for the two-flowered cymule of Loranthaceae inflorescences, not for pollen.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2675",
+  "decision": "keep",
+  "target": "",
+  "reason": "'Perigonial leaf' is a moss term for the leaves around the antheridia, which PO calls perigonial bracts. Seed-plant floras say perigone segment or tepal, not 'perigonial leaf'. The first check's constraint lists groups of plants rather than parts, so it cannot be used as a part restriction anyway.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2676",
+  "decision": "drop",
+  "target": "",
+  "reason": "Protonemal flaps (Tetraphis and its relatives) are leaf-like plates growing on the lasting protonema. Their shape and size would be wrongly put on the whole protonema. PO has no class for the flap, and the term is used in only one small group, so it should stay unmapped.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2677",
+  "decision": "drop",
+  "target": "",
+  "reason": "Other spelling of R2676. Dropped for the same reason.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2680",
+  "decision": "drop",
+  "target": "",
+  "reason": "On its own, French 'flore' means a flora (the book), not a flower ('fleur'). The rule's own reason is about the '-flore(s)' counting suffix, which belongs in flora_counted_parts.tsv as a count, not in a bearer rule.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2681",
+  "decision": "drop",
+  "target": "",
+  "reason": "'-flore' means '-flowered' (3-flore, pauciflore). It is a count of flowers on the unit being described. Add it to flora_counted_parts.tsv next to 'flowered'. A bearer rule would wrongly make the flower the part that carries the quality.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2682",
+  "decision": "drop",
+  "target": "",
+  "reason": "Plural of R2681 ('3-7-flores'). It belongs in flora_counted_parts.tsv as a flower count, not as a bearer rule.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2687",
+  "decision": "retarget",
+  "target": "phyllome lamina (PO_0025396)",
+  "reason": "PO has no 'bract lamina', but a bract is a phyllome, and PO has phyllome lamina. That is the blade, without the sheath of sedge and grass bracts. This follows the earlier 'serration' rule, which went to phyllome lamina tooth. Mapping to bract would give the blade's shape and length to the whole bract.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2688",
+  "decision": "retarget",
+  "target": "phyllome lamina (PO_0025396)",
+  "reason": "Same as R2687: the bract lamina is the lamina of a phyllome.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2689",
+  "decision": "keep",
+  "target": "",
+  "reason": "As a noun phrase in floras ('female flowers with 5 reduced stamens', '1 fertile and 4 reduced stamens'), 'reduced stamen' means a rudimentary, sterile stamen, i.e. a staminode. A stamen that is merely small is described as 'stamens small' or 'short', not 'reduced stamens'.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2690",
+  "decision": "keep",
+  "target": "",
+  "reason": "Plural of R2689, with the same use for sterile rudiments in unisexual flowers.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2691",
+  "decision": "keep",
+  "target": "",
+  "reason": "In moss floras (Brachytheciaceae, Hypnaceae and others) the hyalodermis is the outermost layer of stem cells, enlarged and thin-walled ('hyalodermis of large epidermal cells'). It is a kind of stem epidermis. Its being present or absent is the main character. Orchid roots have velamen (PO_0006042), not a hyalodermis, so the first check's objection does not hold.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2692",
+  "decision": "keep",
+  "target": "",
+  "reason": "Other spelling of R2691. Kept for the same reason.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2697",
+  "decision": "keep",
+  "target": "",
+  "reason": "Plural of 'veinlet', which the accepted rule C270 already maps to leaf lamina vein without a restriction. PO lists veinlet as a synonym of the higher-order leaf veins under this class. If veinlets on bracts or sepals become a problem, both rules should switch to phyllome lamina vein (PO_0025348) together.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2699",
+  "decision": "constrain",
+  "target": "feuille|limbe|foliole|pinnule|leaf|lamina|blade|leaflet",
+  "reason": "'face inférieure' is the underside of whatever organ is being described: sepals, petals, bracts, lips. PO_0000049 is right only when the organ is a leaf blade, leaflet or pinnule (curator decision of 2026-09-18).",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2705",
+  "decision": "constrain",
+  "target": "petal|tepal|staminode|lip|corolla|fall|style|stigma|throat|filament|anther",
+  "reason": "A beard is a tuft or zone of hairs on perianth or androecium parts (Iris falls, Penstemon staminodes, corolla throats). On a lemma or spike, 'bearded' can mean awned, so lemma and the cereal uses are left out.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2706",
+  "decision": "drop",
+  "target": "",
+  "reason": "The word includes 'present', so as a bearer rule it loses the quality. The right form is an entity_presence rule (leaf midvein PO_0020139 + present PATO_0000467), and that is a different kind of rule, not a different target. 'midrib' alone is already a PO synonym of leaf midvein.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2707",
+  "decision": "keep",
+  "target": "",
+  "reason": "In Myrtaceae, Melastomataceae, Rosaceae and Lythraceae, the lobes at the rim of the hypanthium are the sepals, i.e. the calyx lobes. Petals and epicalyx bracts are named on their own, not as hypanthium lobes. This matches the hypanthium rules R2365/R2366 ('lobes of receptacle-tube').",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2708",
+  "decision": "keep",
+  "target": "",
+  "reason": "Same as R2707. In floras, hypanthial lobes are the calyx lobes on the hypanthium rim.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2709",
+  "decision": "keep",
+  "target": "",
+  "reason": "Same as R2707. In floras, 'lobes of the hypanthium' are the sepals on the rim.",
+  "confidence": "medium"
+ }
+]

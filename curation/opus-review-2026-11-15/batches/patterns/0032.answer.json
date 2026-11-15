@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P01280",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'N pairs of X' as a count of pairs (collection_size 2, as for 'jugate'): bearer tooth (as in the 'toothed' row of config/flora_counted_parts.tsv), quality amount PATO:0000070, 3-5, container leaf. It is a count of the organ as a whole, not a count at a position.",
+  "reason": "'3-5 pairs of teeth' on the leaf margin is an ordinary count of paired parts; the reason count_per_position is wrong.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01281",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "The table maps 'celled' only to locule. Add a reading of 'celled' as plant cell PO:0009002 when the container is a moss leaf part (not an ovary, fruit or anther). The container 'apiculus' needs grounding: there is no PO class, and leaf apex PO:0020137 (synonym phyllid apex) is the nearest.",
+  "reason": "A bryophyte apiculus made of 1-2 cells is a count of cells in that part; the structure is pattern 03.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01282",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Send a 'number' row with the count word 'numerous' to pattern 13: bearer root PO:0009005 present, count_word many, container whole plant. 'Storage' has no PO class (tuberous FLOPO:0991109 can be a separate record if wanted). 'fascicled', 'oblong' and the size are separate records.",
+  "reason": "'Storage roots numerous' is the textbook case of pattern 13; it was held as a non-length measurement.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01283",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (growth-form row Q14 'liana')",
+  "fix": "Give the liana row an EQ signature, whole plant PO:0000003 + climbing FLOPO:0991108 + ligneous PATO:0002348, in place of the bare class FLOPO_0900035. 'Shrubs or lianas' then becomes an alternative (pattern 07), and 'climbing' is the shared value.",
+  "reason": "climbing FLOPO:0991108 exists. The habit noun is mapped to a class with no entity-quality signature, as in the earlier review (P00134).",
+  "confidence": "high"
+ },
+ {
+  "id": "P01284",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "'young' is in config/flora_context_words.tsv (PATO_0000309) and 'abaxially' is a reviewed surface. The source has a soft hyphen (U+00AD) inside 'abax­ially': normalise soft hyphens before matching cues, and allow a state and a surface together. Value pilose FLOPO:0991048 + appressed FLOPO:0991064, density dense PATO:0001164. 'becoming glabrate' is a transition.",
+  "reason": "Both qualifiers have readings already; the cue match fails.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01285",
+  "decision": "missing_term",
+  "target": "imparipinnate (odd-pinnate): pinnate, with the rachis ending in a single terminal leaflet or pinna; child of pinnate PATO:0000410, on leaf or leaf lamina",
+  "fix": "Add the value class (synonyms odd-pinnate, imparipinné) and a rule reading 'apex ending with/in a terminal pinna' as imparipinnate on the lamina. The paripinnate counterpart should come with it.",
+  "reason": "A terminal pinna is a common key character in ferns and legumes. No PATO or FLOPO class for imparipinnate exists, only entries in botanical_terminology.tsv.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01286",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground the container 'rachis' to inflorescence axis PO:0020122 (synonym inflorescence rachis) when the sentence is about the inflorescence (peduncle, floral bract). Then 'usually 1-flowered' is flower PO:0009046, amount 1, frequency 'usually'.",
+  "reason": "The 'flowered' split is in the table; only the container failed to ground.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01287",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Read the verb phrase 'bear many X' as an indefinite count: flower PO:0009046 present, count_word many, container inflorescence PO:0009049. The cue is 'many'.",
+  "reason": "The transcribed quality 'many-flowered' is the pattern 13 compound itself; no term is needed.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01288",
+  "decision": "new_pattern",
+  "target": "relation to the substrate",
+  "fix": "Slots: plant bearer, attachment quality (adherent FLOPO:0991188 or appressed FLOPO:0991064), degree 'tightly', and a substrate target. OWL: whole plant has_characteristic (adherent and towards some ENVO substrate); RDF: fb:towardsSubstrate with the cue. Pattern 09 accepts only PO/FLOPO targets.",
+  "reason": "How closely a moss mat adheres to its substrate is a habit character, but the second term is not a plant part.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01289",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Decimetres are converted since 2026-11-15. Accept the abbreviation with a trailing period ('dm.', also 'cm.', 'mm.') as the unit. The result is height PATO:0000119 = 1.5 m, source_unit dm, factor 0.1.",
+  "reason": "A plain height with a unit the parser did not read, not a count.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01290",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'cauline leaves similar' names no attribute. It refers back to the basal leaf description, and copying all of that is not a phenotype statement of its own. The useful alternative ('or with a wholly sheathing petiole') is a separate statement.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01291",
+  "decision": "new_pattern",
+  "target": "combined length of parts",
+  "fix": "Slots: two or more bearers (peduncle PO:0009053, inflorescence axis PO:0020122) and one length range, 10-22 cm, max extreme 35. RDF only: fb:combinedBearers + length + extremes; no OWL class, because the length of neither part alone is known. The parser also has to read the French 'de long' and a bare '(35)' as the extreme.",
+  "reason": "'pédoncule et rachis de 10-22(35) cm de long' gives the length of the two parts together. Giving it all to the rachis overstates.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01292",
+  "decision": "new_pattern",
+  "target": "gradient along a series",
+  "fix": "Slots: the series (leaf, members from proximal to distal), the attribute (size PATO:0000117), direction decreasing, and the cue. OWL: none (no single member has the value). RDF: fb:gradientAttribute size; fb:gradientDirection decreasing; fb:series leaf.",
+  "reason": "'décroissent en grandeur' says the upper leaves get smaller upward. It is not a process and has no single value.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01293",
+  "decision": "missing_term",
+  "target": "acropetally dehiscent: dehiscent with the opening starting at the base of the fruit and proceeding toward the apex; child of dehiscent FLOPO:0991149 (a basipetal sibling if counts justify it)",
+  "fix": "Add the class on fruit/capsule and read 'dehiscing acropetally' / 'dehiscing from the base' as it.",
+  "reason": "A known diagnostic character of Aristolochia capsules. The dehiscent kinds added so far (septicidal, loculicidal, ...) cover the line of opening, not its direction.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01294",
+  "decision": "transcription_error",
+  "target": "trichome PO:0000282, length PATO:0000122",
+  "fix": "Bearer trichome, part of the abaxial leaf lamina epidermis PO:0000049 ('lower surface'), length 0.1-0.2 mm, max extreme 0.3 (pattern 05). 'stellate(-dendroid)' and 'dense, persistent' are separate records.",
+  "reason": "'hairs' is the part being measured, not a quality of the leaf (as in the earlier review, P00004).",
+  "confidence": "high"
+ },
+ {
+  "id": "P01295",
+  "decision": "transcription_error",
+  "target": "trichome PO:0000282, length PATO:0000122",
+  "fix": "Bearer trichome part of stem PO:0009047, length 0.2-0.6 mm, value_qualifier approximately ('c.'). 'puberulous or pubescent' is the separate record of the stem.",
+  "reason": "The hairs are the bearer and the quality is their length.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01296",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Split 'N-toothed' (table row toothed → tooth) before the unit check: tooth, amount 2, container the lateral leaf lobe, frequency 'usually'.",
+  "reason": "A compound count, held as a measurement missing its unit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01297",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (growth-form row Q10 'climber')",
+  "fix": "Map 'climber' to whole plant PO:0000003 + climbing FLOPO:0991108 (no 'ligneous' unless stated), as in the earlier review (P00053, P00167). 'Large' has no measure: drop it.",
+  "reason": "climbing exists. The row points to the primitive class FLOPO_0985031, which has no entity-quality signature.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01298",
+  "decision": "transcription_error",
+  "target": "trichome PO:0000282, length PATO:0000122",
+  "fix": "Bearer trichome, part of a female inflorescence (pattern 12, female from the 'Inflorescences (female)' heading), length 0.3-0.5 mm. 'woolly' (lanate) is a separate record.",
+  "reason": "The measured part is the hair, not the inflorescence.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01299",
+  "decision": "missing_term",
+  "target": "fragmenting (of the capsule annulus): deciduous, coming off in pieces rather than as one ring (contrast revoluble, persistent)",
+  "fix": "Add the value class under an existing detachment quality on the moss capsule annulus, if the annulus has a FLOPO anatomy class. Otherwise reject the item.",
+  "reason": "How the annulus comes off is a standard character in moss keys, but no term exists. It is a quality, not a process.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01300",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Ground the plural 'ovaries' to ovary PO:0009062 as the towards target. Ratio 0.6-1.1 of length PATO:0000122, bearer the floral disk. The disk's own length (1.1-1.8 mm) is a separate record.",
+  "reason": "'0.6-1.1 times as long as ovaries' is exactly pattern 10. The second term was not returned.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01301",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read 'N cm thick' as thickness PATO:0000915 (diameter PATO:0001334 for a terete organ). Read the Flora of China double hyphen '--' as a range dash. Rhizome, 1-1.5 cm.",
+  "reason": "thickness is a PATO attribute. The adjective with a number was not mapped to it.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01302",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Split '3-fid' (fid → lobe): lobe amount 3, container the central leaf segment. Keep 'below middle' as the cue for depth of division, which is still open, in RDF only.",
+  "reason": "The count is pattern 03. The 'fissure' quality and the non-length reason are both wrong.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01303",
+  "decision": "new_pattern",
+  "target": "difference to another part",
+  "fix": "OWL as pattern 09: spadix has_characteristic (increased length and towards some spathe). RDF adds the amount of the difference: fb:differenceLow 0.3, fb:differenceHigh 1.0, extreme 1.5, unit cm, cue 'by'. The spadix's own length is a separate record.",
+  "reason": "Pattern 09 covers 'exceeding X' but not by how much.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01304",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "A comma list of adjectives states every value; it is not an alternative or a continuum. One record each: fruit hairy PATO:0000454 dense PATO:0001164, and on trichome PO:0000282 part of fruit: long, stiff (hispid PATO:0002339 on the fruit), golden colour, swollen-based (pustulate FLOPO:0991223 or tuberculate FLOPO:0991060 base). 'many over 3 mm long' is a lower bound.",
+  "reason": "Wrongly routed to taxon_level_alternatives_or_continuum: the text has no 'or' or 'to'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01305",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'staminodiales ou nulles' says the non-fertile members of the androecium are staminodes or absent. 'Staminode present or absent' is empty in OWL, and 'stamen present' contradicts the 3 fertile stamens. The informative statement is the fertile stamen count. (Separately, French 'nul/nulle(s)' should be a negation cue.)",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01306",
+  "decision": "missing_term",
+  "target": "'costa disappearing in the apex' = percurrent FLOPO:0991163 (a reading rule, no new class)",
+  "fix": "Add a rule reading 'disappearing/vanishing/ending in the apex' of a costa as percurrent. 'ending below the apex' and 'ending N cells before the tip' read as subpercurrent, if that class is added later.",
+  "reason": "The term exists. Only the moss wording is not read, and it is not a process.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01307",
+  "decision": "new_pattern",
+  "target": "parts borne on a part",
+  "fix": "Slots: the bearer (leaf lamina PO:0020039), its organ (leaf PO:0025034) and the axis it is borne on (stolon PO:0003024), taken from the heading 'stolons:'. OWL: has part some (leaf lamina and part of some (leaf and attached to some stolon) and has characteristic some (length ...)), the same for width. A leaf is not part of the stolon, so pattern 12 does not fit.",
+  "reason": "The size applies only to leaves on stolons, not to stem leaves. The stage reason is wrong.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01308",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read 'diam.' as diameter PATO:0001334, and ground 'rachis' in an inflorescence sentence to inflorescence axis PO:0020122. 0.7-2.35 mm. 'at fruiting' belongs to the inflorescence length, not to this clause.",
+  "reason": "A plain measurement wrongly held as relation_to_another_part.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01309",
+  "decision": "new_pattern",
+  "target": "order of division",
+  "fix": "Slots: order of division (1-2), number of segments per division (3) and depth (sect, to the midrib). OWL: leaflet has_characteristic dissected; RDF: fb:divisionOrderLow 1, fb:divisionOrderHigh 2, fb:divisionMerosity 3, fb:divisionDepth sect. The transcribed '1-sect' is wrong.",
+  "reason": "'1-2 × 3-sect' (once or twice ternately cut) has no pattern; the earlier review proposed the same.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01310",
+  "decision": "new_pattern",
+  "target": "order of division",
+  "fix": "Leaf lamina pinnate PATO:0000410 with division order 3-4 in RDF (fb:divisionOrderLow 3, High 4). OWL: the union of tripinnate FLOPO:0991159 and a quadripinnate class, which does not exist. The order slot avoids adding a class for every order.",
+  "reason": "'3- or 4-pinnate' is the order of pinnation; it is not a measurement missing its unit.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01311",
+  "decision": "new_pattern",
+  "target": "optional part",
+  "fix": "RDF: stipule PO:0020041 presence 'variable' (fb:presence variable, cue 'or absent'); no OWL class, because present-or-absent is empty. The stipule's other records (2, subulate, ca. 3 mm, caducous) get the condition 'when present' (unscoped kind).",
+  "reason": "A part described and then said to be absent, at the level of the taxon. The earlier review proposed the same.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01312",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "'old' is in config/flora_context_words.tsv (PATO_0000308). Carry the cue of 'old stems' over the 'and' to the second predicate. Value purple PATO:0000951, value_qualifier approximately ('purplish'); 'dull' is low brightness, or drop it.",
+  "reason": "The state cue sits outside the transcribed span, in the same clause.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01313",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept 'to N mm' after a qualifier heading followed by a colon ('in male:'). The bearer is a male inflorescence (context word male, PATO_0000384, allowed on inflorescence; pattern 04): length ≤ 10 mm, width 4-5 mm.",
+  "reason": "'to' is a supported upper-bound cue; the colon heading stopped it from being matched.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01314",
+  "decision": "new_pattern",
+  "target": "comparison with an implied second term",
+  "fix": "Bearer leaf lamina abaxial epidermis PO:0000049 (slot 1, 'beneath'), quality low saturation PATO:0000328 towards the adaxial epidermis named in the same clause ('bright-green above'). OWL: has_characteristic (pale and towards some adaxial epidermis); RDF keeps 'paler' as the comparative cue.",
+  "reason": "A comparative with no 'than'. The second term has to come from the parallel clause. This was listed as open on 2026-11-14.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01315",
+  "decision": "new_pattern",
+  "target": "part present at a position",
+  "fix": "Presence of adventitious root PO:0000042 (or root) with a place slot: attached to some shoot axis node, lower nodes of the stem. OWL: stem has_part some (node and attached_to some adventitious root); RDF keeps 'lower' as the position cue.",
+  "reason": "'rooting at lower nodes' states where roots are present, not a process. The 2026-11-13 doc names exactly this.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01316",
+  "decision": "existing_pattern",
+  "target": "docs/odp/06-specimen-condition.md",
+  "fix": "'when wetted' is in config/flora_context_words.tsv (specimen_condition moistened). The missing part is reading 'without pink dye' as a negated pink pigmentation of the flower (RDF only, under the condition).",
+  "reason": "The release of pink colour from wetted flowers is a key character in Argythamnia. Under a condition it fits pattern 06, not a process.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01317",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Resolve the ordinal 'the second' (scale of the spikelet) to upper glume PO:0006004 (synonym 'second glume'); the third scale is the sterile lemma. Then vein, amount 3, container upper glume.",
+  "reason": "'nerved' → vein is in the table; only the container failed to ground.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01318",
+  "decision": "transcription_error",
+  "target": "foetid FLOPO:0991020 (odour of carbon disulphide), not aromatic PATO:0002191",
+  "fix": "Whole plant foetid, under the condition 'when crushed'. That needs a 'crushed' condition row in config/flora_context_words.tsv, which has none. The 'or' joins two conditions, not two values, so it is not explicit_disjunction.",
+  "reason": "A carbon disulphide smell is unpleasant (the epithet is 'foetida'). 'aromatic' does not match the text.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01319",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read 'N mm thick' as thickness PATO:0000915 (or diameter PATO:0001334 for terete twigs). The bearer is branch PO:0025073 (synonym twig); 'Leafy' restricts nothing. 1.5-2 mm.",
+  "reason": "Same as P01301: a thickness with a number, held for a non-PATO attribute.",
+  "confidence": "high"
+ }
+]

@@ -1,0 +1,242 @@
+[
+ {
+  "id": "X02880",
+  "decision": "both_true",
+  "target": "the stem is leafless apart from reduced leaves: cauline leaf PO_0000013 + lower FLOPO_0991377 + scale-like FLOPO_0991143 (lanceolate); no normal stem leaves",
+  "fix": "If a 'leafless' stem is followed in the same taxon by 'scale-like' or 'scalelike' stem leaves, read it as stem leaves reduced to scales (cauline leaf PO_0000013 scale-like FLOPO_0991143), not as leaf absent.",
+  "reason": "Crepis phoenix has scapose, nearly leafless stems with a few lower scale leaves. The text itself names those scale leaves.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X02881",
+  "decision": "absence_misread",
+  "target": "leaf sheath auricle PO_0020106 absent PATO_0000462; oral setae (trichome PO_0000282 at the sheath mouth) absent PATO_0000462",
+  "fix": "In bamboos and grasses, 'auricles' means leaf sheath auricle PO_0020106 and 'oral setae' means trichomes at the sheath mouth (PO_0000282). Never map either to stipule. 'X and Y absent' gives an absence for each noun. 'Culm sheath' is a sheath on the culm (leaf sheath PO_0020104 or scale leaf), not a stipule.",
+  "reason": "Both statements were put on 'stipule'. Bamboos have no stipules. The absence is of the auricles and setae, and the persistent organ is the culm sheath.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X02882",
+  "decision": "absence_misread",
+  "target": "no annotation: 'flowers not known' means the data is missing, not that the plant lacks flowers",
+  "fix": "'<part> not known / not seen / unknown / not yet collected' records that the part was not observed. Emit no annotation, and never emit absent PATO_0000462.",
+  "reason": "The fruiting cymes show the plant does flower. The flowers were simply not collected.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X02883",
+  "decision": "both_true",
+  "target": "absence of the leafy bracts around the head cluster (bract PO_0009055 subtending the capitula, absent PATO_0000462); the scarious tips belong to the phyllaries (involucral bract PO_0009045)",
+  "fix": "In Asteraceae, 'ebracteate' (capitula or head cluster ebracteate) means no leafy bracts outside the involucre. The phyllaries (involucral bract PO_0009045) are not affected. Never map phyllary qualities such as 'tips scarious' to generic bract.",
+  "reason": "In Leontopodium, the 'star' of leafy bracts around the heads is a diagnostic character, and some species lack it. The phyllaries, with their scarious tips, are always there.",
+  "confidence": 0.75
+ },
+ {
+  "id": "X02884",
+  "decision": "absence_misread",
+  "target": "no annotation: 'flowers not seen' means missing data",
+  "fix": "'<part> not seen / not known / unknown' records that the part was not observed. Emit no annotation, and never emit absent PATO_0000462.",
+  "reason": "The terminal cymes show that flowers exist. Only the specimens lacked them.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X02885",
+  "decision": "present_misread",
+  "target": "leaf sheath auricle PO_0020106 absent PATO_0000462 (oral setae absent too); remove the 'present' record",
+  "fix": "A phrase that ends in 'absent' / 'lacking' / 'wanting' must never give 'present'. In 'X and Y absent', the absence applies to every noun in the list.",
+  "reason": "The same text was turned into both 'absent' and 'present'. The 'present' reading lost the negation.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X02886",
+  "decision": "absence_misread",
+  "target": "leaf sheath auricle PO_0020106 absent PATO_0000462 (probably on the foliage-leaf sheaths); 'stiffly pale yellow hairy' describes the culm sheath (leaf sheath PO_0020104 hairy PATO_0000454), not a stipule",
+  "fix": "In Poaceae and bamboos, 'auricles' means leaf sheath auricle PO_0020106. Never map it to stipule PO_0020041. A hairiness clause in a culm-sheath sentence belongs to the sheath.",
+  "reason": "Both statements were put on 'stipule'. Bamboos have no stipules. The species name suggests the culm-sheath auricles are present while the leaf-sheath auricles are absent. Which sheath is meant needs checking in the source.",
+  "confidence": 0.6
+ },
+ {
+  "id": "X02887",
+  "decision": "present_misread",
+  "target": "'unequal' belongs to the umbel rays (the stalks of the partial umbels; peduncle PO_0009053, unequal length) or to the bracteoles PO_0009043, not to the absent involucral bracts",
+  "fix": "In Apiaceae, 'bracts' are the involucre of the compound umbel and 'bracteoles' are the involucel. A bare quality after 'bracts absent; rays N' belongs to the rays (or the next named part), never to the bracts just said to be absent.",
+  "reason": "The typical Apiaceae sentence is 'Umbels ...; bracts absent; rays 8-15, unequal'. The quality was carried back onto the bracts.",
+  "confidence": 0.6
+ },
+ {
+  "id": "X02888",
+  "decision": "both_true",
+  "target": "no bracts outside the involucre (calyculus or peduncle bracts: bract PO_0009055 on peduncle PO_0009053, absent PATO_0000462); the phyllaries (involucral bract PO_0009045) are white-ciliate",
+  "fix": "In Asteraceae, 'capitula not bracteate / ebracteate / without calyculus' means no bracts outside the phyllaries. Never read it as 'bract absent' for the taxon when involucral bracts are described.",
+  "reason": "Sinosenecio heads have phyllaries but no outer calyculate bracts. The two statements are about different bracts.",
+  "confidence": 0.75
+ },
+ {
+  "id": "X02889",
+  "decision": "both_true",
+  "target": "leaves present only at the stem apex: cauline leaf PO_0000013 + upper FLOPO_0991376 present; the stem below is leafless",
+  "fix": "'leafless except at/near the apex/base' and 'leafy only above' place the leaves in that region (leaf + upper FLOPO_0991376 or basal FLOPO_0991002). Never read them as leaf absent.",
+  "reason": "The 'except' clause states that leaves exist. The ovate-oblong leaves are the apical ones.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X02890",
+  "decision": "absence_misread",
+  "target": "cauline leaf PO_0000013 decreased amount PATO_0001997 (stem with few leaves)",
+  "fix": "'almost / nearly / ± / subleafless' and 'almost absent' are hedged statements. Read them as decreased amount PATO_0001997 of the part (or skip them), never as absent PATO_0000462.",
+  "reason": "'Almost leafless' means the stem has a few leaves. Basal leaves are also described.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X02891",
+  "decision": "both_true",
+  "target": "vascular leaf PO_0009025 + basal FLOPO_0991002 absent PATO_0000462; the cauline leaves (PO_0000013) are ± orbicular",
+  "fix": "'Basal leaves absent' / 'radical leaves absent' / 'rosette absent': keep the position (basal FLOPO_0991002 or rosette leaf PO_0000014) as part of the absence. Never fall back to 'leaf absent'.",
+  "reason": "Only the basal leaves are missing. The orbicular leaves are the stem leaves.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X02892",
+  "decision": "both_true",
+  "target": "style PO_0009074 absent PATO_0000462 in ray flowers (PO_0025331; sterile rays); the disc-flower style or its branches are linear",
+  "fix": "In Asteraceae, an absence of style, ovary or pappus in a ray-floret clause belongs to the ray flower PO_0025331. Disc-floret parts described in the same taxon are not contradicted. Keep the floret type as context.",
+  "reason": "Bidens has sterile ray florets without a style, while the disc florets have styles with linear branches.",
+  "confidence": 0.65
+ },
+ {
+  "id": "X02893",
+  "decision": "present_misread",
+  "target": "'pubescente sur la face externe' describes the fig receptacle (syconium; inflorescence PO_0009049 or fruit PO_0009001) outer surface pubescent PATO_0000455, not a bract",
+  "fix": "In Ficus, 'réceptacle/figue ... sans bractées externes, pubescente sur la face externe': the surface quality agrees with the receptacle (the feminine 'figue') and belongs to it. Do not attach it to the bracts just said to be absent.",
+  "reason": "The absence (no external bracts on the fig) is correct. The pubescence is that of the fig wall.",
+  "confidence": 0.7
+ },
+ {
+  "id": "X02894",
+  "decision": "both_true",
+  "target": "ostiole without externally visible (outer) ostiolar bracts (bract PO_0009055 + outer FLOPO_0991379 at the ostiole, absent PATO_0000462); the basal bracts of the fig (bract + basal FLOPO_0991002) are puberulous",
+  "fix": "In Ficus, keep the bract position (ostiolar, lateral, basal) with any absence. 'ostiole sans bractées externes' and 'without lateral bracts' do not deny the basal bracts.",
+  "reason": "Ficus figs have several bract sets (basal bracts, lateral bracts on the wall, ostiolar bracts). Different sets are meant.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X02895",
+  "decision": "both_true",
+  "target": "lateral bracts on the fig wall (bract PO_0009055 + lateral PATO_0001193) absent PATO_0000462; the apical (ostiolar) bracts are present and short",
+  "fix": "In Ficus, 'without lateral bracts' means bracts on the receptacle wall are absent. Keep the position in the absence, and never read it as 'bract absent'.",
+  "reason": "The apical ostiolar bracts and the lateral wall bracts are different sets.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X02896",
+  "decision": "absence_misread",
+  "target": "cystoliths in the leaf lamina absent: idioblast PO_0000283 (cystolith-bearing cell; no PO class for cystolith) part of leaf lamina PO_0020039, absent PATO_0000462",
+  "fix": "'cystoliths absent / without cystoliths' and other cell or inclusion nouns (raphides, crystals, dots) are the bearer of the absence. Never fall back to the organ being described.",
+  "reason": "Cystoliths are mineral bodies in lamina cells. The lamina itself is present and has a flaking epidermis.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X02897",
+  "decision": "absence_misread",
+  "target": "leaf lamina PO_0020039 not punctate (no dots; negation of PATO_0001512 punctate)",
+  "fix": "'dots absent / without dots / not dotted / epunctate' means the lamina surface has no dots. Annotate the lamina as not punctate (PATO_0001512) and never as leaf absent.",
+  "reason": "In Myristicaceae, the minute dark dots on the lamina are a key character. Their absence says nothing about the leaf.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X02898",
+  "decision": "absence_misread",
+  "target": "leaf lamina PO_0020039 not punctate (no dots; negation of PATO_0001512 punctate)",
+  "fix": "'dots absent / without dots / not dotted / epunctate' means the lamina surface has no dots. Annotate the lamina as not punctate (PATO_0001512) and never as lamina absent.",
+  "reason": "Same Myristicaceae dot character as Knema. The lamina is present and olive above.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X02899",
+  "decision": "both_true",
+  "target": "glume PO_0009039 without awn (awn PO_0025349 absent on the glumes); the lemma PO_0009037 is short-awned",
+  "fix": "In Poaceae, 'awnless' / 'muticous' qualifies the part named in its clause (glumes, lower lemma, sterile lemma). Keep that part as the bearer of the awn absence. Never state 'awn absent' for the taxon when awned lemmas are described.",
+  "reason": "Bromus kalmii has awnless glumes and short-awned lemmas.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X02900",
+  "decision": "absence_misread",
+  "target": "lower glume PO_0006002 absent PATO_0000462; the upper glume is pubescent",
+  "fix": "'lower/first glume absent' -> lower glume PO_0006002 absent. A specific part name must not fall back to its parent ('glume') when the quality is absence.",
+  "reason": "Only the lower glume is missing. The pubescent glume is the upper one.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X02901",
+  "decision": "both_true",
+  "target": "petal PO_0009032 absent PATO_0000462 in pistillate flowers (PO_0025599); the staminate-flower petals are tiny",
+  "fix": "In unisexual-flowered taxa (Eriocaulaceae, Euphorbiaceae and others), an absence in a male- or female-flower clause belongs to that flower sex (staminate or pistillate flower). Keep the sex as context.",
+  "reason": "In Eriocaulon, female flowers often lack petals while male flowers have minute petals.",
+  "confidence": 0.7
+ },
+ {
+  "id": "X02902",
+  "decision": "present_misread",
+  "target": "leaf PO_0025034 (leaf blade or sheath) scaly PATO_0001804 (lepidote); the stem is absent",
+  "fix": "In Bromeliaceae, 'densely lepidote' after 'Plants stemless' or in a leaf sentence describes the leaves (or the whole plant), not the stem. A quality must not be attached to a part the same taxon declares absent.",
+  "reason": "Tillandsia pruinosa is stemless, and its leaves are densely covered with trichome scales.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X02903",
+  "decision": "absence_misread",
+  "target": "no annotation for the fruit ('capsules not seen' means missing data); 'throat circular' belongs to the perianth tube throat (perianth PO_0009058), not the fruit",
+  "fix": "'<part> not seen / not known' records missing data: emit no annotation. Also, 'throat' in Aristolochia means the mouth of the perianth tube, not the fruit.",
+  "reason": "Both records are wrong: the fruit was not observed, and 'throat circular' was mapped to fruit.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X02904",
+  "decision": "both_true",
+  "target": "palea PO_0009038 absent PATO_0000462 in the sterile (basal barren) florets; the fertile floret's palea is 1-keeled",
+  "fix": "In GrassBase descriptions, 'Basal sterile florets ... without significant palea' places the absence on the sterile florets. Keep 'sterile floret' as context, and never state 'palea absent' for the taxon when the fertile palea is described.",
+  "reason": "Oryza has reduced sterile lemmas below the fertile floret, without a palea. The fertile floret has a keeled palea.",
+  "confidence": 0.7
+ },
+ {
+  "id": "X02905",
+  "decision": "both_true",
+  "target": "'muticous' belongs to another part (the glumes, glume PO_0009039, or the sterile-floret lemmas): awn absent there; the fertile lemma PO_0009037 is awned",
+  "fix": "In Poaceae, 'muticous' / 'awnless' qualifies the part named in its clause (glumes, sterile lemmas). Attach the awn absence to that part, never to the taxon.",
+  "reason": "Lamarckia has a long-awned fertile lemma, while the sterile florets and glumes are awnless.",
+  "confidence": 0.7
+ },
+ {
+  "id": "X02906",
+  "decision": "absence_misread",
+  "target": "trichome PO_0000282 absent on the leaf (leaf PO_0025034 glabrous PATO_0000453)",
+  "fix": "In structured 'Character: value' text, 'Hairs: absent' / 'Indumentum: absent' means hairs (trichome PO_0000282) are absent, i.e. glabrous. Never put the absence on the organ of the enclosing section.",
+  "reason": "The character name 'Hairs' was dropped, and the absence went to the leaf, which is present and furrowed.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X02907",
+  "decision": "absence_misread",
+  "target": "annulus (thickened ring at the mouth of the perianth tube; perianth PO_0009058, no PO class for annulus) absent PATO_0000462; 'pilose' also belongs to the perianth, not the corolla",
+  "fix": "'annulus absent' (Aristolochia, Asclepiadaceae) means a ring on the perianth or corolla tube is absent, not the organ. Also, Aristolochia flowers have a single (calyx-derived) perianth: map their 'calyx/perianth' words to perianth PO_0009058, never to corolla.",
+  "reason": "Aristolochia has no corolla. The annulus is a feature of the perianth mouth.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X02908",
+  "decision": "absence_misread",
+  "target": "basal leaf sheaths (leaf sheath PO_0020104 of basal FLOPO_0991002 leaves) without leaf lamina PO_0020039 (absent PATO_0000462); the other leaves have flat blades",
+  "fix": "'bladeless sheaths' / 'sheaths bladeless' -> the lamina is absent only on those (usually basal) sheaths. Never read it as 'leaf lamina absent' for the taxon.",
+  "reason": "Carex: the basal sheaths are bladeless, and the leaf blades are flat. This is the case given in docs/km-classification.md.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X02909",
+  "decision": "absence_misread",
+  "target": "caudex (woody perennial stem base; listed only as a synonym of stem PO_0009047, no PO class of its own) absent PATO_0000462; the flowering stems are present. 'not fistulose' means the stem is not hollow (solid), not 'stem hollow'",
+  "fix": "'caudex absent' / 'without a caudex' must not be mapped through the stem synonym. It describes the plant base. Do not use the 'caudex' synonym of stem PO_0009047 for absence statements. Also, 'not fistulose' is a negated quality: never emit 'hollow'.",
+  "reason": "Eriogonum descriptions treat the caudex separately from the aerial flowering stems. The absence of a caudex does not mean the plant has no stems.",
+  "confidence": 0.85
+ }
+]

@@ -1,0 +1,242 @@
+[
+ {
+  "id": "X00030",
+  "decision": "absence_misread",
+  "target": "vascular bundle PO:0005020 part of leaf sheath PO:0020104 (the sheath front), absent PATO:0000462; the sheath also not spotted (negation of spotted PATO:0000333). 'veined' belongs to another organ (likely perigynium PO:0009044)",
+  "fix": "'<organ> lacking/without <feature>' ('fronts lacking veins') means only that organ lacks the feature: vein part_of <organ> absent. It must never become a taxon-wide 'vascular bundle absent'.",
+  "reason": "Only the sheath fronts lack veins. Other organs of the sedge are veined.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00031",
+  "decision": "both_true",
+  "target": "leaf lamina PO:0020039 absent only on the basal sheaths (basal FLOPO:0991002); the blades of the other leaves are glabrous",
+  "fix": "Same as X00024: in Carex/Poaceae, 'bladeless basal sheaths' limits the absence to the basal sheath leaves. Never record it as a taxon-wide 'leaf lamina absent'.",
+  "reason": "Lower sheaths have no blade; the upper leaves have glabrous blades.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00032",
+  "decision": "both_true",
+  "target": "leaf lamina PO:0020039 absent on the proximal (lowest) leaves only (context 'proximal'); the blades of the other leaves are papillose abaxially",
+  "fix": "'sheaths of proximal/lower/basal leaves bladeless' limits the absence to those leaves. Treat 'proximal/distal leaves' as a member of a series, like 'basal'.",
+  "reason": "Only the lowest leaves are reduced to sheaths. The others have blades.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00033",
+  "decision": "absence_misread",
+  "target": "peduncle PO:0009053 of the pistillate spike, absent PATO:0000462 (spike sessile); the inflorescence is present",
+  "fix": "'<part> of <organ> absent' ('peduncles of pistillate spike absent') is the absence of the part named first, never of the organ after 'of'.",
+  "reason": "The spike exists and is described; only its stalk is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00034",
+  "decision": "absence_misread",
+  "target": "no absence: the organ (likely perigynium PO:0009044) has some veins (e.g. marginal or beak veins) and no others, so drop the absence. 'narrow midrib green' is probably the midrib of the pistillate scale (bract PO:0009055), not leaf midvein PO:0020139",
+  "fix": "'otherwise/elsewhere/but otherwise veinless' means the organ has only the veins named just before it. It is never an absence of veins, and never taxon-wide. Drop it, or record only the veins that are named.",
+  "reason": "'Otherwise' implies some veins are present. The absence is a misreading.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X00035",
+  "decision": "absence_misread",
+  "target": "vascular bundle PO:0005020 part of the organ described (perigynium PO:0009044): only the 2 marginal veins, no others. Drop the absence",
+  "fix": "Same as X00034: 'with N <kind> veins, otherwise veinless' says which veins there are. It is not an absence.",
+  "reason": "Both phrases describe the same organ: two marginal veins and no others.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00036",
+  "decision": "absence_misread",
+  "target": "veins absent only at the apex of the perigynium PO:0009044 (region 'apex'); the perigynium has 12–22 veins. Drop the absence or limit it to the apex region",
+  "fix": "'veinless at apex/base/distally' limits the absence to that region of the organ (flora_context_words region). 'essentially/nearly veinless' is not a firm absence either.",
+  "reason": "The veins stop short of the apex. The perigynium is clearly veined.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00037",
+  "decision": "both_true",
+  "target": "awn PO:0025349 absent on one kind of scale (probably staminate scales or the proximal pistillate scales); the other scales taper into green awns",
+  "fix": "An 'awnless' and an 'awned' statement in one Carex description are about different scales (staminate vs pistillate, proximal vs distal) or are alternatives ('awnless or with awns'). Keep the scale kind as the context of the awn statement.",
+  "reason": "Carex scale descriptions often differ between scale kinds. Both statements can be true.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X00038",
+  "decision": "absence_misread",
+  "target": "thorn PO:0025172 on branch PO:0025073, absent PATO:0000462; the branch is present and smooth",
+  "fix": "'<part> without <feature>' ('branches without thorns') is the absence of the feature, never of the subject. Same as X00003.",
+  "reason": "The branches exist; only thorns are missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00039",
+  "decision": "absence_misread",
+  "target": "axillary leaf tufts (short shoots, fascicles in the axils) absent. No class exists, so reject the absence; the leaves are present (apex obtuse)",
+  "fix": "'tufts/fascicles/clusters of <part> absent' is the absence of the grouping (axillary short shoots), never of the part itself.",
+  "reason": "The plant has leaves; only the small axillary tufts are missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00040",
+  "decision": "both_true",
+  "target": "spines on the fruit PO:0009001: marginal spines absent, basal spines present (straight or curved). Neither is a thorn PO:0025172 (a shoot-derived spine), so both records have the wrong bearer",
+  "fix": "A spine qualified by position ('marginal', 'basal', 'apical', 'lateral') is one member of a series. Its absence does not cancel spines in another position. Spines on fruits and leaves must not map to thorn.",
+  "reason": "Ceratophyllum demersum fruits have 2 basal spines and no marginal spines.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00041",
+  "decision": "present_misread",
+  "target": "awn PO:0025349 absent stays; the length 'longer ones 1.5–2.5 mm' belongs to the involucre teeth (or another listed member), not the awns",
+  "fix": "'longer/shorter ones N mm' refers back to the last plural noun with a size range (teeth, lobes, bracts). Do not bind it to a part that was just stated absent.",
+  "reason": "A length cannot belong to absent awns. The measurement refers to the involucre teeth just described.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X00042",
+  "decision": "absence_misread",
+  "target": "trichome PO:0000282 (septate) on leaf lamina PO:0020039, usually absent ('usually' = frequency, not a firm absence); the lamina is present and tomentose",
+  "fix": "Same as X00003: 'without <qualified noun>' ('without septate trichomes') is the absence of that kind of hair only. 'usually without' is a frequency, not a firm absence.",
+  "reason": "The lamina is described. Only septate hairs are (usually) missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00043",
+  "decision": "both_true",
+  "target": "basal leaves (rosette leaf PO:0000014 / leaf PO:0025034 + basal FLOPO:0991002) absent at flowering stage PO:0007616; cauline leaves PO:0000013 are present",
+  "fix": "'basal absent at flowering' is limited to one leaf kind (basal) and one stage (at flowering: flora_context_words). It is never a taxon-wide 'leaf absent'; the elliptical 'basal' takes the noun of the current heading (leaves).",
+  "reason": "The basal leaves wither before flowering; the stem leaves remain.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00044",
+  "decision": "both_true",
+  "target": "basal leaves (basal FLOPO:0991002) sometimes absent; the leaves are otherwise present and abruptly tapered at the base",
+  "fix": "'sometimes/occasionally/often absent' is a frequency, not a firm absence. Combined with 'basal leaves', it is limited to that leaf kind.",
+  "reason": "The absence is only occasional and only for basal leaves.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00045",
+  "decision": "both_true",
+  "target": "cyme inflorescence PO:0030126: distal cyme absent, proximal cyme present (Commelina spathes have a proximal and a distal cyme)",
+  "fix": "'distal/proximal/upper/lower <part> absent' limits the absence to that member of a series. It does not cancel the other member.",
+  "reason": "In Commelina the spathe has two cymes; in this species the distal one is missing and the proximal one is present.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00046",
+  "decision": "both_true",
+  "target": "spines absent only on some areoles (probably fruit or proximal areoles); stem spines are present, with pale yellow sheaths. Cactus spines are leaf spines (spine leaf PO:0025173), not thorn PO:0025172, and 'sheaths pale yellow' is the spine sheath, not the spine",
+  "fix": "In cactus descriptions, 'spineless' under fruit, areole or a stem segment applies to that organ only. Map cactus 'spines' to spine leaf, and 'spine sheaths' to the sheath, not the spine.",
+  "reason": "Cylindropuntia munzii stems are spiny. The 'spineless' statement must be about a different organ.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X00047",
+  "decision": "both_true",
+  "target": "second-order bracts (bracts at the base of second order inflorescence branches PO:0006322) absent; the main inflorescence bracts PO:0009054 are present and turn brownish",
+  "fix": "'2d/second/secondary order bracts absent' applies only to that order of bracts (same as X00021). Recognise the abbreviations '2d', '3d' as ordinals.",
+  "reason": "The main involucral bracts are present; only the second-order bracts are missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00048",
+  "decision": "absence_misread",
+  "target": "higher order inflorescence axis PO:0009081 (rays, inflorescence branches) absent PATO:0000462, i.e. inflorescence capitate; the inflorescence bracts are present and medially green",
+  "fix": "In Cyperaceae/Apiaceae, 'rays' are inflorescence branches (PO:0009081), never bracts. 'rays absent' means the inflorescence has no branches (head-like).",
+  "reason": "Rays are inflorescence branches. The bracts are described and present.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00049",
+  "decision": "absence_misread",
+  "target": "cauline leaf PO:0000013 absent PATO:0000462 (the scape is leafless); the basal leaves (leaf PO:0025034 + basal FLOPO:0991002) are present",
+  "fix": "'<axis> leafless' ('stems/scapes leafless') is the absence of leaves on that axis (cauline leaves), never a taxon-wide absence of leaves.",
+  "reason": "Cypripedium acaule has two basal leaves and a leafless scape.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00050",
+  "decision": "absence_misread",
+  "target": "leaf PO:0025034 + bract-like (reduced to scales); drop the absence",
+  "fix": "Same as X00002: hedged absences ('seemingly/apparently leafless') are not absences. When the same description describes the leaves as reduced (bractlike, scale-like), keep the reduction and drop the absence.",
+  "reason": "This ghost orchid's leaves are reduced to bracts, so it only looks leafless.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00051",
+  "decision": "absence_misread",
+  "target": "vascular bundle PO:0005020 part of fruit septum PO:0025268, absent PATO:0000462; the valves have a distinct midvein",
+  "fix": "'<part> not veined/veinless' is the absence of veins in that part only. Its bearer is vein part_of <part>, never a taxon-wide vascular bundle (same as X00027).",
+  "reason": "Only the septum lacks veins; the fruit valves have a midvein.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00052",
+  "decision": "absence_misread",
+  "target": "sterile tip of strobilus PO:0025083 absent. No class exists, so reject the absence. The strobilus is present and solitary, and should map to strobilus PO:0025083, not inflorescence",
+  "fix": "'sterile tips/apices absent' is the absence of a sterile region of the organ, never of the organ. In lycophytes, 'strobili' map to strobilus, not inflorescence.",
+  "reason": "The cones exist; only a sterile tip at their apex is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00053",
+  "decision": "absence_misread",
+  "target": "the coloured ring (band) on the corolla tube is rarely absent. No class exists, so reject the absence; the corolla is present",
+  "fix": "'ring/band/zone/eye absent' is the absence of a colour pattern or a small feature of the organ, never of the organ. 'rarely absent' is not an absence at all.",
+  "reason": "Dodecatheon corollas have a coloured ring at the throat, which is rarely missing. The corolla is always present.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00054",
+  "decision": "absence_misread",
+  "target": "axillary shoot system PO:0006343 (vegetative axillary branches of the rosette) absent PATO:0000462. 'branches not twisted' are inflorescence branches (higher order inflorescence axis PO:0009081)",
+  "fix": "'axillary branches absent' is axillary shoot system absent, not branch. In Crassulaceae, 'branches' in the inflorescence part of the description are inflorescence branches.",
+  "reason": "The rosette has no vegetative side shoots, but the inflorescence is branched.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X00055",
+  "decision": "absence_misread",
+  "target": "axillary shoot system PO:0006343 absent PATO:0000462; the stem PO:0009047 is present (the plant is caespitose)",
+  "fix": "Same as X00054: 'axillary branches absent' is never 'stem absent'. Match the whole phrase 'axillary branch' (a PO synonym of axillary shoot system) before its head noun.",
+  "reason": "The plant has stems; only axillary branches are missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00056",
+  "decision": "absence_misread",
+  "target": "basal spikelets (spikelet PO:0009051 + basal FLOPO:0991002, hidden in the culm bases) absent; the terminal spikelet is present and ovoid",
+  "fix": "Same as X00005: '<modifier> <head noun> absent' ('basal spikelets absent') is the absence of that kind only, never of the bare head noun.",
+  "reason": "Eleocharis has a terminal spikelet; only basal (amphicarpic) spikelets are missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00057",
+  "decision": "absence_misread",
+  "target": "basal spikelets (spikelet PO:0009051 + basal FLOPO:0991002) absent; the inflorescence (terminal spikelet) is present with an acute apex",
+  "fix": "Same as X00056. Additionally, 'spikelets' must map to spikelet PO:0009051, never fall back to inflorescence.",
+  "reason": "The terminal spikelet is present; only basal spikelets are absent.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00058",
+  "decision": "absence_misread",
+  "target": "seed trichome PO:0004511 (basal hairs of the seed) absent PATO:0000462; the seed is present and fusiform",
+  "fix": "'<position> hairs absent' in a seed or fruit description is the absence of hairs (seed trichome / trichome) on that organ, never of the organ.",
+  "reason": "The seeds are described; only their basal hairs are missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00059",
+  "decision": "both_true",
+  "target": "coma PO:0020061 present (white or dingy white); 'very rarely absent' is a frequency (rare individuals)",
+  "fix": "'rarely/very rarely/occasionally absent' must not create an absence assertion. At most, record it as a rare variant beside the normal 'present'.",
+  "reason": "The coma is normally present; its absence is a rare exception.",
+  "confidence": "high"
+ }
+]

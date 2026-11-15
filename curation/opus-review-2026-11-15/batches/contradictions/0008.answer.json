@@ -1,0 +1,242 @@
+[
+ {
+  "id": "X00240",
+  "decision": "absence_misread",
+  "target": "root (PO_0009005, synonym 'aerial root') + aerial (FLOPO_0991036) + absent (PATO_0000462), located on branch (PO_0025073); branch itself present",
+  "fix": "'<part A> without <part B>' asserts absence of B on A, never absence of A. The subject of 'without' is the bearer context; the object of 'without' is the absent part.",
+  "reason": "Ficus drupacea has woolly branches; the text only says they bear no aerial roots. Attaching the absence to the subject 'branches' made a false 'branch absent'.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00241",
+  "decision": "absence_misread",
+  "target": "bract (PO_0009055) with context 'lateral' (on the fig receptacle wall) + absent (PATO_0000462); basal/involucral bracts (PO_0009045) remain present and lanceolate",
+  "fix": "A positional or kind qualifier before the part ('lateral bracts', 'basal bracts', 'involucral bracts', 'sterile bracts') scopes the absence to that subset; keep it as a context word and never generalise the absence to the plain parent class.",
+  "reason": "In Ficus, figs have basal (involucral) bracts and in some species lateral bracts on the receptacle wall. F. praetermissa lacks the lateral ones but has lanceolate basal bracts.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00242",
+  "decision": "present_misread",
+  "target": "keep leaf lamina (PO_0020039) absent on basal leaf sheaths (PO_0020104); attach 'leaf blade linear' to its actual bearer in the source (most likely the involucral bract (PO_0009045), described as leaflike, not a foliage leaf)",
+  "fix": "'bladeless sheaths' is a reading that the plant has leaves reduced to sheaths (lamina absent). When the same taxon then has 'leaf blade linear', check whether it sits in a bract/involucre clause ('involucral bract ... leaf blade-like, linear'); a 'blade' inside a bract clause belongs to the bract.",
+  "reason": "The epithet aphylla means leafless, and the species has culms with only bladeless basal sheaths, so the absence is botanically right. A linear 'blade' must belong to another organ, probably the involucral bract. This could not be checked from the snippet.",
+  "confidence": 0.5
+ },
+ {
+  "id": "X00243",
+  "decision": "absence_misread",
+  "target": "calyx (PO_0009060) + absent (PATO_0000462) and corolla (PO_0009059) + absent (PATO_0000462), probably scoped to staminate flowers (PO_0025600); flower present",
+  "fix": "'(flowers) without calyx and corolla' / 'apetalous and asepalous' denies the perianth parts listed after 'without', each separately; the flower is the bearer, never the absent part.",
+  "reason": "Fraxinus has flowers, and the cymose panicles are described. The text denies the calyx and corolla. The epithet 'odontocalyx' suggests that some flowers have a toothed calyx, so this is likely scoped to one flower sex.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00244",
+  "decision": "both_true",
+  "target": "calyx (PO_0009060) absent in staminate flower (PO_0025600); calyx cupulate, minute in bisexual or pistillate flowers",
+  "fix": "An absence introduced by 'Staminate/Male flowers without ...' or inside a male-flower section is scoped to that flower sex (staminate flower PO_0025600 / pistillate flower PO_0025599); do not put it on the taxon-level part.",
+  "reason": "Fraxinus xanthoxyloides is polygamous. Its male flowers lack a calyx, while the bisexual or female flowers have a minute cupular calyx.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00245",
+  "decision": "absence_misread",
+  "target": "ray flower (PO_0025331) + absent (PATO_0000462) (capitulum discoid); 'lobes oblong-lanceolate' belongs to the corolla lobes of disc florets, not petal",
+  "fix": "'Ray florets absent' / 'heads discoid, rays 0' maps to ray flower (PO_0025331) absent; ray floret must never map to petal. In Asteraceae, 'lobes' after a floret/corolla clause are corolla lobes of the florets.",
+  "reason": "Galatella regelii has discoid heads. The absence of ray florets was grounded to petal, and the disc-floret corolla lobes were also grounded to petal. That created the clash.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00246",
+  "decision": "both_true",
+  "target": "bract (PO_0009055) present (inconspicuous) at the lower nodes of the inflorescence; often absent in the upper part (context FLOPO_0991376 upper)",
+  "fix": "'often lacking upward' / 'reduced or absent distally' is a positional and frequency-qualified absence: scope it to the upper/distal part with the context word, and mark the frequency; never as a taxon-level absence.",
+  "reason": "In Galium inflorescences, bracts are present below and often missing towards the top. Both statements hold for different positions.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X00247",
+  "decision": "both_true",
+  "target": "vascular leaf (PO_0009025) absent on the lower half of the stem (stem PO_0009047, context FLOPO_0991377 lower); leaves overlapping on the upper stem",
+  "fix": "'<stem> lower half/part leafless' is a positional absence of leaves on a region of the stem; scope it with lower (FLOPO_0991377) on stem, not as 'leaf absent' for the taxon.",
+  "reason": "Gentiana albicalyx stems are bare below and leafy, with overlapping leaves, above.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X00248",
+  "decision": "both_true",
+  "target": "seed (PO_0009010) absent in some fruits (the short, curved, sterile pods); seeds numerous in normal pods",
+  "fix": "'pods ... sometimes/some without seeds' or a second fruit form described as seedless is a form- or frequency-scoped absence; carry the qualifier (sometimes, abnormal/short pods) and do not assert taxon-level seed absence.",
+  "reason": "Gleditsia sinensis is known to produce two pod forms: long, many-seeded pods and short, curved, seedless pods. The flora describes both.",
+  "confidence": 0.75
+ },
+ {
+  "id": "X00249",
+  "decision": "absence_misread",
+  "target": "no absence; stipule (PO_0020041) present, lanceolate; 'not becoming a bract' is not annotated (or at most stipule not transformed)",
+  "fix": "'not becoming / not transformed into / not modified into <part>' negates a transformation, not presence; it must never yield '<subject> absent' or '<object> absent'.",
+  "reason": "The stipules are described as lanceolate. The text only says they do not become bract-like. No part is absent.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00250",
+  "decision": "absence_misread",
+  "target": "bract (PO_0009055) + absent (PATO_0000462) located on the scape (stem PO_0009047, synonym scape / peduncle PO_0009053); involucral bracts (PO_0009045) of the capitulum present",
+  "fix": "'<axis> ebracteate / not bracteate' (scape, peduncle, pedicel) is absence of bracts on that axis only; scope it to the axis and keep it disjoint from involucral bracts and floral bracts.",
+  "reason": "The scape has no bracts, but the capitulum has acuminate involucral bracts. Since involucral bract is a kind of bract, the unscoped absence clashed with them.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00251",
+  "decision": "absence_misread",
+  "target": "cross veins (no PO term; vascular bundle PO_0005020 with context 'transverse'/'cross') + absent on leaf lamina (PO_0020039); the longitudinal and intramarginal veins present",
+  "fix": "'without cross veins' / 'cross-veins absent' denies only the transverse veins; with no PO class for them, either keep a context word on vascular bundle or leave the statement unannotated. Never map it to plain vascular bundle absent.",
+  "reason": "Halophila beccarii leaves have a midvein and intramarginal veins but no cross veins. Grounding to the plain vein class contradicted the described intramarginal veins.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00252",
+  "decision": "absence_misread",
+  "target": "no annotation: flower (PO_0009046) unknown (not seen in material), not absent",
+  "fix": "'not seen', 'not known', 'unknown', 'not observed', 'not available' state missing knowledge, not absence; they must produce no absence annotation (at most a 'not described' flag).",
+  "reason": "Hedyotis yangchunensis was described from incomplete material. 'Not seen' is a statement about the specimens, not the plant. The 'several flowered' statement probably comes from the infructescence.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00253",
+  "decision": "absence_misread",
+  "target": "no annotation: inflorescence unknown (not seen), not absent; 'pedunculate' likely describes the infructescence",
+  "fix": "Same as X00252: 'not seen/not known/unknown' never yields PATO_0000462 absent.",
+  "reason": "This is the same sentence as X00252. The missing material was turned into a false absence of the inflorescence.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00254",
+  "decision": "both_true",
+  "target": "stigma (PO_0009073) absent on the pistillode (PO_0009078) of staminate flowers (PO_0025600); stigma lateral on the ovary of pistillate flowers (PO_0025599)",
+  "fix": "'(pistillode/rudimentary ovary) ... without a stigma' inside a male-flower clause scopes the absence to the pistillode of staminate flowers; carry both the pistillode bearer and the sex context.",
+  "reason": "Heliciopsis is dioecious. The male flowers have a pistillode without a stigma, while the female flowers have a lateral stigma. This could not be fully checked from the snippet.",
+  "confidence": 0.65
+ },
+ {
+  "id": "X00255",
+  "decision": "absence_misread",
+  "target": "bract (PO_0009055) + sterile (PATO_0000956) context, on the scape below the inflorescence, + absent (PATO_0000462); floral bracts lanceolate, present",
+  "fix": "'sterile bracts absent' (bracts on the scape that subtend no flower) scopes the absence to sterile/scape bracts; keep 'sterile' as context and never apply it to all bracts.",
+  "reason": "Hemerocallis floras distinguish sterile bracts on the scape from floral bracts. H. forrestii lacks the former and has lanceolate floral bracts.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00256",
+  "decision": "absence_misread",
+  "target": "bract (PO_0009055) + absent (PATO_0000462) located on the peduncle (PO_0009053) only; floral bracts present, acute",
+  "fix": "Same as X00250: '<peduncle/scape> ebracteate' scopes bract absence to that axis (the sterile bracts of the peduncle), distinct from floral bracts.",
+  "reason": "Herminium has no sterile bracts on the peduncle, but each flower has a bract. Only the floral bracts are described as acute.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00257",
+  "decision": "absence_misread",
+  "target": "branch (PO_0025073) + unbranched (PATO_0000414); branches present, many, slender",
+  "fix": "'without secondary branching', 'not rebranching', 'branches simple' are branching qualities of the branch (unbranched PATO_0000414), not absence of branches.",
+  "reason": "Himalayacalamus has many branches at each node. They just do not branch again.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00258",
+  "decision": "both_true",
+  "target": "lemma (PO_0009037) + lower (FLOPO_0991377): awn (PO_0025349 / lemma awn PO_0006032) absent; lemma + upper (FLOPO_0991376): awn present, hooked, 1-2 mm",
+  "fix": "'lower lemma awnless; upper lemma awned' (and lower/upper glume, floret) is scoped by position within the spikelet; keep upper/lower as context on the bearer of the awn statement.",
+  "reason": "In Holcus lanatus, the lower (bisexual) floret is awnless and the upper (male) floret has a short hooked awn.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00259",
+  "decision": "absence_misread",
+  "target": "pistillode (PO_0009078) + absent (PATO_0000462) in staminate flowers (PO_0025600); ovary (PO_0009072) of pistillate flowers present, densely pubescent",
+  "fix": "'reduced/rudimentary/vestigial ovary' maps to pistillode (PO_0009078), and 'reduced/rudimentary stamens' to staminode; never to the fertile organ.",
+  "reason": "Hydnocarpus is dioecious. The male flowers lack a pistillode, while the female ovary is pubescent. 'Reduced ovary' was grounded to plant ovary.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00260",
+  "decision": "absence_misread",
+  "target": "flower (PO_0009046) + sterile (PATO_0000956) context + absent (PATO_0000462); fertile flowers present",
+  "fix": "'sterile/marginal/ray flowers absent' scopes the absence to that flower kind (context sterile PATO_0000956); never to flower as a whole.",
+  "reason": "Hydrangea candida lacks the showy sterile marginal flowers, but its fertile flowers are present. The 'branches thick' statement is irrelevant to the clash.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00261",
+  "decision": "absence_misread",
+  "target": "spine-like projections (no specific PO term; trichome PO_0000282 or spine) + absent on fruit (PO_0009001); equivalently fruit smooth (PATO_0000701), which is already annotated",
+  "fix": "'<part> without spines/spinelike projections/tubercles/wings' is absence of the outgrowth on the part (or 'smooth'), never absence of the part itself.",
+  "reason": "The fruit is present and smooth. Only spine-like outgrowths are denied, which matches 'smooth'.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00262",
+  "decision": "absence_misread",
+  "target": "lenticel (PO_0000031) + absent (PATO_0000462) on branchlet (branch PO_0025073)",
+  "fix": "'lenticels absent' must map to lenticel (PO_0000031); check that the absence bearer is the named noun and not the clause's subject (branchlet/stem).",
+  "reason": "The branchlets exist and are fissured. Only lenticels are lacking, but the absence was put on stem.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00263",
+  "decision": "absence_misread",
+  "target": "no annotation: staminate flower (PO_0025600) unknown, not absent; the fasciculate 1-flowered cymes describe the known (female) inflorescence",
+  "fix": "'Male/Female flowers not known', 'fruit unknown' state missing material; never annotate absent. Same rule as 'not seen'.",
+  "reason": "Ilex jiaolingensis is dioecious and was described without male material. Male flowers exist but were not collected.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00264",
+  "decision": "absence_misread",
+  "target": "no annotation: fruit (PO_0009001) and pistillate flower unknown, not absent; also check the bearer of 'glabrous', which cannot be the fruit if fruit is not known (probably the ovary/pistillode or branchlet)",
+  "fix": "Same as X00263: 'not known' never yields absent. In addition, when a part is declared not known, any quality attached to that part in the same taxon should be flagged for bearer review.",
+  "reason": "The fruit was never collected, so it is unknown, not absent. The 'fruit glabrous' annotation is itself suspect because the source says the fruit is not known.",
+  "confidence": 0.6
+ },
+ {
+  "id": "X00265",
+  "decision": "unclear",
+  "target": "petal (PO_0009032) present; 'auricle absent' is a reading that the auricle (dorsal lobe) of the lateral united petals is absent, no PO term; leave unannotated or record petal (lateral) + context auricle absent",
+  "fix": "In Impatiens, 'auricle' is a lobe of the lateral united petals; 'auricle absent' denies that lobe only and must never become 'petal absent'. Map 'auricle' by family: leaf sheath auricle (PO_0020106) in Poaceae, petal lobe in Balsaminaceae.",
+  "reason": "The petals are present, and the upper petal is described. Only the auricle of the lateral petals is missing. The absence is misread, but the right part has no PO term, so I am not proposing one.",
+  "confidence": 0.5
+ },
+ {
+  "id": "X00266",
+  "decision": "both_true",
+  "target": "bract (PO_0009055) on pedicel (PO_0030112): absent on the lowest pedicels (context FLOPO_0991377 lower), present at the middle of the other pedicels",
+  "fix": "'lowest/upper/terminal <part> without <X>' is positional; scope the absence to the qualified members and keep it disjoint from the unqualified statement.",
+  "reason": "In Impatiens sutchuenensis, most pedicels have a bract at the middle but the lowest lack one.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00267",
+  "decision": "absence_misread",
+  "target": "stipel (PO_0020051) + absent (PATO_0000462) (or not visible); stipule (PO_0020041) present, linear",
+  "fix": "'stipel(s)/stipellae' must map to stipel (PO_0020051) and never be stemmed or fuzzy-matched to stipule. 'not visible' / 'inconspicuous' is at most absent-or-minute, with lower confidence than 'absent'.",
+  "reason": "Indigofera has linear stipules. The text refers to stipels of the leaflets, which are a different part.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00268",
+  "decision": "unclear",
+  "target": "trichome (PO_0000282, synonym cilia) + absent on the ligule (PO_0020105) margin (eciliate); ligule present, slightly scabrous",
+  "fix": "'cilia absent' / 'eciliate' / 'without cilia' denies marginal hairs on the bearer; map to trichome (PO_0000282) absent located on that bearer, never to absence of the bearer.",
+  "reason": "The ligule of Indosasa hispida exists and is scabrous. Only the cilia (marginal hairs) are absent. The absence is misread, but no PATO or FLOPO 'eciliate' term was found, so I am not proposing one.",
+  "confidence": 0.5
+ },
+ {
+  "id": "X00269",
+  "decision": "both_true",
+  "target": "cauline leaf (PO_0000013) + absent (PATO_0000462) (stem ± leafless); rosette leaf (PO_0000014) present, oblanceolate",
+  "fix": "'stem/scape (±) leafless' in a rosette plant is absence of cauline leaves (PO_0000013); keep rosette/basal leaves separate. Also carry '±' as an approximation, not a strict absence.",
+  "reason": "Lapsanastrum takasei is a rosette herb whose flowering stems are almost leafless. Both statements hold for different leaf kinds.",
+  "confidence": 0.9
+ }
+]

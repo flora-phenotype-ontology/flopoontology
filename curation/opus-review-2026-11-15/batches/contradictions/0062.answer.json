@@ -1,0 +1,242 @@
+[
+ {
+  "id": "X01860",
+  "decision": "both_true",
+  "target": "The style is absent only in the ray florets, which are sterile (Asteraceae floret, flower PO:0009046, context 'ray'). The pappus (PO:0025393) belongs to the cypselas of the fertile disc florets. Keep 'lacerate' on the pappus, but the claim should say 'cupule' (a small crown) and not 'pappus' in general",
+  "fix": "In Asteraceae, 'style absent', 'ovary absent' and 'sterile' in the ray-floret paragraph describe the ray florets only. Record the floret kind ('ray', 'disc', 'ligulate', 'tubular') as context and never make a bare taxon-wide 'style absent'. The check should also only pair an absence with a statement about the same part or a part of it. Style and pappus are not linked that way.",
+  "reason": "Aspilia has neuter rays without a style and fertile disc florets with a crown-shaped pappus. The flagged pair is also about two different parts, so it is not really an absent-against-described clash.",
+  "confidence": "low"
+ },
+ {
+  "id": "X01861",
+  "decision": "absence_misread",
+  "target": "Only the outer bracts of the fig ostiole are absent: bract PO:0009055 absent (PATO:0000462) with context 'external, ostiolar' on the syconium ostiole (FLOPO_0986063). The basal bracts at the base of the fig (bract PO:0009055, context basal FLOPO_0991002) are present and minute (decreased size PATO:0000587)",
+  "fix": "In Ficus, 'sans bractées externes', 'without lateral bracts' and 'ostiole without external bracts' deny one named set of bracts (ostiolar or lateral bracts on the fig). Keep the qualifier ('externes', 'latérales', 'lateral') as context and never record a bare 'bract absent'. The basal bracts ('bractées basilaires') are a separate set.",
+  "reason": "Figs have 3 basal bracts at the base of the receptacle. 'Without external bracts' is about the ostiole or the fig wall.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01862",
+  "decision": "absence_misread",
+  "target": "Ostiolar bracts visible from outside are absent: bract PO:0009055 absent, context 'external' on the syconium ostiole (FLOPO_0986063). 'Connées en un disque' describes the basal bracts at the fig base (bract, context basal FLOPO_0991002), connate",
+  "fix": "'Ostiole sans bractées externes' is an absence of the outer ostiolar bracts only. Bind the absence to the ostiole and keep 'externes' as context. A following 'connées en un disque' refers to the basal bracts of the fig.",
+  "reason": "In Ficus the basal bracts are often connate into a cup or disc, while the ostiolar bracts can be hidden inside. Different bract sets.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01863",
+  "decision": "both_true",
+  "target": "Sex of the flower: stamens are absent in the female flowers (pistillate flower PO:0025599) and sessile in the male flowers (staminate flower PO:0025600)",
+  "fix": "In dioecious genera (Garcinia, Diospyros, Ficus, ...), an absence inside a 'fleurs femelles / ♀' or 'fleurs mâles / ♂' paragraph inherits that sex as context. A stamen or pistil absence never applies to the whole taxon unless it is said to.",
+  "reason": "Garcinia is dioecious. Female flowers lack fertile stamens (they may have staminodes), and male flowers have sessile stamens.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01864",
+  "decision": "unclear",
+  "target": "Both statements are bare adjectives ('absents', 'tronqués') with the bearer taken from context. Gnidia petals are small scales that may be absent. 'Tronqués' more likely describes the calyx lobes or the disc than petals that the same text calls absent",
+  "fix": "A bare adjective with no noun ('absents', 'tronqués') inherits the nearest earlier masculine plural noun in the same sentence, not a noun carried over from an earlier sentence or paragraph. If there is no such noun, drop the statement. An absence and a shape on the same inherited bearer in one record means the inherited bearer is wrong.",
+  "reason": "Without the full sentence it is impossible to tell which noun each adjective belongs to.",
+  "confidence": "low"
+ },
+ {
+  "id": "X01865",
+  "decision": "both_true",
+  "target": "Variability: 'parfois absents' (sometimes absent). Petals (PO:0009032) are usually present and pubescent at the tip, and sometimes lacking",
+  "fix": "'parfois absent(e)s', 'sometimes absent', 'often absent', 'absent or ...' and 'rarely present' state that presence varies. Record 'sometimes absent' as present-or-absent variability, never as a plain absence (PATO:0000462).",
+  "reason": "Gunnera flowers vary: petals are often lacking in female or upper flowers.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01866",
+  "decision": "present_misread",
+  "target": "The absence (bract PO:0009055 absent, context: scape) stands, because the scapes have no bracts. 'Subglabres à tomenteuses dans la bande médiane' describes the involucral bracts (involucral bract PO:0009045), and the hairiness ranges from subglabrous to tomentose. It is not 'glabrous'",
+  "fix": "In Asteraceae, the 'involucre', 'bractées de l'involucre' and 'phyllaires' paragraph maps to involucral bract PO:0009045, never to bract PO:0009055. 'Hampe/scape dépourvue de bractées' is a bract absence on the scape and must carry the scape as context. A range 'X à Y' must not be reduced to its first end.",
+  "reason": "Haplocarpha scaposa has bractless scapes topped by heads with a hairy involucre.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X01867",
+  "decision": "both_true",
+  "target": "Position: leaves (PO:0025034) are absent only at the upper nodes (context: upper FLOPO_0991376 / stem node PO:0020141). Elsewhere they are present and show 2 grooves",
+  "fix": "'absent(e)s aux nœuds supérieurs', 'absent on the upper part', 'absent from flowering stems' limit the absence to a position. Keep the place as context and never record a taxon-wide absence.",
+  "reason": "Psammotropha has basal rosette leaves and leafless upper nodes on the flowering stems.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01868",
+  "decision": "both_true",
+  "target": "Kind of cypsela: the pappus is absent (or reduced) on one kind of cypsela and present on the other as 2 very sharp awns ('très aiguës' = the awns). Record cypsela kind (ray / disc) as context. The 'acute' belongs to the pappus awns",
+  "fix": "In Asteraceae with two kinds of cypselas (ray and disc), keep the kind as context on every pappus statement. A feminine plural adjective such as 'très aiguës' after 'arêtes' belongs to the awns and not to a 'pappus' named earlier.",
+  "reason": "Synedrella has ray and disc cypselas that differ in wings and in their pappus awns. The absence and the awn shape probably refer to different ones.",
+  "confidence": "low"
+ },
+ {
+  "id": "X01869",
+  "decision": "both_true",
+  "target": "Stage or shoot: 'sans feuilles' describes the flowering shoots or the plant at flowering time (leafless stage, context: at flowering / flowering stem). The leaves (PO:0025034) are subsessile when present",
+  "fix": "'sans feuilles', 'leafless' and 'without leaves' after a stem, shoot, inflorescence or 'at flowering' word describe that shoot or stage. Record a leafless shoot, or leaves absent with a stage context, never a taxon-wide 'leaf absent'.",
+  "reason": "Trochomeria often flowers from the tuber before or without leaves, and the leaves come later.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X01870",
+  "decision": "both_true",
+  "target": "Member: only the basal leaves are bladeless (leaf lamina PO:0020039 absent, context basal FLOPO_0991002). The upper leaves have a flat blade",
+  "fix": "'les basales sans limbe', 'lower leaves reduced to sheaths' and 'bladeless sheaths' limit the blade absence to the named leaves. Keep 'basal', 'lower' or 'inférieures' as context. This is the moss-flora example in docs/km-classification.md.",
+  "reason": "Sedges commonly have bladeless basal sheaths and bladed upper leaves.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01871",
+  "decision": "absence_misread",
+  "target": "Only the involucral bracts under the spikelet are absent: involucral bract PO:0009045 absent (or inflorescence bract PO:0009054, context 'subtending the spikelet'). The glumes (PO:0009039) are present and red-brown",
+  "fix": "In Cyperaceae and Poaceae, 'bracts absent' and 'involucral bracts none' mean the bracts below the inflorescence. Ground them to involucral bract, not to bract PO:0009055, because an absence of PO bract also denies the glumes, which are a kind of bract.",
+  "reason": "Eleocharis lacks involucral bracts but always has glumes.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01872",
+  "decision": "both_true",
+  "target": "Member: the lower leaves or sheaths are bladeless (leaf lamina PO:0020039 absent, context lower FLOPO_0991377 or basal FLOPO_0991002). The upper leaf blades are green",
+  "fix": "Same rule as basal sheaths: 'sans limbe' after 'gaines', 'feuilles inférieures' or 'basales' limits the absence to those members. If the qualifier is lost, drop the absence.",
+  "reason": "Scleria has bladeless basal sheaths and bladed upper leaves.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X01873",
+  "decision": "both_true",
+  "target": "Different parts: the branchlets ('rameaux', shoot axis PO:0025029) have no lenticels. 'Indistinctement lenticellée' (feminine) describes another part, probably the bark (PO:0004518) of older stems. Lenticel (PO:0000031) presence must carry the part as context",
+  "fix": "'non lenticellé(e)s' and 'lenticellé(e)s' are qualities of the part they agree with. Bind lenticel presence or absence to that noun (rameaux, jeunes rameaux, écorce, tronc), using gender and number agreement. Never record a taxon-wide 'lenticel absent'.",
+  "reason": "Strychnos descriptions often contrast smooth young branchlets with lenticellate older bark or branches.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X01874",
+  "decision": "both_true",
+  "target": "Age of the shoot: the young branchlets are not lenticellate and the older branches are lenticellate. Record lenticel (PO:0000031) with context 'young' or 'old' shoot axis (PO:0025029)",
+  "fix": "When a stem paragraph has both 'non lenticellés' and 'lenticellés', the two go with different ages ('jeunes rameaux', 'rameaux âgés' or 'plus vieux'). Keep the age word as context on both statements.",
+  "reason": "Lenticels form as twigs age. The flora contrasts young and old twigs.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X01875",
+  "decision": "absence_misread",
+  "target": "Only the intersecondary veins are absent: intersecondary leaf vein (FLOPO support class FLOPO_LOCAL:intersecondary_leaf_vein, no ID yet; otherwise leaf lamina vein PO:0020138 with context 'intersecondary') absent. 'Prominent' belongs to the secondary veins",
+  "fix": "'intersecondary veins absent', 'tertiary veins obscure' and 'submarginal vein absent' deny one named vein order. Ground to that vein class or keep the order as context, and never record 'vascular bundle absent'. 'vein' must not fall back to vascular bundle PO:0005020 in a leaf description. Use leaf lamina vein PO:0020138.",
+  "reason": "Every Buchenavia leaf has veins. Only the intersecondary order is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01876",
+  "decision": "absence_misread",
+  "target": "'without leaves' describes the shoots that bear the inflorescences (leafless flowering shoots or short shoots, shoot axis PO:0025029). Leaves (PO:0025034) are present and acuminate",
+  "fix": "'on shoots without leaves', 'inflorescences on leafless branches' and 'from older wood without leaves' describe where the inflorescence sits. Record that position (leafless shoot or cauliflory), not leaf absence.",
+  "reason": "Sparattanthelium is a leafy liana. The phrase is about where the inflorescences are borne.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X01877",
+  "decision": "absence_misread",
+  "target": "Nothing about the bark being absent. This is a statement about the latex: plant latex FLOPO_0980431, either absent from the bark slash or not white (a negated colour). Keep the bark (PO:0004518) as hard",
+  "fix": "'without X latex', 'without resin' and 'without exudate' deny a substance, never the part named before it. Ground them to plant latex FLOPO_0980431, plant resin PO:0025603 or plant sap PO:0025538. 'without white latex' is a negated colour (latex not white) unless the text says there is no latex at all.",
+  "reason": "Bark cannot be absent in a tree. The phrase is about the exudate from the bark slash.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01878",
+  "decision": "absence_misread",
+  "target": "The absence concerns bracts in another place (the peduncle, or between the flowers on the receptacle). The involucral bracts around the head are present and the inner ones obtuse (involucral bract PO:0009045, context inner FLOPO_0991378)",
+  "fix": "In Moraceae, 'peduncle without bracts' and 'interfloral bracts absent' limit the absence to that position. Keep the position as context. 'the inner ones' or 'outer ones' about bracts means involucral bracts and shows that some bracts are present.",
+  "reason": "Antiaropsis has an involucre of bracts around the inflorescence. The same text cannot deny all bracts.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X01879",
+  "decision": "absence_misread",
+  "target": "Cystoliths are absent from the leaf lamina. There is no PO class for cystoliths, so drop the absence (or record cystolith absent on leaf lamina PO:0020039 once a class exists). The 'waxy glands if present inconspicuous' statement is also misread: it is about waxy glands (gland PO:0005656, conditional) and not about the lamina being present",
+  "fix": "'<structure> absent' where the structure is a cell, gland, dot, hair or crystal (cystoliths, waxy glands, dots, hairs) denies that structure and never the organ described in the paragraph. If the structure has no class, drop the statement. 'if present' is never a presence.",
+  "reason": "Ficus leaf descriptions list cystoliths and waxy glands as micro-characters of the lamina.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01880",
+  "decision": "absence_misread",
+  "target": "Lateral bracts on the fig wall are absent (bract PO:0009055, context lateral FLOPO_0991380, on syconium FLOPO_0986130). The '(sub)verticillate or scattered' bracts are the basal bracts",
+  "fix": "'without lateral bracts' and 'lateral bracts absent' in Ficus deny the bracts on the fig body. Keep 'lateral' as context and bind the absence to the syconium. Basal bracts are a separate set and are not affected.",
+  "reason": "Figs have basal bracts and sometimes lateral bracts on the body of the fig. Only the lateral ones are denied.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01881",
+  "decision": "absence_misread",
+  "target": "The hairs inside the fig are absent: trichome PO:0000282 absent, context 'internal' in the syconium (FLOPO_0986130). The fig itself is present",
+  "fix": "'internal hairs absent', 'interfloral hairs absent' and 'hairs absent' deny the hairs. Ground the noun before 'absent' and never the organ named in the paragraph heading.",
+  "reason": "A fig description cannot deny the fruit. The hairs are the absent thing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01882",
+  "decision": "absence_misread",
+  "target": "Lateral bracts of the fig are absent (bract PO:0009055, context lateral FLOPO_0991380, on syconium FLOPO_0986130). The second statement is also misread: 'a rosette of small apical bracts' gives ostiolar bracts present, not 'fruit present'",
+  "fix": "Same as the lateral-bract rule: in the fig paragraph, 'without lateral bracts' is a bract absence. A part named in the statement ('bracts') always wins over the paragraph organ ('fruit'/'fig').",
+  "reason": "The fig is described. Only the lateral bracts are denied, and the apical bracts are described.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01883",
+  "decision": "absence_misread",
+  "target": "Lateral bracts on the fig are absent (bract PO:0009055, context lateral FLOPO_0991380, on syconium FLOPO_0986130). Fruit (fig) (sub)glabrous stands",
+  "fix": "Same rule: '<part> absent' inside an organ paragraph denies the named part, never the organ in the paragraph heading.",
+  "reason": "The fig exists and is glabrous. Only the lateral bracts are lacking.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01884",
+  "decision": "absence_misread",
+  "target": "Waxy glands are absent (gland, portion of secretory tissue PO:0005656, context 'waxy', on the leaf lamina PO:0020039). The lamina is present and chartaceous",
+  "fix": "'waxy glands absent' denies the glands. Ground the gland noun and use the lamina only as the place.",
+  "reason": "Waxy glands at the leaf base or vein axils are a standard Ficus character. The leaf is clearly present.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01885",
+  "decision": "absence_misread",
+  "target": "Nothing is absent. 'bracts not seen' is a gap in the material, and the same record says they are caducous. Keep bract PO:0009055 deciduous and drop the absence",
+  "fix": "A bare 'not seen' never yields an absence (PATO:0000462), and 'caducous' with 'not seen' means the part fell off early.",
+  "reason": "The bracts drop early in Horsfieldia, so specimens often lack them.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01886",
+  "decision": "absence_misread",
+  "target": "The lamina has no dots: leaf lamina PO:0020039 not punctate (PATO:0001512 negated), or drop the statement. The lamina is present and glabrous above",
+  "fix": "'dots absent', 'not dotted' and 'without pellucid dots' are a negated punctate quality on the organ (PATO:0001512). They are never the organ being absent.",
+  "reason": "In Myristicaceae, the dots on the lower leaf surface are a key character. 'Dots absent' means the surface has no dots.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01887",
+  "decision": "absence_misread",
+  "target": "The leaf has no dots: leaf PO:0025034 (or lamina PO:0020039) not punctate (PATO:0001512 negated), or drop the statement. The leaves are present and coriaceous",
+  "fix": "Same as X01886: 'dots absent' is a negated punctate quality and never an organ absence.",
+  "reason": "This is the same Myristicaceae dot character.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01888",
+  "decision": "absence_misread",
+  "target": "Nothing is absent for certain. 'not seen (absent?)' shows doubt. Drop it, or keep it with the flower sex as context if the text gives it (Momordica male flowers usually have a peduncle bract and female flowers often lack one). The bract (PO:0009055) is minute",
+  "fix": "'not seen', 'absent?', '(absent?)' and 'apparently absent' express doubt. Never record them as an absence. Also apply the sex context: a bract statement inside the male- or female-flower paragraph inherits that sex.",
+  "reason": "The author did not see the bract and is not sure it is absent. Another statement describes a minute bract, probably in the other sex.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01889",
+  "decision": "both_true",
+  "target": "Kind of leaf: only floating leaves are absent (leaf PO:0025034 absent, context 'floating'). The submerged leaves are present with a cordate (clasping) base",
+  "fix": "In aquatic plants, 'floating leaves absent', 'submerged leaves absent' and 'aerial leaves absent' deny one kind of leaf. Keep the kind (floating, submerged, emergent) as context, like a series member, and never record 'leaf absent'.",
+  "reason": "Potamogeton perfoliatus has only submerged, perfoliate leaves with a cordate base.",
+  "confidence": "high"
+ }
+]

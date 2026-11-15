@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P00160",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (§5 Processes: a quality under another name)",
+  "fix": "Add a rule that reads 'opening widely' / 'widely opening' on a flower as open PATO:0000610. 'widely' is kept as a degree in RDF only.",
+  "reason": "This is a state of the open flower, not an event. PATO already has 'open', so no new term is needed.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00161",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (§5 Processes: a quality under another name)",
+  "fix": "Read 'breaking up' / 'falling' said of lemmas as deciduous (generic) PATO:0001730 on lemma PO:0009037. 'rhachilla persistent' is non-deciduous PATO:0001732 on spikelet rachilla PO:0009080. 'from the base' (the order in which the lemmas fall) goes to RDF only.",
+  "reason": "In Eragrostis this phrase describes the spikelet breaking apart: the lemmas fall one after another while the rachilla stays. That is a deciduousness quality, and PATO has it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00162",
+  "decision": "new_pattern",
+  "target": "width in cell rows",
+  "fix": "Slots: bearer leaf margin PO:0020128, attribute width, low/high 1-2, unit 'cell' (cells across the width), with the cue. RDF only, like pattern 14 (no class), because a width in cells is neither a length nor a count of the margin's parts.",
+  "reason": "Moss descriptions give widths in cells all the time. Neither the count pattern (03) nor the per-position count (14) covers 'N cells wide'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00163",
+  "decision": "transcription_error",
+  "target": "bract: whitish (white, approximately) + hyaline (transparent PATO:0000964)",
+  "fix": "Split 'whitish,hyaline' at the comma (there is no space after it) into two statements: white with value_qualifier approximately (pattern 01), and transparent PATO:0000964 (PATO synonym 'hyaline').",
+  "reason": "There is no alternative or continuum here. The missing space after the comma made the two words look like one.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00164",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Read 'N–M-ternate' as one_of the existing values: biternate FLOPO:0991241 or triternate FLOPO:0991362. The bearer is the leaf (these values are defined for a compound leaf), not the leaf blade.",
+  "reason": "Both values already exist. The numeric prefix range only needs a table row, not a count.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00165",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (continuum) + docs/odp/03-count-of-parts.md",
+  "fix": "Bearer: involucral bract PO:0009045, not 'bract'. Shape: the continuum linear PATO:0001199 – filiform PATO:0104351. Also a count of 3–6 with container involucre PO:0009100.",
+  "reason": "The hyphenated shape is the continuum the docs already describe, and both terms exist. 'involucre of 3–6' is a plain count with a container.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00166",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (§5 Processes: a quality under another name)",
+  "fix": "The same rule as P00160: 'opening widely' on a flower becomes open PATO:0000610, with the degree in RDF.",
+  "reason": "Same wording as P00160.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00167",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'the margin ... 5-lobed' as a count of 5 lobes ('lobed' → lobe in flora_counted_parts.tsv) with container leaf lamina PO:0020039. 'margin' is where the lobes are, not a position for each count. 'slightly' (shallow) goes to RDF as a degree.",
+  "reason": "It is a plain N-lobed count. The annotator took 'margin' for a per-position place.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00168",
+  "decision": "transcription_error",
+  "target": "scales present on the rhizome; scale margin entire",
+  "fix": "Make two statements. (1) Bearer trichome PO:0000282 (PO synonym 'scale'), present PATO:0000467, container rhizome PO:0004542. (2) The margin of those scales is entire PATO:0104359.",
+  "reason": "'covered' is not a comparison. The text says the rhizome has scales and that the scales have entire margins.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00169",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "'enclosing' is surrounding PATO:0001772 (in the table), towards nut fruit PO:0030102 (PO synonym 'nut'). Keep 'ca. 3/4' as a fraction in RDF only.",
+  "reason": "This is the 'enclosing X' relation, and the target grounds to a PO term. Only the fraction lacks a slot.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00170",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'unknown' means the data is missing. It says nothing about whether the catkin is present.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00171",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "'several' after the noun is the amount 'several': bracteole PO:0009043 present, count_word several. Container: the partial umbel (involucel).",
+  "reason": "'several' is one of the three amounts of pattern 13. The annotator held it as a measurement.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00172",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (rows Q09–Q14, growth forms)",
+  "fix": "Add French 'liane' to the liana rule. Give it the description whole plant PO:0000003 + climbing FLOPO:0991108 + ligneous PATO:0002348, instead of the bare class FLOPO_0900035 (Q14).",
+  "reason": "Same case as the 2026-11-14 review (P00134/P00136). The value terms exist; the growth-form row only needs that description.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00173",
+  "decision": "new_pattern",
+  "target": "comparison with an implied second term",
+  "fix": "The 'towards' target is the same part in the contrasted whole, taken from the previous clause ('Male flowers: pedicels slender'). OWL: pedicel part_of (flower and female) has decreased length towards some (pedicel part_of (flower and male)), using pattern 12 for both. RDF keeps the cue and the clause where the target comes from.",
+  "reason": "The second term (male-flower pedicels) is only implied. The docs list this case as open.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00174",
+  "decision": "new_pattern",
+  "target": "count of series",
+  "fix": "Slots: counted unit = a whorl of the part (stamen), the number, a frequency ('usually'), and the organ (androecium). OWL as for '3-jugate': object aggregate whorl, has member some stamen, with an amount data range. RDF stores the count with 'whorl' as the counted unit.",
+  "reason": "This counts whorls of stamens, not stamens, and has nothing to do with a missing unit.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00175",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'secreting mucilage or not' joins a value with its negation. The union says nothing about the taxon.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00176",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (§1 slot 1: place on the part)",
+  "fix": "'at base' is a region row of flora_context_words.tsv (line 62). Style PO:0009074, decreased thickness PATO:0000592 on its basal region. 'thickened distally' is the same rule on the distal region.",
+  "reason": "This is a place on the part (kind C), not a stage. The cue is already in the table.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00177",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Read 'now and then, it can also reach a height of 50 cm' as the maximum extreme of the preceding 20–40 cm (20-40(-50) cm), with 'now and then ... can also reach' as the cue.",
+  "reason": "This is a rare upper extreme beyond the usual range, which pattern 05 already models.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00178",
+  "decision": "transcription_error",
+  "target": "pedicel trichome, non-glandular",
+  "fix": "Bearer: trichome PO:0000282 (PO synonym 'non-secretory trichome'), present, part of the pedicel. Do not use negated glandular on the pedicel. Orientation (patent, retrorse) and the hair length belong to the trichome.",
+  "reason": "'nonglandular' describes the hairs, not the pedicel. PO already has a non-secretory trichome synonym, so no word-internal negation is needed.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00179",
+  "decision": "existing_pattern",
+  "target": "config/flopo_flora_value_terms.tsv (FLOPO:0991021 exfoliating)",
+  "fix": "Add the French synonyms 'se desquamant' / 'desquamant' to exfoliating FLOPO:0991021 (it already has 'flaking'). Bearer: bark.",
+  "reason": "The value term exists for bark that flakes or peels. Only the French wording is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00180",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (§1 slot 1: place on the part)",
+  "fix": "Bearer: involucral bract PO:0009045 (phyllary). dark green PATO:0001249 on the central part of the distal region. 'in upper part' is in the table; add 'in centre' / 'in the centre' as a region row (BSPO median/central region), and allow two place cues to stack.",
+  "reason": "This is a place on the bract, not a stage. One of the two place words is missing from the table.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00181",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "'longer than culm': increased length PATO:0000573 towards stem PO:0009047 (PO synonym 'culm'). Bearer: leaf with the upper position FLOPO:0991376 (pattern 04).",
+  "reason": "The second term is stated and grounds to PO stem. The quality text only needs the comparison reader.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00182",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Look for the 'on each side' cue anywhere in the clause, not only inside the span 'with 10-20 teeth'. Bearer: tooth, container leaf margin PO:0020128, kind each_side.",
+  "reason": "This is a per-side count. The cue comes before 'minutely serrulate', outside the transcribed span.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00183",
+  "decision": "new_pattern",
+  "target": "resemblance to another part",
+  "fix": "Slots: bearer, the target part from the previous clause (sepal), and the cue 'similar'. RDF only (fb:resembles), with no copied qualities, because the statement goes on to list differences ('somewhat smaller').",
+  "reason": "'similar' to sepals refers to qualities not listed here. Copying them into OWL would claim more than the text says.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00184",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Add the French cue 'par aisselle' as kind per_axil, landmark leaf axil PO:0009023, count 1-4 of inflorescences.",
+  "reason": "Pattern 14 covers 'per leaf axil'. Only the French cue is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00185",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (row Q10 'climber')",
+  "fix": "Give the climber row the description whole plant PO:0000003 + climbing FLOPO:0991108, instead of the held class FLOPO_0985031. Keep 'low' in RDF only.",
+  "reason": "The climbing value term exists, so the growth form can be stated as entity + quality.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00186",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "Apply 'young' (PATO:0000309) as the bearer state for 'pubescent' on branch. End the 'after drying' specimen condition at the comma so that it covers only 'dark brown'.",
+  "reason": "Both context words are in the table. The annotator let the drying condition carry over to the next quality.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00187",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Allow a count_word (pattern 13: 'several') in place of a number, with count_position per_node and the frequency 'usually'. RDF only, as with any count at a position.",
+  "reason": "This combines patterns 13 and 14. The rule count_position_without_count blocks it now.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00188",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Add the place kind 'per_cell' (landmark: the lamina cell) for 2-4 salients per cell. Treat 'or essentially absent' as an alternative (pattern 07/08), not as a negation of the count.",
+  "reason": "This is a per-cell count. The negation flag came from the second alternative.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00189",
+  "decision": "new_pattern",
+  "target": "comparison with an implied second term",
+  "fix": "The target is the part described just before (stigma PO:0009073). OWL: style has decreased length towards some stigma. RDF keeps 'much' and the implied target with its cue.",
+  "reason": "'shorter' has no 'than'. The comparison is with the part in the previous clause.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00190",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (§1 slot 1: surface)",
+  "fix": "'beneath' is a surface row (abaxial). Apply dull FLOPO:0991106 and green to leaf lamina abaxial epidermis PO:0000049 (substituted bearer for colours).",
+  "reason": "This is a surface of the leaf, not a stage, and both values exist.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00191",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Read 'faces N-nerved' as a count of veins/ribs on each face of the cypsela: kind at_region/each_side, container fruit PO:0009001, range 1(-3) with the extreme (pattern 05).",
+  "reason": "'faces' is a place on the fruit body, not a part that needs its own term.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00192",
+  "decision": "new_pattern",
+  "target": "projection beyond another part",
+  "fix": "Slots: bearer anther, exserted PATO:0000623 towards the corolla tube (from the context), and a length (0.7 mm) for the part that sticks out. OWL: the exserted relation only. RDF: the measured projection length with its unit.",
+  "reason": "Exserted is a term, but a measured exsertion has no slot. An earlier review already proposed this pattern.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00193",
+  "decision": "new_pattern",
+  "target": "comparison within a series",
+  "fix": "Bearer frond with state fertile, decreased length towards frond with state sterile. 'than sterile fronds' must reach back over 'and developing earlier'. Allow a target of the same PO class when the bearer states differ (OWL: (frond and fertile) has decreased length towards some (frond and sterile)).",
+  "reason": "The second term is in the text but is the same organ in another state. The rule that a target cannot be the bearer blocks it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00194",
+  "decision": "new_pattern",
+  "target": "gradient along a series",
+  "fix": "Slots: bearer (lower leaf lamina cells), quality (decreased length, decreased width), direction ('towards the margins', a BSPO landmark). RDF only: a change across positions, which cannot be stated as one class of the bearer.",
+  "reason": "A change in value from one position to another. The docs list this as an open pattern.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00195",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read '4- or 5-angled' (hyphen held over) as a count of angles, range 4–5 ('angled' → angle in the table, 'N or M' → range since 2026-11-14), bearer stem PO:0009047 (culm). 'acutely' is a separate quality of the angles.",
+  "reason": "This is an N-xed count with a hyphen held over to the next number. The 'missing unit' reason is wrong.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00196",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "Add 'at immaturity' to flora_context_words.tsv as bearer_quality immature PATO:0001501 (the row 'immature' exists).",
+  "reason": "Only the wording is missing. The state and its PATO class are already used.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00197",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Read 'containing many X' as count_word many: flower present, container inflorescence (raceme).",
+  "reason": "This is an indefinite count written as a phrase instead of 'many-flowered'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00198",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md (secondary: values under different attributes)",
+  "fix": "Map 'petiolulate' to petiolule PO:0020050 present on the leaflet, and subsessile to FLOPO:0991013. Join them as one_of over whole statements, not as a continuum.",
+  "reason": "This is the documented 'sessile or shortly stalked' case. No new term is needed.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00199",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Parse '½' and the inch sign '\"' (1.5 in → 3.81 cm, with source_unit). Carry 'up to' over to the second dimension ('4\" long and 1½\" across').",
+  "reason": "Inch conversion exists since 2026-11-15. The fraction character, the inch symbol and the shared bound are not read.",
+  "confidence": "high"
+ }
+]

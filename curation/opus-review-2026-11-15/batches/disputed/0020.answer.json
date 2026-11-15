@@ -1,0 +1,212 @@
+[
+ {
+  "rule_id": "R2455",
+  "decision": "drop",
+  "target": "",
+  "reason": "The exostome is only the outer ring of a double peristome. FLOPO already has a separate endostome class (FLOPO:0986064), so mapping the exostome to the whole peristome would mix outer-ring qualities (colour, papillae, striation) with the inner ring. It needs its own exostome class, the counterpart of endostome, not a rule.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2456",
+  "decision": "drop",
+  "target": "",
+  "reason": "Outer peristome is the same as exostome. 'Inner peristome' already goes to endostome (FLOPO:0986064), so sending the outer one to the whole peristome would be lopsided and would mix in endostome qualities. It needs an exostome class.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2457",
+  "decision": "retarget",
+  "target": "peristome tooth (PO_0030043)",
+  "reason": "PO defines a peristome tooth as a single lobe of a peristome. Exostome teeth are exactly that. 'Outer' is lost, but the target is right. This matches the accepted rule that maps endostome segments to peristome tooth (R2275).",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2458",
+  "decision": "drop",
+  "target": "",
+  "reason": "Endostome cilia are thread-like strands between the endostome segments. Mapping them to peristome tooth would merge their counts ('cilia 2-3', 'nodose', 'rudimentary') with the 16 exostome teeth and the endostome segments, which gives false counts. Like 'appendiculae' (rejected), they need their own class.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2459",
+  "decision": "drop",
+  "target": "",
+  "reason": "Same as R2458: cilia are not teeth, and their counts would be mixed with the tooth counts.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2460",
+  "decision": "drop",
+  "target": "",
+  "reason": "Same as R2458.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2461",
+  "decision": "retarget",
+  "target": "asexual propagule (FLOPO_0986119)",
+  "reason": "Rhizoidal tubers are asexual propagules that form on moss rhizoids. They are not PO gemmae, but they fit the existing FLOPO class asexual propagule, which already takes 'vegetative propagule' and 'brood body'. That is better than having no class at all.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2462",
+  "decision": "retarget",
+  "target": "asexual propagule (FLOPO_0986119)",
+  "reason": "Plural of R2461. Rhizoidal tubers are asexual propagules.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2463",
+  "decision": "retarget",
+  "target": "asexual propagule (FLOPO_0986119)",
+  "reason": "A variant spelling of rhizoidal tuber (R2461).",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2471",
+  "decision": "drop",
+  "target": "",
+  "reason": "This rule uses up the word 'basal', so the position is lost. Counts of basal glands would become counts of all glands. The plain 'gland' rule (PO_0005656) plus the region-of-the-bearer pattern already records the position, as R1438 does, so no special rule is needed.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2472",
+  "decision": "drop",
+  "target": "",
+  "reason": "Same as R2471.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2473",
+  "decision": "drop",
+  "target": "",
+  "reason": "French for basal gland. Same as R2471.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2474",
+  "decision": "constrain",
+  "target": "leaf|blade|lamina|leaflet",
+  "reason": "'Reticulate veins' names the network of smaller veins on the leaf blade. PO_0020138 is specific to the leaf blade, so the rule is right only for leaf parts. Petals, sepals and bracts would need phyllome lamina vein (PO_0025348), and fruit veins are a different structure.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2475",
+  "decision": "constrain",
+  "target": "leaf|blade|lamina|leaflet",
+  "reason": "Plural of R2474. Same constraint.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2476",
+  "decision": "drop",
+  "target": "",
+  "reason": "Reticulate venation is a quality: FLOPO:0991100 reticulate on the leaf venation (PO_0000036). It is not a vein, and the word should go to the quality, not to a part.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2479",
+  "decision": "drop",
+  "target": "",
+  "reason": "Ambiguous. In Asteraceae and Cyperaceae a 'stigmatic branch' is a style branch (FLOPO:0986008). In Euphorbiaceae and Malvaceae it is a stigma lobe (FLOPO:0986009). It is never the whole stigma, so counts would be wrong. Without the family, no single target is safe.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2480",
+  "decision": "drop",
+  "target": "",
+  "reason": "French for stigmatic branch. Ambiguous between style branch and stigma lobe, as in R2479.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2481",
+  "decision": "drop",
+  "target": "",
+  "reason": "Plural of R2480. Same ambiguity.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2482",
+  "decision": "retarget",
+  "target": "stigma lobe (FLOPO_0986009)",
+  "reason": "The first check says a stigma branch is a division of a branched stigma, counted 2-5 and papillose. That is the FLOPO definition of stigma lobe: one of the divisions of a lobed stigma. 'Stigmatic lobe' already maps there.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2483",
+  "decision": "keep",
+  "target": "",
+  "reason": "A winter bud is a bud, so PO_0000055 is a correct broader class. The qualities recorded (glutinous, shiny, scale colour) belong to the bud. Dormancy is a season, not a part. Turion (FLOPO:0986054) fits only the aquatic, detached sense and would be wrong for winter buds of trees.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2484",
+  "decision": "keep",
+  "target": "",
+  "reason": "Plural of R2483. Bud is a correct broader class.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2485",
+  "decision": "keep",
+  "target": "",
+  "reason": "A resting bud is a bud. Mapping it to bud is correct, just less specific. Dormancy is not a separate part.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2486",
+  "decision": "drop",
+  "target": "",
+  "reason": "Reticulation is a pattern, the quality reticulate (FLOPO:0991100), on veins, seed coats, pollen or bulb coats. It is not a part. This matches the earlier rejection of 'reticulum' and 'network' as bearers.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2487",
+  "decision": "drop",
+  "target": "",
+  "reason": "French reticulation: a pattern, not a vein. Same as R2486.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2488",
+  "decision": "drop",
+  "target": "",
+  "reason": "The venation reticulum is the vein network as a whole. 'Reticulum' was already rejected as a bearer word. Where it matters, the network goes to reticulate on the leaf venation, not to a single vein.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2489",
+  "decision": "retarget",
+  "target": "style branch (FLOPO_0986008)",
+  "reason": "FLOPO already has a style branch class: one of the distal divisions of a style. It is the exact target and keeps counts such as '2 style-branches' right.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2490",
+  "decision": "retarget",
+  "target": "style branch (FLOPO_0986008)",
+  "reason": "Plural of R2489. The exact FLOPO class exists.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2491",
+  "decision": "retarget",
+  "target": "style branch (FLOPO_0986008)",
+  "reason": "French for style branch. The exact FLOPO class exists.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2492",
+  "decision": "drop",
+  "target": "",
+  "reason": "Interprimary veins are a particular rank of vein lying between the primary veins. Mapping them to any leaf lamina vein would turn counts such as 'interprimary veins 2-4' into counts of all veins, which is wrong. PO has no class for this rank.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2493",
+  "decision": "drop",
+  "target": "",
+  "reason": "Plural of R2492. Same problem.",
+  "confidence": "medium"
+ }
+]

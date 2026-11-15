@@ -1,0 +1,242 @@
+[
+ {
+  "id": "X00210",
+  "decision": "absence_misread",
+  "target": "lower glume (PO_0006002) + absent (PATO_0000462); 'villous' belongs to the upper glume (PO_0009039 glume with context FLOPO_0991376 upper)",
+  "fix": "'lower glume absent' / 'first glume absent': the absence is on the named member. Use PO_0006002 lower glume (or glume + FLOPO_0991377 lower), never plain glume, so the other glume can still be described.",
+  "reason": "In Digitaria the lower glume is often missing. The upper glume is present and villous. Dropping 'lower' made a false absence of all glumes.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00211",
+  "decision": "both_true",
+  "target": "ovary (PO_0009072) absent in staminate flowers (PO_0025600); ovary villous in bisexual or pistillate flowers",
+  "fix": "An absence inside a 'Male flowers: ...' or 'Female flowers: ...' block, or after 'in male/staminate flowers', is scoped to that flower sex (context words male/female, PATO_0000384/PATO_0000383). Do not put it on the taxon-level part.",
+  "reason": "Distyliopsis has polygamous (male and bisexual) flowers. Male flowers lack an ovary, while the bisexual flowers have a villous ovary.",
+  "confidence": 0.75
+ },
+ {
+  "id": "X00212",
+  "decision": "both_true",
+  "target": "petal (PO_0009032) absent in pistillate flower (PO_0025599); petals clawed in staminate flower (PO_0025600)",
+  "fix": "In dioecious or monoecious descriptions, 'calyx, petals, and staminodes lacking' in the female-flower section is scoped to pistillate flowers. Carry the sex context from the section heading to every part listed.",
+  "reason": "Dobinea is dioecious. Male flowers have a campanulate calyx and clawed petals, while female flowers lack calyx, petals and staminodes.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00213",
+  "decision": "both_true",
+  "target": "calyx (PO_0009060) absent in pistillate flower (PO_0025599); calyx campanulate in staminate flower (PO_0025600)",
+  "fix": "Same as X00212: a list of lacking parts in a female (or male) flower section inherits that sex context.",
+  "reason": "This is the same sentence as X00212. The calyx is described for male flowers and denied for female flowers.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00214",
+  "decision": "present_misread",
+  "target": "keep 'stemless' as no aerial stem; attach 'simple' to the part it qualifies in the source (probably the leaves or the capitulum, not the stem)",
+  "fix": "A bare adjective ('simple') after a habit sentence that says 'stemless/acaulescent' must not be assigned to stem by default. Take its bearer from the nearest named part in the source, or drop it if there is none.",
+  "reason": "A stemless herb cannot have a 'simple' stem. The bare word 'simple' was attached to stem by default. Its real bearer could not be checked from the snippet.",
+  "confidence": 0.55
+ },
+ {
+  "id": "X00215",
+  "decision": "both_true",
+  "target": "pappus (PO_0025393) absent on ray-floret achenes (ray flower PO_0025331); pappus pallid-yellow on disc-floret achenes",
+  "fix": "In Asteraceae, '(ray) achenes without pappus' versus 'disc achenes with pappus ...' is scoped by floret type. Carry 'ray'/'disc' (or 'marginal'/'central') as the bearer context of the pappus statement.",
+  "reason": "Doronicum typically has epappose ray achenes and pappose disc achenes. Both statements hold for different florets.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X00216",
+  "decision": "absence_misread",
+  "target": "leaf sheath auricle (PO_0020106) + absent (PATO_0000462); oral setae absent too (no PO term; leave unannotated or use a FLOPO bamboo-sheath part if one exists)",
+  "fix": "In grasses and bamboos, 'auricles' means leaf sheath auricle (PO_0020106) or culm-sheath auricle, never stipule. Remove the auricle→stipule mapping for Poaceae. 'Oral setae' are bristles at the sheath mouth, not stipules either.",
+  "reason": "Bamboos have no stipules. Both statements were grounded to stipule. The absence is about sheath auricles, and the setose statement is about a (culm) sheath.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00217",
+  "decision": "both_true",
+  "target": "sorus (PO_0025359) present, but missing from the apical region (region: apex) of the pinna/lamina",
+  "fix": "'absent from apices / absent from the base / absent toward the margin' is a statement about where the part is found (a region restriction), not an absence of the part. Read 'X absent from R' as 'X present, not in region R'.",
+  "reason": "The sori are present near the costa. They are only missing from the apices of the segments.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00218",
+  "decision": "absence_misread",
+  "target": "no annotation: staminate flower (PO_0025600) not observed (unknown), not absent",
+  "fix": "'not seen', 'unknown', 'not known', 'not observed', 'not available' mean the material was missing, not the organ. Never emit 'absent' for them. Emit nothing (or an 'unknown' flag).",
+  "reason": "The flora says male flowers were not seen in the material. Female flowers are described.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00219",
+  "decision": "both_true",
+  "target": "receptacle absent in staminate inflorescences, receptacle elliptic in pistillate inflorescences (context male PATO_0000384 / female PATO_0000383); note the bearer is an inflorescence receptacle, not PO_0009064 flower receptacle",
+  "fix": "In Urticaceae (Elatostema, Pellionia), 'receptacle' in an inflorescence description is the inflorescence receptacle, and its presence is described separately for staminate and pistillate inflorescences. Carry the sex context, and do not ground it to PO_0009064 (flower receptacle).",
+  "reason": "In Elatostema, staminate and pistillate inflorescences are described separately. One may have no receptacle while the other has an elliptic one.",
+  "confidence": 0.6
+ },
+ {
+  "id": "X00220",
+  "decision": "absence_misread",
+  "target": "receptacle + decreased size (PATO_0000587) or vestigial (PATO_0000588), not absent",
+  "fix": "'nearly absent', 'almost absent', 'subabsent', 'scarcely developed', 'obsolete' mean reduced, not absent: decreased size (PATO_0000587) or vestigial (PATO_0000588).",
+  "reason": "'nearly absent' and 'very small' say the same thing. The receptacle exists.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00221",
+  "decision": "absence_misread",
+  "target": "rhizome (PO_0004542) + absent (PATO_0000462)",
+  "fix": "'Plants without X' / 'Plant lacking X': X is the absent part and the plant is only the subject. Never annotate whole plant as absent.",
+  "reason": "The whole plant was marked absent. The text says the plants lack a rhizome (they are caespitose).",
+  "confidence": 0.97
+ },
+ {
+  "id": "X00222",
+  "decision": "both_true",
+  "target": "glume (PO_0009039) without awn (apex awnless) versus lemma awn purplish",
+  "fix": "'apex awnless / apex acute, awnless' inside a glume (or lower lemma) clause means that part has no awn. Attach the awn absence to the part named in the clause, not to the taxon's awn, so the lemma awn can still be described.",
+  "reason": "In Elymus the glumes are often awnless while the lemmas are awned. The awnless apex and the purplish awn belong to different spikelet parts.",
+  "confidence": 0.7
+ },
+ {
+  "id": "X00223",
+  "decision": "both_true",
+  "target": "bracts (PO_0009055) absent on the peduncle or below the involucre (no calyculus); the 'oblong-linear or linear' bracts are phyllaries (involucral bracts)",
+  "fix": "In Asteraceae, 'not bracteate / ebracteate / without calyculus' said of the peduncle or involucre base is about bracteoles there, not the phyllaries. Scope it to the peduncle or calyculus, and keep phyllaries as a separate bearer.",
+  "reason": "Emilia lacks a calyculus (bractless peduncle) but has linear-oblong phyllaries.",
+  "confidence": 0.65
+ },
+ {
+  "id": "X00224",
+  "decision": "both_true",
+  "target": "inner pappus (pappus PO_0025393 with context FLOPO_0991378 inner) absent in ray flowers (PO_0025331); outer pappus of scales or setae present",
+  "fix": "'inner absent in ray florets' carries two contexts: the member (inner/outer pappus series) and the floret type. Keep both. A series member's absence does not deny the whole part.",
+  "reason": "Erigeron strigosus has a double pappus. Ray florets keep only the outer series.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00225",
+  "decision": "absence_misread",
+  "target": "bract (PO_0009055) + deciduous (generic) (PATO_0001730) only; no absence",
+  "fix": "'caducous, not seen' or 'not seen' means the part falls early and was missing from the specimens. Keep caducous (PATO_0001730) and never emit absent for 'not seen'.",
+  "reason": "The bracts exist but fall early. 'Not seen' is about the specimens.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00226",
+  "decision": "absence_misread",
+  "target": "stipule (PO_0020041) + deciduous (generic) (PATO_0001730) only; no absence",
+  "fix": "Same rule as X00225: 'not seen' is never absent.",
+  "reason": "Caducous stipules not seen on the specimens. This is the same sentence pattern as X00225.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00227",
+  "decision": "absence_misread",
+  "target": "bract (PO_0009055) + deciduous (generic) (PATO_0001730) only",
+  "fix": "Same rule as X00225: 'not seen' (also as a separate clause after 'caducous') is not absent.",
+  "reason": "The bracts are caducous and so were not seen.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00228",
+  "decision": "absence_misread",
+  "target": "stipule (PO_0020041) + deciduous (generic) (PATO_0001730) only",
+  "fix": "Same rule as X00225.",
+  "reason": "Caducous stipules, not seen on the specimens.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00229",
+  "decision": "both_true",
+  "target": "leaf lamina (PO_0020039) absent in the upper cauline leaves (context FLOPO_0991117 cauline / FLOPO_0991376 upper); basal leaves have scabrous blades",
+  "fix": "'(cauline/upper) leaves reduced to a bladeless sheath' scopes the lamina absence to that leaf series (cauline/upper). Carry the leaf member context. Never make it a taxon-wide lamina absence when other leaves are described.",
+  "reason": "Eriophorum vaginatum has filiform scabrous basal leaf blades and bladeless inflated culm-leaf sheaths.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00230",
+  "decision": "both_true",
+  "target": "bract (PO_0009055) leaflike in the lower inflorescence; reduced to absent in the upper part (context FLOPO_0991376 upper, region distal)",
+  "fix": "'reduced to absent above / upward / distally' is a gradient along the axis. Scope it to the upper members (FLOPO_0991376) and read 'reduced to absent' as a range from decreased size to absent, not a plain absence.",
+  "reason": "The lower bracts are leaflike. They become smaller and are missing toward the inflorescence apex.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00231",
+  "decision": "absence_misread",
+  "target": "no aerial (flowering) stem: the plant is acaulescent (no PATO/FLOPO term yet; do not use stem PO_0009047 + absent, since PO stem includes caudex); caudex branched stays on stem",
+  "fix": "'Stems absent / stemless / acaulescent' in floras means no aerial leafy stem. The plant still has a caudex or rhizome, both PO stem. Do not annotate PO_0009047 absent. Map it to a whole-plant habit quality (acaulescent) instead, or skip it.",
+  "reason": "PO 'stem' lists caudex as a synonym, so the branched caudex is a stem. The flora's 'stems absent' only denies aerial stems.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X00232",
+  "decision": "absence_misread",
+  "target": "scale leaf (PO_0006003) + absent (PATO_0000462), basal (FLOPO_0991002)",
+  "fix": "A compound noun 'scale-leaves / cataphylls / bud scales' maps to PO_0006003 scale leaf, not leaf. A head noun after a hyphen must not be stripped to its last word.",
+  "reason": "Only basal scale leaves are missing. Foliage leaves are present and alternate.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00233",
+  "decision": "absence_misread",
+  "target": "no annotation: pistillate flower (PO_0025599) and fruit not observed (unknown)",
+  "fix": "Same as X00218: 'not seen' means not observed, never absent.",
+  "reason": "Female flowers and fruit were not seen. Male flowers are described.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00234",
+  "decision": "both_true",
+  "target": "stem (PO_0009047) leafless in its upper part (region distal); leaves on the lower stem. Also: 'veins prominent' should go to vascular bundle (PO_0005020), not leaf",
+  "fix": "'leafless above / leafless distally' is a region of the stem without leaves, not an absence of leaves. Read 'leafless R' as 'stem region R has no leaves'.",
+  "reason": "Fagopyrum statice has basal or lower leaves and a leafless upper stem. The vein statement shows the plant has leaves.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00235",
+  "decision": "absence_misread",
+  "target": "leaf sheath auricle (PO_0020106) + absent (PATO_0000462)",
+  "fix": "In Poaceae and bamboos, 'auricles absent' is about leaf (or culm) sheath auricles, PO_0020106, never leaf. A part noun that does not map must not fall back to the parent organ of the clause.",
+  "reason": "The leaves are present (blade erect). Only the sheath auricles are missing.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00236",
+  "decision": "absence_misread",
+  "target": "stem (PO_0009047, culm) + not ribbed: negation of FLOPO_0991062 ribbed (surface quality), not stem absent. Also: 'pith spongy' should go to pith (PO_0006109)",
+  "fix": "'longitudinal ribs absent / without ribs / not ridged' is a negated surface quality of the bearer (not ribbed / smooth). Ribs are not a PO part, so the absence must not fall back to the bearer.",
+  "reason": "The culm exists (its pith is described). Only ribbing is denied.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00237",
+  "decision": "both_true",
+  "target": "leaf lamina (PO_0020039) absent in upper leaves (context FLOPO_0991376 upper; sheaths only); lower/basal leaf blades 3-ternate",
+  "fix": "'Upper leaf/leaves bladeless', 'uppermost bladeless', 'upper leaves reduced to sheaths' scope the lamina absence to the upper leaf series (FLOPO_0991376). It is not a taxon-wide absence.",
+  "reason": "In Ferula the upper cauline leaves are reduced to sheaths. The basal leaves have large dissected blades.",
+  "confidence": 0.92
+ },
+ {
+  "id": "X00238",
+  "decision": "both_true",
+  "target": "leaf lamina absent in upper leaves (FLOPO_0991376 upper); basal leaf blades 3-pinnatisect",
+  "fix": "Same rule as X00237.",
+  "reason": "Same Ferula pattern: the upper leaves are bladeless sheaths, the basal leaves are dissected.",
+  "confidence": 0.92
+ },
+ {
+  "id": "X00239",
+  "decision": "both_true",
+  "target": "leaf lamina absent in uppermost leaves (FLOPO_0991376 upper); lower leaf blades broadly ovate",
+  "fix": "Same rule as X00237: 'uppermost bladeless' carries the member context 'uppermost' (flora_context_words: upper).",
+  "reason": "Same Ferula pattern: the uppermost leaves are sheaths only.",
+  "confidence": 0.92
+ }
+]

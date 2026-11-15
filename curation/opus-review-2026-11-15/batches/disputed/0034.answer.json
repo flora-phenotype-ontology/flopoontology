@@ -1,0 +1,212 @@
+[
+ {
+  "rule_id": "R3342",
+  "decision": "constrain",
+  "target": "flower|flowers|inflorescence|inflorescences",
+  "reason": "The only data so far are 'flowers in large sprays' (22 statements, 1 flora), where spray is the inflorescence. But 'spray' also names flattened foliage branchlets in Cupressaceae and other conifers ('sprays flattened'). So map it only when flowers or an inflorescence is the context.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3343",
+  "decision": "constrain",
+  "target": "flower|flowers|inflorescence|inflorescences",
+  "reason": "Plural of spray; same reasoning as R3342 (conifer foliage sprays must not become inflorescences).",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3358",
+  "decision": "drop",
+  "target": "",
+  "reason": "In Nymphaeaceae the disk is not the stigma. In Nuphar the stigmatic disk is the flattened top of the ovary, with the stigmatic rays lying on it. In Nymphaea the stigmas sit in a cup, and the carpel tips (stigmatic appendages) stand around it. Its qualities in the data ('entire to crenate', 'occasionally reddened') are qualities of the disk margin and colour, not of the stigma. Papaver is the same: the disk is the sessile stigmatic cap of the ovary. Stigma (PO_0009073) is therefore wrong as the bearer. I could not check whether PO has a class for the ovary apex or a stigmatic region, so this word needs a new class or a 'stigma part of gynoecium' pattern, not a rule.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3375",
+  "decision": "constrain",
+  "target": "head|heads|capitulum|capitula|disc|disk",
+  "reason": "In Asteraceae heads the tubular florets are the disc florets (PO_0025332, synonym disc floret). Elsewhere 'tubular flowers' is a corolla-shape description of ordinary flowers. Map it only inside a head or capitulum.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3376",
+  "decision": "constrain",
+  "target": "capitule|capitules|tête|disque|head|capitulum|capitula",
+  "reason": "French form of R3375. 'Fleurs tubuleuses' are disc florets only inside an Asteraceae capitule; otherwise it describes a tubular corolla.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3388",
+  "decision": "drop",
+  "target": "",
+  "reason": "PO gemma (PO_0025614) is defined as a small ball of cells borne on a thallus. The data (Isopterygium, Pseudotaxiphyllum) describe uniseriate filamentous axillary propagula on leafy mosses, which do not fit that definition. The phrase also covers bulbils and brood bodies. No single existing class fits.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3389",
+  "decision": "constrain",
+  "target": "fig|figs|syconium|syconia|receptacle|receptacles|fruit|figue|figues|réceptacle",
+  "reason": "In Ficus the ostiole is the syconium opening (the data include 'fruit: ostiole 4-5 mm diam.' and 'ostiole bilabié'). But Carex treatments use 'ostiole margin' for the mouth of the perigynium beak (eflora-fop), and fungal or algal ostioles exist too. Map it only when a fig or receptacle part is the context.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3395",
+  "decision": "constrain",
+  "target": "leaf|leaves|frond|fronds|pinna|pinnae|leaflet|lamina|blade",
+  "reason": "In ferns (Lygodium, Dryoathyrium) the secondary rachis is the pinna rachis. The data also have Ilex 'secondary rachis glabrate', which is an inflorescence axis, and palm and grass panicles use the term the same way.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3398",
+  "decision": "constrain",
+  "target": "leaf|leaves|frond|fronds|pinna|pinnae|leaflet|lamina|blade",
+  "reason": "Spelling variant of R3395; same constraint.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3400",
+  "decision": "constrain",
+  "target": "feuille|feuilles|fronde|frondes|pinne|pinnes|foliole|limbe|leaf|frond|pinna",
+  "reason": "French form of R3395; it means the pinna rachis only on a compound leaf or frond, not on an inflorescence.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3406",
+  "decision": "keep",
+  "target": "",
+  "reason": "As a noun naming a bearer with its own shape, margin and size ('plicae broadly triangular', 'margin denticulate', 'plica apex acute'), 'plica' in the floras is the Gentianaceae corolla plica (Gentiana, Crawfurdia). Folds of leaves and palm blades are written 'plications', 'folds' or 'plicate', not 'plica'. A corolla constraint would lose the bare Gentiana statements.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3410",
+  "decision": "keep",
+  "target": "",
+  "reason": "Plural of plica; the data are Gentiana and Crawfurdia corolla plicae ('plicae broadly triangular, 2-4 mm long'). See R3406.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3430",
+  "decision": "keep",
+  "target": "",
+  "reason": "All occurrences are Bulbophyllum (FDAC 'stégidies', plazi B. anjozorobeense) with stelidium qualities: lateral column teeth that are tapering, triangular, filiform, 0.5-3 mm long, flattened and curved forward. It is the form of 'stelidia' used in that flora, not a different structure.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3436",
+  "decision": "keep",
+  "target": "",
+  "reason": "In floras, 'anther appendix' is the apical membranous appendage of the connective, as in Apocynaceae/Asclepiadoideae (data: Ruehssia 'apical membranous appendix') and Melastomataceae. Thecal outgrowths are usually called awns, spurs or tails. A constraint of 'connective|anther' would add nothing, because the word already contains 'anther'.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3437",
+  "decision": "drop",
+  "target": "",
+  "reason": "Anther tails are usually basal extensions of the thecae (Asteraceae caudate anthers, Ericaceae), not connective appendages. There is no existing thecal-appendage class, so no rule should map this word.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3458",
+  "decision": "keep",
+  "target": "",
+  "reason": "In Apocynaceae treatments (Flora of China Asclepiadaceae, FTEA, Flora Zambesiaca), 'stigma head' (stigma-head) is the standard name for the style head (clavuncle), and that is where the phrase occurs as a bearer. A capitate stigma elsewhere is described as 'stigma capitate', not 'stigma head'.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3459",
+  "decision": "keep",
+  "target": "",
+  "reason": "All data are Apocynaceae (Adenium obesum, Alafia caudata, Mascarenhasia arborescens: 'pistil head almost conical, 1-1.5 mm long'), where pistil head is the style head.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3467",
+  "decision": "drop",
+  "target": "",
+  "reason": "Pseudostaminode is mainly an Amaranthaceae term. 'Interstaminal appendage' is broader: it also covers interstaminal staminodes (Sapotaceae), filament-tube teeth and corona lobes. There is also a conflict: R2353 already maps 'pseudo-staminode' to staminode (PO_0009077). Do not add a third route.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3475",
+  "decision": "drop",
+  "target": "",
+  "reason": "'Corolla scale' covers Cuscuta infrastaminal scales, Boraginaceae fornices (already faucal appendage, FLOPO_0986115), Caryophyllaceae and Sapindaceae petal scales, and coronal scales. No single class fits.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3480",
+  "decision": "keep",
+  "target": "",
+  "reason": "'Article' of a fruit is the segment of a lomentaceous fruit (Aeschynomene, Desmodium, Ormocarpum; data: 'articles semicircular, 1 or 2 articles'). The segments of lomentaceous Brassicaceae fruits are loment segments too. Apiaceae mericarps are not called articles.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3481",
+  "decision": "drop",
+  "target": "",
+  "reason": "The data already mix meanings. Monanthotaxis (Annonaceae) has segments of moniliform monocarps ('segments globose'), and Ormocarpum has loment joints. 'Fruit segment' is also used for mericarps and citrus segments.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3482",
+  "decision": "keep",
+  "target": "",
+  "reason": "All flora data are Utricularia (35+ statements: 'traps globose, glandular, 1-2 mm long, mouth basal'). The other trap genera (Dionaea, Aldrovanda, Genlisea) are rare in these floras, and Nepenthes and Sarracenia are described as pitchers, not traps.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3483",
+  "decision": "keep",
+  "target": "",
+  "reason": "Plural of trap; same evidence as R3482 (Utricularia 'Traps numerous, globose').",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3507",
+  "decision": "constrain",
+  "target": "base|stem base|root crown|crown|rootstock",
+  "reason": "A basal burl (Vaccinium 'stem base a burl', Arctostaphylos) is a lignotuber. A burl on a trunk or branch is a woody outgrowth, not a lignotuber.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3518",
+  "decision": "keep",
+  "target": "",
+  "reason": "'Vagrant lamina' turns up only in Fissidens treatments (NYBG and others: 'vagrant laminae about half the length', 'unbordered'). It is a systematic misreading of 'vaginant lamina', with no other possible meaning, so the rule works as the spelling fix.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3519",
+  "decision": "keep",
+  "target": "",
+  "reason": "Plural of R3518; same Fissidens-only misreading of 'vaginant laminae'.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3520",
+  "decision": "drop",
+  "target": "",
+  "reason": "PO keeps teeth and lobes apart as separate classes (leaf lamina tooth PO_0025518 next to the lobe classes). Mapping teeth to involucre lobe would break that split, and we have no tooth class for the involucre. It needs an involucre-tooth class or a 'tooth part of involucre' pattern.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3521",
+  "decision": "drop",
+  "target": "",
+  "reason": "Adjective form of R3520; drop for the same reason.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3540",
+  "decision": "retarget",
+  "target": "plant cell (PO_0009002)",
+  "reason": "Follow R3661 'leaf cell': plant cell with container leaf (PO_0025034). 'Leaf cells' includes costal, alar and marginal cells, not only laminal cells.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3541",
+  "decision": "constrain",
+  "target": "spadix|spadices|spadice|inflorescence|inflorescences",
+  "reason": "The class is part of a spadix (Araceae). 'Male zone' is also used for unisexual zones of other inflorescences and for the androecial zone of flowers. Map it only on a spadix, or on an inflorescence where the spadix is meant.",
+  "confidence": "medium"
+ }
+]

@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P00000",
+  "decision": "existing_pattern",
+  "target": "docs/odp/11-ratio-of-two-dimensions.md",
+  "fix": "Read 'N-M times as long as wide' with a range below 1 as ratio length/width 0.5-0.8 on corolla lobe (PATO:0001470, unit ratio, numerator length, denominator width). Add a check that compares the ratio with the 'L by W' measurement in the same clause, and keep the row held when they disagree.",
+  "reason": "This is the ratio pattern. But the same clause gives the lobes as 15-20 by 10-14 mm, a length/width ratio of 1.07-2.0, so '0.5-0.8 times as long as wide' contradicts it (probably meant 'as wide as long'). It should not be annotated until a curator decides.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00001",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add 'may reach' (and 'can reach') to the inclusive upper-bound cues. Use the metric value given in parentheses (2 m) or the feet conversion, not both.",
+  "reason": "Whole plant width at most 2 m. A plain upper bound with a cue the parser does not know.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00002",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Add the reviewed pair caespitose FLOPO:0991007 / pulvinate PATO:0001357 to config/flora_union_pairs.tsv. Read the noun forms 'in tufts' -> caespitose and 'in cushions' -> pulvinate (like rule R0299 cushionlike). 'dense compact' is a degree word and is not kept.",
+  "reason": "Tufts or cushions are alternative growth forms of the moss colony, and both values exist.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00003",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept 'to ±' as an inclusive upper bound with value_qualifier approximately (pattern 01). Apply it to both numbers of 'L × W': leaf length <= 6 cm and leaf width <= 2.5 cm.",
+  "reason": "An approximate upper bound on leaf length and width. The '±' after 'to' blocks the cue.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00004",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "Leave held. Make sure the inch conversion never reads 'in diam.' as inches.",
+  "reason": "The source has no unit: Flora of China uses metric units and almost certainly dropped 'cm' ('3-4 cm in diam.'). Reading 'in' as inches would invent a value 2.5 times too large.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00005",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground the container 'lateral segments' (of the upper leaf blade) to leaf lamina lobe PO:0025517 with a bearer rule for 'segment(s)'. 'toothed' -> tooth is already in flora_counted_parts.tsv. Read '1-3-toothed or entire' as tooth count 0-3, since entire means no teeth (or as a union with entire).",
+  "reason": "A count in a word whose container is a word with no term yet.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00006",
+  "decision": "missing_term",
+  "target": "'(hairs) becoming sparse' -> rule to glabrescent FLOPO:0991052",
+  "fix": "Add a quality rule mapping 'becoming sparse' (of hairs, with age) to glabrescent on the leaflet's abaxial surface (slot 1). 'on older leaves' is the old reading (PATO:0000308) already in flora_context_words.tsv.",
+  "reason": "The golden hairs thin out with age, which is the glabrescent condition. The reddish hairs on the veins stay, so only the abaxial golden indumentum is meant.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00007",
+  "decision": "existing_pattern",
+  "target": "config/flora_context_words.tsv (kind A2, stage wording)",
+  "fix": "Add \"second year's\" / 'second-year' as a bearer-state reading (old PATO:0000308, or a stage row) restricted to branchlets/twigs. The annotation is: branch has part lenticel PO:0000031 present, lenticel raised and elliptic.",
+  "reason": "'in the second year' is listed as A2 wording that needs table rows. The structure is otherwise ordinary.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00008",
+  "decision": "existing_pattern",
+  "target": "config/flora_context_words.tsv (kind unscoped) and FLOPO:0991020 foetid",
+  "fix": "Add 'when crushed' as an unscoped reading for odour qualities: the plant has the odour, and crushing only releases it. Add 'foul-scented' as a synonym of foetid FLOPO:0991020. The coordinated bearers foliage, branches, flowers give three records.",
+  "reason": "Not a process: an odour of the living plant, tested by crushing. Not a dried-specimen condition.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00009",
+  "decision": "new_pattern",
+  "target": "count of branches of a branched part",
+  "fix": "Record the tendril as branched PATO:0000402 (OWL), with the number of branches 2-3 (unit count) in RDF and the '2- or 3-' cue (read as the range 2-3). An 'N-branched' row in flora_counted_parts.tsv would need a 'tendril branch' anatomy class, which PO lacks; ground 'tendril' to PO:0025364 branch tendril or its parent class for Cucurbitaceae.",
+  "reason": "'2- or 3-branched' counts the branches of the tendril. 'branched' is not in the counted-parts table, and the branch of a tendril has no part term.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00010",
+  "decision": "new_pattern",
+  "target": "member of an unequal series",
+  "fix": "A bearer slot for a size-defined subset of like parts ('the longer stamens', 'the shorter filaments'): bearer stamen with a series-member qualifier 'longer' plus its cue, combined with pattern 09 (increased length towards calyx lobe) and pattern 12 (part of a short-styled flower). OWL: the relation only on the qualified subset; the member qualifier in RDF.",
+  "reason": "Only the longer stamens of the short-styled morph exceed the calyx lobes. Stating it of all stamens would be false.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00011",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Count mericarp PO:0020075 (the 'fruits' are nutlets, see rule R2921 nucule) with container fruit and an inclusive upper bound of 4 (pattern 02, cue 'up to'). Ground the 'each flower' container to one flower = one fruit.",
+  "reason": "Boraginaceae flowers give a fruit of up to 4 nutlets. The flora's 'fruits' are mericarps, so the container failed to ground.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00012",
+  "decision": "missing_term",
+  "target": "comb-fibril (Sphagnum): comb-like fibrillar thickenings on the inner walls of cortical or hyaline cells",
+  "fix": "Add a FLOPO anatomy class for comb-fibril, then annotate comb-fibril absent (negated presence, cue 'lacking') with the place 'interior wall' (slot 1, inner side). The transcribed entity 'stem' should become comb-fibril, part of stem cortical cell.",
+  "reason": "'lacking' has its second term here (the comb-fibrils), but no class exists for it, and the stem is not the bearer.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00013",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The entity should be sepal, part of a female flower (pattern 12), with eglandular by rule R0003 (gland absent). The negation is inside the word, so 'eglandular' itself must count as the cue.",
+  "reason": "'all eglandular' refers to the 6-8 sepals of the female flowers, not the whole plant.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00014",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Add French comparison cues 'plus court(e)s que' and 'égalant'. Ground 'carène' to keel petal PO:0025326 and 'ailes' to wing petal PO:0025325. 'shorter or equalling' is a ratio of at most 1: length towards keel petal (pattern 10 table: a range that includes 1 -> length).",
+  "reason": "The relation and its second part are both stated. Only the French cues and the 'carène' grounding are missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00015",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Read fractions as ratios and restore the mixed number '11/4' as 1 1/4 (FNA formatting lost). Perianth tube length towards spathe, ratio 0.67-1.25 (spans 1 -> length), with '±' as approximately.",
+  "reason": "A ratio to another part given as fractions, not a measurement missing its unit.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00016",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Keep '3-lobed' as the quality trilobed PATO:0002241 (the counted-parts rule) on the basal leaf blade, and read 'apically' as a region (slot 1, apex), not a count position. '3-lobed to pinnatifid' is a continuum.",
+  "reason": "'apically' says where the lobing is. It is not a count at a position.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00017",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Add a reviewed pair to flora_union_pairs.tsv: oblique orientation PATO:0002481 or 'curved upward' (ascending-curved, not recurved PATO:0002211). Attach it to the fruiting stage ('in fruit').",
+  "reason": "Two orientations of the fruiting pedicel. 'recurved upward' is curved-ascending, so mapping it to recurved would be wrong.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00018",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add the French ending 'denté' -> tooth (corolla lobe) to config/flora_counted_parts.tsv. 'au sommet' is a region, not a count position. The container is the corolla of the female florets (pattern 12): corolla lobes 2-3.",
+  "reason": "A count in a word with a French ending that is not in the table.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00019",
+  "decision": "new_pattern",
+  "target": "depth of division",
+  "fix": "Slots: bearer (leaf lamina), division quality (palmately parted), and depth as a fraction of the bearer's length (0.5-0.67, unit ratio, 'their length' as the reference dimension). OWL: only the division quality; the depth fraction in RDF like a ratio.",
+  "reason": "Listed as open in annotation-context-patterns.md ('divided 1/3-2/5').",
+  "confidence": "high"
+ },
+ {
+  "id": "P00020",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (growth-form rows Q09-Q14)",
+  "fix": "Give 'liana'/'liane' an EQ signature: whole plant PO:0000003 with climbing FLOPO:0991108 and ligneous PATO:0002348, instead of the primitive class FLOPO_0900035. Add French 'liane' as a synonym.",
+  "reason": "The value classes exist now; the primitive growth-form classes held since 2026-09-18 can be defined by them (as in the previous review, P00136).",
+  "confidence": "high"
+ },
+ {
+  "id": "P00021",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (growth-form rows Q09-Q14)",
+  "fix": "Map 'climber' to whole plant PO:0000003 + climbing FLOPO:0991108. FLOPO_0985031 can get this as its equivalence instead of staying primitive.",
+  "reason": "Same as the previous review's P00077: the value exists, only the rule is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00022",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Take the container from the noun the parentheses belong to ('margins ... (teeth 0-6)' -> distal cauline leaf lamina) and count tooth 0-6. No position cue is involved.",
+  "reason": "A plain count of marginal teeth. The parentheses were misread as a position.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00023",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Split the quality 'shorter than corolla' into decreased length PATO:0000574 with towards corolla PO:0009059 and the comparison cue. comparison() already reads 'shorter than X'.",
+  "reason": "A textbook case of pattern 09, but the transcription put the comparison and its target into the quality.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00024",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "The container is the staminate spike scale of the sentence. Ground Carex 'scale' to a floral bract, not to the trichome synonym 'scale'. 'center' is a region (slot 1, median region), so 3 veins in the scale's center.",
+  "reason": "'three-nerved' is a count in a word; the container ('scales') is in the clause but 'scale' grounds to the wrong PO class.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00025",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (growth-form rows Q09-Q14)",
+  "fix": "'herbaceous climber' -> whole plant with climbing FLOPO:0991108 and herbaceous. 'Large' is vague and is not kept.",
+  "reason": "Same growth-form rule as P00021.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00026",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/flora_review_rules.tsv R0054 (beakless = not beaked)",
+  "fix": "Let the negating affix of a rule word ('-less', 'e-', 'a-') serve as its own negation cue, so the negation gate accepts it within the span.",
+  "reason": "The rule exists (negation of beaked FLOPO:0991028); the gate looks for a separate negation word that cannot exist here.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00027",
+  "decision": "existing_pattern",
+  "target": "docs/odp/12-part-of-qualified-whole.md",
+  "fix": "Container palea PO:0009038, which is part of a sterile spikelet (context word 'sterile' already allows spikelet). Keel count 2 by the 'keeled' row. 'unequally' says the keels differ and is not a position.",
+  "reason": "A count in a word on the palea of the sterile spikelets.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00028",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Bearer vitta FLOPO_0986042 (rule R2361), container fruit/mericarp PO:0020075, count 2-3 with a count_position of a new kind 'per_furrow' ('in each furrow'; landmark vallecula if a class exists, else none).",
+  "reason": "A count per furrow, like 'per node'. Only the kind of place and the container are missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00029",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Strip 'nearly' as approximately (pattern 01) and 'palmately' as the arrangement. Split '3-parted' by the 'parted' -> lobe row: leaf lamina lobes 3, palmately arranged.",
+  "reason": "A count in a word with an approximation cue and a manner adverb that blocked the split.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00030",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Annotate the corolla's outer surface (slot 1) as pubescent with glandular hairs present. 'eglandular' describes some of the hairs, not the corolla.",
+  "reason": "The corolla bears both glandular and eglandular hairs, so it is not eglandular.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00031",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (growth-form rows Q09-Q14)",
+  "fix": "'climbing shrub' -> whole plant with climbing FLOPO:0991108 and ligneous PATO:0002348 (shrub).",
+  "reason": "Same growth-form rule as P00021.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00032",
+  "decision": "new_pattern",
+  "target": "exsertion length",
+  "fix": "Filament exserted PATO:0000623 towards perianth tube (OWL, pattern 09). The length of the part that sticks out, ± 2.5 mm, is a measurement of that portion with the cue 'exserted ... from the tube', stored in RDF and marked approximate.",
+  "reason": "The number measures how far the part projects beyond another, not the part's own length. No pattern covers this.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00033",
+  "decision": "new_pattern",
+  "target": "optional part",
+  "fix": "Pedicel record with decreased length plus a presence of 'optional' (cue 'or absent'). OWL: only 'flower sessile or with a short pedicel' as a union where the reviewed pair exists; otherwise RDF only, since 'present or absent' says nothing about every plant.",
+  "reason": "A union of a quality of the part with the part's absence. Pattern 07 unions values of one bearer and cannot express this.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00034",
+  "decision": "new_pattern",
+  "target": "part present at a position",
+  "fix": "Bearer shoot axis node PO:0005004 of the stem, with part shoot-borne (adventitious) root PO:0000042 present, negated (cue 'never'). OWL: no class for the negation (outside EL); RDF records negated presence with the place.",
+  "reason": "'rooting at the nodes' is the presence of adventitious roots at the nodes, listed as open in annotation-context-patterns.md.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00035",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Allow 'merous' when the bearer is a single whorl (corolla -> petal/corolla lobe, calyx -> sepal, perianth -> tepal): count 5 with container corolla. Add 'in mature bud' to flora_context_words.tsv as a stage (flower bud).",
+  "reason": "'merous' is excluded because it names no single part, but on a corolla it plainly counts petals.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00036",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The entity should be trichome (hairs, rule R2229) on the twig (stem), with length (0.5-)1 mm as a range with an extreme (pattern 05). Fix the OCR 'l' -> '1'.",
+  "reason": "The quality slot holds the noun 'hairs' and the stem is not the measured part.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00037",
+  "decision": "new_pattern",
+  "target": "bound on the maximum",
+  "fix": "Record that the largest stems exceed 50 cm (RDF: fb:maxAtLeast 50 cm with the cue 'to more than'). No OWL lower bound, which would claim that every stem exceeds 50 cm. Quality: length, not height, for ascending stems.",
+  "reason": "Listed as open ('a bound on the maximum'). It is neither an upper bound nor a lower bound of the range.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00038",
+  "decision": "new_pattern",
+  "target": "before or after a stage",
+  "fix": "Spathe blade deciduous PATO:0001731 with a stage relation 'after' PO flowering stage (cue 'after flowering'). OWL: deciduous only; RDF: fb:afterStage. The model has only present_during. Ground 'spathe-blade' to spathe.",
+  "reason": "Listed as open in annotation-context-patterns.md (A2 before/after a stage).",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00039",
+  "decision": "existing_pattern",
+  "target": "docs/odp/12-part-of-qualified-whole.md",
+  "fix": "Bearer: Salix 'glands' -> flower nectary PO:0009056, part of a male flower (pattern 12, cue 'Male flower:'), connate FLOPO:0991067 with 'basally' as a region (slot 1).",
+  "reason": "The context is the sex of the flower (kind B), not a developmental stage, and the adaxial and abaxial nectaries are like parts fused at the base.",
+  "confidence": "medium"
+ }
+]

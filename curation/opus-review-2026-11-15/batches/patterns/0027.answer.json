@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P01080",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Add 'on both sides' as an each_side cue for counts. Read it as: lobe, amount 3-4, count_position each_side, container leaf lamina. config/flora_context_words.tsv has 'on both sides' as unscoped, which is right for surface qualities but not for a count, so this reading must apply only when the statement is a count. 'doubly serrated' and 'shallowly cleft' are separate statements.",
+  "reason": "'3-4 lobes on both sides' gives the number per side of the blade, not for the whole leaf. That is pattern 14.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01081",
+  "decision": "transcription_error",
+  "target": "entity: trichome PO:0000282, part of petiole (and rachis); quality: length PATO:0000122, 0.3-0.5 mm",
+  "fix": "Re-transcribe with the hairs as the bearer, part of the petiole, measured as a length. 'appressed to slightly ascending' and 'tangled' are separate qualities of the hairs.",
+  "reason": "'hairs' is not a quality of the petiole. The numbers are the length of the hairs, not of the petiole.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01082",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "flora_counted_parts.tsv has 'angled -> angle', so split '6-angled' into angle, amount 6, container stem. Keep 'obscurely' as a degree qualifier. '6-angled to terete' joins a count and a shape. Read it as a union across attributes (pattern 07, secondary), not as a continuum.",
+  "reason": "This is a count inside a word. The annotator looked for a unit and missed the count split.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01083",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1, kind C region)",
+  "fix": "Add the forms with 'their' ('along their margins', 'toward their apices') to config/flora_context_words.tsv. Allow two stacked regions: the margin (the culm angles) inside the apical region. Result: culm (stem PO:0009047), rough PATO:0000700, in a margin region within the distal region, degree 'slightly'.",
+  "reason": "'along their margins toward their apices' gives places on the culm, not a stage. The rows exist only without 'their', and only one region is read at a time.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01084",
+  "decision": "transcription_error",
+  "target": "entity: basal scale (appendage) of the stamen filament, part of stamen; quality: length 2-8 mm, width up to 3 mm",
+  "fix": "The bearer is the scale at the base of the filament, not the stamen. It needs a part-of-stamen bearer (no PO class was found, so a FLOPO anatomy class or a pinned part). Also teach pattern 02 the form 'L × to W mm': the width is an inclusive upper bound with the cue 'to'.",
+  "reason": "The measurements belong to the scale. Saying the stamen is at most 3 mm wide would be a false statement.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01085",
+  "decision": "missing_term",
+  "target": "twining: a value of the stem (and plant) for climbing by winding helically round an external support. Child of climbing FLOPO:0991108, as the value behind phenotype FLOPO:0985034 'twining climbing phenotype'",
+  "fix": "Add a FLOPO value class 'twining' (French synonym 'volubile') under climbing FLOPO:0991108, and give FLOPO:0985034 the signature stem + twining. Keep 'anticlockwise' in the RDF as the direction of winding. Do not make a term for it now: dextrorse and sinistrorse are used both ways in the literature.",
+  "reason": "FLOPO:0985034 exists but has no part + quality signature, which is exactly why this was held. 'twining' is common in floras and is narrower than 'climbing'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01086",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (kind C region; phrase reading)",
+  "fix": "Add a reviewed reading: 'narrowed/attenuate/tapering to (at) both ends' on a single organ means fusiform PATO:0002400 (tapering at each end). Do not read 'both ends' as a stage. 'ventricose at the middle' is a separate statement.",
+  "reason": "'narrowed to both ends' describes the overall shape of the corolla, and PATO already has a term for it. There is no stage here.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01087",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1 region margin; kind D member)",
+  "fix": "Read 'upper sepal' as sepal with the FLOPO position value 'upper' (kind D). Add 'lower margin' as a region row: the margin of the organ, BSPO-pinned. Result: length about 1.8 cm of the lower margin of the upper sepal (galea), with 'ca.' as approximately (pattern 01).",
+  "reason": "The length of the lower edge of the helmet is a standard Aconitum measurement. 'lower' names a place, not a stage.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01088",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add 'N or more' as an inclusive lower-bound cue for counts, so it is not treated as an 'or' alternative. Result: flower, amount >= 12, container inflorescence (cyme), frequency 'often'.",
+  "reason": "'12 or more' is a lower bound, not a choice between two values.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01089",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "'exceeding' is already read. What is missing is grounding the elliptical noun 'compounds' (compound clusters of the inflorescence) to inflorescence PO:0009049, as the towards target. Result: bract with increased length PATO:0000573, towards inflorescence. Hold the row if that grounding is not reviewed.",
+  "reason": "The comparison is clear, but the second term is an elliptical noun that has no grounding.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01090",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Normalise the FOC double hyphen ('2--4-lobed') before splitting compound words. Result: lobe, amount 2-4. The container is the apex of the central lobe of the labellum, not the whole labellum.",
+  "reason": "This is a count inside a word, of the apex of the labellum's central lobe. The '--' range defeats the compound splitter.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01091",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Skip the parenthetical comment ('mostly with ... acumen') between the values. Read 'acuminate PATO:0002228 to rounded' as a continuum on the leaf lamina apex. Take '(to emarginate)' as a rarer further value (pattern 08 with an implied 'rarely'), or leave it out.",
+  "reason": "This is a continuum of apex shapes, broken by an inserted comment in parentheses.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01092",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Read the union acute PATO:0000389 | obtuse with value_qualifier approximately ('sub-', pattern 01), on the leaf lamina base PO:0008019. Restrict the bearer to leaves of young sterile branches (pattern 12). Otherwise it contradicts the fertile-branchlet blades, which are 'obtuse at each end'.",
+  "reason": "This is a plain union of two base shapes with 'sub-'. The leaves are dimorphic, so the qualified whole must be kept.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01093",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "The pair spreading|recurved is already accepted in config/flora_union_pairs.tsv (row 21). Let an accepted pair also resolve 'X to Y' as a union when the two values are under different PATO attributes, so no continuum is possible. Bearer: calyx lobe (part of calyx), not sepal.",
+  "reason": "The values exist and the pair is reviewed. Only the continuum form 'to' fails, because the attributes differ.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01094",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add 'can reach' / 'reach' as inclusive upper-bound cues ('reaching' is already one). Prefer the metric value in parentheses (3 m), or convert 10 ft to SI as done since 2026-11-15. Result: whole plant height <= 3 m. 'and wide' gives a width with the same bound.",
+  "reason": "This is an upper bound with a cue form the parser doesn't know.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01095",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Parse 'L × to W mm': length 17-20 mm, width an inclusive upper bound of 7 mm, with the cue 'to' after '×'.",
+  "reason": "The cue 'to' is in the width slot of a length × width pair, which the parser doesn't handle.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01096",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Transcribe the whole list 'elliptic, oblong, or lanceolate' as one one_of on the calyx lobe, not the fragment 'or lanceolate'. Splitting a comma list with a final 'or' must keep all three operands.",
+  "reason": "This is a union of three shapes of one attribute. Only the last operand was transcribed.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01097",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read 'to 10 cm' inside the parentheses as an inclusive upper bound on leaf blade length (cauline leaves). Drop 'smaller distally' from the span: it is a gradient along a series, which is open and needs no term.",
+  "reason": "The bound is clear, but the parentheses and the trailing gradient comment block the cue.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01098",
+  "decision": "transcription_error",
+  "target": "statement spans the whole sentence; split into capsule length 0.75-1 mm and capsule smooth | wrinkled when dry",
+  "fix": "Split the sentence. The length is a plain measurement. 'smooth or wrinkled when dry' is a union smooth PATO:0000701 | wrinkled PATO:0001810 (add the pair to flora_union_pairs.tsv if it is missing) with specimen_condition dry (pattern 06). 'ovoid' is a third statement.",
+  "reason": "The transcribed length doesn't contain the 'or'. The disjunction belongs to a different statement in the same span.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01099",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Read a one_of on sepal with three operands: orbicular with approximately ('sub-', pattern 01) | ovate (degree 'broadly') | 'lance-ovate' as a continuum lanceolate PATO:0001877 to ovate. This needs the union to accept a continuum operand and a degree word.",
+  "reason": "This is a union of shapes of one attribute, but one operand is a hyphenated intermediate and one has a degree word.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01100",
+  "decision": "transcription_error",
+  "target": "entity: glandular trichome (gland-tipped hairs), part of fruit; quality: length 2-2.5 mm",
+  "fix": "Re-transcribe with the hairs as the bearer, part of the fruit, length 2-2.5 mm. Accept 'mm.' with a full stop as the unit. 'red' is a separate colour of the hairs.",
+  "reason": "The length is that of the hairs. 'hairs' as a quality of the fruit is wrong.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01101",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1, surface 'outside')",
+  "fix": "Allow the surface 'outside' on the spathe and its tube (a bract, so it fits the rule for single perianth members and bracts). Transcribe the full union of colours: reddish green | medium green | dull purple-violet, on the outer surface. '(dark green post-anthesis)' belongs to the inside colour and is a stage reading.",
+  "reason": "'outside' is a surface, not a stage. The spathe tube wasn't recognised as a bract-like bearer.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01102",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'with N <part>' as a count: lobe, amount 2, with the container at the style apex (the stigma lobes). Or, by the existing rule, bilobed PATO:0002214 on the apex region of the style. 'very short' is a separate decreased length of the lobes. 'subcapitate' is a separate shape with approximately.",
+  "reason": "This is a count of parts written as 'with 2 lobes'. No unit is needed.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01103",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add French comparison cues ('plus grand(s) que', 'plus court(s) que', 'plus long(s) que') and resolve the elliptical target 'les externes' to the bearer's own noun with the outer position (petal + FLOPO outer). Result: petal with position inner, increased size, towards petal with position outer, degree 'légèrement'.",
+  "reason": "A comparison with an explicit second term, but in French and elliptical.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01104",
+  "decision": "transcription_error",
+  "target": "statement spans the whole bract sentence; the transcribed quality is sessile only",
+  "fix": "Split the sentence. Bract sessile, with 'above soil level' read as the member of the series (kind D; add a row). The margin union (entire | erose to irregularly toothed) is a separate statement. 'sessile' itself contains no disjunction.",
+  "reason": "The 'or' that held the row belongs to the margin clause, not to 'sessile'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01105",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add the rule 'N-seriate' with N >= 3 -> multiseriate FLOPO:0991084 (defined as more than two series), with N kept in the RDF as the number of series. '2-seriate' -> biseriate FLOPO:0991089.",
+  "reason": "The existing term covers it exactly. A rule is better than a new count of series.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01106",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation)",
+  "fix": "Add 'acaulescent' and 'stemless' as lexical negation cues (like 'leafless'). Use negation_scope 'evident above-ground stem', not literal absence of every stem, following the curator decision of 2026-09-18 (FLOPO-PATTERN:stem_number_or_absence). 'annual herb' is a separate habit statement.",
+  "reason": "This is a qualified absence of the stem. The word itself is the cue, and the annotator found none.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01107",
+  "decision": "transcription_error",
+  "target": "entity: trichome PO:0000282 at the stipule margin, part of stipule; quality: length about 1.5 mm",
+  "fix": "Re-transcribe with the hairs as the bearer: part of the stipule, in the margin region, length 1.5 mm with approximately. 'basifixed' is a separate attachment quality of the hairs.",
+  "reason": "The length belongs to the hairs, not to the stipule.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01108",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Add the cue form 'each node with N X' (per_node). Result: branch, amount 3, count_position per_node, container the inflorescence axis. Split the long span. 'with 4-7 nodes' is a separate count of nodes (pattern 03). 'perpendicular to rachis' is pattern 09.",
+  "reason": "A count per node in reversed word order, inside an over-long span.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01109",
+  "decision": "transcription_error",
+  "target": "entity: stipe of the ovary (gynophore), not style; quality: inserted into PATO:0000624 towards receptacle (centre)",
+  "fix": "Re-transcribe with the bearer as the stipe of the ovary. Then pattern 09 'inséré' -> inserted into, target receptacle, with 'au centre' kept as the region.",
+  "reason": "The text says 'stipe inséré', not style.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01110",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground the noun 'cell' (of the ovary) to locule, as in the existing 'celled -> locule' row. Read 'in each X' as the container. Result: ovule, amount 2, container locule. 'apical, axile' is the placement. '(in New Guinea)' restricts it to a region and should be kept as a note.",
+  "reason": "The count is clear, but the container 'cell' is not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01111",
+  "decision": "existing_pattern",
+  "target": "config/flora_counted_parts.tsv (pattern 03)",
+  "fix": "Add the row 'ridged -> rib'. Result: rib, amount 4, container pseudobulb, frequency 'often'.",
+  "reason": "This is a count inside a word, but its ending is missing from the table.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01112",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Read 'containing many X' with the count word 'many'. Result: flower present, container inflorescence (verticillaster), count_word many. 'white' is a separate colour of the flower.",
+  "reason": "Pattern 13 covers indefinite counts. It doesn't need a count term.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01113",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'pinnately' / 'palmately' describe how the leaf is divided, not a place. Don't route them to count_per_position. Result: lobe, amount 3-5, container leaf lamina, frequency 'usually', degree 'deeply'. Pinnately lobed is a separate shape statement.",
+  "reason": "This is an ordinary count inside a word. 'pinnately' was misread as a position.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01114",
+  "decision": "new_pattern",
+  "target": "bound on the maximum",
+  "fix": "Slots: bearer, attribute, unit, and a lower bound on the largest size reached (value_max_extreme_low = 1 m), with the cue 'to at least'. RDF only, with no OWL range: not every plant reaches 1 m, and the true maximum is not known.",
+  "reason": "'to at least 1 m' is not an upper bound. It says the largest plants are at least 1 m.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01115",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Split at 'but' into two relations with the same target, perigynium PO:0009044: decreased length PATO:0000574, degree 'much'; and the same width with approximately (pattern 10, 'nearly as wide as'). The bearer is the pistillate scale: the floral bract of the female flower (pattern 12).",
+  "reason": "Two comparisons with one explicitly named part, joined by 'but'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01116",
+  "decision": "missing_term",
+  "target": "twining (French 'volubile'): a value of the plant or stem for climbing by winding helically round a support. Child of climbing FLOPO:0991108, the value behind FLOPO:0985034",
+  "fix": "The same term as for P01085, with the French synonym 'volubile'. Then read 'étalées ou volubiles' as a union with spreading PATO:0104356 (the pair needs review).",
+  "reason": "Same case as P01085: the twining phenotype class has no part + quality signature.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01117",
+  "decision": "transcription_error",
+  "target": "quality: thickness PATO:0000915 of the fruit (third dimension), 9-11 mm",
+  "fix": "Ground 'broad' to thickness when length and width have already been given for the same organ in the clause. Alternatively, add a context rule: the third dimension after 'long' and 'wide' is thickness.",
+  "reason": "'broad' after 'wide' is the third dimension of the pod, not a second width.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01118",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add 'subtended by' (listed as unread under Limits). Read it in reverse: the spatheole (a bract; it needs a grounding to bract or a FLOPO anatomy class) is present and subtends the inflorescence. Without a reviewed relation quality, keep it as presence plus the source words in RDF.",
+  "reason": "This is a positional relation to another part, a case the pattern names as open.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01119",
+  "decision": "transcription_error",
+  "target": "quality: slender PATO:0002212 on style PO:0009074",
+  "fix": "Ground 'slender' to slender PATO:0002212, not to the general attribute 'shape', which made the annotator look for a measurement. 'white' is a separate colour statement.",
+  "reason": "The value term exists. Transcribing it as the attribute 'shape' is wrong.",
+  "confidence": "high"
+ }
+]

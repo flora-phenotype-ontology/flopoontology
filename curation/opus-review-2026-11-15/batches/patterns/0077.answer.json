@@ -1,0 +1,226 @@
+[
+ {
+  "id": "P03080",
+  "decision": "new_pattern",
+  "target": "comparison with an implied second term",
+  "fix": "Bearer sepal with the series position upper (FLOPO upper value as bearer_context_quality); quality increased width PATO_0000600 with towards = sepal with position lower, taken from the preceding clause 'lower sepals'. OWL: has_part some (sepal and upper and has_characteristic some (increased width and towards some (sepal and lower))); RDF keeps the comparison cue 'broader' and the implied term's cue.",
+  "reason": "'broader' compares the upper sepals with the lower sepals named in the previous clause; the second term is implied, not missing, which is the open 'upper leaves smaller' construction.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03081",
+  "decision": "missing_term",
+  "target": "complex grappling-hook trichome: a trichome of Loasaceae (Mentzelia) whose shaft bears several whorls of retrorse barbs, besides the apical anchor; sibling 'simple grappling-hook trichome' with only the apical whorl. A FLOPO anatomy class under PO trichome PO_0000282",
+  "fix": "With the class, the statement is presence of the trichome on the leaf lamina abaxial surface (surface reading of 'abaxial surface', already in flora_context_words.tsv). The same list also gives simple grappling-hook and needlelike trichomes.",
+  "reason": "The surface context is already handled; what is missing is the bearer. PO trichome (synonyms glochid, barb trichome) is too coarse, and glochid names a different structure of the Cactaceae.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03082",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (kind A stage 'in fruit', kind C region 'apically')",
+  "fix": "Both cues are in config/flora_context_words.tsv. Split the span into its two clauses: 'apically pilose but otherwise glabrous' gives calyx lobe apex pilose (region reading). 'lobes in fruit ... often gland-tipped pilose' gives calyx lobe pilose and glandular hairs during fruit development stage PO_0001002, with frequency_qualifier often. The stage cue must reach the predicate across the comma list of the same subject.",
+  "reason": "The statement 'pilose' occurs twice with two different, already-readable contexts, and the annotator held it instead of resolving each one.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03083",
+  "decision": "missing_term",
+  "target": "collerette: the persistent collar or rim at the summit of the fruiting hypanthium of Melastomataceae capsules, lobed by dehiscence; a FLOPO anatomy class, part of hypanthium PO_0009065",
+  "fix": "With the container, '4-lobée' is a count of lobes (pattern 03, French row 'lobée → lobe' in flora_counted_parts.tsv if missing), value 4, container collerette. 'par la déhiscence' is the cause and stays in RDF.",
+  "reason": "The count construction is fine; the counted lobes belong to a structure with no PO or FLOPO class.",
+  "confidence": "low"
+ },
+ {
+  "id": "P03084",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md (with docs/odp/05-range-with-extremes.md)",
+  "fix": "'angled → angle' is in flora_counted_parts.tsv. The compound splitter must accept a parenthesised extreme inside the number, 'N(-M)-xed': count of angles 4, value_max_extreme 6, container capsule. 'acutely' is a second statement (acute angles) or is dropped.",
+  "reason": "It was read as a measurement without a unit; it is a counted-part compound with a range extreme.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03085",
+  "decision": "new_pattern",
+  "target": "vague count",
+  "fix": "Flower count in the inflorescence (the rachis is inflorescence axis PO_0020122, so the container is the inflorescence). The low end is the count word 'several', the high end an open bound '> 10'. OWL: presence only, as in pattern 13; RDF: fb:countWord 'several' as the lower end and value_low_exclusive 10 as the upper end.",
+  "reason": "Pattern 13 explicitly holds ranges like 'several to many'; a range from a count word to a numeric bound needs its own representation.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03086",
+  "decision": "missing_term",
+  "target": "wide-spreading: exact synonym of divaricate FLOPO:0991080 (which already has 'widely spreading' as a related synonym); no new class",
+  "fix": "Then: leaf with position proximal (in flora_context_words.tsv), continuum spreading PATO_0104356 to divaricate, specimen_condition moistened ('when moist', in the table).",
+  "reason": "The continuum and both contexts are handled; only the second value fails to ground.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03087",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation, 'no petals, leafless') and docs/odp/12-part-of-qualified-whole.md",
+  "fix": "Add a lexical rule: eglandular → glandular PATO_0002117, negated, with the 'e-' prefix of the word as the negation cue (offsets inside the word), the same way as 'leafless'. The bract is part of the male inflorescence (pattern 12).",
+  "reason": "The negation is in the word itself, so the annotator found no separate negation cue in the span.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03088",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'ribbed → rib' is already in flora_counted_parts.tsv; ground the container from the sentence organ (Achenes) and emit a rib count of 10.",
+  "reason": "A plain 'N-ribbed' compound with a table row was not split.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03089",
+  "decision": "new_pattern",
+  "target": "habit_noun_as_phenotype",
+  "fix": "Map each POWO habit noun to whole plant PO_0000003 plus a quality: Herb → herbaceous PATO_0002352, Epiphyte → epiphytic FLOPO:0991110, Climbing → climbing FLOPO:0991108, Subshrub → a woody-base habit. Read the comma list after 'Habit:' as one_of alternatives (pattern 07). OWL: whole plant and has_characteristic some (Q1 or Q2 or ...).",
+  "reason": "Nothing in it is negated; the held construction is a list of habit nouns.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03090",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept 'to' inside parentheses as an upper-bound cue. Better: read 'from ... (5–10 cm) to ... (to 1 m)' as whole-plant height 5 cm to 1 m, with the habit adjectives (dwarf, erect, much-branched) as separate statements.",
+  "reason": "This is a height range across habit forms; the bound cue sits inside a parenthesis that the cue list does not accept.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03091",
+  "decision": "new_pattern",
+  "target": "projection beyond another part",
+  "fix": "Bearer style, exserted beyond the stylar orifice of the hypanthial disc (towards = hypanthium PO_0009065 or its disc), with the projection length 1–2 mm. OWL: has_part some (style and has_characteristic some (exserted and towards some hypanthium)); RDF: fb:projectionLength 1–2 mm with the landmark cue.",
+  "reason": "Pattern 09 gives the relation but not a measured distance past a landmark; the earlier review proposed this pattern.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03092",
+  "decision": "new_pattern",
+  "target": "exception to a general statement",
+  "fix": "'glabrous throughout' gives whole plant glabrous with an exception slot, and the excepted part gives the inverse statement: perianth lobe adaxial (inside) surface hairy. OWL: the general glabrous class only with 'and not' the excepted part, or RDF-only for the general statement; the exception is a firm hairy statement.",
+  "reason": "The transcribed 'perianth lobe glabrous' is the opposite of what the text says; annotating it needs the exception construction.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03093",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "'numerous' is listed in INDEFINITE_AMOUNTS; it stands as the third member of a comma list after 'Basal leaves'. Read it as count_word many for leaf in whole plant, with bearer state basal FLOPO:0991002 (kind D).",
+  "reason": "A covered word in a predicate list after other values was missed.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03094",
+  "decision": "missing_term",
+  "target": "open / diffuse said of an inflorescence: rules to loose PATO_0001802 (as 'lax' in the 2026-11-13 review); no new class. Block PATO 'open' (not closed) and 'diffuse' → distributed PATO_0001566 for this bearer",
+  "fix": "With both words read as loose, 'open to diffuse' collapses to inflorescence loose, or a continuum of loose to a more widely branched state if a 'diffuse' value class is later justified.",
+  "reason": "The continuum structure is handled; the two words lack inflorescence-specific groundings, and their PATO homonyms have the wrong sense.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03095",
+  "decision": "new_pattern",
+  "target": "habit_noun_as_phenotype",
+  "fix": "'Liana' becomes whole plant PO_0000003 with climbing FLOPO:0991108 and woody, and 'to 20 m' a bounded length of the plant (pattern 02). The FLOPO phenotype class matched for the noun gets this EQ signature: OWL whole plant and has_characteristic some climbing and has_characteristic some woody.",
+  "reason": "A habit noun names a conjunction of qualities; the matched FLOPO class has no EQ to emit.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03096",
+  "decision": "new_pattern",
+  "target": "alternative bearers",
+  "fix": "one_of over two bearer scopes of the same quality: leaflet adaxial surface appressed-pubescent, or only the adaxial veins pubescent. OWL: union of has_part some (adaxial epidermis and pubescent) and has_part some (vein and pubescent); both entail pubescence on the adaxial side, which may be stated firmly.",
+  "reason": "The disjunction is over where the quality sits, not over values of one attribute, so pattern 07 does not apply.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03097",
+  "decision": "new_pattern",
+  "target": "habit_noun_as_phenotype",
+  "fix": "'climber' → whole plant with climbing FLOPO:0991108 (the earlier review's noun rule), 'Perennial' → perennial, and '4.5–7.5 m long' a length of the plant. The matched FLOPO phenotype class gets this EQ signature.",
+  "reason": "The same habit-noun construction as P03095; a term exists, only the noun → EQ mapping is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03098",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Bearer trichome PO_0000282, part of flower (pattern 12), with length 0.3–0.6 mm and colour rust; 'hairs' is not a quality.",
+  "reason": "The hairs are the measured entity; the transcription put them in the quality slot.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03099",
+  "decision": "missing_term",
+  "target": "twining: a climbing quality of a plant whose stem winds spirally round its support; child of climbing FLOPO:0991108 (sibling of root-climbing FLOPO:0991319)",
+  "fix": "Then whole plant twining, and 'to 4 m' a bounded length of the stem or plant (pattern 02).",
+  "reason": "Twining is an adjective, not a habit noun; climbing's definition mentions twining, but there is no class for the specific mode.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03100",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept '(to N unit)' after 'petiolate' as an upper bound on petiole length (≤ 2 mm). Add 'emergent' and 'submerged' to config/flora_context_words.tsv as leaf states, so the bearer is the emergent cauline leaf.",
+  "reason": "The upper-bound cue sits in parentheses, and the leaf state 'emergent' has no table row.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03101",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'per segment' as the bearer_container (the pinna segment, with a lexicon rule for 'segment'), 'ca.' as approximately (pattern 01), and 'N pairs of' as count 2N or as a count with unit pair.",
+  "reason": "The segment contains the veinlets, so it is a container, not a place as in pattern 14.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03102",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add the row 'sect → lobe' (segment) to config/flora_counted_parts.tsv, so '5-sect' is a count of 5 calyx lobes with container calyx. 'from base' is division to the base, with sepals free to the base, as a second statement.",
+  "reason": "The '-sect' suffix has no row in the counted-parts table.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03103",
+  "decision": "new_pattern",
+  "target": "comparison with an implied second term",
+  "fix": "Bearer leaf lamina adaxial epidermis, quality darker towards leaf lamina abaxial epidermis, with value_qualifier slightly, under specimen_condition dry ('when dry' earlier in the clause, pattern 06).",
+  "reason": "This is the 'paler beneath' type: the comparison is with the opposite surface, which is not named.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03104",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Match the bound cue case-insensitively, including 'To' at the start of a field after a 'Petiole:' heading: petiole length ≤ 4 cm.",
+  "reason": "The capitalised cue in the africa-tree-db field format was not matched.",
+  "confidence": "high"
+ },
+ {
+  "id": "P03105",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'dentate → tooth' is in flora_counted_parts.tsv. Ground the container from the sentence organ hypanthium PO_0009065 (the clause subject) and read 'at limb' as its apex or rim region: 4 teeth.",
+  "reason": "The container is named as the subject of the clause and was not carried into the count.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03106",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "'cymule' grounds to cyme inflorescence PO_0030126 (PO synonym). Read 'with many X' as count_word many, container inflorescence, frequency_qualifier usually; 'subsidiary' is dropped or kept as position.",
+  "reason": "This is an indefinite count with a known word and a grounded part; the annotator did not take the 'with many' cue.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P03107",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Bearer trichome PO_0000282 on the twig (stem), with length < 0.1 mm (pattern 02) and colour greyish. 'in NE Borneo to 0.5 mm' is a regional variant that stays in RDF.",
+  "reason": "The hairs are the measured entity, not a quality of the stem.",
+  "confidence": "high"
+ }
+]

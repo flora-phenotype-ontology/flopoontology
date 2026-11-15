@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P01120",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation; slot 1 region)",
+  "fix": "Read 'lacking' as a negation cue. The annotation is: labellum, apex margin region (slot 1), inflexed (FLOPO:0991145), negated. This is not a comparison.",
+  "reason": "This is a negated quality of a region of the lip. It has no second term, so the held reason is wrong.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01121",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept 'to ±' as an upper-bound cue together with value_qualifier approximately (pattern 01). The bearer is the stem segment between constrictions, not the whole branchlet.",
+  "reason": "The usual upper bound is joined with '±'. The value is the length of a segment.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01122",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation)",
+  "fix": "Accept a privative prefix inside the word (e-punctate) as the negation cue, with the word span as cue. The annotation is gland-dotted (FLOPO:0991174) or punctate (PATO_0001512), negated, on the corolla lobe.",
+  "reason": "'Epunctate' means without gland dots. The negation cue is inside the word.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01123",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept 'to ±' as an upper-bound cue with value_qualifier approximately: pedicel length ≤ 3 mm. Being inside parentheses does not matter.",
+  "reason": "This is a plain approximate upper bound on pedicel length.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01124",
+  "decision": "new_pattern",
+  "target": "comparison with an implied second term",
+  "fix": "Petal, decreased width (PATO_0000599), towards sepal. The second term is taken from the preceding member of the same perianth sentence (sepals). Store the implied target as inferred, with the cue 'narrower', and keep it in RDF until it is checked.",
+  "reason": "The second term (sepals) is implied by the previous clause and is not stated.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01125",
+  "decision": "missing_term",
+  "target": "immersed / emergent (bryophyte sense): capsule hidden by the perichaetial leaves / capsule partly raised above them",
+  "fix": "Add bryophyte-sense values, or a rule limited to moss capsules. Then '1/2 emergent' is the continuum pattern immersed → emergent, with the fraction kept in RDF. The current rule immersed → sunken and the aquatic emergent FLOPO:0991193 do not fit.",
+  "reason": "Both existing groundings have a different meaning.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01126",
+  "decision": "missing_term",
+  "target": "disarticulating: spikelet or inflorescence breaking into units at maturity (grasses)",
+  "fix": "Add a FLOPO value (for example under PATO 'split' or as a sibling of dehiscent), with 'breaking up at maturity' as a synonym. 'below each fertile floret' then becomes a position (slot 1).",
+  "reason": "This is a standard grass character. It is a quality under a process name, and no term exists.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01127",
+  "decision": "missing_term",
+  "target": "climber = synonym of FLOPO:0991108 climbing (whole plant)",
+  "fix": "Add 'climber' as a synonym of climbing, as was done for 'root-climber'. 'Terrestrial' is FLOPO:0991111 on the whole plant. 'to at least 6 m tall' is a lower bound (pattern 02).",
+  "reason": "The habit noun has an existing value.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01128",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read 'to more than' as a strict lower bound: whole plant length > 1 m.",
+  "reason": "The cue combines 'to' with 'more than'. Its meaning is a lower bound.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01129",
+  "decision": "new_pattern",
+  "target": "alternative with its own scope",
+  "fix": "One value (pubescent, sparsely) with a union of two places as bearer_part: abaxial major veins OR abaxial vein axils. OWL: leaf and has part some ((vein or vein axil region) and has characteristic some pubescent). The frequency stays in RDF.",
+  "reason": "The alternatives are places on the leaf, not values.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01130",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Add the pair PATO_0001545 inflexible | FLOPO_0991046 membranous to config/flora_union_pairs.tsv as accepted. Both words already ground (rigid → inflexible).",
+  "reason": "Two textures of the involucre are real alternatives. Only the pair-table row is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01131",
+  "decision": "new_pattern",
+  "target": "measured relation to another part",
+  "fix": "Stigma (stigmatic process), fused with (PATO_0000642), towards labellum (slot 3), with the extent of fusion 12–15 mm as a length measurement on the relation (RDF: fb:extent). OWL keeps only the 'fused with ... towards labellum' part.",
+  "reason": "This is the length over which the stigma is fused to the lip, not a length of the stigma.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01132",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground 'second scale' / 'third scale' in grass spikelets (old NA Flora terms) to upper glume (PO_0009039) and sterile lemma (PO_0009037) with a bearer rule. Then '3-nerved' is a count of 3 veins of each. Without that rule, leave it unresolved.",
+  "reason": "The count pattern exists. The container needs a grounding rule for this term usage.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01133",
+  "decision": "new_pattern",
+  "target": "range down to absence",
+  "fix": "A union of (petiolate with petiole length ≤ 7 cm) and (petiole absent / sessile). This uses the bounded measurement and a negated presence as operands of one_of.",
+  "reason": "'7 cm to obsolete' is a reversed range whose low end is the part being absent.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01134",
+  "decision": "new_pattern",
+  "target": "projection beyond another part",
+  "fix": "Stamen, exserted (PATO_0000623), towards corolla tube (slot 3), with the projecting length 1–1.5 mm (approximately) kept as an extent in RDF.",
+  "reason": "The number is the length by which the stamens project, not a size of the stamens.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01135",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Union of dentate (PATO_0001205) and fimbriated (PATO_0002311). Let the region cue 'distally' scope the whole union (distal region, slot 1), not one operand. 'irregularly' and 'short-' stay in RDF.",
+  "reason": "Both values have terms. The region cue across the alternative is not yet allowed.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01136",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md (measurement)",
+  "fix": "Read 'broad' after a number and unit as PATO_0000921 width: calyx width 1–1.5 mm.",
+  "reason": "This is a plain width range. Only the dimension word is not recognised.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01137",
+  "decision": "missing_term",
+  "target": "acaulescent: whole plant with no visible aerial stem, its leaves arising at ground level",
+  "fix": "Add a FLOPO value (habit/position), not a negated stem. The plants have a short stem and are 10–20 cm tall, so 'stem absent' would be wrong in OWL.",
+  "reason": "Reading it as a negation gives a false class.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01138",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The quality is axillary (FLOPO:0991000) on the flower. Its pattern list already has 'in leaf axils'; add 'at leaf axil'. 'Flowers 1 or 2' is a separate count (range 1–2).",
+  "reason": "A position phrase was transcribed as a raw quality and held as a measurement.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01139",
+  "decision": "new_pattern",
+  "target": "depth of division",
+  "fix": "Leaflet, lobed (apex notch), with the depth of the sinus 1/5–1/3 of the leaflet length, as a ratio measurement towards the length of the bearer itself (RDF). OWL: leaflet has characteristic lobed.",
+  "reason": "This is the depth of division as a fraction of the length. It is listed as open.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01140",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "The container is the tendril, not a lobe. Ground the bare word 'tendril' (PO has only kinds of tendril) to their common parent or a FLOPO tendril class. Read '2-fid' on a tendril as PATO_0001784 bifurcated (2 branches).",
+  "reason": "The counted-part table maps 'fid' to lobe, but the tendril container is not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01141",
+  "decision": "existing_pattern",
+  "target": "config/flora_context_words.tsv (slot 1 region)",
+  "fix": "Add 'in distal 1/2' and 'distal 1/2' as region rows (as 'in distal half'). Combine with the surface 'abaxially' for hirsute. Spinescent on the leaf blade keeps the organ as bearer with a part restriction.",
+  "reason": "This is a place on the part, not a stage. Only the fraction-written variant is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01142",
+  "decision": "new_pattern",
+  "target": "mutual relation of like parts",
+  "fix": "Theca, in contact with (PATO_0001961), towards theca (the same class, of the same synandrium), approximately. Slot 3 takes the bearer's own class as target when the cue has no object.",
+  "reason": "'Contiguous' was rejected as a bare value because it is relational. Here the second term is the other thecae.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01143",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "The measurement is plain: the terminal leaflet (leaflet with a terminal position) is 3–5 cm long and 1–2.5 cm wide. 'much longer than lateral leaflets' is a separate comma clause for pattern 09.",
+  "reason": "The relation belongs to the preceding clause, not to the measurement.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01144",
+  "decision": "new_pattern",
+  "target": "part present at a place",
+  "fix": "Stem has part some (adventitious root and part of some stem node): presence of adventitious roots with slot 1 at the node. Add the cues 'radicant(es) aux nœuds' and 'rooting at (the) nodes'.",
+  "reason": "This is a process wording for a part present at a place.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01145",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Read 'thick' after a number and unit as PATO_0000915 thickness: petiole thickness 1–1.5 mm, max extreme 2 mm.",
+  "reason": "This is a range with an extreme. Only the dimension word is not recognised.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01146",
+  "decision": "new_pattern",
+  "target": "part present at a place",
+  "fix": "As P01144, with the series position 'lower' (FLOPO:0991377) on the node: the culm has adventitious roots at its lower nodes.",
+  "reason": "Same construction as P01144.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01147",
+  "decision": "missing_term",
+  "target": "twining: a climbing quality of a stem that climbs by winding around its support",
+  "fix": "Add a FLOPO value as a child of climbing FLOPO:0991108, a sibling of root-climbing. 'rarely' is the frequency qualifier.",
+  "reason": "Twining is a common character with no term.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01148",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Add the French cue 'de chaque côté' (and 'sur le bord'). The annotation is: leaf blade margin teeth, count 12–18, on each side.",
+  "reason": "This is a count at a position that the annotator missed in French.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01149",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "The length 4–5.3 mm belongs to the pedicellate spikelet (bearer_context_quality pedicellate). 'male or barren' is a separate union of sex values (pattern 07) and should not block the length.",
+  "reason": "The disjunction is about sex, not length.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01150",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Read '(3 or )4' as usual value 4 with value_min_extreme 3.",
+  "reason": "This is an extreme in parentheses written with 'or'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01151",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The bearer is the male inflorescence (pattern 12/04: inflorescence of male flowers). The count is ≤ 5 (max extreme 8) per leaf axil (count at a position, pattern 14 with 'per leaf-axil').",
+  "reason": "'per leaf-axil' was transcribed as the entity.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01152",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Style branch, connate (FLOPO:0991067) with style branch, over (1/2–)5/6 or more of the length. This is the measured extent of a state (fraction kept in RDF), not a style length.",
+  "reason": "The quality is the extent of connation, not the length of the style.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01153",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'Unknown' means the corolla has not been seen. It is not a phenotype and must not be read as 'present' or 'absent'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01154",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation; stage kind A)",
+  "fix": "Accept 'aphylle(s)' as a privative negation word. The statement then reads as: flowering stem leafless at anthesis, because when leaves occur they develop after the flowers. 'ou si feuillées' should not become a leafless-or-leafy union.",
+  "reason": "The real character is a leafless flowering stem at flowering. A literal union would carry no information.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01155",
+  "decision": "existing_pattern",
+  "target": "config/flora_context_words.tsv (kind D, series member)",
+  "fix": "Extend the 'middle' row to leaves, and read 'middle to distal' as the union median | upper on cauline leaves. Petiolate (FLOPO:0991023) with 'shortly' kept in RDF.",
+  "reason": "These are series positions, not a stage. 'middle' is restricted to other bearers.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01156",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Parse French 'X à N nervures': the container is the head noun (lemma PO_0009037), counting veins = 7.",
+  "reason": "The container 'lemma' grounds. The French construction is not parsed.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01157",
+  "decision": "missing_term",
+  "target": "'disintegrating into fibres' = rule to FLOPO:0991026 fibrous, on the leaf sheath",
+  "fix": "Add a rule phrase that maps 'disintegrating into (a mass of) fibres' on palm leaf sheaths to fibrous, with stage mature. The fibre length 80 cm is a separate measurement of the fibres.",
+  "reason": "This is a process wording for an existing texture value.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01158",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add 'may reach' / 'reach' as an inclusive upper-bound cue (the file lists 'reaching'): seta length ≤ 3 mm.",
+  "reason": "This is an upper bound with an unlisted verb form, even though it sits in the discussion paragraph.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01159",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add 'surrounding' to the relation cues: disk, surrounding (PATO_0001772), towards ovary, with region base (slot 1 on the target).",
+  "reason": "This is a positional relation with a PATO relational term and a stated second part.",
+  "confidence": "high"
+ }
+]

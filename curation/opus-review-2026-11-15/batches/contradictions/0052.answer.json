@@ -1,0 +1,242 @@
+[
+ {
+  "id": "X01560",
+  "decision": "absence_misread",
+  "target": "peduncle (PO:0009053) without bracts: bract (PO:0009055) absent (PATO:0000462) on the peduncle only; the phyllaries (involucral bract PO:0009045) are present",
+  "fix": "'ebracteate' applies to the part it describes or the part it follows (peduncle, scape, calyculus), not to the whole taxon. Record bract absence on that part; never let it contradict involucral bracts or floral bracts",
+  "reason": "In Microseris, 'ebracteate' is said of the peduncles. Involucral bracts are always present and are described in the other statement",
+  "confidence": 0.8
+ },
+ {
+  "id": "X01561",
+  "decision": "absence_misread",
+  "target": "axillary leaf clusters (secondary leaves in the axils of the stem leaves) absent; no PO term, so reject rather than annotate leaf (PO:0009025) absent",
+  "fix": "'<position or kind> leaves absent' (axillary, basal, cauline, wintering) means only that subset is absent. Never record it as absence of the general part; map it to the subset's term if one exists (basal → rosette leaf PO:0000014), otherwise reject",
+  "reason": "Minuartia keys contrast 'axillary leaves present/absent' (clusters in the leaf axils); the main leaves are present and evenly spaced",
+  "confidence": 0.85
+ },
+ {
+  "id": "X01562",
+  "decision": "absence_misread",
+  "target": "overwintering stems absent; no PO or FLOPO term, so reject (stem PO:0009047 is present)",
+  "fix": "'<adjective> stems absent' (wintering, trailing, sterile, flowering) is absence of that kind of stem only, never stem absent. Reject it unless a subtype term exists",
+  "reason": "The plant clearly has stems (erect to ascending, green); only the overwintering kind is missing",
+  "confidence": 0.9
+ },
+ {
+  "id": "X01563",
+  "decision": "absence_misread",
+  "target": "trailing stems absent; no term, so reject (stem PO:0009047 is present)",
+  "fix": "Same rule as X01562: a qualifier before 'stems absent' restricts the absence to that kind of stem",
+  "reason": "The taxon's stems are described as green; only trailing stems are absent",
+  "confidence": 0.9
+ },
+ {
+  "id": "X01564",
+  "decision": "absence_misread",
+  "target": "leaflet (PO:0020049) hairs: short trichomes (PO:0000282) absent, so only long hairs. Not leaflet absent",
+  "fix": "'<size or kind> hairs absent' (short, glandular, crisped, cottony) is absence of that kind of trichome on the current part, never absence of the part. Without a trichome-subtype term, reject, or record trichome present with the long-hair qualities",
+  "reason": "Potentilla descriptions list hair kinds on leaflets ('long hairs ..., short hairs absent'). The part was taken from context and the hair word was lost. 'appressed' probably describes the hairs too",
+  "confidence": 0.9
+ },
+ {
+  "id": "X01565",
+  "decision": "absence_misread",
+  "target": "petiole (PO:0020038): short trichomes absent, long trichomes (PO:0000282) common to dense. The petiole is present",
+  "fix": "Same rule as X01564: 'short hairs absent' is about trichomes on the part named in context",
+  "reason": "The petiole is described with long hairs in the same sentence group",
+  "confidence": 0.92
+ },
+ {
+  "id": "X01566",
+  "decision": "absence_misread",
+  "target": "head (capitulum) not subtended by leaflike bracts: leaflike bracts below the involucre absent. The phyllaries (involucral bract PO:0009045) are present, with pale margins",
+  "fix": "'not subtended by leaflike bracts' or 'without leaflike bracts' is absence of leaflike outer or subtending bracts only. Never bract absent when phyllaries or other bracts are described; reject unless a subtending-bract term exists",
+  "reason": "Pyrrocoma has phyllaries; the statement only excludes leafy bracts below the head",
+  "confidence": 0.85
+ },
+ {
+  "id": "X01567",
+  "decision": "absence_misread",
+  "target": "rosette leaf (PO:0000014) absent (PATO:0000462). The 'sessile or petiolate' statement is about cauline leaf (PO:0000013)",
+  "fix": "'Basal leaves absent' → rosette leaf (basal leaf) absent, not leaf absent. Annotate the stem leaves described after it to cauline leaf",
+  "reason": "Basal leaves absent and stem leaves described is a normal combination in an aquatic Rorippa",
+  "confidence": 0.88
+ },
+ {
+  "id": "X01568",
+  "decision": "absence_misread",
+  "target": "inner tepal (tepal PO:0009033) without tubercles: not tuberculate/callose (FLOPO:0991060 tuberculate or FLOPO:0991215 callose, negated). The present statement belongs to tepal (PO:0009033), not sepal",
+  "fix": "In Rumex and other Polygonaceae, 'tubercles absent' describes the inner tepals (valves). It is absence of a callosity on the tepal, never tepal or sepal absent. Also, 'tepals' must map to tepal, not sepal",
+  "reason": "Valves of Rumex can bear or lack tubercles; the tepals themselves are described as ovate or oblong",
+  "confidence": 0.9
+ },
+ {
+  "id": "X01569",
+  "decision": "both_true",
+  "target": "abaxial nectary absent vs adaxial nectary present (different nectaries of the same flower; position abaxial/adaxial)",
+  "fix": "'abaxial|adaxial <part> absent' beside a description of the other-side part: keep the position qualifier and record absence of the abaxial nectary only. Without positional nectary classes, drop the absence",
+  "reason": "Salix flowers have adaxial and sometimes abaxial nectaries; FNA describes each separately",
+  "confidence": 0.92
+ },
+ {
+  "id": "X01570",
+  "decision": "both_true",
+  "target": "stipules absent or rudimentary on early leaves vs foliaceous with acuminate apex on late leaves (stage or position: early vs late leaves)",
+  "fix": "In Salix-style text 'Stipules: on early ones absent ...; on late ones ...', the absence is limited to the early leaves. Keep 'on early/late ones' as context, or drop the absence when the same part is described for other leaves",
+  "reason": "FNA Salix routinely describes stipules separately for early and late leaves",
+  "confidence": 0.75
+ },
+ {
+  "id": "X01571",
+  "decision": "absence_misread",
+  "target": "phyllode leaf (PO:0025335) absent (PATO:0000462); vascular leaf (pitcher) present",
+  "fix": "'Phyllodia absent' → phyllode leaf (PO:0025335) absent, never leaf absent. Map the plural 'phyllodia' via the PO synonym before falling back to the parent. Also, 'not constricted' must not be recorded as constricted",
+  "reason": "Sarracenia has pitcher leaves and may or may not have flat phyllodes. Note that the present statement also loses the negation",
+  "confidence": 0.92
+ },
+ {
+  "id": "X01572",
+  "decision": "absence_misread",
+  "target": "budlike arrested branches absent; no term (branch PO:0025073 in an arrested budlike form), so reject. Stems are present",
+  "fix": "'without <qualified part>' (budlike arrested branches) is absence of that special structure; never map to the general axis (stem). Reject when no term exists for the special structure",
+  "reason": "Selaginella keys use 'with/without budlike arrested branches'; the stems are described as decumbent or creeping",
+  "confidence": 0.9
+ },
+ {
+  "id": "X01573",
+  "decision": "absence_misread",
+  "target": "leaf lamina intramarginal vein (PO:0025520) absent (FLOPO_0994007 is the 'present' class; use absence with the same bearer)",
+  "fix": "'marginal vein absent' / 'intramarginal vein absent' → PO:0025520 absent, never leaf lamina or vascular bundle absent",
+  "reason": "Sapotaceae leaves are described with or without a marginal vein; the lamina is present and described",
+  "confidence": 0.82
+ },
+ {
+  "id": "X01574",
+  "decision": "absence_misread",
+  "target": "domatium (FLOPO_0986021) absent (PATO:0000462)",
+  "fix": "'domatia absent' → domatium absent. When the absent noun is a named structure with a term, use it; never fall back to the part named in the context (leaf lamina)",
+  "reason": "Domatia are pockets on the leaf blade; the blade itself is present",
+  "confidence": 0.95
+ },
+ {
+  "id": "X01575",
+  "decision": "absence_misread",
+  "target": "peduncle (PO:0009053): sterile bracts absent. Floral bracts (bract PO:0009055) are present, shorter than the ovary",
+  "fix": "'<part> ebracteate' (Peduncle ebracteate, scape ebracteate) scopes the absence to that part. Floral bracts described elsewhere are not contradicted. Record it as a peduncle quality or drop it, not as a taxon-wide bract absence",
+  "reason": "In orchids, 'peduncle ebracteate' means no sterile bracts on the inflorescence stalk; each flower still has a floral bract",
+  "confidence": 0.88
+ },
+ {
+  "id": "X01576",
+  "decision": "both_true",
+  "target": "inner whorl of petals absent vs outer whorl of petals present (different members: inner vs outer petals)",
+  "fix": "'inner|outer <part> absent' beside a description of the other whorl: keep the whorl qualifier; never record petal absent for the taxon",
+  "reason": "Annonaceae have two petal whorls; in Annona reticulata the inner petals are minute or absent while the outer petals are well developed",
+  "confidence": 0.9
+ },
+ {
+  "id": "X01577",
+  "decision": "both_true",
+  "target": "awnless lemma of one floret or spikelet (lower floret, or pedicelled spikelet) vs awned upper lemma (different members)",
+  "fix": "In grass spikelet descriptions, 'awnless' and 'awned' are said of different lemmas or spikelets (lower/upper floret, sessile/pedicelled spikelet). Keep the floret or spikelet context; drop the awn absence if the context is lost",
+  "reason": "In Andropogoneae such as Apocopis, the upper lemma is typically awned while other members are awnless; the flora is not inconsistent",
+  "confidence": 0.7
+ },
+ {
+  "id": "X01578",
+  "decision": "absence_misread",
+  "target": "leaf lamina intramarginal vein (PO:0025520) absent; vascular bundle (PO:0005020) and midvein are present",
+  "fix": "The 'veinless → vascular bundle absent' rule must not fire on a qualified vein ('marginal vein absent', 'secondary veins absent'). A qualified vein is absence of that vein type only",
+  "reason": "Ardisia leaves are described with or without a marginal vein; the midvein is described",
+  "confidence": 0.92
+ },
+ {
+  "id": "X01579",
+  "decision": "absence_misread",
+  "target": "calyx tube orifice ring (annulus at the throat) absent; no PO or FLOPO term, so reject. Calyx (PO:0009060) is present",
+  "fix": "'<sub-structure> absent' (orifice ring, throat appendages, corona) is absence of that sub-structure, never of the organ in context. Reject when the sub-structure has no term",
+  "reason": "In Asarum the orifice ring is a ridge at the mouth of the calyx tube; the calyx lobes are described",
+  "confidence": 0.92
+ },
+ {
+  "id": "X01580",
+  "decision": "absence_misread",
+  "target": "whole plant (PO:0000003) holomycotrophic (FLOPO:0991374) (synonym achlorophyllous mycoheterotrophic); not whole plant absent",
+  "fix": "'Plants without chlorophyll', 'lacking chlorophyll' or 'achlorophyllous' → the trophic quality FLOPO:0991374 holomycotrophic (or FLOPO:0991360 saprophytic if the source says so), never absence of the bearer. 'without <substance>' is never part absence",
+  "reason": "Chlorophyll is a substance, not a part; the other statement already states the right quality",
+  "confidence": 0.95
+ },
+ {
+  "id": "X01581",
+  "decision": "absence_misread",
+  "target": "leaf sheath (PO:0020104) of the basal sheaths without a blade (bladeless cataphylls); the foliage leaves have a flat leaf lamina (PO:0020039)",
+  "fix": "Narrow the 'bladeless → leaf lamina absent' rule: when 'bladeless' modifies 'sheaths' or 'basal sheaths' (or 'sheaths bladeless'), it describes the basal cataphylls only. Do not record taxon-wide leaf lamina absence; drop it, or record it on leaf sheath with a basal context",
+  "reason": "Carex has bladeless basal sheaths and normal bladed leaves; this is the known pattern in docs/km-classification.md",
+  "confidence": 0.95
+ },
+ {
+  "id": "X01582",
+  "decision": "absence_misread",
+  "target": "basal leaf sheaths (PO:0020104) bladeless; the leaf lamina (PO:0020039) of the foliage leaves is coriaceous",
+  "fix": "Same as X01581: 'Basal sheaths bladeless' is scoped to the basal sheaths",
+  "reason": "Carex: bladeless basal cataphylls and leathery blades on the foliage leaves",
+  "confidence": 0.95
+ },
+ {
+  "id": "X01583",
+  "decision": "absence_misread",
+  "target": "basal leaf sheaths (PO:0020104) bladeless; the foliage leaf lamina (PO:0020039) is grooved",
+  "fix": "Same as X01581; also covers 'bladeless sheathed at base' (the stem bears bladeless sheaths at its base)",
+  "reason": "Carex: the absence applies to the basal sheaths only",
+  "confidence": 0.95
+ },
+ {
+  "id": "X01584",
+  "decision": "absence_misread",
+  "target": "sub-basal sheaths of flowering culms (leaf sheath PO:0020104) bladeless; the foliage leaf lamina (PO:0020039) is glabrous",
+  "fix": "Same as X01581; a qualified sheath subject (sub-basal, basal, lower) always scopes 'bladeless'",
+  "reason": "Carex: only the sub-basal sheaths lack blades",
+  "confidence": 0.95
+ },
+ {
+  "id": "X01585",
+  "decision": "absence_misread",
+  "target": "upper inflorescence bracts (bract PO:0009055) bladeless (sheath only); the foliage leaf lamina (PO:0020039) is flat",
+  "fix": "'bracts bladeless' or 'upper bracts bladeless' is a bract quality (bract has no leaf-like blade), not leaf lamina absence. Scope 'bladeless' to its own subject",
+  "reason": "In Carex the upper bracts are often reduced to sheaths, while leaves have normal blades",
+  "confidence": 0.93
+ },
+ {
+  "id": "X01586",
+  "decision": "absence_misread",
+  "target": "basal leaf sheaths (PO:0020104) brown and bladeless; the foliage leaf lamina (PO:0020039) is flat",
+  "fix": "Same as X01581",
+  "reason": "Carex: bladeless basal sheaths beside bladed leaves",
+  "confidence": 0.95
+ },
+ {
+  "id": "X01587",
+  "decision": "absence_misread",
+  "target": "basal leaf sheaths (PO:0020104) yellow-brown, lustrous, bladeless; the foliage leaf lamina (PO:0020039) is flat",
+  "fix": "Same as X01581; colour adjectives before 'bladeless sheaths' confirm that the subject is the sheaths",
+  "reason": "Carex: bladeless basal sheaths beside bladed leaves",
+  "confidence": 0.95
+ },
+ {
+  "id": "X01588",
+  "decision": "absence_misread",
+  "target": "lowest inflorescence bract (bract PO:0009055) not leaflike (no distinct leaf-like involucral bract); bracts are present, with an acute apex",
+  "fix": "'without distinct <part>' or 'without <qualifier> bract leaf' denies a feature of the part (leaf-like or distinct), not its existence. Do not record absence; reject, or record 'not leaflike' if a term exists",
+  "reason": "Carex inflorescences have bracts; the text only says none is a distinct leaf-like involucral bract",
+  "confidence": 0.85
+ },
+ {
+  "id": "X01589",
+  "decision": "absence_misread",
+  "target": "basal leaf sheaths (PO:0020104) brownish and bladeless; the foliage leaf lamina (PO:0020039) is slightly stiff",
+  "fix": "Same as X01581",
+  "reason": "Carex: bladeless basal sheaths beside bladed leaves",
+  "confidence": 0.95
+ }
+]

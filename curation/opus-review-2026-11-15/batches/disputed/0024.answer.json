@@ -1,0 +1,212 @@
+[
+ {
+  "rule_id": "R2710",
+  "decision": "constrain",
+  "target": "glume|lemma|palea",
+  "reason": "An awn-point is a short awn at the tip of an organ, so mapping it to awn is fine. PO defines awn only as an appendage of a glume, lemma or palea, though. In moss floras an awn-point is the hair-point where the midrib runs out past the leaf tip, which is not an awn. So limit the rule to grass and sedge glumes, lemmas and paleas.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2711",
+  "decision": "constrain",
+  "target": "glume|lemma|palea",
+  "reason": "Same as R2710: a short awn on a glume, lemma or palea. The moss hair-point is excluded.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2712",
+  "decision": "constrain",
+  "target": "glume|lemma|palea",
+  "reason": "Same as R2710, in the plural.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2713",
+  "decision": "constrain",
+  "target": "sporophyte|seta|peristome|operculum|calyptra|exothecium|spore",
+  "reason": "PO sporangium wall (PO_0025306) is exactly right for the moss or liverwort capsule. In seed-plant floras a capsule wall is the pericarp (PO_0009084) of a capsule fruit. The rule needs bryophyte context. The constraint can only use part names, so these are the parts that show up with moss capsules. 'Capsule rim' (R3133) was limited to moss floras in the same way.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2714",
+  "decision": "constrain",
+  "target": "sporophyte|seta|peristome|operculum|calyptra|exothecium|spore",
+  "reason": "Same as R2713, in the plural.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2720",
+  "decision": "constrain",
+  "target": "leaf|leaflet|lamina|blade|pinna|frond",
+  "reason": "Secondary leaf vein (PO_0020140) is a leaf class. Secondary nerves of bracts, sepals or petals should not map to it. So limit the rule to leaves and leaf parts.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2727",
+  "decision": "drop",
+  "target": "",
+  "reason": "Corona appendages (horns, teeth, scales) are outgrowths on the corona or its lobes, not the lobes. Their shape and length would be wrongly given to corona lobe (FLOPO_0986035). Giving them to floral corona (FLOPO_0985020) would be wrong too. No existing class fits. A new appendage class would be needed if these come up often.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2728",
+  "decision": "drop",
+  "target": "",
+  "reason": "Same as R2727, in the plural.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2735",
+  "decision": "keep",
+  "target": "",
+  "reason": "PO lists 'hermaphrodite flower' as an exact synonym of flower (PO_0009046), and the earlier rules R2539 (bisexual flower) and R2540 (hermaphrodite flower) were accepted. The flower is the right part for counts and other qualities. Being bisexual could be recorded later with a context word (PATO_0001340 hermaphrodite), but the part is correct.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2736",
+  "decision": "keep",
+  "target": "",
+  "reason": "Plural of the PO synonym 'hermaphrodite flower'. Same as R2735 and R2540.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2743",
+  "decision": "keep",
+  "target": "",
+  "reason": "This is a garbled form of 'phyllary' from text extraction. Earlier, 'phyllaryphyll' (R2428) and 'phyllaryllary' (R2537) were mapped to involucral bract for the same reason. The word is not a real word, so it cannot match anything else by mistake. The examples (unequal, acute apices, glabrous) are phyllary features.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2744",
+  "decision": "keep",
+  "target": "",
+  "reason": "The part is a gland, which follows rule C265 (portion of secretory tissue, PO_0005656). 'Circular' is a shape (PATO_0000411) that should ideally be recorded too. Leaving it out loses detail but makes nothing false, and the counts belong to the glands.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2745",
+  "decision": "keep",
+  "target": "",
+  "reason": "Same as R2744, in the plural.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2750",
+  "decision": "keep",
+  "target": "",
+  "reason": "A sprout is a shoot, and the earlier rule R2749 already maps 'sprout' to shoot system (PO_0009006). 'Adventitious' describes where the shoot comes from. Leaving it out loses detail but makes nothing false, and no existing class covers adventitious shoots.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2754",
+  "decision": "keep",
+  "target": "",
+  "reason": "The dorsal sepal is a sepal. A FLOPO annotation says the plant has some sepal with this quality, which is true when that sepal is the dorsal one, so the quality is not spread to every sepal. This follows the 'inner tepal', 'outer tepals' (R3123) and 'inner phyllary' (R2845) decisions. No class for 'dorsal' as a position exists yet.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2755",
+  "decision": "keep",
+  "target": "",
+  "reason": "Same as R2754 (French).",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2756",
+  "decision": "keep",
+  "target": "",
+  "reason": "Follows the inner/outer tepal decisions. 'Inner' is already a context word for petals that records the position (FLOPO_0991378 inner). The part itself is petal.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2757",
+  "decision": "drop",
+  "target": "",
+  "reason": "PO defines petal spur (PO_0025511) as a slender, hollow extension. A sac is a short pouch, not slender. Moving the rule to orchid labellum (FLOPO_0980978) would give the sac's length and shape to the whole lip. No class fits. A saccate lip is better recorded as labellum + saccate (FLOPO_0991140).",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2758",
+  "decision": "drop",
+  "target": "",
+  "reason": "Same as R2757.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2759",
+  "decision": "keep",
+  "target": "",
+  "reason": "Same as R2756. 'Outer' is already a context word that records the position (FLOPO_0991379 outer). The part is petal.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2760",
+  "decision": "keep",
+  "target": "",
+  "reason": "The sessile spikelet is a spikelet. Saying 'some spikelet has the quality' is true, and being sessile can be recorded as sessile (sensu botany) (PATO_0001436). This follows the inner/outer decisions. PO's sessile spikelet classes are specific to maize.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2763",
+  "decision": "keep",
+  "target": "",
+  "reason": "PO defines peristome tooth (PO_0030043) as 'a single lobe of a peristome', which covers the inner peristome segments too. The earlier rules R2275 and R2276 already map 'endostome segment(s)' to it. The cilia are a bit looser, but the examples are segments. Whether a tooth is inner or outer could be added as a position.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2767",
+  "decision": "drop",
+  "target": "",
+  "reason": "'Parallel' is already handled as a quality: rule R0005 maps 'parallel' to parallelodromous (PATO_0001968) when it is about veins or nerves. 'Vein' and 'nerve' already map to vascular bundle on their own. Treating the whole phrase as one part hides the venation pattern, so the words are better grounded one at a time.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2768",
+  "decision": "drop",
+  "target": "",
+  "reason": "Same as R2767.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2769",
+  "decision": "drop",
+  "target": "",
+  "reason": "Same as R2767 (French).",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2770",
+  "decision": "retarget",
+  "target": "primary leaf vein (PO_0025413)",
+  "reason": "'Principal nerve' means the main vein or veins: the midrib, or the several main veins of a palmately veined leaf. Primary leaf vein covers both, while 'vascular bundle' is far too general. Leaf midvein (PO_0020139) would be wrong for palmate leaves. 'Main nerve' (R2616) was mapped to the broader leaf lamina vein because of counts.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2771",
+  "decision": "retarget",
+  "target": "primary leaf vein (PO_0025413)",
+  "reason": "Same as R2770.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2778",
+  "decision": "keep",
+  "target": "",
+  "reason": "In dicot floras (Melastomataceae, Moraceae and others), plain 'intercostals' means the intercostal veins between the secondary veins, which is tertiary leaf vein (PO_0008021). The examples (reticulate, prominent) are vein features. The grass leaf zones are written 'intercostal zones', which this rule does not match.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2781",
+  "decision": "keep",
+  "target": "",
+  "reason": "Colleter (FLOPO_0986023) is the right part. 'Present' was stuck to the part by the extractor. Presence should be recorded as the quality where the statement has none. The mapping itself is exact, like the accepted 'colleters' rule (R2422).",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2782",
+  "decision": "keep",
+  "target": "",
+  "reason": "These are colleters on the calyx, and colleter (FLOPO_0986023) is the right part. Leaving out where they sit loses detail but makes nothing false. 'Calycine colleter' (R2423) was already accepted with the same target, and a separate class for calyx colleters is not worth adding.",
+  "confidence": "medium"
+ }
+]

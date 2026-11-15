@@ -1,0 +1,212 @@
+[
+ {
+  "rule_id": "R1168",
+  "decision": "constrain",
+  "target": "leaf|leaves|blade|lamina|leaflet",
+  "reason": "PO secondary leaf vein (PO_0020140) is part of a leaf. Lateral veins of bracts, sepals, petals or glumes are not leaf veins in PO, so the rule should apply only to leaf parts. As a part name it is right, the same as the rules for 'lateral nerve'.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R1170",
+  "decision": "drop",
+  "target": "",
+  "reason": "Discolorous (FLOPO:0991070) is a quality of the whole leaf, whose two surfaces differ. 'Lighter coloured' is usually said of one surface (the bearer would then be the under surface) or compares one taxon with another. With only 3 statements, the general phrase is too unsafe to map to discolorous.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R1172",
+  "decision": "keep",
+  "target": "",
+  "reason": "Free (FLOPO:0991068) is the right value. 'Nearly' is the approximate qualifier handled by the approximate-value pattern (docs/odp/01-approximate-value.md), just as 'nearly glabrous' keeps glabrous as its value. No partly connate class exists.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R1173",
+  "decision": "keep",
+  "target": "",
+  "reason": "PATO reflexed (PATO:0104353) is defined as 'abruptly bent backward or abaxially downward', so it includes being bent downward. Reflexed is the stronger form of deflexed, so a part that is not deflexed is also not reflexed. The negation holds.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R1176",
+  "decision": "drop",
+  "target": "",
+  "reason": "Star shaped (PATO:0002065) is a shape quality of one bearer. 'Stellately arranged' says how several parts (leaves, hairs, rays) sit together, so annotating each leaf as star shaped would be false. PATO's definition does mention being 'arranged like rays', so a keep is defensible, but no arrangement class fits safely.",
+  "confidence": "low"
+ },
+ {
+  "rule_id": "R1179",
+  "decision": "drop",
+  "target": "",
+  "reason": "Hydrophobic (PATO:0001885) is a chemical tendency of a surface to repel water. Floras use 'water-shedding' for leaves that drain water by their shape or overlap as well as by their surface. The rule's own reason admits the shape reading. With 3 statements and two meanings, no rule should be made.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R1181",
+  "decision": "drop",
+  "target": "",
+  "reason": "In moss descriptions 'without clearly defined stereids' means the thick-walled cells are not set apart as a band. They may still be present, and the clear absence is already covered by R1908 'without stereids'. Mapping it to 'stereid absent' claims more than the text says.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R1184",
+  "decision": "keep",
+  "target": "",
+  "reason": "Narrowly foliose pseudoparaphyllia are leaf-like (PATO:0002457) as opposed to filamentous. Leaf-like is true, and the narrowness is a separate width statement. This is the same as 'broadly expanded' → dilated.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R1187",
+  "decision": "constrain",
+  "target": "apex|anther|cotyledon|leaf|leaflet|petal|blade",
+  "reason": "The examples ('anther refuse at apex', 'cotyledons refuse') are real misreadings of 'retuse' (PATO:0001974). Limiting the rule to organs and tips that can be retuse keeps out the ordinary English word (as in 'refuse heaps').",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R1189",
+  "decision": "keep",
+  "target": "",
+  "reason": "In the examples ('calyx limb degraded', 'central strand degraded') degraded means reduced to a remnant. That matches the PATO vestigial definition (a remnant structure), the same reading as the accepted rules for obsolete and rudimentary. PATO degenerate is a disease process and does not fit.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R1195",
+  "decision": "retarget",
+  "target": "dilated (PATO_0001571)",
+  "reason": "'Widened' at a base or apex means one part of the structure is wider than the rest. The earlier rules for 'widening', 'expanded' and 'broadly expanded' map this to dilated. Increased width (PATO:0000600) compares with another structure and would be wrong. 'Slightly' says how much and is not kept.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R1199",
+  "decision": "constrain",
+  "target": "inflorescence|spike|spikelet",
+  "reason": "In the examples, inflorescences and spikes have both male and female flowers, which is androgynous (FLOPO:0991037). In orchids, 'gynandrous' flowers or columns have the stamens fused with the pistil. Limiting the rule to inflorescences keeps that sense out.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R1200",
+  "decision": "keep",
+  "target": "",
+  "reason": "The fruit does open, so dehiscent (FLOPO:0991149) is true. The earlier rule R0748 maps 'tardily dehiscent' to dehiscent the same way, and keeps the timing as a cue. No 'late' term exists.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R1206",
+  "decision": "keep",
+  "target": "",
+  "reason": "Odorous (PATO:0001331) is true. This follows the accepted 'mango-scented' → odorous rule (R1962). Apple scent is fruity rather than clearly sweet or spicy, so the parent class is the safe value until there are enough statements for a new class.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R1211",
+  "decision": "keep",
+  "target": "",
+  "reason": "This matches the accepted R2078 'right-twining' → climbing. The climbing definition includes twining round a support. The direction is dropped on purpose because floras use right and left inconsistently, and no twining-direction class exists.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R1217",
+  "decision": "drop",
+  "target": "",
+  "reason": "Calcified (PATO:0001447) claims a calcium carbonate crust. In floras, 'incrusted' also means a crust of silica, resin or salt, or (in French, 'incrustée') a sunken midrib. The word alone does not support calcified. A phrase rule such as 'incrusted with lime' would be safe.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R1219",
+  "decision": "keep",
+  "target": "",
+  "reason": "The antler-like spines and appendages in the examples are repeatedly forked. Branched (PATO:0000402) is true and is what they have in common. No antler shape class exists, and the loss of detail is accepted, as for other '-like' words.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R1220",
+  "decision": "keep",
+  "target": "",
+  "reason": "This mirrors the accepted 'imperceptible' → inconspicuous (R0739) and 'evident' → conspicuous rules. 'Perceptible veins' means visible veins in floras. 'Barely' or 'hardly perceptible' are longer phrases that match first.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R1227",
+  "decision": "keep",
+  "target": "",
+  "reason": "Lanate (PATO:0104357, synonym woolly) means long, soft, tangled hairs, so a wavy form is already part of woolly hairs. The rule for plain 'lanuginose' maps to lanate as well.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R1228",
+  "decision": "keep",
+  "target": "",
+  "reason": "Subvaginate means partly sheathing, that is, partly wrapped round the axis. That is what PATO clasping (PATO:0104363) covers, while full sheathing is FLOPO:0991105. Mapping it to clasping keeps the 'partly'.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R1229",
+  "decision": "keep",
+  "target": "",
+  "reason": "A racemose-umbellate inflorescence is a shortened raceme that looks like an umbel. Umbelliform (FLOPO:0991031) means umbel-like and already lists 'umbellate-racemose' as a related synonym.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R1232",
+  "decision": "keep",
+  "target": "",
+  "reason": "Every forb is a herb, so herbaceous (PATO:0002352) is true. 'Not a grass' is a matter of the taxon, not a quality, and dropping it makes nothing false.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R1239",
+  "decision": "keep",
+  "target": "",
+  "reason": "A cymose-corymbose inflorescence is a cyme with a flat-topped outline, and corymb-like (PATO:0002455) describes that outline correctly. No term exists for cymose branching, so dropping it loses detail but makes nothing false.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R1241",
+  "decision": "keep",
+  "target": "",
+  "reason": "The margin is toothed, so dentated (PATO:0001205, synonym toothed) is true. No denticulate or callus-toothed term exists, and the detail is lost as in other mapped compound words.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R1244",
+  "decision": "constrain",
+  "target": "flower|floret|ray",
+  "reason": "Neutral ray or basal flowers are sterile (PATO:0000956), and the rule's own reason limits it to flowers, but its bearer constraint is empty. Limit it to flowers and florets. The more precise neuter (FLOPO:0991261) could replace sterile later.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R1247",
+  "decision": "drop",
+  "target": "",
+  "reason": "Mucronulate (FLOPO:0991055) is a narrow term: a tiny mucro, which is an abrupt point formed by the midrib running out. Floras also say 'short-tipped' for leaves with a short drawn-out tip (shortly acuminate) or a short beak. The general word cannot safely carry the narrow term.",
+  "confidence": "low"
+ },
+ {
+  "rule_id": "R1252",
+  "decision": "keep",
+  "target": "",
+  "reason": "The base does form a sheath, so sheathing (FLOPO:0991105) is true. 'Short' is a degree, which is dropped as in 'broadly expanded' → dilated. The rule is already limited to leaves and bracts.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R1253",
+  "decision": "keep",
+  "target": "",
+  "reason": "The first check's own target is the current one (PATO:0001359). Rugose is true for finely wrinkled surfaces, and FLOPO has no rugulose term. The direction and fineness are dropped, as for other mapped compound words.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R1257",
+  "decision": "keep",
+  "target": "",
+  "reason": "The rule matches only in the quality slot, where the examples are French 'en relief' (veins standing above the surface). That is raised (PATO:0001369), the opposite of impressed (sunken).",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R1260",
+  "decision": "keep",
+  "target": "",
+  "reason": "The bearer is the stem, caudex or rhizome, and in PO a leaf base is part of the leaf, not of the stem. So 'stem with leaf base' can only mean leftover leaf bases, which the accepted 'shredded leaf bases' → leaf base present (R1953) records the same way. Leaves are not claimed to lack a base, but the reasoner check (ELK) asked for in the rule must still confirm this.",
+  "confidence": "low"
+ }
+]

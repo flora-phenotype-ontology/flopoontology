@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P02200",
+  "decision": "missing_term",
+  "target": "rounded: apex or base shape outlined by a smooth continuous curve, without an angle (distinct from obtuse PATO:0001935)",
+  "fix": "Add a FLOPO value 'rounded' (shape) for leaf apex/base and other organ apices; then 'obtuse or rounded' resolves as a same-attribute union (07a).",
+  "reason": "'rounded' is unmapped (botanical_terminology marks it ambiguous) and the union-pair reviews rejected grounding it to obtuse, so the union has no second value.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02201",
+  "decision": "new_pattern",
+  "target": "dimension along a named axis",
+  "fix": "Slots: bearer (pollen PO:0025281), attribute (length PATO:0000122 or diameter PATO:0001334), axis (polar | equatorial), value with unit µm. OWL: has characteristic some (length and has magnitude some xsd:decimal[...]); the axis stays in RDF (fb:axis \"polar\"). P/E goes to a ratio of two dimensions (11).",
+  "reason": "P and E are palynological abbreviations for polar axis length and equatorial diameter; no pattern names the axis along which a dimension is measured.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02202",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Bearer rule grounding 'ultimate segment' (of a fern frond, i.e. the pinnule/ultimate leaf segment) as the container, and read 'N pairs' with collection size 2 (as 'jugate' in flora_counted_parts.tsv).",
+  "reason": "Sori are borne on the segment, so it is a container, not a place; only the container grounding and the 'pairs' multiplier are missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02203",
+  "decision": "transcription_error",
+  "target": "entity should be inflorescence (female), not 'per leaf-axil'",
+  "fix": "Bearer inflorescence with bearer quality female (04), count 1-3, count_position per_axil with landmark leaf axil PO:0009023 (pattern 14); add the hyphenated cue 'per leaf-axil'.",
+  "reason": "The counted part is 'Female inflorescences'; 'per leaf-axil' is the position cue.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02204",
+  "decision": "transcription_error",
+  "target": "entity trichome (hairs of the flower), quality length",
+  "fix": "Bearer trichome with bearer_container flower, quality length PATO:0000122 = 0.1 mm; scurfy and greyish brown are separate statements of the hairs.",
+  "reason": "'hairs' was taken as the quality; the 0.1 mm is the length of the hairs, not of the flower.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02205",
+  "decision": "missing_term",
+  "target": "rounded: apex or lobe shape outlined by a smooth continuous curve, without an angle",
+  "fix": "Same FLOPO value as P02200; then 'obtuse or rounded' on the disc lobes is a 07a union.",
+  "reason": "The disjunction fails only because 'rounded' has no term and must not be grounded to obtuse.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02206",
+  "decision": "new_pattern",
+  "target": "distance from a landmark",
+  "fix": "Slots: bearer (secondary vein, or its loop), PATO distance PATO:0000040 towards the landmark (leaf lamina margin), value 2-4 mm. OWL: has characteristic some (distance and towards some 'leaf lamina margin') with a data range; 'anastomosing' (brochidodromous looping) is a separate quality.",
+  "reason": "Listed as open in annotation-context-patterns.md (spacing and distance from a landmark); no odp file covers it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02207",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read the numeral '0' after a part noun as a count of zero, i.e. negated presence (negated, with '0' as the negation cue), with the whole 'male flowers' from the section heading (pattern 12).",
+  "reason": "Flora Zimbabwe writes absence as 'petals 0; disk 0; pistillode 0'; negation exists but '0' is not a cue.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02208",
+  "decision": "missing_term",
+  "target": "twining (volubile): a climbing quality by virtue of the stem winding spirally around its support; child of climbing FLOPO:0991108, bearer stem/branch/whole plant",
+  "fix": "Add the FLOPO value with French synonym 'volubile'; this also gives FLOPO_0985034 'twining climbing phenotype' its EQ signature.",
+  "reason": "Neither PATO nor the FLOPO value terms have twining; root-climbing FLOPO:0991319 is the model sibling.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02209",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "Read the participle 'inflating' as inflated PATO:0002376, with 'in fruit' as the stage (PO:0001002, already in flora_context_words.tsv) and '±' as approximately (01); 'increasing' gives accrescent FLOPO:0991082.",
+  "reason": "Terms and the stage reading exist; only the verb form is not mapped to the quality.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02210",
+  "decision": "transcription_error",
+  "target": "statement not split into atomic clauses",
+  "fix": "Split it: peduncle stout; peduncle flexible PATO:0001544; peduncle many times as long as the rachis (10); flower head rounded at apex; head constricted in centre or at base (07 with region). Only the last part has the disjunction.",
+  "reason": "The whole sentence was held as one disjunction, though 'peduncles stout' has no 'or'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02211",
+  "decision": "new_pattern",
+  "target": "habit noun",
+  "fix": "A reviewed table mapping habit nouns to whole-plant values: vine → climbing FLOPO:0991108 (liana, climber alike), with the modifier hemi-epiphytic FLOPO:0991228 as a second annotation of the whole plant PO:0000003. OWL: has characteristic some climbing (and hemi-epiphytic); the noun is kept as the cue.",
+  "reason": "'vine' is a noun for a habit, not a quality; the doc lists habit nouns as open.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02212",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'similar to stem leaves' doesn't say which qualities are shared; it only refers the reader to another description.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02213",
+  "decision": "new_pattern",
+  "target": "projection beyond another part",
+  "fix": "Bearer fruit wing (part of samara PO:0030099), quality protruding PATO:0001598 towards the fruit body, region apical (BSPO), negated. OWL: not stated (negated relational); RDF record with towards, region and negation cue. Same name as in the 2026-11-14 review.",
+  "reason": "The entity is the wing, not the samara, and pattern 09 doesn't read negated projection ('not extended beyond').",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02214",
+  "decision": "existing_pattern",
+  "target": "docs/odp/01-approximate-value.md",
+  "fix": "Read 'hardly opening' as closed PATO:0000608 with value_qualifier approximately ('hardly' as cue), stage 'at anthesis' PO:0007616 from the context table.",
+  "reason": "The process words describe a state at a stage that existing terms and qualifiers can express.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02215",
+  "decision": "existing_pattern",
+  "target": "docs/odp/12-part-of-qualified-whole.md",
+  "fix": "Add '⚥' / 'fleurs ⚥' / 'hermaphrodite flowers' to flora_context_words.tsv as hermaphrodite PATO:0001340 for flower; annotate stamen length PATO:0000122 ≈ 3 mm ('environ'), whole = flower that is hermaphrodite. Keep 'plus courtes que dans la fleur ♂' as RDF or drop it.",
+  "reason": "The transcribed quality 'hermaphrodite flower length' mixes the whole's quality into the attribute; the pattern exists, but the symbol has no reading.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02216",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'Flowers unknown' means the flowers haven't been observed, not that they are absent; it must not become a negated presence.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02217",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "Add 'à l'état adulte' → mature PATO:0001701 and 'à l'état jeune' → young to flora_context_words.tsv (only English 'adult' is there).",
+  "reason": "Kind A stage/state reading exists; the French phrase is missing from the table.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02218",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Read 'containing many X' / 'with many X' as count_word many, counted part flower, container inflorescence; cue 'many' at its offsets rather than the paraphrase 'many-flowered'.",
+  "reason": "The count word stands in the source span; the annotator held it because the transcribed quality was a paraphrase.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02219",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Cue 'beside each [leaf]' as count_position per_node (landmark leaf / leaf axil PO:0009023), and 'a pair of' as count 2; spine length 2 cm is a separate measurement.",
+  "reason": "This is a count per leaf position (stipular spine pair); only the cue words are missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02220",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Review the pair linear PATO:0001199 | dilated PATO:0001571 for filaments into flora_union_pairs.tsv (accept: filament shape), with the region 'at the base' attached to the second operand only.",
+  "reason": "This is a secondary union across attributes whose pair hasn't been reviewed; also the region cue sits inside an alternative.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02221",
+  "decision": "transcription_error",
+  "target": "entity should be phyllary apex, not phyllary",
+  "fix": "Bearer the phyllary apex (region slot, BSPO apical region of the phyllary), quality spreading PATO:0104356.",
+  "reason": "In 'apices acute to long-acuminate, involute, spreading', spreading describes the apices.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02222",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Count word 'few' with bearer leaf, position basal FLOPO:0991002 (04), quality present PATO:0000467, not 'number'.",
+  "reason": "'Basal leaves few' is exactly the 'leaves few' wording of pattern 13.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02223",
+  "decision": "new_pattern",
+  "target": "timing of a change",
+  "fix": "Slots: bearer flower, event (opening / anthesis), time of day (sunset, dusk, night) with cue. RDF only (fb:event, fb:timeOfDay); no OWL quality on the part, since process qualities on parts are made unsatisfiable by the FLOPO GCI.",
+  "reason": "This is the time of a process; no term or pattern expresses it, and a process quality on a part would be unsatisfiable.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02224",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Bearer rule grounding 'orifice' (of the utricle beak) to the perigynium beak as container; '2-toothed' → tooth count 2 via flora_counted_parts.tsv (toothed → tooth); 'shortly' is tooth length, separate.",
+  "reason": "The counted part is resolved by the table; only the container 'orifice' is ungrounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02225",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add the cue 'to only' as an inclusive upper bound, and 'mostly' as frequency usually.",
+  "reason": "This is an upper bound on blade length with an unknown cue wording.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02226",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept 'to ±' as an approximate inclusive upper bound (02 + 01); quality diameter PATO:0001334, not width; bearer 'stem with sheaths' (stem including leaf sheaths) kept as a bearer state in RDF, distinct from the 1.5 cm stem without sheaths.",
+  "reason": "'with to ± 2 cm' is elliptical for 'with sheaths up to about 2 cm in diameter'.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02227",
+  "decision": "transcription_error",
+  "target": "spurious stage qualifier",
+  "fix": "Annotate monocarp (fruitlet of the apocarpous fruit) smooth PATO:0000701 without a stage; the span has no stage word.",
+  "reason": "'monocarps oblong, ..., sparsely hairy, smooth' has no developmental context; the stage was added by the transcriber.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02228",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Count word 'several' for stem, quality present; 'from one caudex' is not a container (caudex is a PO stem synonym), so use the whole plant as container.",
+  "reason": "This is an indefinite count; the container phrase blocked it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02229",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Rule: 'N-M-pinnatisect' expands to the 07a union of the orders, pinnatisect FLOPO:0991155 | bipinnatisect FLOPO:0991284, with 'often' as frequency (08).",
+  "reason": "Both terms exist; '1-2' was misread as a measurement without unit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02230",
+  "decision": "new_pattern",
+  "target": "measured relation to another part",
+  "fix": "Bearer style, quality exserted PATO:0000623 towards the perigynium beak (09) in OWL; the length of the projecting part, 0.2-1.3 mm, as fb:low/fb:high on the relation in RDF only.",
+  "reason": "Pattern 09 has no magnitude, and pattern 10 gives ratios, not absolute lengths of a projection.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02231",
+  "decision": "transcription_error",
+  "target": "entity trichome (long hairs) on the abaxial leaflet surface, quality length",
+  "fix": "Bearer trichome, container leaflet, region abaxial surface (slot 1), quality length 0.5-1.8 mm.",
+  "reason": "'hairs' was taken as the quality; the numbers are hair length.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02232",
+  "decision": "new_pattern",
+  "target": "alternative bearers",
+  "fix": "Count 6-10 of (tooth or lobe) on the indusium margin. OWL: has part some ((tooth or lobe) and part of some indusium); the count and the 'and/or' cue go to RDF.",
+  "reason": "'teeth and/or lobes' counts a union of part kinds; the count pattern takes a single counted part.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02233",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read the privative '-less' ('nerveless') as negated presence of vein, 'or nearly so' as approximately (already a reading); keep 'otherwise' as an RDF cue, since the 2 ribs are a separate statement.",
+  "reason": "Terms and the negation representation exist; only the '-less' form isn't read.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02234",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Distribute 'serrate' over 'singly or doubly': union serrated PATO:0001206 | doubly serrate FLOPO:0991221 (same attribute); 'finely to coarsely' is a tooth-size continuum, RDF only.",
+  "reason": "Both values exist; the adverbial disjunction wasn't expanded.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02235",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'margins with N X' as a plain count of X (lobe) with container the organ of the sentence (leaf blade); the margin is the region of the parts, not a count position.",
+  "reason": "This isn't a count per place, so pattern 14 doesn't apply; the plain count was missed.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02236",
+  "decision": "transcription_error",
+  "target": "quality thickness PATO:0000915 (diameter PATO:0001334 for a terete rhizome), not 'thick'",
+  "fix": "Rule: 'N mm thick' → thickness (diameter when the organ is terete), value 2-5 mm.",
+  "reason": "The adjective was transcribed as the quality instead of its attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02237",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Read 'to as much as X but mostly c. A-B' as usual range A-B (approximate) with value_max_extreme X; stage: elongating at maturity.",
+  "reason": "This is a usual range with a rare maximum, worded without parentheses.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02238",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Count word 'many' with 'pairs' (collection size 2), counted part leaflet, container pinna (bipinnate leaf).",
+  "reason": "This is an indefinite count; 'pairs' and the pinna container weren't handled.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02239",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept 'to' inside parentheses as an inclusive upper bound (sepal length ≤ 6 mm) with stage 'in fruit' PO:0001002; also annotate accrescent FLOPO:0991082 with 'slightly' as a degree qualifier.",
+  "reason": "The terms and the stage reading exist; the parenthesized bound cue isn't read.",
+  "confidence": "medium"
+ }
+]

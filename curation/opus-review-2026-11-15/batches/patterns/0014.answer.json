@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P00560",
+  "decision": "existing_pattern",
+  "target": "config/flora_context_words.tsv (kind D, which member of a series)",
+  "fix": "Add the phrase 'of middle whorl' / 'middle whorl' as a reading of median FLOPO:0991381 for tepal|petal|sepal|stamen. Then the 2.5-3.5 cm width (and the 4.5-5.5 cm length) is stated of tepals with the median position. 'innermost' is already a row.",
+  "reason": "The stage qualifier is a series position, not a stage. Only the wording 'of middle whorl' is missing from the table.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00561",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/flora_value_term_rules.tsv (measurement cue)",
+  "fix": "Read the French 'épais de N mm' as thickness PATO:0000915 with value 2 mm, as 'long de' is read as length. 'environ' makes the value approximate (pattern 01). The adjective 'thick' must not be the quality when a number follows.",
+  "reason": "The statement is an ordinary thickness measurement of the petiole. The annotator took the adjective instead of the attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00562",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "'shorter than the leaves' should be read by comparison(): decreased length PATO:0000574 towards leaf PO:0025034, with 'slightly' as a degree in RDF. Ground 'sheaths' here as the sheath of the peduncle (scape), not as leaf sheath, because it follows 'peduncles' in an Eriocaulon description.",
+  "reason": "This is a plain comparison of a dimension with a named second part, so the towards slot covers it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00563",
+  "decision": "new_pattern",
+  "target": "measured extent of a state",
+  "fix": "The bearer (distal cauline leaf) has the state decurrent PATO:0001984 in OWL. The length of the decurrent part (0-2 cm) is an RDF measurement of the extent of that state (fb:extentLow/High and a unit), or, where PO has the part, the length of the decurrent base. 'slightly' and 'sessile and auriculate-clasping to' stay as the continuum.",
+  "reason": "A number measures how far a state reaches. It is not a dimension of the bearer. The same construction appears as 'exserted 2.5-4 mm' and 'joined for 2-5 mm'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00564",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground the container 'squamellae' (in a pappus) to pappus element PO:0025394, not to lodicule or inflorescence bract. Count 1 ('a single') of awn PO:0025349 per element, with the bearer_quality outer FLOPO:0991379 from 'the outer ones'. 'awn or awn-tip' is one part and needs no union.",
+  "reason": "The count and the container are both in the clause. The ambiguous 'squamella' synonym blocked the container from grounding.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00565",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept 'to' directly after '×' as an inclusive upper bound on the second dimension: width ≤ 1.5 cm, length 8-25 cm. 'in flower' is already a stage row (PO:0007616), and 'Spikes' grounds to inflorescence.",
+  "reason": "'to' is a known cue, but the parser does not expect it inside an L × W pair.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00566",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation) with docs/odp/08-alternative-with-frequency.md",
+  "fix": "Read the count '0' after a part ('pappi 0') as a negation cue: pappus PO:0025393 absent, with frequency usually. 'sometimes coroniform' is the alternative with its own frequency (coronate FLOPO:0991315).",
+  "reason": "'0' is FNA's way of writing 'absent'. The negation cue is the digit, and the gate does not know it.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00567",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/flora_review_rules.tsv (R0003 eglandular) with docs/odp/12-part-of-qualified-whole.md",
+  "fix": "Let the prefix of 'eglandular' be its own negation cue. Apply R0003 (gland PO:0005656 absent) to the hairs (trichome PO:0000282, part of whole plant), not to the plant. The plant itself is hairy PATO:0000454, and 'mostly' is the frequency.",
+  "reason": "The plant has hairs, and it is the hairs that lack glands. The rule exists but was put on the wrong bearer, and its cue was looked for outside the word.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00568",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Count 1 of inflorescence PO:0009049 with the bearer quality female PATO:0000383. count_position is per_axil with landmark leaf axil PO:0009023 ('per leaf-axil'). 'Female' alone stands for 'female inflorescences', resolved from the parallel 'Male' sentence.",
+  "reason": "'1 per leaf-axil' is the per_axil kind of pattern 14.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00569",
+  "decision": "new_pattern",
+  "target": "comparison with an implied second term",
+  "fix": "The bearer is the outer tangential cell wall of hyalodermis cells (a wall of a cell as the bearer, still open). The quality is decreased thickness PATO:0000592 towards an unnamed term. The implied comparator (the inner walls of the same cells) and 'slightly' stay in RDF only, and there is no OWL towards.",
+  "reason": "'thinner' has no stated second term. This is the open 'comparison with an implied second term' item, and it also needs a cell-wall bearer.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00570",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'in clusters of N to M' as a count of flower PO:0009046 (2-16) with bearer_container inflorescence PO:0009049, and 'N to M' as a range. 'axillary' is a position of the cluster. This is not a unit problem.",
+  "reason": "This is a count of flowers per cluster, and the count pattern covers it once the 'clusters of' phrase is read.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00571",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md (with the dm conversion in 02-bounded-measurement.md)",
+  "fix": "Since 2026-11-15, decimetres are converted (factor 0.1 to m): height of whole plant 6-10 m with max extreme 15 m, keeping source_unit dm. Re-annotating should release it.",
+  "reason": "The row was held before dm became a supported unit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00572",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1, region 'margin')",
+  "fix": "There is no alternative in this clause. The 'or' of 'apex acute or acuminate' leaked across the comma, so split the clause at commas. The bearer is leaf margin PO:0020128 (region row 'margin'), the value is dentate, and 'sharply' is a degree in RDF.",
+  "reason": "The held reason does not apply. It is a single value on a region of the lamina.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00573",
+  "decision": "new_pattern",
+  "target": "measured extent of a state",
+  "fix": "Anther PO:0009066 exserted PATO:0000623 in OWL. The length by which it projects (2.5-4 mm) is an RDF extent of the state, beyond the corolla tube as the implied landmark. The short-styled morph is the qualified whole (pattern 12).",
+  "reason": "The number measures how far the anther projects, not any dimension of the anther.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00574",
+  "decision": "new_pattern",
+  "target": "measured extent of a state",
+  "fix": "Bracteoles fused with PATO:0000642 each other (mutual relation, towards bracteole) in OWL. The length of the fused part (2-5 mm) is the RDF extent of the state.",
+  "reason": "It is the same construction as 'exserted 2.5-4 mm': a number for how far a state reaches.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00575",
+  "decision": "existing_pattern",
+  "target": "config/flora_context_words.tsv (row 'above', kind region, distal, for culm)",
+  "fix": "Read 'above' with the existing region row: the distal region of the culm is slender PATO:0002212 and weak (decreased strength PATO:0001779). These are two annotations from the 'and'. It is the contrast to 'thick at base'.",
+  "reason": "This is a place on the part, not a stage, and the table already has the reading for culm.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00576",
+  "decision": "existing_pattern",
+  "target": "docs/odp/12-part-of-qualified-whole.md",
+  "fix": "Carry the section heading 'Pistillate flowers:' as the qualified whole, flower PO:0009046 with female PATO:0000383, onto the following parts. Pedicel length 1.5-3.1 cm, part of a female flower.",
+  "reason": "The sex belongs to the whole flower whose pedicel is measured. The context sits in a heading before a colon, which the reader does not scope.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00577",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Read the numeric fractions '1/3-1/2 as long as' as ratio_low 0.33 and ratio_high 0.5, giving decreased length PATO:0000574 towards the spur (petal spur PO:0025511).",
+  "reason": "This is a ratio to another part written with fractions, which the reader does not parse yet.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00578",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'of 2–3 leaflets' as a count of leaflet PO:0020049 (2-3) with container leaf PO:0025034 and frequency usually.",
+  "reason": "This is a count with 'of' before the counted part, not a measurement.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00579",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (Q10 climber)",
+  "fix": "Point the habit noun 'climber' to whole plant PO:0000003 + climbing FLOPO:0991108 (rule V209) instead of the phenotype class FLOPO_0985031, which has no EQ signature. '1–2 m long' is then a length of the plant.",
+  "reason": "The value class exists, and only the noun's rule points to a class without EQ.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00580",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "As for P00565: 'to' after '×' is an inclusive upper bound on width (≤ 1.5 cm), and the length is 2-6.5 cm.",
+  "reason": "This is the same L × to-W construction.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00581",
+  "decision": "new_pattern",
+  "target": "dimension counted in cells",
+  "fix": "The bearer is the leaf margin band (part of the apical and dorsal laminae). Its thickness PATO:0000915 and width PATO:0000921 are given with unit 'cell layers' / 'cell rows', 2-3. UO has no such unit, so the value stays RDF only (fb:unit 'cells'), and OWL keeps the attribute without a data range.",
+  "reason": "This is a dimension measured in numbers of cells, common in moss floras. It is not a count of parts at a position.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00582",
+  "decision": "transcription_error",
+  "target": "hypanthium campanulate",
+  "fix": "The quality should be campanulate PATO:0104350 (rule C055), not the attribute 'shape'. 'about 2 mm long' is a separate length statement.",
+  "reason": "The transcribed quality is the attribute instead of the value given in the text. The unit complaint came from the neighbouring measurement.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00583",
+  "decision": "new_pattern",
+  "target": "part present at a position",
+  "fix": "The ostiole has an annular rim around it, which is low. In OWL this is ostiole and has part / surrounded by PATO:0005016 some rim, and 'low' is a quality of the rim (decreased height). In RDF the rim stays a text-grounded part until a PO/FLOPO class exists.",
+  "reason": "The statement asserts a structure present around a part. The relation slot needs a grounded second part, and 'rim' has none.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00584",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md (secondary, reviewed pair table)",
+  "fix": "Add the pair acuminate PATO:0002228 / aristate (rule C207: awn present) to config/flora_union_pairs.tsv as a union across attributes, because a continuum needs comparable values. 'long' and 'shortly' are degree words in RDF. The bearer is the apex of dorsal leaves.",
+  "reason": "'long acuminate to shortly aristate' joins a shape and an awn presence. The degree words and the cross-attribute pair blocked it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00585",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (Q14 liana)",
+  "fix": "Map 'liane' / 'liana' to whole plant + climbing FLOPO:0991108 and ligneous PATO:0002348 (as decided for P00136), instead of FLOPO_0900035 without EQ. 'Grande' is too vague and is dropped. The 40 m height and 40-100 m length follow in the same sentence.",
+  "reason": "The terms exist, and only the habit-noun rule is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00586",
+  "decision": "new_pattern",
+  "target": "combined length of parts",
+  "fix": "The value (≤ 30 cm) is the length of petiole and rachis together. In RDF it is a record with both bearers (petiole and leaf rachis PO:0020055) and fb:combined true. In OWL, at most the entailed bound 'petiole length ≤ 30 cm' can be stated.",
+  "reason": "The measurement is the sum over two parts, so it is not a length of the petiole alone.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00587",
+  "decision": "new_pattern",
+  "target": "gradient along a series",
+  "fix": "The bearer is the series of cauline leaves. The value is a direction of change ('decreasing in size and width distally'), with the cues 'gradually' and 'upward' in RDF. The blade's own shape and size in the same span are separate annotations.",
+  "reason": "'reduced and narrower upward' describes a trend along successive leaves, not a quality of one blade.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00588",
+  "decision": "new_pattern",
+  "target": "comparison within a series",
+  "fix": "The bearer is lemma with sterile PATO:0000956, and the quality is decreased size PATO:0000587 towards lemma with fertile PATO:0000955. This is pattern 09 with both sides qualified (pattern 04). Comparison is allowed when the target has the same class but a different qualifier.",
+  "reason": "Pattern 09 refuses a target of the same class as the bearer, but both sides here are lemmas told apart by fertility.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00589",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/flora_value_term_rules.tsv",
+  "fix": "There is no alternative here: split the 'and' into two values on stem. Use sturdy → robust PATO:0002310 (rule C137, so far only in Collenette) and stiff → inflexible PATO:0001545.",
+  "reason": "This is a conjunction that was taken for an alternative or continuum. Both words already have terms.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00590",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (Q10 climber) with docs/odp/02-bounded-measurement.md",
+  "fix": "Use the same habit-noun rule as P00579 (climbing FLOPO:0991108 on whole plant). 'to ± 15 m' is an upper bound on length with the approximation cue '±' (pattern 01).",
+  "reason": "The terms exist, and only the noun rule is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00591",
+  "decision": "transcription_error",
+  "target": "stems to | m long",
+  "fix": "'|' is an OCR misreading of '1'. Normalise a lone '|' before a unit to 1, which gives stem length ≤ 1 m (pattern 02).",
+  "reason": "The statement has an OCR error, so the bound has no number.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00592",
+  "decision": "missing_term",
+  "target": "twining: a climbing quality (child of FLOPO:0991108) of a plant whose stem winds spirally around its support",
+  "fix": "Add a FLOPO value 'twining' under climbing FLOPO:0991108 for whole plant/stem. Map 'vine' to climbing, replacing the class FLOPO_0985032 without EQ, and 'Twining vine' to whole plant + twining.",
+  "reason": "Climbing exists, but twining has only the phenotype class FLOPO_0985034, which has no EQ.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00593",
+  "decision": "existing_pattern",
+  "target": "docs/odp/12-part-of-qualified-whole.md",
+  "fix": "Add '♂' and '♀' to config/flora_context_words.tsv as male PATO:0000384 and female PATO:0000383. A bract subtends rather than belongs to the flower, so the whole should be the male part of the inflorescence (or the male flower via subtending), not 'part of male flower'. Length 1.5-2(-2.5) mm, with the extreme by pattern 05.",
+  "reason": "The sex symbols are not in the context table. Sex as a stage was the wrong reading.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00594",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Read fractions written as words, 'one fourth to one third as long as', as ratio 0.25-0.33. This gives decreased length PATO:0000574 of leaf sheath towards stem internode PO:0020142. 'elongate' qualifies the target and stays in RDF.",
+  "reason": "This is a ratio to another part in words, which the reader does not parse yet.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00595",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add a grounding rule: 'cell' in an ovary clause = locule PO:0025263. Then count ovule 1 with container locule ('each cell with 1 ovule').",
+  "reason": "The count is plain. Only the old word 'cell' for locule did not ground as the container.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00596",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "Leave unannotated. Do not read it as flowers absent.",
+  "reason": "'Flowers unknown' records a gap in knowledge, not a phenotype.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00597",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "The bearer is glume with upper FLOPO:0991376. Read the ratio '2/3 to as long as' as 0.67-1, and per the table a range reaching 1 gives length PATO:0000122 towards spikelet PO:0009051.",
+  "reason": "This is a fraction-to-equality ratio to another part, with the bearer elided ('the upper').",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00598",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Split the compound word '4–5(–6)-lobed' into a count of lobe on ovary, 4-5 with max extreme 6 (pattern 05). The parser must allow a parenthetical extreme before '-lobed'.",
+  "reason": "'N-lobed' is covered (lobed → lobe), but the extreme in parentheses inside the compound blocked it.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00599",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/flora_value_term_rules.tsv (V237 anastomosing)",
+  "fix": "Treat the participle 'anastomosing' as the value FLOPO:0991128 (rule V237), not as a process. The bearer is veinlet with lower FLOPO:0991377 ('the lower veinlets'), and 'irregularly' is a manner qualifier in RDF.",
+  "reason": "The value class and rule exist. The -ing form was routed to process_or_event.",
+  "confidence": "high"
+ }
+]

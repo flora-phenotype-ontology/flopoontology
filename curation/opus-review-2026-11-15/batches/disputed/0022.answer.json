@@ -1,0 +1,212 @@
+[
+ {
+  "rule_id": "R2537",
+  "decision": "keep",
+  "target": "",
+  "reason": "The target is right: phyllary is a PO synonym of involucral bract. The key is a pipeline artifact (a doubled expansion), but it really occurs in 15 statements in 4 floras. The rule recovers them until the expansion bug is fixed at its source. A rule keyed on 'phyllary' adds nothing, because the PO synonym already grounds it.",
+  "confidence": 0.75
+ },
+ {
+  "rule_id": "R2538",
+  "decision": "keep",
+  "target": "",
+  "reason": "'Propagulum' (Latin singular) is a bryological word. The examples are bryophyte asexual propagules borne in leaf axils, and gemma is the nearest PO class. The first check's constraint words (bryophyte, moss, liverwort) are not part names, so they would never match a container. Seed-plant floras say 'propagule', not 'propagulum'.",
+  "confidence": 0.6
+ },
+ {
+  "rule_id": "R2539",
+  "decision": "keep",
+  "target": "",
+  "reason": "A bisexual flower is a flower, and PO lists 'hermaphrodite flower' and 'perfect flower' as synonyms of flower. Mapping a narrower name to its PO class is the usual practice (false umbel to cyme). To keep the sex, add 'bisexual' as a bearer_quality context word (PATO_0001340 hermaphrodite) beside male and female in flora_context_words.tsv. Do not drop the bearer.",
+  "confidence": 0.7
+ },
+ {
+  "rule_id": "R2540",
+  "decision": "keep",
+  "target": "",
+  "reason": "'Hermaphrodite flower' is itself a PO synonym of flower (PO_0009046), so this rule only repeats PO. The sex should come from a context word 'hermaphrodite' (PATO_0001340), as for male and female.",
+  "confidence": 0.8
+ },
+ {
+  "rule_id": "R2541",
+  "decision": "keep",
+  "target": "",
+  "reason": "'Perfect flower' is a PO synonym of flower (PO_0009046). Add 'perfect' as a context word for hermaphrodite (PATO_0001340), limited to flower and floret. For stamens, 'perfect' means fertile, so do not apply it there.",
+  "confidence": 0.8
+ },
+ {
+  "rule_id": "R2542",
+  "decision": "keep",
+  "target": "",
+  "reason": "French 'fleur' with ☿ is a hermaphrodite flower, which PO puts under flower. Treat it like 'fleur' with ♀/♂: the symbol ☿ should be a context word for hermaphrodite (PATO_0001340).",
+  "confidence": 0.7
+ },
+ {
+  "rule_id": "R2543",
+  "decision": "keep",
+  "target": "",
+  "reason": "In flora use, 'vegetative parts' (indumentum, farina, glandular dots) means the leafy stems as opposed to flowers and fruits. Roots are hardly ever described this way. PO vegetative shoot system ('only vegetative tissues and organs') is the nearest class. The root sense is rare enough to accept.",
+  "confidence": 0.6
+ },
+ {
+  "rule_id": "R2544",
+  "decision": "keep",
+  "target": "",
+  "reason": "Plural of R2543, with the same judgement.",
+  "confidence": 0.6
+ },
+ {
+  "rule_id": "R2545",
+  "decision": "keep",
+  "target": "",
+  "reason": "'Female inflorescence' is an exact PO synonym of pistillate inflorescence (PO_0025598). A female inflorescence is pistillate wherever the phrase is used. The proposed constraint words are sex terms, not part names, so they would never match a container.",
+  "confidence": 0.9
+ },
+ {
+  "rule_id": "R2549",
+  "decision": "constrain",
+  "target": "pappus|achene|cypsela|capitulum|head",
+  "reason": "Pappus scale is a PO synonym of pappus element, and all examples are pappus. Outside Asteraceae an 'aristate scale' may be a bract or glume, so limit the rule to pappus contexts. The awned quality (aristate) should still be emitted alongside, not swallowed by the key.",
+  "confidence": 0.55
+ },
+ {
+  "rule_id": "R2550",
+  "decision": "constrain",
+  "target": "pappus|achene|cypsela|capitulum|head",
+  "reason": "Plural of R2549, with the same constraint.",
+  "confidence": 0.55
+ },
+ {
+  "rule_id": "R2567",
+  "decision": "constrain",
+  "target": "stem|bark|slash|trunk|branch|twig|root|leaf|petiole|plant",
+  "reason": "PO plant sap is an aqueous solution moving through the apoplast or symplast, and its comment excludes latex. Juice of a cut stem or bark fits. Fruit juice (pulp contents) does not, so fruit contexts must not take this rule.",
+  "confidence": 0.75
+ },
+ {
+  "rule_id": "R2577",
+  "decision": "retarget",
+  "target": "inflorescence (PO_0009049)",
+  "reason": "A racemose cyme (cymes along a racemose, indeterminate axis) is in effect a thyrse. PO places indeterminate thyrse (PO_0030127) under inflorescence, not under cyme inflorescence, so the cyme target states something false. The use is too loose for the thyrse class itself, so use the parent inflorescence.",
+  "confidence": 0.6
+ },
+ {
+  "rule_id": "R2578",
+  "decision": "retarget",
+  "target": "inflorescence (PO_0009049)",
+  "reason": "Plural of R2577, with the same judgement.",
+  "confidence": 0.6
+ },
+ {
+  "rule_id": "R2579",
+  "decision": "drop",
+  "target": "",
+  "reason": "'Spicate' is an adjective. The quality rule spike-like (FLOPO:0991142) already covers it. As a bearer key it would turn an inflorescence described as spike-like into a true spike. The few examples where it stood for 'spikes' are better grounded by the noun itself.",
+  "confidence": 0.65
+ },
+ {
+  "rule_id": "R2585",
+  "decision": "constrain",
+  "target": "bulb|corm|bulbil|bulbel|bulblet",
+  "reason": "Tunic is the dry outer coat of a bulb or corm. 'Outer coat' of seeds (testa), fruits (pericarp) or stems is something else. Tubers and rhizomes do not bear tunics, so they are left out of the constraint.",
+  "confidence": 0.8
+ },
+ {
+  "rule_id": "R2588",
+  "decision": "keep",
+  "target": "",
+  "reason": "Hypophysis is a PO synonym of sporangium base. In floras the word is used only for the neck of a moss capsule (rugose, inflated, differentiated). The seed-plant sense, the embryo hypophysis (PO_0020109), does not occur in flora descriptions.",
+  "confidence": 0.7
+ },
+ {
+  "rule_id": "R2589",
+  "decision": "keep",
+  "target": "",
+  "reason": "Plural of R2588, with the same judgement.",
+  "confidence": 0.7
+ },
+ {
+  "rule_id": "R2590",
+  "decision": "constrain",
+  "target": "capsule|sporangium|sporophyte|seta|urn|theca",
+  "reason": "Apophysis is a PO synonym of sporangium base in mosses. In conifer floras (Pinus) it is the exposed swollen part of the cone scale, which is common and not a sporangium base. Limit the rule to moss sporophyte contexts.",
+  "confidence": 0.75
+ },
+ {
+  "rule_id": "R2595",
+  "decision": "keep",
+  "target": "",
+  "reason": "The bamboo pseudospikelet is a spikelet proper with bud-bearing bracts at its base. The floras use it where other grasses have spikelets, and its statements (length, sessile, number per node) are spikelet statements. Narrower-to-parent mapping, as for other narrower names.",
+  "confidence": 0.6
+ },
+ {
+  "rule_id": "R2596",
+  "decision": "keep",
+  "target": "",
+  "reason": "Spelling variant of R2595, with the same judgement.",
+  "confidence": 0.6
+ },
+ {
+  "rule_id": "R2622",
+  "decision": "keep",
+  "target": "",
+  "reason": "FLOPO corona lobe is defined as 'one of the divisions of a floral corona'. Corona scales (Apocynaceae, Caryophyllaceae) are separate members of the corona, which fits that definition. Retargeting to floral corona (FLOPO_0985020) would wrongly attribute counts and shapes of single scales to the whole corona.",
+  "confidence": 0.7
+ },
+ {
+  "rule_id": "R2628",
+  "decision": "constrain",
+  "target": "corolla",
+  "reason": "The upper lip is the corolla lip only under the corolla. Calyces (Lamiaceae, Fabaceae) and orchid descriptions also have upper lips. 'Flower', 'floret' and 'petal' are too broad as constraint words, because flower sections describe two-lipped calyces too.",
+  "confidence": 0.8
+ },
+ {
+  "rule_id": "R2629",
+  "decision": "constrain",
+  "target": "corolle|corolla",
+  "reason": "French form of R2628. It applies only under the corolla (corolle); the calyx (calice) also has a 'lèvre supérieure'.",
+  "confidence": 0.8
+ },
+ {
+  "rule_id": "R2640",
+  "decision": "retarget",
+  "target": "inflorescence (PO_0009049)",
+  "reason": "'Subumbellate' means only nearly umbel-like, so the inflorescence is not an umbel. Ground the bearer to inflorescence. The shape belongs to the existing value umbelliform (FLOPO:0991031), not to the bearer class.",
+  "confidence": 0.65
+ },
+ {
+  "rule_id": "R2642",
+  "decision": "keep",
+  "target": "",
+  "reason": "Passiflora-type corona filaments are the thread-like divisions of the floral corona, which is the definition of corona lobe. Counts, lengths and banding of filaments are qualities of the divisions, not of the whole corona.",
+  "confidence": 0.75
+ },
+ {
+  "rule_id": "R2643",
+  "decision": "keep",
+  "target": "",
+  "reason": "Plural of R2642, with the same judgement.",
+  "confidence": 0.75
+ },
+ {
+  "rule_id": "R2644",
+  "decision": "keep",
+  "target": "",
+  "reason": "Word-order variant of R2642, with the same judgement.",
+  "confidence": 0.75
+ },
+ {
+  "rule_id": "R2646",
+  "decision": "constrain",
+  "target": "capitulum|head|flower head|capitule",
+  "reason": "A central floret is a disk flower only in an Asteraceae head. In grass spikelets or umbels it is just a floret in a middle position.",
+  "confidence": 0.7
+ },
+ {
+  "rule_id": "R2647",
+  "decision": "constrain",
+  "target": "capitulum|head|flower head|capitule",
+  "reason": "A central flower is a disk flower only in a head. In a cyme or dichasium it is the terminal flower.",
+  "confidence": 0.75
+ }
+]

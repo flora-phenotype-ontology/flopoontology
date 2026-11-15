@@ -1,0 +1,321 @@
+[
+ {
+  "cause": "A word that narrows the part (position, kind, size or a narrow synonym: 'cauline', 'basal', 'ray', 'interfloral', 'lateral', 'external', 'small', 'axillary', 'stem leaves', 'caudex', 'calyculus') is dropped, so the statement, most often an absence, lands on the broader class (leaf, flower, bract, stem).",
+  "count": 24,
+  "ids": [
+   "con-X03520",
+   "con-X02856",
+   "con-X02443",
+   "con-X00485",
+   "con-X03248",
+   "con-X00313",
+   "con-X03361",
+   "aud-A01499"
+  ],
+  "step": "annotator",
+  "remedy": "Before grounding, look up the noun together with the word before it as one phrase: cauline leaf → PO:0000013, basal leaf → rosette leaf PO:0000014, ray floret → PO:0025331, disc floret → PO:0025332, calyculus → epicalyx PO:0009063. If the phrase has no class, keep the word in the context slot, or add it to flora_context_words.tsv (interfloral, lateral, external/externes, axillary, proximal, small). If the qualifier cannot be kept, do not emit an absence on the broader class. An absence matched only through a narrow synonym (caudex, scape, culm, calyculus) must not go onto the broader class. 'leafless' after a stem region ('upper part', 'branches') limits the absence to that region.",
+  "detectable": "yes: the source words hold an adjective or a narrow synonym in front of the part noun that the grounded bearer lacks, and the bearer is a parent class (leaf PO:0025034, flower, bract, stem). Also flag 'X absent' when the same taxon has positive qualities on X.",
+  "example": "'Cauline leaves absent' (rosette plant) → leaf PO:0025034 absent; it should be cauline leaf PO:0000013 absent."
+ },
+ {
+  "cause": "When a feature, sub-part or attachment is denied ('awns / ribs / dots / lateral veins / syrinx / annulus / tuft / domatia / marginal vein / short hairs absent', 'without sheaths', 'not attached to valves', 'without leafy stems'), the negation falls back to the organ that carries it, because the feature itself is not grounded.",
+  "count": 18,
+  "ids": [
+   "con-X02872",
+   "con-X00026",
+   "con-X02990",
+   "con-X01939",
+   "con-X02233",
+   "con-X00891",
+   "con-X01295",
+   "con-X00751"
+  ],
+  "step": "annotator",
+  "remedy": "Never move an absence from the denied noun to the noun it belongs to. If the denied noun grounds, emit that class as absent (intramarginal vein PO:0025520, domatium FLOPO_0986021, trichome PO:0000282 with its qualifier). Surface features become a negated quality on the organ (ribbed FLOPO:0991062 negated, punctate negated for 'dots absent / epunctate'). 'not attached to / free from' is an attachment relation. If nothing grounds, drop the statement. Add rows for awn, mucro, beak, rib, dot, syrinx, annulus and tuft to the negation-target table.",
+  "detectable": "yes: the source words of an 'absent/without/lacking' row hold a noun other than the bearer's label or synonyms. Also flag absences whose bearer has positive qualities in the same taxon.",
+  "example": "'Lower glume lateral veins absent' → glume absent; it should be the veins of the glume absent, or nothing."
+ },
+ {
+  "cause": "Statements that the material is missing ('not seen', 'not known', 'not observed', 'unknown') are read as the part being absent.",
+  "count": 12,
+  "ids": [
+   "con-X03743",
+   "con-X01153",
+   "con-X01713",
+   "aud-A00797",
+   "con-X00608",
+   "con-X00729",
+   "con-X00964",
+   "con-X02636"
+  ],
+  "step": "transcription",
+  "remedy": "Prompt: 'X not seen / not known / not observed / unknown' and anatomy lines such as 'Crystals: not observed' report a gap in the material. Write no row for them. Annotator: a hard drop when the source words match (not|never) (seen|known|observed)|unknown|non vu|inconnu, and never take the bearer from the section heading for such a line.",
+  "detectable": "yes: a regex on the source words of absence rows",
+  "example": "'Flowers not known' (Ilex described from fruit) → flower absent"
+ },
+ {
+  "cause": "'bladeless' or 'bladeless sheaths' (basal sheaths of sedges, grasses and monocots, or bracts) is read as 'leaf lamina absent' for the whole taxon.",
+  "count": 11,
+  "ids": [
+   "con-X00362",
+   "con-X01802",
+   "con-X01281",
+   "con-X03406",
+   "con-X01629",
+   "con-X01128",
+   "aud-A03895",
+   "con-X02531"
+  ],
+  "step": "annotator",
+  "remedy": "Rule: 'bladeless' that qualifies sheath(s), bract(s), scale(s) or 'lower/basal leaves' never yields leaf lamina absent. Map it to the culm + aphyllopodic FLOPO:0991233, to leaf sheath PO:0020104 with the context 'basal', to scale leaf PO:0006003 present, or to inflorescence bract with 'sheath only'. A bare 'bladeless' attaches to the nearest named part, and is dropped if that part is not the foliage leaf.",
+  "detectable": "yes: the source words contain 'bladeless' or 'without blade' and the output is leaf lamina absent. Also flag it when the same taxon has lamina qualities.",
+  "example": "'reddish purple, lustrous, bladeless sheaths' (Carex) → leaf lamina absent"
+ },
+ {
+  "cause": "A term is grounded to its general PO sense when the taxon's family uses it for something else: grass auricles, oral setae and culm sheaths; seta; orchid lip; staminal tube; lichen terms; grass florets and panicle branches; Equisetum sheath teeth.",
+  "count": 11,
+  "ids": [
+   "con-X02767",
+   "con-X02588",
+   "con-X01602",
+   "aud-A01946",
+   "aud-A02944",
+   "aud-A00497",
+   "con-X00726",
+   "pat-P02762"
+  ],
+  "step": "table",
+  "remedy": "Add a family-scoped bearer table (family, word, class). Poaceae auricle → leaf sheath auricle PO:0020106 (never stipule). Oral setae → trichome at the sheath mouth. Seta outside bryophytes → trichome (awn in grasses). Orchidaceae lip → labellum. Meliaceae staminal tube → its own part (not stamen). Poaceae 'florets N' → container spikelet. 'flabellate' florets → spikelet. Panicle branch → inflorescence branch PO:0009081, where 'naked' means spikelets absent. Equisetaceae sheath → leaf sheath. Exclude lichen taxa and terms (thallus, soredia, isidia, rhizines) from PO matching.",
+  "detectable": "yes: a family from the taxon name plus the word, checked against the table. Flag PO_0030032 (seta) outside bryophytes and stipule in Poaceae.",
+  "example": "Bamboo 'auricles and oral setae absent' → stipule absent"
+ },
+ {
+  "cause": "A place word that limits a quality to a region or side ('apex', 'base', 'at base', 'in the distal part', 'adaxially', 'en dessous / en dessus', 'base of perianth lobes') is lost, or is not applied to every alternative or conjunct, so the quality goes on the whole organ.",
+  "count": 11,
+  "ids": [
+   "aud-A05121",
+   "aud-A01690",
+   "aud-A05444",
+   "aud-A00856",
+   "aud-A05733",
+   "aud-A02724",
+   "aud-A00365",
+   "aud-A01691"
+  ],
+  "step": "annotator",
+  "remedy": "Use the substituted-bearer scope ('apex rounded') for every operand of 'or' and 'and'. A clause-initial place adverb covers all qualities in the clause. Add 'en dessous' → abaxial and 'en dessus' → adaxial to flora_context_words.tsv. A place phrase after the second alternative ('free to connate at base', 'glabrous or hairy in the distal part') goes in that alternative's position slot. In 'inserted at base of X', the place is the base of X.",
+  "detectable": "yes: the source words contain apex, base, margin, adaxial/abaxial or dessus/dessous, or 'at/in the <region>', but the annotation has no region or position slot",
+  "example": "'apex acute or obtuse' → leaf lamina acute; it should be leaf apex acute or obtuse."
+ },
+ {
+  "cause": "A word or phrase has no reviewed row, so it is grounded wrongly or left out: 'up' blocked, 'discontinuous' as a process quality, glaucous as approximately green, 'contracted into petiole', 'continuous with', liana, 'Stipules 0', French surface and count phrases, 'segment'.",
+  "count": 10,
+  "ids": [
+   "uns-137",
+   "uns-89",
+   "aud-A01719",
+   "pat-P00281",
+   "pat-P00485",
+   "pat-P00585",
+   "pat-P00056",
+   "pat-P03063"
+  ],
+  "step": "table",
+  "remedy": "Add rows: upward-reaching → ascending PATO_0104355. interrupted → structurally discontinuous PATO_0040026. glaucous → PATO glaucous. 'base contracted/narrowed into petiole' → leaf lamina base attenuate PATO_0001982. 'continuous with' → fused with PATO:0000642. liane/liana → whole plant climbing FLOPO:0991108 + ligneous PATO:0002348. '<part> 0' → negated present PATO:0000467. 'face supérieure/inférieure' → adaxial/abaxial. 'N dents' → tooth count. Dissected-blade 'segment' → leaf lamina lobe PO:0025517.",
+  "detectable": "partly: report the source words that reach the fallback or unsat path, ranked by how often they occur",
+  "example": "'sometimes interrupted' → discontinuous PATO_0000690, a process quality, on a sorus"
+ },
+ {
+  "cause": "The bound and unit parser misses common forms: '± to N', 'reaching N mm in width', 'usually less than', 'to more than N', 'd.b.h. to N', and foot or inch marks.",
+  "count": 6,
+  "ids": [
+   "pat-P00532",
+   "pat-P01021",
+   "pat-P01673",
+   "pat-P00843",
+   "pat-P01480",
+   "pat-P02522"
+  ],
+  "step": "annotator",
+  "remedy": "Extend the cue grammar. Allow '±' or 'ca.' before 'to' (approximately). Allow a dimension after the number ('in width'). Allow a frequency word before 'less/more than'. 'to more than' is a lower bound. Read d.b.h./dbh as trunk diameter PATO:0001334 on stem. Read ' and \" as ft and in, then convert to SI.",
+  "detectable": "yes: rows with a number and a unit-like token whose cue check fails",
+  "example": "'usually less than 1 m high' was held as an unsupported cue"
+ },
+ {
+  "cause": "Coordinations and compounds are classified wrongly: 'A and B' read as alternatives, a degree adverb ('narrowly', 'densely', 'sparsely or densely') read as a second value, 'tapering-acuminate' read as a range, and 'oblong-elliptic' reduced to its first value.",
+  "count": 6,
+  "ids": [
+   "pat-P00589",
+   "pat-P02744",
+   "pat-P02546",
+   "pat-P01516",
+   "aud-A01704",
+   "aud-A00559"
+  ],
+  "step": "annotator",
+  "remedy": "'and' gives separate records. 'Q or <degree> Q' and '<degree> or <degree> Q' give Q, with the degree as an RDF qualifier. narrowly, broadly, densely and sparsely are degree modifiers like '±'. A hyphenated 'shape-shape' compound is a continuum. A 'manner-shape' compound (tapering-, shortly-) is the second shape with the first word as manner.",
+  "detectable": "yes: the operands share a value after degree words are removed, or the conjunction is 'and', or the first part of a hyphen compound is not a shape value",
+  "example": "'oblong-elliptic' → oblong only"
+ },
+ {
+  "cause": "In hair phrases the hairs' colour or measurement is put on the organ that bears them.",
+  "count": 5,
+  "ids": [
+   "aud-A03249",
+   "aud-A02852",
+   "pat-P01775",
+   "pat-P01298",
+   "pat-P02955"
+  ],
+  "step": "transcription",
+  "remedy": "Prompt: a colour, length or density inside or after a hair phrase ('ferruginous pubescent', 'silvery tomentulose', 'hairs 0.3-0.5 mm long') describes the hairs. Make the part 'hairs' (trichome PO:0000282) with the organ as container, and write the organ's hairiness as a separate row. Annotator: move a colour that comes before an indumentum word to the trichome.",
+  "detectable": "yes: a colour word next to an indumentum word, or 'hairs' in the source words of a length row whose bearer is not trichome",
+  "example": "'appressed ferruginous pubescent' → petiole rust-coloured"
+ },
+ {
+  "cause": "Indefinite and per-unit counts ('numerous', 'several', 'few', 'N per ultimate branch') are sent to the measurement path as 'number' with no value.",
+  "count": 5,
+  "ids": [
+   "pat-P01398",
+   "pat-P01417",
+   "pat-P02494",
+   "pat-P02724",
+   "pat-P00204"
+  ],
+  "step": "annotator",
+  "remedy": "Route quality 'number' with a count word (numerous, several, few, many) to pattern 13 (present + count_word). Accept the count word before the noun and a frequency word between the part and the count word. Read 'per <part>' as a per-unit count_position, not as the entity.",
+  "detectable": "yes: quality 'number' with no numeric value and a count word in the source words",
+  "example": "'Roots numerous' was held as a measurement without a unit"
+ },
+ {
+  "cause": "The 'N-xed' count-in-word split fails on '--' ranges, a leading adverb ('palmately 3–4-lobed'), being run after the unit check, or 'celled' that has only the locule reading.",
+  "count": 4,
+  "ids": [
+   "pat-P02971",
+   "pat-P02479",
+   "pat-P01375",
+   "pat-P01281"
+  ],
+  "step": "annotator",
+  "remedy": "Run the flora_counted_parts.tsv split before the unit check. Accept '--' as a range dash. Allow an adverb before N-xed and keep it as manner. Add 'celled' → plant cell PO:0009002 when the container is not an ovary, fruit or anther.",
+  "detectable": "yes: the token matches \\d+(--|–|-)?\\d*-[a-z]+ed and no count was made",
+  "example": "'7-nerved' was read as a measurement with no unit"
+ },
+ {
+  "cause": "The transcription puts the attribute or the wrong thing in the quality slot: 'broad'/'wide' after a number, 'light-green' written as colour, 'pour le pédoncule' made a relation, and a qualitative 'reflexed' routed as a measurement.",
+  "count": 4,
+  "ids": [
+   "pat-P01041",
+   "pat-P02452",
+   "pat-P02361",
+   "pat-P01550"
+  ],
+  "step": "transcription",
+  "remedy": "Prompt: after a number and unit, 'broad/wide/long/high' names the dimension (width, length, height). Copy the source value word itself ('light-green'), not its attribute. 'dont N pour le X' gives X's own length. Annotator: route a row with no number to the qualitative path.",
+  "detectable": "yes: the quality is an attribute (colour, shape, number) while the source words hold a value word in the lexicon, or a measurement row has no number",
+  "example": "'limb 7.5-11 mm broad' → corolla broad"
+ },
+ {
+  "cause": "A quality without its own subject is bound to the header organ instead of the part named just before it (nerves, distal sheaths, filaments, the primary divisions after 'then').",
+  "count": 4,
+  "ids": [
+   "aud-A01397",
+   "aud-A01577",
+   "aud-A03523",
+   "aud-A01992"
+  ],
+  "step": "transcription",
+  "remedy": "Prompt: a quality or comparison with no subject belongs to the part named last in the same clause. In 'ternate, then pinnate', the values after 'then' go to the primary divisions.",
+  "detectable": "partly: the clause names a sub-part between the header and the quality, but the bearer is the header part",
+  "example": "'lateral nerves 6-7 pairs, not prominent above' → leaf not prominent"
+ },
+ {
+  "cause": "Context from a section heading or flower type ('Male flowers:', 'Female flowers:', 'disk-flowers ...; corollas') is not carried to the parts described under it.",
+  "count": 3,
+  "ids": [
+   "aud-A02854",
+   "aud-A06100",
+   "aud-A02831"
+  ],
+  "step": "transcription",
+  "remedy": "Prompt: fill the flower-sex or flower-type context of every row under a 'Male/Female flowers:' heading, or under a ray/disk sub-sequence. Annotator: map it to male PATO_0000384 / female, or to ray/disk flower as the whole.",
+  "detectable": "yes: the description has sex or flower-type headings but the rows under them have no context",
+  "example": "'sepals blackish' under 'Male flowers:' has no male context"
+ },
+ {
+  "cause": "A stage or age word ('immature', 'young', 'by flowering') before or after the bearer is not kept as the stage.",
+  "count": 3,
+  "ids": [
+   "aud-A02978",
+   "pat-P01224",
+   "pat-P02661"
+  ],
+  "step": "annotator",
+  "remedy": "Check flora_context_words.tsv for an adjective before the noun (young PATO:0000309, immature). Add 'by flowering' → flowering stage PO:0007616.",
+  "detectable": "yes: a context word in the source words is missing from the annotation",
+  "example": "'Immature fruit purple' → fruit purple (reads as ripe)"
+ },
+ {
+  "cause": "One negation at the end of a list ('A and B absent') is not applied to every item, so one item is recorded as present.",
+  "count": 2,
+  "ids": [
+   "con-X00866",
+   "con-X01821"
+  ],
+  "step": "annotator",
+  "remedy": "Apply a final negation to every coordinated item. A list item under a negation must never be recorded as present.",
+  "detectable": "yes: two rows share the source words and one has 'absent' while the other is present",
+  "example": "'auricles and oral setae absent' → one present, one absent"
+ },
+ {
+  "cause": "French visibility phrases ('sans nervures distinctes / marquées') are read as the veins being absent.",
+  "count": 2,
+  "ids": [
+   "con-X00461",
+   "con-X01021"
+  ],
+  "step": "table",
+  "remedy": "Add rows: 'sans nervures distinctes/marquées', 'nervures peu distinctes', 'veins obscure' → vein inconspicuous PATO:0000464.",
+  "detectable": "yes: 'sans' followed by a noun and then distinct/marqué/visible",
+  "example": "'sans nervures marquées' → vein absent"
+ },
+ {
+  "cause": "In 'in K rows', K is taken as the count of the parts instead of the count of rows.",
+  "count": 2,
+  "ids": [
+   "aud-A06228",
+   "aud-A03945"
+  ],
+  "step": "annotator",
+  "remedy": "When 'row(s)' follows the number, put the count on the rows or the arrangement (in rows), never on the part.",
+  "detectable": "yes: 'row' right after the number in the source words of a count row",
+  "example": "'Sori in 1 row on each side of costa' → 1 sorus"
+ },
+ {
+  "cause": "Hedged or elliptic absence ('nearly leafless', 'parfois absentes' bound to the section's organ) is read as a plain absence of that organ.",
+  "count": 2,
+  "ids": [
+   "con-X02564",
+   "con-X00465"
+  ],
+  "step": "annotator",
+  "remedy": "A hedge (nearly, almost, sub-, parfois/sometimes) blocks a plain absence. 'nearly leafless' becomes leaves few or reduced (decreased amount PATO_0001997). An elliptic 'absent(e)s' binds to the nearest preceding noun with the same gender and number, and its frequency is kept.",
+  "detectable": "yes: a hedge or frequency word in the source words of an absence row",
+  "example": "'nearly leafless' → leaf absent"
+ },
+ {
+  "cause": "Other single cases: an implicit second term of a relation, a quality that belongs to the sinus, the moss cell ratio 'N:1', a vague remark joined to 'sometimes absent', and a union of whole qualities ('perfect or pistillate').",
+  "count": 5,
+  "ids": [
+   "pat-P00965",
+   "pat-P00094",
+   "pat-P01837",
+   "pat-P00302",
+   "pat-P01875"
+  ],
+  "step": "annotator",
+  "remedy": "'contiguous/approximate/remote' said of a group: the target is the same kind of part. 'separated by broad sinus' → leaf sinus broad. Read 'N-M:1' as a length:width ratio. Drop vague words and keep negation + frequency. Add 'perfect' → hermaphrodite PATO:0001340 and allow a union over the whole.",
+  "detectable": "partly: a relation with no target, a ':1' token, an absence with the wrong polarity",
+  "example": "'medial cells 2-7:1' was held as a missing unit"
+ }
+]

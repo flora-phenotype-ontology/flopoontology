@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P01560",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground 'spikelet-clusters' as a group of spikelets with the group rule (bearer_collection: object aggregate and has_member some spikelet, PO:0009051) and count 3 spikelets per group. Like 'clusters of 2 to 16', the group is the container.",
+  "reason": "This is a count of parts in a group. The playbook already handles groups as collections, but the annotator tried to ground 'spikelet-cluster' as a PO container and failed.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01561",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept 'to' after an opening parenthesis ('(to 1.5 mm)') as the inclusive upper-bound cue. Bearer: bracteole PO:0009043 (synonym bractlet), part of epicalyx PO:0009063 (synonym calyculi).",
+  "reason": "'to' is already an upper-bound cue. Only the parenthesis stopped the parser.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01562",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'Fruit unknown' means the fruit has not been seen. It does not mean the fruit is absent, so it is not a phenotype. Reading it as negated presence would be wrong.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01563",
+  "decision": "new_pattern",
+  "target": "gradient_along_series",
+  "fix": "Slots: the series member (leaf), the attribute (width PATO:0000921), the direction (decreasing), the axis and its direction (stem, acropetal) and the cue. RDF only, like a frequency. In OWL at most a pair: upper leaf (FLOPO:0991376) has decreased width PATO:0000599 towards lower leaf.",
+  "reason": "The leaves get narrower up the stem. This is a gradient along a series, already listed as open (10 statements), not a process.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01564",
+  "decision": "new_pattern",
+  "target": "habit_noun_as_phenotype",
+  "fix": "Use a reviewed table of habit nouns: climber → whole plant PO:0000003 climbing FLOPO:0991108; 'woody' → ligneous PATO:0002348 as a second record. 'to 30 m' is a bound on plant length (pattern 02), not height, for a climber. 'Large' is not annotated.",
+  "reason": "A habit noun names a quality of the whole plant. The climbing term exists (with 'liana' among its contexts), but no rule turns the noun into an EQ.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01565",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Bearer: leaf midvein PO:0020139 ('main vein'), quality prominent PATO:0001482, with 'abaxially' as the abaxial side (kind C; the context word is already in the table).",
+  "reason": "The prominent part is the main vein, not the leaf blade. 'abaxially' is a place word, not a stage.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01566",
+  "decision": "missing_term",
+  "target": "partially opening (flower): a flower whose perianth does not spread fully at anthesis; child of the flower opening qualities",
+  "fix": "Annotate flower PO:0009046 with the new value. 'many simultaneously' is not annotated.",
+  "reason": "This is a stable floral character (the opening state at anthesis), not an event. PATO has no term for a flower that opens only partly.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01567",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md (plain measurement range)",
+  "fix": "Add a grounding rule: '<number> <unit> thick' → thickness PATO:0000915 (the attribute), not the value 'thick'. Bearer: stalk PO:0025066 (synonym stipe) of the sterile frond, with sterile as bearer state (pattern 04).",
+  "reason": "This is an ordinary measurement. The annotator grounded the adjective 'thick' instead of the attribute thickness.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01568",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "This describes the root systems of wind-thrown trees at one site in West Virginia. It is an ecological observation of a stand, not a description of the taxon.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01569",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add the French forms '3-lobé/3-lobée' as trilobed (as with three-lobed = trilobed; the word has its own term, so do not split it into a count). Add 'souvent' as frequency often. 'légèrement' (slightly) is a degree; keep it as the cue only.",
+  "reason": "The value is trilobed. Only the French spelling of the numeral compound was not recognised.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01570",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Add the French cue 'chaque nœud (florifère) portant N' as count_position kind per_node: amount 2 of flower PO:0009046, container inflorescence.",
+  "reason": "This is the 'flowers 1-3 per node' case of pattern 14, written in French.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01571",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add the row 'segmented → segment' to config/flora_counted_parts.tsv, using calyx lobe as the counted part when the organ is a calyx. Result: amount 2 of calyx lobe, no container needed.",
+  "reason": "'2-segmented' is a count in a word. 'segmented' PATO:0002312 does not carry the number.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01572",
+  "decision": "existing_pattern",
+  "target": "docs/flora-annotation-playbook.md rule 9 (absence)",
+  "fix": "Accept the suffix '-less' (spurless) as the negation cue, so the word is its own cue. Result: absence of a spur on the basal region of the sepal. PO has only petal/corolla spur, so the spur needs a FLOPO anatomy class or a generic part restricted to the sepal base.",
+  "reason": "'spurless' is a plain absence. The cue is inside the word, which the negation check does not accept.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01573",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Read 'single or few' as an indefinite count with a known lower end: amount of stem 1 to few (pattern 13 'few' with value_low 1), or a union of amount 1 and few (pattern 07).",
+  "reason": "These are alternatives of a count on one attribute. Both values are already covered by patterns 03 and 13.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01574",
+  "decision": "new_pattern",
+  "target": "detachment_from_another_part",
+  "fix": "Slots: bearer receptacle PO:0009064 (synonym torus), a quality of separability or abscission, and a towards slot for the other part (hypanthium), as in pattern 09. OWL: receptacle and has_characteristic some (separable and towards some hypanthium). 'easily' stays as a degree cue in RDF.",
+  "reason": "This is a structural relation between two parts (they come apart readily), not an event. No pattern covers detachment from a named part.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01575",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (kind A + slot 1 region)",
+  "fix": "'initially' → young PATO:0000309 is already in the table. Combine it with the margin region of the ligule (BSPO margin as part_restriction). Then check that the clause is split at ';' so 'initially' counts once.",
+  "reason": "The stage word and the margin region both have readings. The annotator failed to combine them on a bearer with no PO margin class.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01576",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add a grounding rule: bare 'rachis' in an inflorescence context → inflorescence axis PO:0020122 (synonym 'inflorescence rachis'). Result: amount 1 of flower, container inflorescence axis.",
+  "reason": "This is an ordinary 'N-flowered' count. Only the container word 'rachis' was not grounded.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01577",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Decimetres have been converted to cm since 2026-11-15 (docs/odp/02, Units). Re-annotate: stem length 10-25 cm, extremes 2 and 35 cm, source_unit dm.",
+  "reason": "The row was held before dm became a supported unit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01578",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add 'reaches (a mature height of)' as an inclusive upper-bound cue, alongside 'reaching'. Feet are now converted: height ≤ 3.66 m, source_unit ft. 'mature' can be read as bearer state mature.",
+  "reason": "This is an upper bound with an inflected cue the list lacks. The unit is now supported.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01579",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept '(to 1 cm)' as an inclusive upper bound, as in P01561. Bearer: spine, part of fruit (pattern 12 or container). 'short' is covered by the number.",
+  "reason": "The cue 'to' is supported. Only the parenthesis blocked it.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01580",
+  "decision": "missing_term",
+  "target": "'soon falling' as a synonym of FLOPO:0991231 fugacious (the term exists; only the synonym or rule is missing)",
+  "fix": "Add 'soon falling', 'soon deciduous' and 'early falling' as synonyms or rules for fugacious. Result: leaf PO:0025034 fugacious.",
+  "reason": "Fugacious ('falling very early, soon after it is formed') is exactly this meaning. This is not a process.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01581",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Read 'la base ... munie de 2-4 glandes' as count_position kind at_region. Landmark: the base of the leaf lamina. Amount 2-4 of gland, container leaf lamina.",
+  "reason": "This is a count at a named region of the blade, which pattern 14 covers. The French cue 'munie de' and the relative clause were not recognised.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01582",
+  "decision": "new_pattern",
+  "target": "gradient_along_series",
+  "fix": "Slots: the series member (sorus), the attribute (maturity or developmental stage), the direction (acropetal) and the axis (frond lamina). RDF only. OWL has no sound reading of an order of development.",
+  "reason": "'developing acropetally' is an order of maturation along an axis, the same construction as a gradient along a series.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01583",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1, kind C) + docs/odp/01-approximate-value.md",
+  "fix": "Add 'on the nerves/veins' to config/flora_context_words.tsv as a region: a part_restriction vein of the bearer. Result: lemma, a vein part that is scabrous, with '±' as approximately.",
+  "reason": "Both the place and the '±' have patterns. Only the context row 'on the nerves' is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01584",
+  "decision": "new_pattern",
+  "target": "comparison_with_implied_second_term",
+  "fix": "Slots: the bearer with its series position (stamen filament + outer FLOPO:0991379), a relational quality (decreased width PATO:0000599), and a towards target filled from the contrasted clause (filament + inner FLOPO:0991378). Store the cue for both. OWL as in slot 3: has_characteristic some (decreased width and towards some (filament and inner)).",
+  "reason": "'narrower' leaves the second term implicit (the inner filaments named just before). This is the open pattern with 76 statements.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01585",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground the container: Carex 'scales' (pistillate scales) → floral bract, with 'center' as the median region (slot 1). Result: amount 3 of vein, container scale.",
+  "reason": "'3-nerved' is already split by the table (nerved → vein). The container 'scales' did not ground.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01586",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add the row 'ridged → ridge (or angle, as for angled)' to config/flora_counted_parts.tsv so that '4-ridged' is the count 4. 'obtusely' and 'longitudinally' stay as cues. Also stop reading the numeral as a unitless measurement.",
+  "reason": "This is a count in a word. The annotator took '4' for a measurement without a unit.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01587",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Read the sex symbols: '♂ ♀ (on one plant)' → monoecious FLOPO:0991071 and '♀ only' → female PATO. Result: whole plant one_of (monoecious, female), with 'either ... or' as the cue.",
+  "reason": "This is a union of two sexual states of the plant. Gynodioecious (female or bisexual-flowered individuals) does not match, because here the bisexual plants have unisexual flowers.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01588",
+  "decision": "new_pattern",
+  "target": "comparison_with_implied_second_term",
+  "fix": "Bearer: the abaxial leaflet surface (slot 1). Quality: a decreased-saturation or lighter colour, towards the adaxial surface of the same leaflet, filled in as the implied term. 'often' becomes a frequency in RDF.",
+  "reason": "'paler beneath' compares the lower surface with the upper one without naming it. Same construction as P01584.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01589",
+  "decision": "new_pattern",
+  "target": "alternative_with_own_scope",
+  "fix": "Make each operand of one_of carry its own part_restriction: (pilose on the veins) or (pubescent/tomentose between the veins), both on the abaxial side of the leaflet. OWL: a union of the two has_part restrictions.",
+  "reason": "The alternatives differ in both value and place on the organ. The union pattern only takes values on one bearer scope.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01590",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Normalise '--' to a range dash and split 'L X W mm'. Length 8-22 mm (max 26). Width 3-6 mm (min 0.3).",
+  "reason": "These are ranges with extremes. The double hyphen and the length × width form blocked the parser. No alternative is involved.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01591",
+  "decision": "new_pattern",
+  "target": "habit_noun_as_phenotype",
+  "fix": "'Liane' / liana → whole plant PO:0000003 climbing FLOPO:0991108 + ligneous PATO:0002348 (two records). 'to 12 m or more' → a lower bound on plant length (pattern 02), not an upper one.",
+  "reason": "A habit noun. The terms exist, but no rule maps the noun to its EQ.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01592",
+  "decision": "new_pattern",
+  "target": "habit_noun_as_phenotype",
+  "fix": "liana → climbing FLOPO:0991108 + ligneous PATO:0002348 on the whole plant. 'Arbusto, trepadora, liana' is a list of alternative habits (pattern 07 over growth forms).",
+  "reason": "A habit noun, the same construction as P01591.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01593",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md + docs/odp/12-part-of-qualified-whole.md",
+  "fix": "Annotate the count of calyx lobes 2-4, with the calyx part of a male flower (pattern 12) and the stage 'lors de l'anthèse' → anthesis (kind A table). 'valvate in bud' is a separate record.",
+  "reason": "The phenotype is a calyx closed in bud that splits into 2-4 parts at anthesis. Count, stage and qualified whole are all covered.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01594",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md (plain measurement range)",
+  "fix": "Same grounding rule as P01567: '<n> mm thick' → thickness PATO:0000915. Bearer: leafy twig (stem/branch, with leafy as bearer state if wanted).",
+  "reason": "An ordinary measurement grounded on the adjective 'thick' instead of the attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01595",
+  "decision": "missing_term",
+  "target": "twining: climbing by the spiral winding of an axis round a support; child (or narrow synonym) of FLOPO:0991108 climbing, with inflorescence and inflorescence axis as allowed bearers",
+  "fix": "Annotate inflorescence (raceme) with twining.",
+  "reason": "The climbing definition already mentions twining, but neither the word nor an inflorescence bearer is allowed.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01596",
+  "decision": "missing_term",
+  "target": "acaulescent: a quality of a whole plant whose stem is absent or so short that the leaves appear to arise from the ground (stemless or apparently so); sibling of a caulescent value",
+  "fix": "Annotate the whole plant PO:0000003 as acaulescent. 'or exceptionally caulescent' → pattern 08 (alternative with its own frequency).",
+  "reason": "'acaulescent' usually means a very short stem, not a truly absent one, so negated stem presence would be wrong. It needs its own value.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01597",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "dm is converted since 2026-11-15. Annotate stem length 20-80 cm, extremes 10 and 100 cm, source_unit dm. Use length, as for other FNA stem measures, rather than the transcribed height.",
+  "reason": "The row was held before dm was supported.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01598",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md + docs/odp/01-approximate-value.md",
+  "fix": "Add the rule 'non-stipitate' = sessile (not 'stipitate' negated). Use 'sub-' as stipitate with value_qualifier approximately. Result: union sessile or ~stipitate on the receptacle (fig).",
+  "reason": "The values are alternatives on one attribute (stalk). Only the 'non-' word lacked a rule. Prefer a positive value to a negation inside a union.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01599",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Make 'many' a cue of the indefinite count, alongside 'numerous'. Result: seed, amount many.",
+  "reason": "'Seeds many' is the 'seeds numerous' case of pattern 13.",
+  "confidence": "high"
+ }
+]

@@ -1,0 +1,79 @@
+[
+ {
+  "rule_id": "R3686",
+  "decision": "keep",
+  "target": "",
+  "reason": "The rule's evidence is from Carex/Cyperaceae floras (17 statements in 3 floras). There, 'utricle beak' is the narrowed tip of the perigynium (PO_0009044, which has the synonym perigynia). The fruit sense of utricle is handled separately by R0457 and R1188 (PO_0030097). Fruit utricles in Amaranthaceae are rarely described with a 'beak' as a named part. Mapping a beak to the apex region (FLOPO_0985023) is the usual way to keep a named organ's beak: bare 'beak' was rejected only because it had no organ. The part-word constraint cannot pick out a family, so constraining does not help.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3692",
+  "decision": "keep",
+  "target": "",
+  "reason": "In moss descriptions the 'peristome membrane' is the basal membrane: the low, joined lower part of the endostome, from which the segments and cilia arise. That is a basal region of the peristome (PO_0030042), so 'plant organ base part of peristome' is a fair way to say it with existing classes. Mapping only to the peristome would lose the part. Rejecting would lose 10 statements that are clear.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3699",
+  "decision": "keep",
+  "target": "",
+  "reason": "The evidence is moss capsules whose 'capsule cells' are the exothecial cells (short-rectangular, thick-walled), which is the exothecium, PO_0030073 (sporangium epidermis). Inner cells (spores, columella) have their own names and are not called 'capsule cells'. Angiosperm 'capsule 3-celled' is a count of locules carried by a quality word, not this bearer phrase. Plain plant cell would drop correct information.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3704",
+  "decision": "drop",
+  "target": "",
+  "reason": "The word names the wall of the leaf-blade cells, not the cell. PO has no cell-wall class; the cell wall is a GO class (GO:0005618). The previous review rejected every '... cell wall' bearer for this reason: 'basal cell wall', 'marginal cell wall', 'juxtacostal cell wall', 'inner walls'. Mapping to native plant cell (PO_0025606), or even to laminal cell (FLOPO_0986100), would turn 'walls thick, pitted' into a thick, pitted cell. Wall qualities should go through the walled-quality rules (as R1523 'lax-walled' and R1528 'thick lateral-walled' do) or wait for a decision on the cell-wall bearer.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3720",
+  "decision": "retarget",
+  "target": "leaf (PO_0025034) part of branch (PO_0025073)",
+  "reason": "Non-vascular leaf (PO_0025075) is right only for bryophytes such as Sphagnum. 'Branch leaf' also turns up for conifers, lycophytes and other vascular plants. Leaf (PO_0025034) is the common parent of the vascular and non-vascular leaf, so it is correct in both groups and stays a part of the branch. The original rule's own note already suggests leaf for vascular floras.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3737",
+  "decision": "constrain",
+  "target": "leaf|leaf blade|lamina|blade",
+  "reason": "The target is consistent: plant epidermal cell (PO_0004013) as part of leaf lamina adaxial epidermis (PO_0000050). But that container belongs to the leaf lamina of vascular leaves. The rule's own note applies it to the moss costa as well, and adaxial epidermal cells of petals, bracts or the moss costa would be put in the wrong place. Limit it to leaf-blade contexts. Elsewhere, plain 'epidermal cell' (R3202) still applies.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3740",
+  "decision": "keep",
+  "target": "",
+  "reason": "The examples ('laterals asymmetric', widths in mm, and R1576 'laminae not reflexing') describe the separate blades of individual petals, including the lateral ones. So lamina (PO_0025060) as part of petal (PO_0009032) fits the evidence. The fused-limb reading is not what these statements describe, and PO has no 'corolla limb' class that would be a better target.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3750",
+  "decision": "constrain",
+  "target": "fruit|capsule|seed",
+  "reason": "As a part, kapok is the mass of silky hairs inside the capsule of Ceiba and Bombax. Trichome (PO_0000282) as part of fruit (PO_0009001) is right, and seed trichome is rightly avoided. 'Kapok' is also a common name for the tree (and a trade fibre), so the rule should fire only when the statement is about the fruit, the capsule or the seeds the hairs surround.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3755",
+  "decision": "retarget",
+  "target": "plant cell (PO_0009002) part of leaf (PO_0025034)",
+  "reason": "Use the same cell class as the sibling rules 'leaf cell' (R3661) and 'medial laminal cells' (R3735): plant cell PO_0009002, not native plant cell PO_0025606. 'Distal' cells in moss leaves are the cells of the upper blade, which is wider than the leaf apex. So leaf apex (PO_0020137, used for 'apical laminal cell') would be too narrow. The region stays a position cue, as with the 'medial' rule. Bare 'distal cell' was rejected only because it could also mean axillary-hair cells; 'leaf distal cell' names the leaf, so the mapping is clear.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3766",
+  "decision": "drop",
+  "target": "",
+  "reason": "These are cells of the photosynthetic filaments that grow on the upper surface of the costa (Aloina, Pterygoneurum). The statements describe the filaments (cell shape, papillae, cells per filament), not ordinary costa cells. Mapping to 'plant cell part of costa' would mix the two. The previous review rejected 'filament cell' for the same missing class. There are only 2 statements, so it is better to wait for a filament class.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3774",
+  "decision": "retarget",
+  "target": "plant cell (PO_0009002) part of seed coat (PO_0009088)",
+  "reason": "In the one source flora the statements (domed, smooth, papillate, elongate) are about the surface cells. But as a general rule, 'seed coat cell' also covers cells of deeper layers (palisade, sclereids), and seed coat epidermis (PO_0006048) would be wrong for those. The part-word constraint cannot help here because 'seed coat cell' is itself the bearer. Seed coat (PO_0009088) as the whole is always correct, and the surface reading is kept by 'testa' or 'exotesta' when the text names them.",
+  "confidence": "medium"
+ }
+]

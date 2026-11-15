@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P02520",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Read 'N-M dm. or higher' as the usual range 3-5 dm (converted to 30-50 cm) with an open upper extreme; add the trailing cues 'or higher', 'or more', 'or taller', 'or longer'. If the model requires a number for the extreme, store a lower bound of 30 cm (pattern 02) with the range in RDF.",
+  "reason": "This is a range of plant height followed by an open end, not an alternative between two values.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02521",
+  "decision": "existing_pattern",
+  "target": "config/flora_context_words.tsv (kind D, inner FLOPO_0991378)",
+  "fix": "Add the French row 'interne' / \"l'interne\" -> inner FLOPO_0991378, and add 'pappus' (PO_0025393) to the bearer words of 'inner'. The record is pappus (inner) length 6-7 mm.",
+  "reason": "'l'interne' is the inner series of a double pappus. It is a member of a series, not a developmental stage.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02522",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md (Units)",
+  "fix": "Recognise the foot mark ' (and the inch mark \") as units ft and in, then convert to SI: 0.61-1.22 m. Read 'about' as value_qualifier approximately (pattern 01).",
+  "reason": "Plant height in feet, written with the ' symbol, which the unit parser does not know.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02523",
+  "decision": "existing_pattern",
+  "target": "config/flora_context_words.tsv (terminal PATO_0002476) + region 'at base'",
+  "fix": "Resolve the elliptical 'the terminal' to the leaflet blade named in the clause ('blades ..., the lateral ones ..., the terminal ...'): bearer leaflet (terminal) with the base region cuneate. Let 'terminal' apply to the noun the clause elides.",
+  "reason": "'terminal' is a series member (terminal leaflet), not a stage. The context row exists, but the noun is elided.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02524",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md (config/flora_counted_parts.tsv)",
+  "fix": "Add the row 'branched -> branch' to flora_counted_parts.tsv. Container: the tendril named before the word, grounded to PO tendril (here a leaf-opposed branch tendril, PO_0025364). Count 5-10.",
+  "reason": "'5-10-branched' is a count of the tendril's branches. The rejected-bearer table already sends 'n-branched' to pattern 03.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02525",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add the trailing cue 'N or less' (also 'or shorter', 'or smaller') as an inclusive upper bound, and the inch mark \" as unit in, converted to 2.54 cm. Bearer: the upper stem leaves (upper FLOPO_0991376).",
+  "reason": "'1\" long or less' is a one-sided bound, not a disjunction.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02526",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Bearer: sepal with lateral FLOPO_0991380. Equal length 'towards' the sepal with median position. Add 'intermediate' (orchid dorsal sepal) as a row of median FLOPO_0991381 in flora_context_words.tsv so that the second term grounds.",
+  "reason": "'equalling the intermediate' is pattern 10, but the second term, 'the intermediate [sepal]', is not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02527",
+  "decision": "existing_pattern",
+  "target": "plain EQ: FLOPO:0991004 paired",
+  "fix": "Map 'paired' to the value class FLOPO:0991004 paired, which is not a count, on spine grounded to PO_0025172 thorn (in its bearer list). Do not route 'paired' to the count splitter.",
+  "reason": "The value class exists and lists thorn as a bearer. The annotator treated it as a count.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02528",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (Q14 liana -> FLOPO_0900035)",
+  "fix": "Give FLOPO_0900035 whole plant lianescent the EQ signature whole plant PO:0000003 + climbing FLOPO:0991108 + ligneous PATO:0002348, or map 'liana(s)/liane(s)' to those terms directly.",
+  "reason": "Same case as the reviewed P01285/P01734: the terms exist, but the held phenotype class has no EQ signature.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02529",
+  "decision": "existing_pattern",
+  "target": "measurement rule: thickness PATO:0000915",
+  "fix": "Map 'épais de N mm' to thickness PATO:0000915 (not the value 'thick'): petiole PO:0020038, 1-2 mm.",
+  "reason": "Same as the reviewed P01237/P01571.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02530",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Count of bract 1-2 ('1 or 2' is the range 1-2 under the 2026-11-14 rule), count_position at_region 'lower part' of the peduncle PO:0009053, which is the landmark. 'sterile' PATO_0000956 is a quality of the counted bracts.",
+  "reason": "'1 or 2' is a range, not an alternative. The statement counts sterile bracts on the lower part of the peduncle.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02531",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (Q14 liana -> FLOPO_0900035)",
+  "fix": "Same as P02528: 'lianes' -> whole plant + climbing FLOPO:0991108 + ligneous PATO:0002348. 'Grandes' adds no annotatable value.",
+  "reason": "The held class has no EQ signature.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02532",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md + config/flora_context_words.tsv (region)",
+  "fix": "Union rounded | obtuse (same attribute) on leaflet. Add 'at each end' / 'at both ends' as a region row that gives two records, apex and base.",
+  "reason": "A plain same-attribute union. The region cue 'at each end' has no reading.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02533",
+  "decision": "transcription_error",
+  "target": "bearer: floral bract (not sepal)",
+  "fix": "Bearer: floral bract (the subject of 'floral bracts 7-8 mm long, about equaling the sepals, ... ecarinate'). The value is negated keeled: accept the privative prefix e- of 'ecarinate' as the negation cue.",
+  "reason": "The sepals are only the second term of a comparison. The bracts are ecarinate.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02534",
+  "decision": "missing_term",
+  "target": "longitudinally arranged (seeds lying with their long axis parallel to the fruit's axis)",
+  "fix": "Seed, orientation 'parallel to' PATO_0002272 towards the fruit axis (pattern 09 slot). This needs an orientation value or a grounding rule for 'disposées longitudinalement'.",
+  "reason": "This is a real character of seed orientation in the pod. The structure (pattern 09) fits, but there is no word rule or value for it.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02535",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Bearer: lower glume PO_0006002. Length ratio 0.5-0.67 (unit ratio) towards spikelet PO:0009051. Add numeric fractions 'N/M as long as' and 'N/M-P/Q as long as' as ratio cues, next to 'half the length'.",
+  "reason": "The ratio pattern covers this. The fraction is not a missing unit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02536",
+  "decision": "transcription_error",
+  "target": "bearer: trichome (hair) of twig, quality: length",
+  "fix": "Bearer: trichome PO_0000282 on the twig (branch PO_0025073), length PATO_0000122 < 0.1 mm (pattern 02, strict bound). 'scurfy' is a separate value.",
+  "reason": "'hairs' was transcribed as the quality. The measured thing is the length of the hairs.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02537",
+  "decision": "missing_term",
+  "target": "trigone (thickening of the cell wall at the corners of bryophyte leaf cells), and cell lumen",
+  "fix": "Once bearers exist, this is pattern 09: trigone smaller than lumen.",
+  "reason": "This is a moss leaf-cell character. Neither PO nor FLOPO has these cell-level bearers.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02538",
+  "decision": "new_pattern",
+  "target": "depth of division",
+  "fix": "Value palmately lobed FLOPO:0991158 on leaf blade, plus an RDF depth of division as a fraction of the distance from margin to base: lower bound 0.5 ('to the middle or beyond'). OWL keeps only palmately lobed.",
+  "reason": "Depth of incision is not covered by any pattern. It was named in the 2026-11-14 review as 'depth and order of division'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02539",
+  "decision": "new_pattern",
+  "target": "count per unit",
+  "fix": "Count of leaf 4-5 with per_unit = ultimate branch (branch PO:0025073 of highest order). It is like pattern 14, but the unit is a repeated part, not a place: RDF fb:perUnit, and no OWL class, as in pattern 14.",
+  "reason": "Pattern 14 has per_node and per_axil, but 'per ultimate branch' is a count per repeated structure. The transcribed entity 'per ultimate branch' is the unit, not the bearer.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02540",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "'Stamens many' is the example wording of pattern 13: stamen, amount 'many'. Make the annotator take 'many' after the noun as count_word.",
+  "reason": "This exact wording is in the pattern's description.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02541",
+  "decision": "new_pattern",
+  "target": "comparison with an implied second term",
+  "fix": "Bearer: the inner basal lobe of the lateral leaflet. Decreased size 'towards' the outer lobe of the same leaflet, with the second term taken from the contrasting phrase ('outer lobe large'). RDF keeps the implied target; OWL only when it grounds.",
+  "reason": "'smaller' has no 'than X'. The second term is the contrasting sibling lobe.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02542",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Allow '±' between the bound cue and the number ('to ± 15 cm'): upper bound 15 cm with value_qualifier approximately (pattern 01). The height is of the erect stems; the 'or to 1 m long and arching' alternative is a separate length record.",
+  "reason": "The cue 'to' is known, but the '±' between the cue and the number breaks it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02543",
+  "decision": "new_pattern",
+  "target": "count per unit",
+  "fix": "As P02539: count of leaf 2-4 per ultimate branch, RDF fb:perUnit, no OWL class.",
+  "reason": "The same construction as P02539.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02544",
+  "decision": "new_pattern",
+  "target": "comparison with an implied second term",
+  "fix": "Bearer: leaf lamina abaxial epidermis. Lighter colour ('paler') 'towards' the adaxial surface, which is the contrasted side ('deep-green ... above'). 'dull beneath' is a plain surface value (slot 1) and annotatable now.",
+  "reason": "'paler' is relative, and its second term is the opposite surface named earlier.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02545",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Bearer: inflorescence with male PATO quality (pattern 04, 'Male' refers to the inflorescences of the previous sentence). Count 1, count_position per_axil, landmark leaf axil PO:0009023.",
+  "reason": "Pattern 14 lists 'per leaf axil'. The elliptical 'Male [inflorescences]' was not resolved, and 'per leaf-axil' was taken as the entity.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02546",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "'pilose or densely pilose' reduces to pilose FLOPO:0991048, with the degree 'densely' kept as an RDF modifier of one operand. Carry the scope 'adaxially' (leaf lamina adaxial epidermis) from the clause.",
+  "reason": "Both alternatives have the same value; only the degree differs.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02547",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'in N-M pairs' as a count of leaflet pairs, the same as the 'jugate' row of flora_counted_parts.tsv (leaflet, factor 2): lateral leaflets 8-20 in 4-10 pairs. Add the cue 'in N pairs' / 'N paires'.",
+  "reason": "A count in pairs is already handled for 'N-jugate'. Only the cue form is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02548",
+  "decision": "existing_pattern",
+  "target": "negation (negated, negation_scope) - docs/annotation-context-patterns.md",
+  "fix": "Accept the privative prefix e- of a reviewed word as the negation cue (eciliate = not ciliate, also ecarinate, ecalyculate, estipulate, epapillose). Bearer: sepal margin, region via slot 1.",
+  "reason": "The negation is inside the word, so no separate cue stands in the span.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02549",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md (clause scope) + measurement rule",
+  "fix": "Split the clause at commas: 'red or yellow at maturity' is the colour union, and '7-13 mm' after 'globose' is a separate measurement. Read a bare length after 'globose' as diameter PATO_0001334 of fruit.",
+  "reason": "The disjunction belongs to the colour and was wrongly given scope over the size.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02550",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (Q14 liana -> FLOPO_0900035)",
+  "fix": "Same as P02528. 'de 3-15 m de hauteur' and the stem diameter are separate measurements.",
+  "reason": "The held class has no EQ signature.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02551",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add the compound cue 'to more than' as a strict lower bound: stem length PATO_0000122 > 7 m. For a climbing stem the quality is length, not height.",
+  "reason": "'more than' is a known cue, but 'to more than' is not.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02552",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "A count of 0 ('Sepals 0') is absence: sepal, negated present (or absent PATO_0000462), with the digit '0' as the cue. Add this rule to the count splitter.",
+  "reason": "Same as the reviewed P02901 ('Petals 0').",
+  "confidence": "high"
+ },
+ {
+  "id": "P02553",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Read 'capitules ± nombreux' as an indefinite count, capitulum amount 'many' (French 'nombreux'), with '±' as value_qualifier approximately (pattern 01). Allow '±' before the count word.",
+  "reason": "This is pattern 13, but the '±' before the count word blocks it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02554",
+  "decision": "existing_pattern",
+  "target": "negation (negated, negation_scope) - docs/annotation-context-patterns.md",
+  "fix": "'écaliculé' = calyculus absent: epicalyx PO:0009063 (synonym calyculus) on the involucre, negated present, with the prefix é- as cue. Add it to the privative-word list (see P02548).",
+  "reason": "The negation is a prefix inside the word.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02555",
+  "decision": "new_pattern",
+  "target": "order of division",
+  "fix": "Bearer: inflorescence with female quality (pattern 04). Branched PATO_0000402 with frequency_qualifier 'occasionally', and RDF branching order 1-2 ('once or twice') as a count of orders. OWL keeps branched only, because the frequency stays in RDF.",
+  "reason": "'once or twice' is a range of branching order, not an alternative between two values. No pattern covers order of division.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02556",
+  "decision": "existing_pattern",
+  "target": "docs/odp/01-approximate-value.md (with the continuum)",
+  "fix": "Continuum obovate PATO_0001936 -> orbicular PATO_0001934, with the second endpoint value_qualifier approximately (prefix 'sub-'). Allow an approximate value as an endpoint of a continuum.",
+  "reason": "This is a plain continuum. 'suborbicular' as an endpoint blocks it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02557",
+  "decision": "new_pattern",
+  "target": "resemblance to another part",
+  "fix": "Upper lemma 'similar' to lower lemma: RDF fb:resembles lower lemma, with the explicit differences annotated by pattern 09 ('slightly shorter' -> decreased length towards the lower lemma; 'more ovate'). No OWL from 'similar' itself.",
+  "reason": "'similar' refers to the whole description of another part, which no pattern covers. The 'but ...' differences are annotatable.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02558",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Normalise the OCR '|' to '1' before a unit ('to | m' -> 'to 1 m'): stem length upper bound 1 m.",
+  "reason": "The cue 'to' is supported. The number is an OCR error in the source text, not a missing cue.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02559",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md (with pattern 02)",
+  "fix": "'to (2.5)3.0 mm' is an upper bound of 3.0 mm with a parenthesised lower variant 2.5 kept as an RDF extreme. Bearer: upper bract (FLOPO_0991376, 'the upper').",
+  "reason": "A bound with a parenthesised alternative maximum. Neither pattern 02 nor pattern 05 parses the combination.",
+  "confidence": "medium"
+ }
+]

@@ -1,0 +1,242 @@
+[
+ {
+  "id": "X01980",
+  "decision": "absence_misread",
+  "target": "No absence: the flowers are unknown (missing data). Drop 'flower PO:0009046 absent'. The flat-topped statement belongs to the infructescence (infructescence PO:0006342), not the inflorescence",
+  "fix": "'<part> not seen', 'not known', 'unknown', 'not observed' and 'not collected' mean the material is missing, never absent (PATO:0000462). Drop the statement. 'Infructescence(s)' maps to infructescence PO:0006342, never inflorescence.",
+  "reason": "Diospyros hasseltii was described from fruiting material only. The fruits stand on a flat-topped infructescence, which shows the flowers exist.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01981",
+  "decision": "absence_misread",
+  "target": "Leaf sheath auricle PO:0020106 absent (PATO:0000462) and oral setae (trichome PO:0000282, context 'sheath shoulder') absent. There is no stipule in a bamboo. 'Purple' belongs to the part named in its own clause (culm sheath or ligule), not a stipule",
+  "fix": "In Poaceae and bamboo descriptions, 'auricle(s)' maps to leaf sheath auricle PO:0020106 and 'oral setae' to trichome PO:0000282 at the sheath shoulder. Neither ever maps to stipule. 'Auricles and oral setae absent' denies both nouns.",
+  "reason": "Grasses have no stipules. The auricles were mapped to stipule, so a colour from a nearby clause looks like a contradiction.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01982",
+  "decision": "absence_misread",
+  "target": "No absence. The stipules are present and caducous (stipule PO:0020041, deciduous (generic) PATO:0001730); they had fallen before collection. Drop 'stipule absent'",
+  "fix": "'caducous, not seen' and 'early deciduous, not seen' describe a part that falls early and is missing from the specimens. Keep the caducous quality and never emit absent.",
+  "reason": "The same sentence says the stipules exist and fall early. 'Not seen' only reports that the specimens lacked them.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01983",
+  "decision": "absence_misread",
+  "target": "Leaf sheath auricle PO:0020106 absent (PATO:0000462). The grey colour belongs to the oral setae (trichome PO:0000282, context 'sheath shoulder'), not to the leaf",
+  "fix": "'auricles absent' in a grass or bamboo sheath paragraph maps to leaf sheath auricle PO:0020106 absent, never 'leaf absent'. 'Oral setae <quality>' takes trichome PO:0000282 as its bearer.",
+  "reason": "Fargesia has leaves. Only the sheath auricles are missing, and the oral setae are present and grey.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01984",
+  "decision": "present_misread",
+  "target": "The same text produced both 'auricle absent' and 'auricle present'. The second record must be oral setae (trichome PO:0000282, context 'sheath shoulder') absent. Leaf sheath auricle PO:0020106 is absent only",
+  "fix": "In '<A> and <B> absent', the absence applies to both nouns: emit A absent and B absent. A coordinated noun before 'absent' must never yield 'present'.",
+  "reason": "One phrase cannot both state and deny the auricle. The coordination was split wrongly.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01985",
+  "decision": "absence_misread",
+  "target": "Involucral bract PO:0009045 absent (PATO:0000462), meaning the bracts below the inflorescence. The spikelet glumes (glume PO:0009039) are present, with an abaxially green midvein (context 'midvein')",
+  "fix": "'Involucral bracts absent' maps to involucral bract PO:0009045 absent, never to generic bract PO:0009055, which would also deny glumes and floral bracts.",
+  "reason": "In Cyperaceae the involucral bracts and the glumes are different bracts. Only the first are missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01986",
+  "decision": "present_misread",
+  "target": "Leaf sheath auricle PO:0020106 absent. The record 'auricle present' from 'auricles and oral setae absent' must be oral setae (trichome PO:0000282) absent",
+  "fix": "In '<A> and <B> absent', the absence applies to both nouns. Never emit 'present' for a noun inside a negated coordination.",
+  "reason": "Both texts deny the auricle. The 'present' record is a parsing error on the coordinated noun phrase.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01987",
+  "decision": "both_true",
+  "target": "Only the sterile (marginal, showy) flowers are absent (flower PO:0009046, context 'sterile'). The fertile flowers are present. The 'apex truncate' probably belongs to the capsule or calyx, not the inflorescence",
+  "fix": "'sterile flowers absent', 'marginal flowers absent' and 'radiant flowers absent' deny only that kind of flower. Keep the qualifier as the context and never record a taxon-wide 'flower absent'.",
+  "reason": "Hydrangea coenobialis lacks the showy sterile flowers but has fertile flowers. 'Apex truncate to slightly arcuate' is a fruit or calyx description.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X01988",
+  "decision": "absence_misread",
+  "target": "No absence: the flowers are unknown (missing data). Drop 'flower absent'. 'Fasciculate' belongs to the fruits or infructescence (fasciculated PATO:0001861)",
+  "fix": "'Flowers not known', 'flowers unknown' and 'flowers not seen' are missing data, never absent (PATO:0000462).",
+  "reason": "The species is known only from fruiting material.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01989",
+  "decision": "absence_misread",
+  "target": "No absence: staminate flowers (staminate flower PO:0025600) are unknown. Drop the statement. The cymes are of the female or fruiting plant",
+  "fix": "'Male/female flowers not known' is missing data for that sex only. It is never absent, and never about 'flower' in general.",
+  "reason": "Ilex is dioecious and this species is known from female material. The cymes are those of the pistillate plant.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01990",
+  "decision": "absence_misread",
+  "target": "Only the dorsal auricle of the united lateral petals is absent (petal PO:0009032, context 'auricle', absent). The petals are present and have lanceolate distal lobes",
+  "fix": "'auricle absent' and 'without auricle' in a petal, sepal or leaf paragraph deny the auricle of that organ. Record the organ with the context 'auricle', never the organ itself as absent.",
+  "reason": "In Impatiens the lateral united petals often have a basal or dorsal auricle. This species lacks it.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01991",
+  "decision": "absence_misread",
+  "target": "The scape or stem has few or no cauline leaves (cauline leaf PO:0000013, decreased amount PATO:0001997). The rosette leaves (rosette leaf PO:0000014) are present and oblanceolate",
+  "fix": "'almost leafless', '± leafless', 'nearly leafless' and 'subleafless' never map to absent. Read them as few cauline leaves (decreased amount) on the axis just named.",
+  "reason": "A rosette plant with almost leafless scapes has its leaves in the basal rosette.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01992",
+  "decision": "absence_misread",
+  "target": "Few cauline leaves (cauline leaf PO:0000013, decreased amount PATO:0001997). The basal leaves are present with a sinuate-dentate margin",
+  "fix": "'± leafless' is a hedged statement about the stem: few cauline leaves, never 'leaf absent'.",
+  "reason": "The same taxon has rosette leaves with a sinuate-dentate margin.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01993",
+  "decision": "absence_misread",
+  "target": "The frond lacks a stalk at its base (context 'stalk', absent). The frond is present. 'Without reddish color' is a negated colour and must not be recorded as red (PATO:0000322)",
+  "fix": "'without <modifier> <part> at <position>' denies that sub-part, not the bearer. 'without <colour>' is a negated quality: never record the colour itself.",
+  "reason": "Lemna fronds exist and are neither stalked nor reddish. Both records lost a negation or a head noun.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01994",
+  "decision": "absence_misread",
+  "target": "Only the submarginal vein is absent (vascular bundle PO:0005020, context 'submarginal', on leaf lamina PO:0020039). The lateral veins are present and end in subapiculate teeth",
+  "fix": "'submarginal vein absent', 'intramarginal vein absent' and 'marginal vein absent' deny only that vein. Keep the position as the context and never record 'vein absent' for the whole leaf.",
+  "reason": "Every leaf has veins. Maesa leaves differ in whether a submarginal vein is present.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01995",
+  "decision": "present_misread",
+  "target": "The involucral bracts are absent (bract PO:0009055 or involucral bract PO:0009045, context 'umbel'). 'Linear' describes the bracteoles of the involucel (bracteole PO:0009043)",
+  "fix": "In Apiaceae, 'bracts' means the involucre at the base of the main umbel and 'bracteoles' the involucel. Map 'bracteoles' to bracteole PO:0009043 and never to bract, even though PO lists bracteole as a synonym of bract.",
+  "reason": "Notopterygium has no involucre but linear involucel bracteoles. The 'linear' clause follows the bracteoles.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X01996",
+  "decision": "absence_misread",
+  "target": "No absence: the stipules are caducous (stipule PO:0020041, deciduous (generic) PATO:0001730) and were not seen. Drop 'stipule absent'",
+  "fix": "'caducous ... not seen' and a bare 'not seen' are missing data, never absent.",
+  "reason": "The flora says the stipules exist and fall early.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01997",
+  "decision": "absence_misread",
+  "target": "No absence: the inflorescences and flowers are unknown. Drop 'flower absent'. 'Terminal' belongs to the infructescence (infructescence PO:0006342), not the inflorescence",
+  "fix": "'<A> and <B> not seen' is missing data for both nouns, never absent. 'Infructescence(s)' maps to infructescence PO:0006342.",
+  "reason": "The species was described from fruiting material. Infructescences imply inflorescences and flowers.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01998",
+  "decision": "absence_misread",
+  "target": "No absence: the inflorescences are unknown. Drop 'inflorescence absent'. 'Compact' belongs to the infructescence PO:0006342",
+  "fix": "'<A> and <B> not seen' is missing data, never absent. A quality in an infructescence clause takes infructescence PO:0006342 as its bearer.",
+  "reason": "Same record as X01997.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01999",
+  "decision": "absence_misread",
+  "target": "No absence: the staminate flowers (staminate flower PO:0025600) are unknown. Drop the statement",
+  "fix": "'male/female flowers not seen' is missing data for that sex only, never absent, and never about 'flower' in general.",
+  "reason": "The pendulous inflorescence is known from the female or fruiting stage.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02000",
+  "decision": "both_true",
+  "target": "Only the small prickles and the bristles are absent (prickle PO:0025169, context 'small', absent; trichome PO:0000282 'bristle' absent). The large prickles are present and stout. Rose prickles map to prickle PO:0025169, never to thorn PO:0025172",
+  "fix": "'small <part>s absent' and '<part>s of one size only' deny only the members of that size. Keep the size as the context. In Rosa and Rubus, 'prickles' map to prickle PO:0025169, not thorn.",
+  "reason": "Rosa xanthina has stout, flattened prickles but lacks the small prickles and glandular bristles found in related species.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02001",
+  "decision": "both_true",
+  "target": "'Stemless' means acaulescent: there is no elongated aerial stem (FLOPO 'whole plant acaulescent', or stem PO:0009047 with context 'aerial', absent). The underground or basal caudex (stem) is present and stout",
+  "fix": "'stemless' and 'acaulescent' deny only an elongated aerial stem. Map them to the whole-plant acaulescent class and never to 'stem absent', because caudex, rhizome and corm are stems in PO.",
+  "reason": "Saussurea wernerioides is a cushion-forming acaulescent plant with a stout caudex.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02002",
+  "decision": "absence_misread",
+  "target": "The involucre has no calyculus (epicalyx PO:0009063, absent). The phyllaries (involucral bract PO:0009045) are present and purplish",
+  "fix": "In Asteraceae, 'involucre not bracteate', 'not bracteolate' and 'ecalyculate' mean no calyculus of supplementary bracts: epicalyx PO:0009063 absent. They never mean bract or phyllary absent.",
+  "reason": "Every Senecio head has phyllaries. Species differ in whether they have outer calyculus bracteoles.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X02003",
+  "decision": "both_true",
+  "target": "Only bisexual inflorescences are absent (inflorescence PO:0009049, context 'bisexual'). The male inflorescences (staminate inflorescence PO:0025601) are present: axillary and sessile",
+  "fix": "'bisexual/androgynous <part> absent' denies only that kind. Keep the sex as the context. Male and female inflorescences map to PO:0025601 and PO:0025598.",
+  "reason": "Streblus taxoides is dioecious, so its inflorescences are unisexual.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02004",
+  "decision": "absence_misread",
+  "target": "The stem is leafless except at the apex: the leaves are crowded at the top (stem PO:0009047, context 'below apex', no leaves). The leaves (leaf PO:0025034) are present, and the lower ones are much smaller",
+  "fix": "'leafless except at apex', 'leafless below' and 'leafless in lower part' describe a region of the stem. They are never taxon-wide 'leaf absent'.",
+  "reason": "The phrase itself names where the leaves are.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02005",
+  "decision": "absence_misread",
+  "target": "The involucre has no calyculus (epicalyx PO:0009063, absent). The phyllaries (involucral bract PO:0009045) are present with an acuminate apex",
+  "fix": "In Asteraceae, an involucre 'not bracteolate' or 'ecalyculate' means epicalyx PO:0009063 absent, never bract absent.",
+  "reason": "Tephroseris heads have phyllaries. Only the outer calyculus bracteoles are missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02006",
+  "decision": "absence_misread",
+  "target": "Ray flower PO:0025331 absent (PATO:0000462). Disk flower PO:0025332 yellow",
+  "fix": "'ray florets absent' and 'heads discoid' map to ray flower PO:0025331 absent. 'disk florets <quality>' maps to disk flower PO:0025332. Never use generic flower PO:0009046 for floret kinds.",
+  "reason": "A homogamous discoid head has disk florets only. The epithet 'homogamum' says this.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02007",
+  "decision": "both_true",
+  "target": "Presence varies (variant PATO:0001227, or no presence statement). This is not an absence. When present, the bracts are linear-lanceolate (involucral bract PO:0009045)",
+  "fix": "'not always present', 'sometimes absent' and 'often absent' mean presence varies. Never record absent (PATO:0000462).",
+  "reason": "'Not always present' implies the part is sometimes present, and the flora describes it.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02008",
+  "decision": "absence_misread",
+  "target": "The septum (septum PO:0000030) has no vein (vascular bundle PO:0005020, context 'septum', absent). The fruit valves (fruit valve PO:0000033) have a distinct midvein",
+  "fix": "'septum not veined' and 'septum veinless' describe the septum. Bind 'not veined' to the noun it follows and never record taxon-wide 'vein absent'.",
+  "reason": "In Brassicaceae siliques, the septum and the valves are described separately. Valves with a midvein and a veinless septum often go together.",
+  "confidence": "high"
+ },
+ {
+  "id": "X02009",
+  "decision": "absence_misread",
+  "target": "The septum (septum PO:0000030) is not veined (vascular bundle, context 'septum', absent). The fruit valves (fruit valve PO:0000033) have a distinct midvein",
+  "fix": "A bare 'not veined' in a fruit clause takes the most recently named fruit part (usually 'septum ... not veined') as its bearer. It is never a taxon-wide 'vein absent'.",
+  "reason": "The usual Brassica wording is 'septum complete, not veined'. The valves have a midvein.",
+  "confidence": "medium"
+ }
+]

@@ -1,0 +1,242 @@
+[
+ {
+  "id": "X00120",
+  "decision": "present_misread",
+  "target": "petal PO:0009032 + absent PATO:0000462; floral disc absent (no PO term for the floral disc; nearest is nectary PO:0009035)",
+  "fix": "In 'A and B absent' / 'A and B lacking', the absence applies to every listed part, and the phrase must never also produce a 'present' statement for any of them.",
+  "reason": "Both records come from the one sentence 'Petals and disk absent'. Acer negundo flowers have no petals, so the absence is right and the 'present' record is a parser artifact.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00121",
+  "decision": "present_misread",
+  "target": "leaf sheath auricle PO:0020106 + absent PATO:0000462; oral setae = trichome PO:0000282 + absent PATO:0000462 (at the sheath shoulder)",
+  "fix": "Same rule: 'A and B absent' gives absence for each listed part and no presence statement.",
+  "reason": "A single sentence produced both absence and presence. Absence of auricles and oral setae is normal in Acidosasa.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00122",
+  "decision": "absence_misread",
+  "target": "leaf sheath auricle PO:0020106 + absent PATO:0000462 (sheath auricles); cilia = trichome PO:0000282 + absent PATO:0000462",
+  "fix": "In grasses and bamboos (Poaceae, Bambusoideae), 'auricle(s)' is the sheath auricle (PO:0020106), never a stipule. Map 'auricle' to stipule only for dicot leaves described with stipules.",
+  "reason": "'auricles and cilia absent' refers to bamboo sheath auricles, not stipules. 'leathery' probably describes the culm sheath, so the stipule: coriaceous record is also wrongly mapped.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00123",
+  "decision": "absence_misread",
+  "target": "aerial tuber (bulbil) PO:0004548 + absent PATO:0000462, context: distal leaves/axils",
+  "fix": "In '<subject> without X', the absence is on X, not on the subject; the subject only gives the position.",
+  "reason": "'distal ones without bulbils' says the distal leaves have no bulbils, not that leaves are absent.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00124",
+  "decision": "absence_misread",
+  "target": "ultimate inflorescence branches + sterile PATO:0000956 (flowerless, needle-like); not flower absent for the taxon",
+  "fix": "'<branches> with no flowers' / 'flowerless branches' means those branches are sterile (PATO:0000956), not that the plant lacks flowers.",
+  "reason": "In Acroglochin the ultimate inflorescence branches end as sterile needle-like spines; the flowers sit on the lower branches.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X00125",
+  "decision": "both_true",
+  "target": "stage: lenticels absent on young branchlets vs conspicuous on old ones",
+  "fix": "When 'absent' is followed in the same sentence by a quality qualified by 'when old/young/mature', keep the stage context on both statements and do not assert a plain absence for the taxon.",
+  "reason": "The 'conspicuous when old' fragment is a stage-qualified clause about the same lenticels, so the two statements describe different ages.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X00126",
+  "decision": "absence_misread",
+  "target": "no annotation (inflorescence not observed); the infructescence statement stays",
+  "fix": "'not seen', 'unknown', 'not known', 'not observed' mean missing data, never absence; produce no statement.",
+  "reason": "'Inflorescences not seen' means the specimens lacked flowers. It says nothing about the plant having none.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00127",
+  "decision": "unclear",
+  "target": "check the source: pappus absent may refer to a particular floret or achene type, or be a typo",
+  "fix": "Before asserting absence for a taxon, look for a member qualifier (ray/disc, outer/inner, female/bisexual) earlier in the same sentence and attach it.",
+  "reason": "Ainsliaea normally has a plumose pappus. Without the sentence it is unclear whether the absence is scoped to some florets or is a source error.",
+  "confidence": "low"
+ },
+ {
+  "id": "X00128",
+  "decision": "absence_misread",
+  "target": "no annotation (flowers not observed)",
+  "fix": "'not seen' / 'unknown' means missing data, never absent.",
+  "reason": "'Flowers not seen' only means the specimens were fruiting.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00129",
+  "decision": "both_true",
+  "target": "position: sterile bracts absent on the peduncle vs floral bracts present in the inflorescence",
+  "fix": "'<part> ebracteate' restricts the bract absence to that part (here the peduncle); do not assert bract absent for the whole plant.",
+  "reason": "Orchid peduncles can lack sterile bracts while each flower still has a floral bract, which is the acuminate one.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00130",
+  "decision": "absence_misread",
+  "target": "petiole PO:0020038 + length PATO:0000122 0–2.5 cm (petiole sometimes absent / variable)",
+  "fix": "'absent to N unit' / '0–N unit' is a length range starting at zero. Read it as a length value with variable presence, not as absence.",
+  "reason": "The text gives a length range, so the petiole is short to missing, not absent.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00131",
+  "decision": "absence_misread",
+  "target": "wing petal PO:0025325 + absent PATO:0000462; keel PO:0025327 + absent PATO:0000462",
+  "fix": "Named petal types (wings/alae, keel, standard/banner) map to their own PO terms; their absence must not be lifted to the parent 'petal'.",
+  "reason": "Amorpha has only the standard; wings and keel are missing. The standard (banner petal PO:0025324) is purple.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00132",
+  "decision": "both_true",
+  "target": "different parts: the muticous apex and the awned apex belong to different organs (e.g. leaf vs bract/bracteole)",
+  "fix": "For 'apex muticous' / 'apex with awn', take the bearer from the subject of the clause it sits in, not from a part named earlier in the description.",
+  "reason": "Both statements are about apices of different organs in the same description. 'muticous' (no awn or point) and 'awned' cannot hold for one apex.",
+  "confidence": "low"
+ },
+ {
+  "id": "X00133",
+  "decision": "absence_misread",
+  "target": "false (recurrent) veins absent; no PO term (not vascular bundle PO:0005020) — leave unannotated or propose a FLOPO anatomy class",
+  "fix": "'false vein(s)' / 'recurrent false veins' are not veins and must not map to vascular bundle; skip or map to a dedicated class.",
+  "reason": "False veins in Angiopteris are non-vascular strips between the true veins; the true veins are present and obvious.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00134",
+  "decision": "both_true",
+  "target": "whorl: inner petals absent vs outer petals present (reddish)",
+  "fix": "'inner/outer <part> absent' keeps the whorl qualifier and does not assert absence of the part as a whole.",
+  "reason": "Annona diversifolia has only the outer petal whorl; the inner whorl is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00135",
+  "decision": "absence_misread",
+  "target": "pistillode PO:0009078 + absent PATO:0000462, context: male flower (PATO:0000384)",
+  "fix": "'rudimentary ovary', 'pistillode', 'ovary rudiment' map to pistillode PO:0009078 (in male flowers), never to plant ovary.",
+  "reason": "The absence is of the rudimentary ovary in male flowers; female flowers have a normal glabrous ovary.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00136",
+  "decision": "both_true",
+  "target": "member: pedicelled spikelet absent vs sessile spikelets present (lowermost barren)",
+  "fix": "'pedicelled/sessile spikelet absent' keeps that qualifier; never assert spikelet absent for the taxon.",
+  "reason": "In Apocopis the pedicelled spikelet is often missing while the sessile spikelets are there.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00137",
+  "decision": "absence_misread",
+  "target": "leaf lamina PO:0020039 without a collective marginal vein (no PO term); not vascular bundle absent",
+  "fix": "Specific vein types ('marginal', 'intramarginal', 'collective', 'false' vein) are not 'vascular bundle'. Their absence must not be lifted to the general vein class.",
+  "reason": "Only the marginal vein is missing. 'sparsely glandular' probably describes the leaf blade, so the vascular bundle: glandular record is doubtful too.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X00138",
+  "decision": "absence_misread",
+  "target": "no annotation (capsules not observed)",
+  "fix": "'not seen' means missing data, never absent; a bare section heading ('Capsules') yields no presence statement either.",
+  "reason": "'Capsules not seen' is missing data.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00139",
+  "decision": "present_misread",
+  "target": "perianth PO:0009058 (basal utricle of the perianth tube) + spherical",
+  "fix": "In Aristolochiaceae, 'utricle' is the swollen base of the perianth tube, not a fruit; map it to perianth. Also, 'Fruit not seen' gives no absence.",
+  "reason": "The utricle in Aristolochia is part of the perianth; the fruit is unknown, not absent.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00140",
+  "decision": "both_true",
+  "target": "different bracts: no bract-like leaves below the head (calyculus) vs involucral phyllaries present (acuminate)",
+  "fix": "'(not) subtended by bract-like leaves' is about bracts outside the involucre. Keep it apart from the phyllaries; never assert bract absent for an Asteraceae taxon.",
+  "reason": "The head has phyllaries, and the negated clause is only about extra bract-like leaves below the head.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X00141",
+  "decision": "both_true",
+  "target": "position: leaflike bracts on the upper stem vs heads/branches without bracts",
+  "fix": "'without bracts' keeps the subject of its clause (head, branch, receptacle) as context and is not an absence for the whole plant.",
+  "reason": "The taxon clearly has leaflike bracts; the absence is local to another part.",
+  "confidence": "low"
+ },
+ {
+  "id": "X00142",
+  "decision": "absence_misread",
+  "target": "spikelet PO:0009051 with trichome PO:0000282 (tubercle-based) absent",
+  "fix": "'lacking/without X' puts the absence on X, never on the subject it describes.",
+  "reason": "The spikelets lack tubercle-based hairs, which agrees with 'glabrous'.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00143",
+  "decision": "absence_misread",
+  "target": "calyx tube orifice ring absent (no PO term); calyx PO:0009060 present",
+  "fix": "'<sub-part> absent' (orifice ring, annulus, throat ring) is an absence of the sub-part; if it has no term, produce no statement rather than mapping to the parent.",
+  "reason": "Only the ring at the calyx tube mouth is missing; the calyx is purple.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00144",
+  "decision": "both_true",
+  "target": "ray flower PO:0025331: pappus absent; disk flower PO:0025332: pappus present (brownish white)",
+  "fix": "'Ray florets without pappus' / 'pappus of disc florets ...' keep the ray/disc floret qualifier on the pappus statements.",
+  "reason": "Aster annuus has no pappus on ray achenes, only on disc achenes.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00145",
+  "decision": "absence_misread",
+  "target": "petal PO:0009032, not clawed (negation of FLOPO:0991169 clawed)",
+  "fix": "'without (distinct) claw' is a negated shape quality of the petal (not clawed), not an absence of the petal.",
+  "reason": "The claw, not the petal, is what the text says is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00146",
+  "decision": "absence_misread",
+  "target": "stem PO:0009047 (vegetative shoots) + sterile PATO:0000956, short",
+  "fix": "'non-flowering <part>' means that part is sterile (PATO:0000956), not flower absent.",
+  "reason": "The plant has short vegetative shoots beside flowering racemes.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00147",
+  "decision": "both_true",
+  "target": "member: upper florets awnless vs lower floret awned (bent)",
+  "fix": "'upper/lower florets awnless' keeps the floret position; no awn absence for the taxon.",
+  "reason": "In Avena nuda only the lower florets bear a bent awn.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00148",
+  "decision": "both_true",
+  "target": "position: branches absent at lower culm nodes, many from mid-culm upward",
+  "fix": "'absent from lower nodes, ... from mid-culm' keeps the node position; no branch absence for the taxon.",
+  "reason": "The sentence itself says where branches are absent and where they appear.",
+  "confidence": "high"
+ },
+ {
+  "id": "X00149",
+  "decision": "absence_misread",
+  "target": "no annotation for fruit (capsule not developed = not known); the lunate abaxial wing probably belongs to the ovary",
+  "fix": "'not developed', 'immature', 'not known' produce no absence; wing descriptions under an ovary are ovary wings, not fruit wings.",
+  "reason": "The capsule was not mature in the material. The 'abaxial wing lunate' is likely from the ovary description and wrongly given to the fruit.",
+  "confidence": "medium"
+ }
+]

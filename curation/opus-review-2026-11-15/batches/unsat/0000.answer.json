@@ -1,0 +1,202 @@
+[
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_b540d8f82818a005706af5cd29e91c0e",
+  "decision": "wrong_grounding",
+  "target": "new FLOPO value 'interrupted (spatial)' under PATO:0000060 spatial pattern",
+  "fix": "Ground 'interrupted' said of an inflorescence to a spatial value (flower clusters separated by gaps along the axis), not PATO:0000690.",
+  "reason": "PATO:0000690 discontinuous is a quality of a single process (is_a occurrence < temporal distribution quality < physical quality of a process). FLOPO's GCI forbids a PO anatomical bearer carrying a process characteristic. An interrupted spike or panicle is a spatial arrangement. PATO has no spatial continuous/interrupted term, so a FLOPO value is needed; the earlier union acceptances of 'interrupted' should follow it.",
+  "confidence": 0.75
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_24a97d36e0a93aef9a26290a0ad879fb",
+  "decision": "wrong_grounding",
+  "target": "PATO:0001729 shedability",
+  "fix": "Map 'persistent/deciduous' of organs to the shedability attribute (FLOPO:0991231 fugacious for caducous, FLOPO:0991181 marcescent for marcescent), not PATO:0000082.",
+  "reason": "PATO:0000082 persistence is a rhythm quality (repetitiveness of a rhythm), a process quality, so it is unsatisfiable on a bract. Botanical persistence vs deciduousness is shedability (organismal disposition). PATO:0001731 deciduous (plant) is restricted to shedding foliage, so the attribute is the safe target for 'deciduous' bracts.",
+  "confidence": 0.85
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_7396861dd1e46993260a1ae9bec3c63f",
+  "decision": "wrong_grounding",
+  "target": "PATO:0001729 shedability",
+  "fix": "Map 'persistante' of stipules to shedability, not PATO:0000082 persistence.",
+  "reason": "Same as bract: PATO:0000082 is a rhythm (process) quality. Stipule persistence is a shedability disposition; PO:0020041 is already a listed bearer of the shedability siblings FLOPO:0991181 and FLOPO:0991231.",
+  "confidence": 0.85
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_9ad88ae1714918ebe5f9248c25300222",
+  "decision": "wrong_grounding",
+  "target": "new FLOPO value 'continuous (spatial)' under PATO:0000060 spatial pattern",
+  "fix": "Ground 'sori continuous around margins' to a spatial continuity value, not PATO:0000689.",
+  "reason": "PATO:0000689 continuous is a quality of a single process (occurrence). Sori forming an unbroken line along the margin is a spatial pattern. No PATO spatial term exists; pair with the 'interrupted (spatial)' value.",
+  "confidence": 0.75
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_0657af632a739f050b4b149f0d470368",
+  "decision": "wrong_grounding",
+  "target": "FLOPO:0991231 fugacious (shedability, PATO:0001729)",
+  "fix": "Map 'caduques' to FLOPO:0991231 fugacious (synonym caducous); general persistence statements to PATO:0001729 shedability.",
+  "reason": "PATO:0000082 persistence is a rhythm (process) quality. 'Caduc' is the shedability value already added as FLOPO:0991231 with related synonym caducous.",
+  "confidence": 0.8
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_a3f9772b30126f013b2995924b099f38",
+  "decision": "wrong_grounding",
+  "target": "new FLOPO value 'continuous (spatial)' under PATO:0000060 spatial pattern",
+  "fix": "Ground 'surface continuous' of a thallus (unbroken, not areolate or cracked) to the spatial continuity value, not PATO:0000689.",
+  "reason": "PATO:0000689 is a process quality and unsatisfiable on PO:0030027. In thalloid liverworts a continuous upper surface means no areolae or breaks, a spatial and structural feature.",
+  "confidence": 0.6
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_018a5fcc279f225075098a6a4294971f",
+  "decision": "wrong_grounding",
+  "target": "new FLOPO value 'continuous (spatial)' under PATO:0000060 spatial pattern",
+  "fix": "As for sorus: an indusium running unbroken along the sorus line is spatial continuity.",
+  "reason": "PATO:0000689 continuous is defined as a quality of a single process; FLOPO forbids it on an anatomical bearer.",
+  "confidence": 0.7
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_165c63bb00e95fefd08596b5fa6ddd21",
+  "decision": "wrong_grounding",
+  "target": "process pattern TOP:plant_process_phenotype: flower participates_in a GO flowering process (anthesis; nearest found GO:0009908 flower development) has_characteristic PATO:0095006 nocturnal",
+  "fix": "Keep PATO:0095006 but move it from the flower to the process the flower participates in (anthesis), using the FLOPO process-target pattern.",
+  "reason": "PATO:0095006 nocturnal is a process characteristic ('a process that happens during the hours of darkness'). FLOPO only allows it on a GO process, not on PO:0009046 directly. The statement itself (night-opening flowers) is sound.",
+  "confidence": 0.75
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_377d046aa262c32ec3fe00da78f59e66",
+  "decision": "wrong_grounding",
+  "target": "process pattern: flowering occurs before leaf emergence (precocious/hysteranthous); new FLOPO value if a process pattern is not wanted",
+  "fix": "Do not ground 'precocious' to PATO:0001754. In floras 'flowers precocious' means flowering before the leaves appear; model it as timing of flowering relative to leafing.",
+  "reason": "PATO:0001754 predisplaced growth is a heterochronic (peramorphic) growth quality of a process, an evolutionary-developmental term. It is unsatisfiable on a flower and means something else. No PATO or FLOPO term for hysteranthy was found.",
+  "confidence": 0.75
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_26a85a0f1a085268bffaafeaf56038ee",
+  "decision": "wrong_grounding",
+  "target": "new FLOPO value 'interrupted (spatial)' under PATO:0000060 spatial pattern",
+  "fix": "Sori 'discontinuous' along the margin is a spatial gap pattern; ground to the spatial value, not PATO:0000690.",
+  "reason": "PATO:0000690 is a process quality (occurrence); FLOPO forbids it on PO:0025359.",
+  "confidence": 0.75
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_909b237c9c1e0f1a6f6f52b1793d2262",
+  "decision": "wrong_grounding",
+  "target": "process pattern TOP:plant_process_phenotype: flower participates_in a GO flowering process (anthesis; nearest found GO:0009908) has_characteristic PATO:0095007 diurnal",
+  "fix": "Keep PATO:0095007 but attach it to the anthesis process, not the flower.",
+  "reason": "PATO:0095007 diurnal is a process characteristic (is_a PATO:0001236); it cannot inhere in a flower under FLOPO's GCI. The statement is sound.",
+  "confidence": 0.75
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_cf0ba5266baadb8b83645a27ad4dbd39",
+  "decision": "wrong_grounding",
+  "target": "new FLOPO value 'continuous (spatial)' under PATO:0000060 spatial pattern",
+  "fix": "An 'uninterrupted' inflorescence (spike without gaps) is spatial continuity; ground to the spatial value.",
+  "reason": "PATO:0000689 continuous (synonym uninterrupted) is a quality of a single process, unsatisfiable on PO:0009049.",
+  "confidence": 0.75
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_4001caccf22cb528cd7108978c98f909",
+  "decision": "wrong_grounding",
+  "target": "PATO:0002211 recurved",
+  "fix": "Ground 'recurrent' of veins (curving back) to PATO:0002211 recurved.",
+  "reason": "PATO:0000427 recurrent means a process happening again (is_a occurrence), so it is unsatisfiable on PO:0020138. In leaf venation 'recurrent' veins bend back towards the base or midrib, a curvature. PATO:0002211 is defined as curved backward.",
+  "confidence": 0.6
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_31916ef8b7cfacfa13386e04c5fd3a78",
+  "decision": "wrong_statement",
+  "target": "bearer: the glands on the fruit; quality: new FLOPO 'continuous (spatial)' under PATO:0000060",
+  "fix": "Reattach 'continuous' to the glands named in the text, not to the fruit, and ground it to the spatial continuity value.",
+  "reason": "The example 'glands rarely continuous' describes glands, so the split gave the wrong bearer. PATO:0000689 is also a process quality that FLOPO forbids on anatomy.",
+  "confidence": 0.7
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_569a6af6f3ab125bbb67a7cfdf9cd2be",
+  "decision": "wrong_grounding",
+  "target": "process pattern: flowering before leaf emergence (precocious/hysteranthous); new FLOPO value if needed",
+  "fix": "'Flowering precocious' is about the timing of flowering relative to leafing; do not use PATO:0001754 or an inflorescence bearer.",
+  "reason": "PATO:0001754 predisplaced growth is a heterochronic growth process quality, wrong in meaning and unsatisfiable on PO:0009049.",
+  "confidence": 0.75
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_4b082437a33be679cb9a451bf9bf760a",
+  "decision": "wrong_grounding",
+  "target": "FLOPO:0991231 fugacious",
+  "fix": "Map '± rapidement caduques' of stipules to FLOPO:0991231 fugacious (caducous), not PATO:0001309 duration.",
+  "reason": "PATO:0001309 duration is a physical quality of a process, unsatisfiable on PO:0020041. Quickly caducous stipules are exactly the fugacious shedability value, which lists PO:0020041 as a bearer.",
+  "confidence": 0.85
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_ac803aaa0cc2dd27d14e5ac88f0cad74",
+  "decision": "wrong_grounding",
+  "target": "new FLOPO value 'interrupted (spatial)' under PATO:0000060 spatial pattern",
+  "fix": "An interrupted indusium (in separate segments) is a spatial gap pattern; ground to the spatial value.",
+  "reason": "PATO:0000690 discontinuous is a quality of a single process; FLOPO forbids it on FLOPO:0986020.",
+  "confidence": 0.7
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_5e676d88bc2623edcc903e7a7cb6a2a8",
+  "decision": "wrong_grounding",
+  "target": "PATO:0002211 recurved",
+  "fix": "Ground 'recurrent' to PATO:0002211 recurved; also check whether the bearer should be a leaf vein rather than vascular bundle.",
+  "reason": "PATO:0000427 recurrent is a process occurrence quality. Said of veins or bundles in floras, 'recurrent' means curving back. The bare example 'recurrent' gives little context, so confidence is lower.",
+  "confidence": 0.5
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_5fed9e392c62240b89860b343c7c89b1",
+  "decision": "wrong_grounding",
+  "target": "PATO:0001729 shedability",
+  "fix": "Map 'style persistent' to shedability (persistent on the fruit), not PATO:0000082.",
+  "reason": "PATO:0000082 persistence is a rhythm (process) quality. A persistent style is one not shed, a shedability disposition; FLOPO:0991231 already lists PO:0009074 as a bearer of that attribute.",
+  "confidence": 0.85
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_f3d15e53ce28d0c25916510b952c8f69",
+  "decision": "unclear",
+  "target": "",
+  "fix": "Check the source sentences: 'continuous' on seeds may refer to an aril, raphe, wing or seed row. Reground per context, or drop the statement if the referent cannot be found.",
+  "reason": "PATO:0000689 is a process quality and unsatisfiable on PO:0009010, so the current grounding is wrong. The bare example 'continuous' does not show what is continuous, so no single target can be given.",
+  "confidence": 0.5
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_a4071371030e3c0ea1db5e44bb681d3f",
+  "decision": "wrong_grounding",
+  "target": "PATO:0001729 shedability",
+  "fix": "Map 'persistants' sepals to shedability (calyx persistent in fruit), not PATO:0000082.",
+  "reason": "PATO:0000082 persistence is a rhythm (process) quality; persistence of sepals is a shedability disposition (FLOPO:0991231 lists PO:0009031).",
+  "confidence": 0.85
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_e51719a79500f33007c53dae58ca91cb",
+  "decision": "wrong_grounding",
+  "target": "PATO:0104035 pendent",
+  "fix": "Ground 'flowers facing downward' to an orientation value (PATO:0104035 pendent, or FLOPO:0991207 descending when oblique), not PATO:0000365 down.",
+  "reason": "Flower orientation is an orientation quality (PATO:0000133), not the direction term 'down'. In ont/quality.obo, direction (PATO:0000039) is a physical object characteristic, so the unsatisfiability probably comes from the PATO OWL build; this was not confirmed here. Either way the orientation terms fit the botany.",
+  "confidence": 0.55
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_4ea5ad6be589a6cabd11cbedea084ffc",
+  "decision": "wrong_grounding",
+  "target": "PATO:0000470 increased amount",
+  "fix": "Map 'hydathodes frequent' (many) to PATO:0000470 increased amount (synonym increased number), not PATO:0000044 frequency.",
+  "reason": "PATO:0000044 frequency is a rate of occurrence of a bearer's repetitive actions (a process quality), unsatisfiable on PO:0005660. 'Frequent' hydathodes means they are numerous on the leaf.",
+  "confidence": 0.75
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_c019574d6f37615623d76d02b6d20b3f",
+  "decision": "wrong_grounding",
+  "target": "PATO:0000622 erect",
+  "fix": "Ground 'stipe upward' to an orientation value (PATO:0000622 erect, or PATO:0104355 ascending if curving up), not PATO:0000370 up.",
+  "reason": "The orientation of a stalk belongs under orientation (PATO:0000133). The obo file does not explain why 'up' is unsatisfiable (direction is a physical object characteristic there); probably the PATO OWL build. The orientation term is the better grounding anyway.",
+  "confidence": 0.55
+ },
+ {
+  "class": "http://phenomebrowser.net/flopo/annotation-class/FAC_f44fe0c9ea446a0201964d286604721b",
+  "decision": "wrong_grounding",
+  "target": "new FLOPO value 'interrupted (spatial)' under PATO:0000060 spatial pattern",
+  "fix": "'Panicule interrompue' (branches in separated whorls or clusters) is a spatial gap pattern; ground to the spatial value.",
+  "reason": "PATO:0000690 discontinuous is a quality of a single process, unsatisfiable on PO:0030123 under FLOPO's GCI.",
+  "confidence": 0.75
+ }
+]

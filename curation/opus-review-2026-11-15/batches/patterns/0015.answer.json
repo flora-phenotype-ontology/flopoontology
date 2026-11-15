@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P00600",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add the French process wording 's'ouvrant (en N valves)' as a rule: legume dehiscent FLOPO:0991149, plus a count of fruit valve PO:0000033 = 2 (a 'N valves' variant of the 'valved → valve' row in config/flora_counted_parts.tsv).",
+  "reason": "Opening into valves is dehiscence, which has a FLOPO value since 2026-11-13; the number of valves is an ordinary count of parts.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00601",
+  "decision": "new_pattern",
+  "target": "habit noun as phenotype",
+  "fix": "Give the FLOPO habit classes an EQ signature in a reviewed table: liana/liane (FLOPO_0900035) = whole plant PO:0000003 has characteristic climbing FLOPO:0991108 and ligneous PATO:0002348, as two RDF records with the noun as cue. Rule R0231 (liane → climbing) already exists but is shadowed by ncvc_normalization Q14, which maps to the class without a signature.",
+  "reason": "'Liane' is the plant's habit (woody climber); only the missing signature on the FLOPO class holds it.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00602",
+  "decision": "existing_pattern",
+  "target": "docs/odp/08-alternative-with-frequency.md",
+  "fix": "'rarely' is a frequency cue, not a negation: drop negated and read 'puberulent, rarely glabrous' as one_of puberulent | glabrous PATO:0000453 with frequency_qualifier rarely on the second operand.",
+  "reason": "The stem is glabrous in a few plants; nothing in the text is negated.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00603",
+  "decision": "missing_term",
+  "target": "tapetal residue: material from the tapetum left on the outer spore wall (perine-like deposit)",
+  "fix": "Spore PO:0025017 has part some <tapetal residue> on its surface; 'thin' is decreased thickness PATO:0000592 of the residue. Without a reviewed anatomy class, reject.",
+  "reason": "This is not a comparison. It says what covers the spore surface, and neither PO nor FLOPO has a term for that material; a single pteridophyte statement does not justify a new class yet.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00604",
+  "decision": "new_pattern",
+  "target": "part present at a position",
+  "fix": "Presence of root PO:0009005 (shoot-borne) at shoot axis node PO:0005004: OWL whole plant has_part some (shoot axis node and has_part some root); RDF keeps 'rooting at nodes' as cue and frequency 'rarely' (pattern 08 with 'creeping').",
+  "reason": "'Rooting at the nodes' is a process word for roots present at the nodes; the doc lists this construction as still open.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00605",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation: absence); cue list NEGATION_EVIDENCE in flopo2/verify/gates.py",
+  "fix": "Add 'wanting' (and 'none') to NEGATION_EVIDENCE; the record is involucre PO:0009100 absent (negation_scope absence).",
+  "reason": "'Wanting' means absent; the absence pattern exists, only the cue is missing (the recover script already lists 'wanting').",
+  "confidence": "high"
+ },
+ {
+  "id": "P00606",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md (measurements)",
+  "fix": "Map 'N-M unit thick' to the attribute thickness PATO:0000915 (not the value increased thickness PATO:0000591), value 1.5-2 cm on the inflorescence (raceme).",
+  "reason": "A number before 'thick' is a measurement of thickness; PATO has the attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00607",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation: absence); docs/odp/12-part-of-qualified-whole.md",
+  "fix": "Read the count '0' after a part as absence (petal PO:0009032 absent), and add the numeral 0 to the absence cues. The bearer is part of the pistillate (and staminate) flower: pattern 12.",
+  "reason": "'Petals 0' is the usual flora way to say the petals are absent.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00608",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add 'can reach' / 'may reach' to the upper-bound cues (beside 'reaching'); the length is at most 10 in, converted to 25.4 cm with source_unit kept.",
+  "reason": "This is an inclusive upper bound. Botanically the 10 inches is the spike rather than a spikelet, but the transcription follows the text.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00609",
+  "decision": "new_pattern",
+  "target": "seasonal form of a part",
+  "fix": "Leaf with a bearer_context value naming the season form (summer leaf vs spring leaf, a heterophylly state), carrying subulate, persistent (PATO:0001732 non-deciduous), smooth-margined; OWL: has_part some (leaf and has_characteristic some <summer form> and has_characteristic some ...). Needs a reviewed FLOPO state value or rows 'summer'/'spring' in config/flora_context_words.tsv.",
+  "reason": "These are two seasonal kinds of leaf on one plant, not a developmental stage of a single leaf; there is no context row or value for them.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00610",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground 'ultimate branch' (bamboo: ultimate branchlet) to branch PO:0025073 as bearer_container; leaf count 4-6.",
+  "reason": "Leaves are borne on the ultimate branch, so this is an ordinary count with a container that was not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00611",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md (measurements)",
+  "fix": "As P00606: 'N-M cm thick' → thickness PATO:0000915 of rhizome, 2-3 cm.",
+  "reason": "A thickness measurement with a unit; PATO has the attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00612",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1, region)",
+  "fix": "'at base' is a region row already: bearer is the margin of the pseudoparaphyllium, with part_restriction basal region and value serrated PATO:0001206. If 'pseudoparaphyllium' has no PO/FLOPO class, the row stays held for the bearer, not for the stage.",
+  "reason": "'At base' is a place on the part, not a developmental stage.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00613",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1, surface)",
+  "fix": "Ground 'perianth lobe' (undivided perianth of Cassytha) to tepal PO:0009033 and let 'inside' apply to it (single perianth member): adaxial/inner surface subglabrous FLOPO:0991053.",
+  "reason": "'Inside' is a surface word allowed on single perianth members; the bearer was not recognised as one.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00614",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Per the note in config/flora_counted_parts.tsv, '2-lobed' is the quality bilobed PATO:0002214, with bearer leaf apex PO:0020137 (apex is the bearer, not a count position); 'unequally' adds asymmetrical PATO:0000616.",
+  "reason": "Unequally bilobed leaf apex; the annotator read 'apex' as a position for a lobe count.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00615",
+  "decision": "new_pattern",
+  "target": "habit noun as phenotype",
+  "fix": "As P00601: 'woody climber' → whole plant PO:0000003 climbing FLOPO:0991108 + ligneous PATO:0002348 (rule R1888 has climbing; the FLOPO_0985031 class shadows it without a signature). The sentence is a union of habits with frequencies (patterns 07/08: mostly shrub, or climber, less often herb).",
+  "reason": "A habit noun stated as an alternative growth form.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00616",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept '±' between the bound cue and the number ('to ± 30 cm'): upper bound 30 cm with value_qualifier approximately (pattern 01). 'in drier situations' is a habitat condition to be kept in RDF.",
+  "reason": "'To' is a known cue; the '±' in between blocks it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00617",
+  "decision": "new_pattern",
+  "target": "resemblance to another part",
+  "fix": "RDF record bearer leaf rachis PO:0020055, fb:resembles stipe (PO:0025066 stalk, fern stipe), so that the stipe's statements in the same description can be copied to the rachis on review. No OWL until the copy is made.",
+  "reason": "'Similar to stipe' points to another part's description; it is not a PATO comparison of one attribute.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00618",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Restrict the disjunction check to the value span: 'spreading or ascending' is its own union (07); '7-15 cm long' is a plain leaf length and should pass.",
+  "reason": "The 'or' joins the orientation values, not the length.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00619",
+  "decision": "new_pattern",
+  "target": "alternative counts",
+  "fix": "Expand the suspended hyphen '3-5-toothed or -lobed' into one_of [count of tooth 3-5 | count of lobe 3-5] on the leaf (margin); OWL union of the two has_part counts; RDF keeps both operands with the shared cue.",
+  "reason": "Two counts of different parts given as alternatives; pattern 07 joins values of one attribute.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00620",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation: absence); cue list NEGATION_EVIDENCE in flopo2/verify/gates.py",
+  "fix": "Add 'ebracteolate' to NEGATION_EVIDENCE (rule R0369: bracteole PO:0009043 absent). The bearer must be bracteole, not bract. 'largely' is frequency 'usually', with the alternative 'sometimes a few bractlets' (pattern 08).",
+  "reason": "The absence rule exists; the gate does not know the word, and the transcribed bearer is the wrong part.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00621",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Expand 'not or somewhat undulate' to one_of [not undulate (negated, quality) | undulate PATO:0000967 with degree slightly]; the quality is undulate, not the attribute 'shape'. Needs 07 to accept a negated operand.",
+  "reason": "This is a standard 'X or not X' alternative on the leaf margin.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00622",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md (measurements)",
+  "fix": "As P00606: 'Leafy twigs 1-3 mm thick' → branch PO:0025073 (twig) thickness PATO:0000915, 1-3 mm.",
+  "reason": "A thickness measurement with a unit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00623",
+  "decision": "new_pattern",
+  "target": "comparison between regions of one part",
+  "fix": "Leaflet with a relational quality 'dissimilar' between its abaxial and adaxial surfaces (towards the other surface), degree '± to strongly' in RDF. The nearest existing value is discolorous FLOPO:0991070, but here the difference is in hairs as well as colour, so keep it RDF-only.",
+  "reason": "The two surfaces are compared with each other; no second part is named because the second term is the other surface.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00624",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read 'subsessile to petiole N mm' as petiole PO:0020038 length up to 5 mm (the lower end near 0 is 'subsessile'); 'to' joins the two ends.",
+  "reason": "This is a range of petiole length whose lower end is given in words.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00625",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Add a place kind 'per_locule' with landmark locule PO:0025263 and the cue 'each cell of a capsule contains': seed count 1 per locule (RDF only). The fruit being 3-locular is a separate count.",
+  "reason": "The number of seeds is given per locule, not for the fruit.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00626",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Recognise the prime sign (' and ′) as feet, so the existing feet → metre conversion (2026-11-15) gives whole plant height 0.61-2.13 m with source_unit ft.",
+  "reason": "The unit is written as a prime symbol that the parser does not read as feet.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00627",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "This is not a disjunction: pinnae (leaflet PO:0020049) 'above middle' (upper position) are alternate and spreading; 'proximal ones' (lower position value) are subopposite and reflexed. Split at 'or' into two series-member statements.",
+  "reason": "The 'or' contrasts members of a series rather than giving alternatives for the taxon.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00628",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The bearer is the petiolule PO:0020050 of the lowest pinnae (pattern 04, lower members), length up to ~7 cm (bound with '±', as P00616).",
+  "reason": "'(to ± 7 cm.)' qualifies 'long-petiolulate', so it gives the length of the petiolule, not the pinna.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00629",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add 'enveloped by' to the 'enclosed by / surrounded by' row: achene surrounded by PATO:0005016 towards perigynium PO:0009044; 'loosely' as degree in RDF.",
+  "reason": "This is an attachment or position relation to a named part, and the pattern has the row.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00630",
+  "decision": "existing_pattern",
+  "target": "docs/odp/12-part-of-qualified-whole.md",
+  "fix": "Pappus PO:0025393 part of ray flower PO:0025331, absent, frequency 'sometimes'; needs 'wanting' as an absence cue (as P00605).",
+  "reason": "Absence of a part of a qualified whole, with frequency; all of these pieces exist except the cue.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00631",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "When 'rachis N-flowered' follows an inflorescence, take the inflorescence PO:0009049 (or inflorescence axis PO:0020122) as container: flower count 5-10.",
+  "reason": "This is an ordinary '-flowered' count; only the container 'rachis' was not grounded.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00632",
+  "decision": "new_pattern",
+  "target": "habit noun as phenotype",
+  "fix": "As P00601: liana → whole plant PO:0000003 climbing FLOPO:0991108 + ligneous PATO:0002348 via an EQ signature on FLOPO_0900035; the habit list is a union (pattern 07) of shrub, subshrub, liana.",
+  "reason": "A habit noun; the FLOPO class has no EQ signature.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00633",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation: absence); cue list NEGATION_EVIDENCE in flopo2/verify/gates.py",
+  "fix": "Add 'acaulescent' (and 'stemless') to NEGATION_EVIDENCE; rule C167 already maps it to stem PO:0009047 absent.",
+  "reason": "The mapping exists; the gate does not recognise the word as an absence cue.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00634",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add French comparators 'plus long/court/large que' to comparison(), and 'carène' as a synonym of keel PO:0025327 (or keel petal PO:0025326): banner petal PO:0025324 increased length PATO:0000573 towards keel.",
+  "reason": "A comparison of a dimension with a named part, written in French.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00635",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Fruit (capsule) with the value spherical PATO:0001499 ('globose'), not the attribute 'shape'; 'ca. 4 mm in diam.' is a separate diameter measurement (pattern 01 for 'ca.').",
+  "reason": "The statement is a plain shape value with no measurement; the unit reason applies to the next statement.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00636",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'in clusters of N-M' as a flower count 4-10 with bearer_container the cluster (flower fascicle / partial inflorescence, grounded in the review), not as a quality 'clusters of 4-10'.",
+  "reason": "This counts flowers within a group, and the group contains the flowers.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00637",
+  "decision": "existing_pattern",
+  "target": "docs/odp/12-part-of-qualified-whole.md",
+  "fix": "Lamina PO:0025060 (apical region) of fronds of young plants (whole plant young), lobe count 3 (pattern 03); 'next stage' (the order of juvenile forms) is RDF only.",
+  "reason": "A juvenile-frond character: the part belongs to a qualified whole (young plant). There is no unit problem.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00638",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The bearer is trichome PO:0000282 on the leaflet surfaces, with length PATO:0000122 0.8-1.5 mm.",
+  "reason": "The measurement is the length of the hairs, and the quality 'hairs' is not a quality.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00639",
+  "decision": "new_pattern",
+  "target": "order of division",
+  "fix": "Inflorescence cyme-like FLOPO:0991255, plus a count of branching orders 1-2 (has number of PATO:0001555 for orders of branching, RDF only like pattern 14); '1 or 2' is the range 1-2, not a disjunction.",
+  "reason": "The order of branching of a cyme has no slot; the 'or' between numbers is already handled as a range.",
+  "confidence": "medium"
+ }
+]

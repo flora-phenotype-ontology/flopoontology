@@ -1,0 +1,242 @@
+[
+ {
+  "id": "X00540",
+  "decision": "present_misread",
+  "target": "leaf (PO_0025034) + absent (PATO_0000462) only; no 'leaf present' statement from 'lacking leaves'",
+  "fix": "'lacking <part>' / 'lacking <part>s' is a negation cue like 'without': it yields only the absence of the part. One text span must never yield both a presence and an absence of the same part; if the negation reading fires, the presence reading is dropped.",
+  "reason": "Didymoplexis is a leafless orchid that lives off fungi. Both records come from the same phrase 'lacking leaves'. The 'present' reading missed the negation.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00541",
+  "decision": "absence_misread",
+  "target": "no absence of stem (PO_0009047); 'stemless' (acaulescent) means the vegetative stem is very short, with leaves in a basal rosette (leaf PO_0025034 rosulate FLOPO:0991005); the flowering stems (scapes, PO_0009047) unbranched stays",
+  "fix": "'stemless' / 'acaulescent' / 'acaulous' describes a plant whose leafy stem is short or hidden, not a plant without a stem. It must not produce 'stem absent', least of all where scapes or flowering stems are described. Read it as a rosette or short-stem habit, or leave it unannotated.",
+  "reason": "Elytraria acaulis has a leaf rosette on a very short axis and leafless flowering scapes. In PO, scape is a synonym of stem, so 'stem absent' is false.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00542",
+  "decision": "absence_misread",
+  "target": "cauline leaf (PO_0000013) + absent (PATO_0000462), i.e. the stem bears no leaves; basal leaves present and rough",
+  "fix": "'leafless stem' / '<stem|scape|flowering stem> leafless' denies leaves on that stem: annotate cauline leaf (PO_0000013) absent, never leaf (PO_0025034) absent, when the taxon has basal or rosette leaves.",
+  "reason": "This Helichrysum has a basal rosette of leaves and a scape-like flowering stem without leaves. The leaves themselves are present.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00543",
+  "decision": "both_true",
+  "target": "sorus (PO_0025359) present along the margins of the pinnule lamina (PO_0020039, region margin PO_0020128); absent only at the apex and in the sinuses",
+  "fix": "'absent at/from the <region>' or 'absent in the <region>' is a positional absence: scope it to that region of the bearer, never a taxon-level absence of the part, especially when the same sentence says where the part is borne.",
+  "reason": "Histiopteris has sori running along the leaf margin that stop at the lobe tips and in the sinuses. Both statements describe one distribution.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00544",
+  "decision": "absence_misread",
+  "target": "glume awn (PO_0025351) + absent (PATO_0000462) on the upper glume (PO_0009039); lemma awn (PO_0006032) present on the upper lemma (PO_0009037)",
+  "fix": "'<organ> awnless' / 'awnless <organ>' denies the awn of that organ only: glume → glume awn (PO_0025351), lemma → lemma awn (PO_0006032), palea → palea awn (PO_0025350). Never a taxon-level 'awn absent' when another organ's awn is described.",
+  "reason": "In Hyparrhenia the upper glume has no awn but the upper lemma has a strong awn. These are different organs.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00545",
+  "decision": "absence_misread",
+  "target": "trichome (PO_0000282) with stinging (FLOPO_0980427) + absent (PATO_0000462) on the whole plant; stipule (PO_0020041) intrapetiolar stays",
+  "fix": "'without <noun phrase>': the absent thing is the noun phrase after 'without' (here 'stinging hairs' = stinging trichome), never the subject of the sentence or a part named nearby.",
+  "reason": "Pilea belongs to the nettle family (Urticaceae) but has no stinging hairs. Its stipules are present and well described.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00546",
+  "decision": "absence_misread",
+  "target": "no absence of leaf (PO_0025034); at most cauline leaf (PO_0000013) few (stems mostly leafless); basal rosette leaves present",
+  "fix": "'mostly / largely / nearly / almost leafless' is a hedged, reduced amount, not an absence. And when said of a stem it concerns cauline leaves (PO_0000013). Produce no absence, or 'few cauline leaves'.",
+  "reason": "The flowering stems of Ranunculus multifidus carry few leaves; most leaves are in a basal rosette. The hedged 'mostly leafless' does not mean the plant has no leaves.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X00547",
+  "decision": "absence_misread",
+  "target": "no absence of inflorescence (PO_0009049); the absent thing is the tendril (PO_0025364 branch tendril) on the inflorescence: tendrils never borne on the inflorescence; inflorescence leaf-opposed stays",
+  "fix": "'never borne on the <part>' / 'not borne on the <part>' denies a location of the preceding subject (the subject is absent from that part). The part after 'on' exists and must not be annotated absent.",
+  "reason": "In Rhoicissus, unlike some Cissus, tendrils do not grow from the inflorescence. The phrase is about where tendrils are, not about the inflorescence existing.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00548",
+  "decision": "absence_misread",
+  "target": "ray flower (PO_0025331) + absent (PATO_0000462) (capitulum discoid); disk flowers and capitulum (PO_0030121) present",
+  "fix": "'without ray-florets' / 'rayless' / 'no rays' → ray flower (PO_0025331) absent; 'no disc/disk florets' → disk flower (PO_0025332) absent. A qualified floret ('ray-', 'disc-') must map to its specific PO class, never to flower (PO_0009046).",
+  "reason": "Senecio hochstetteri has discoid heads: there are no ray florets, but there are disc florets. 'Flower absent' is false.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00549",
+  "decision": "both_true",
+  "target": "sporophyll (PO_0009026, the fertile segment or sporophore) sometimes absent; sterile leaf (vascular leaf PO_0009025, trophophore) present; the two joined at the petiole bases",
+  "fix": "'not always produced / present / developed' means 'sometimes absent', a variable presence, never an absolute absence. Anaphors ('the latter', 'the former') must resolve to their antecedent (here the fertile frond), not to the generic head noun.",
+  "reason": "Botrychium has a sterile blade and a fertile spore-bearing segment on a shared stalk. The fertile segment is sometimes missing, but the sterile leaf is always there.",
+  "confidence": 0.8
+ },
+ {
+  "id": "X00550",
+  "decision": "absence_misread",
+  "target": "cauline leaf (PO_0000013) + absent (PATO_0000462) on the flowering stalk (scape); basal leaves (PO_0025034) linear stays",
+  "fix": "'<stalk|scape|flowering stem> ... and leafless' → cauline leaf (PO_0000013) absent on that stem, never leaf (PO_0025034) absent when basal leaves are described.",
+  "reason": "Camassia has linear basal leaves and a leafless flowering scape.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00551",
+  "decision": "absence_misread",
+  "target": "staminate spike: spikelet/spike (PO_0009051) with male (PATO_0000384) context + absent (PATO_0000462); the other spikes present and flattened",
+  "fix": "'no <sex-adjective> <part>' (no staminate spikes, no male flowers, no pistillate spikelets) denies only the part with that sex. Keep the sex context (male PATO_0000384 / female PATO_0000383, or PO_0025600/PO_0025599/PO_0025601/PO_0025598 where they exist). Never a bare 'part absent'.",
+  "reason": "Carex abdita has no separate staminate spikes, but it does have spikes. The absence is about the male ones only.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00552",
+  "decision": "both_true",
+  "target": "vascular bundle (PO_0005020) on the outer face of the perigynium (PO_0009044): absent in var. enervis, present (several longitudinal veins) in var. muehlenbergii",
+  "fix": "Statements in a sentence or paragraph introduced by an infraspecific name ('var. X', 'subsp. X', 'f. X', 'the variety ...') are scoped to that infraspecific taxon and must not be merged into the species-level record.",
+  "reason": "Carex muehlenbergii has two varieties that differ exactly in this way: var. enervis has perigynia without veins on the outer face, the typical variety has veined ones. The Illinois Wildflowers page describes both.",
+  "confidence": 0.7
+ },
+ {
+  "id": "X00553",
+  "decision": "absence_misread",
+  "target": "rosette leaf (PO_0000014) + absent (PATO_0000462), i.e. no basal rosette; cauline leaves (PO_0000013) lanceolate or oblong stays",
+  "fix": "'no basal leaves' / 'no (tuft of) basal leaves' / 'without a basal rosette' → rosette leaf (PO_0000014) absent (or leaf with basal FLOPO_0991002 absent), never leaf (PO_0025034) absent.",
+  "reason": "Centaurium pulchellum is separated from its relatives by having no basal leaf rosette. Its stem leaves are described.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00554",
+  "decision": "both_true",
+  "target": "petal (PO_0009032) absent in pistillate flowers (PO_0025599); present (narrow, white) in staminate flowers (PO_0025600)",
+  "fix": "In a monoecious or dioecious taxon, an absence in a sentence about one flower sex ('female flowers ... no petals') is scoped to that sex (PO_0025599 / PO_0025600). The sex word may sit in an earlier clause of the same sentence, so carry it forward.",
+  "reason": "Croton has male flowers with small petals and female flowers without petals. That matches the two statements.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00555",
+  "decision": "absence_misread",
+  "target": "rosette leaf (PO_0000014) + absent (PATO_0000462); cauline leaves (PO_0000013) smooth with short-ciliate margins stays",
+  "fix": "'There are no basal leaves' → rosette leaf (PO_0000014) / basal leaf absent, never leaf (PO_0025034) absent (same rule as 'no tuft of basal leaves').",
+  "reason": "Doellingeria umbellata has no basal leaves at flowering, but it has many stem leaves.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00556",
+  "decision": "absence_misread",
+  "target": "leaf lamina (PO_0020039) + absent (PATO_0000462); the present statement should be leaf sheath (PO_0020104) truncated, not leaf",
+  "fix": "'leaf blade(s)' / 'blade(s)' maps to leaf lamina (PO_0020039), and 'sheath' to leaf sheath (PO_0020104). The head noun decides the part: 'no leaf blades' is a lamina absence, never a leaf absence.",
+  "reason": "Eleocharis leaves are reduced to bladeless sheaths. The leaf exists as a sheath, which is truncate at the top.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00557",
+  "decision": "absence_misread",
+  "target": "palea awn (PO_0025350) + absent (PATO_0000462); lemma awn (PO_0006032) straight stays",
+  "fix": "'awnless <organ>' → the awn of that organ is absent (palea → PO_0025350, lemma → PO_0006032, glume → PO_0025351). It does not deny awns on other organs.",
+  "reason": "In Elymus hystrix the lemmas have long straight awns and the paleas have none.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00558",
+  "decision": "absence_misread",
+  "target": "cauline leaf (PO_0000013) + absent (PATO_0000462) on the flowering stem; rosette leaves (PO_0000014) somewhat hairy stays",
+  "fix": "'flowering stems are leafless' → cauline leaf (PO_0000013) absent, not leaf absent (same rule as 'leafless stem/scape').",
+  "reason": "Erophila verna has a basal rosette of hairy leaves and leafless flowering scapes.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00559",
+  "decision": "both_true",
+  "target": "lemma awn (PO_0006032) usually absent, sometimes present (inconspicuous)",
+  "fix": "'usually / often / mostly / commonly <absent|awnless>' is a frequency-qualified absence: annotate it as variable presence (or with the frequency kept), never as an absolute absence.",
+  "reason": "Festuca pratensis lemmas are usually awnless but sometimes have a short awn tip. The flora states both.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00560",
+  "decision": "absence_misread",
+  "target": "leaflet (PO_0020049) with terminal (PATO_0002476) + absent (PATO_0000462) (leaf paripinnate); lateral leaflets present, crenate stays",
+  "fix": "'no terminal leaflet(s)' / 'paripinnate' / 'even-pinnate' → leaflet with terminal position (PATO_0002476) absent. The position qualifier must stay on the absent part; never 'leaflet absent'.",
+  "reason": "Gleditsia leaves are even-pinnate: there is no single leaflet at the tip, but there are many leaflets.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00561",
+  "decision": "absence_misread",
+  "target": "disk flower (PO_0025332) + absent (PATO_0000462) (heads ligulate); ray/ligulate florets and the panicle of heads present",
+  "fix": "'no disc/disk florets' → disk flower (PO_0025332) absent, never flower (PO_0009046) absent (same rule as 'without ray-florets').",
+  "reason": "Hieracium heads are made of strap-shaped (ligulate) florets only, with no disc florets. The plant has flowers.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00562",
+  "decision": "both_true",
+  "target": "lemma awn (PO_0006032) sometimes present (short), otherwise absent: variable presence",
+  "fix": "'sometimes <part present>, otherwise <absent>' / '<present> or <absent>' gives one variable presence ('sometimes present'), never a hard absence beside a presence.",
+  "reason": "Muhlenbergia frondosa lemmas are awnless or carry a short awn (the awned form is sometimes called forma commutata). The text gives both as alternatives.",
+  "confidence": 0.85
+ },
+ {
+  "id": "X00563",
+  "decision": "both_true",
+  "target": "petal (PO_0009032) absent in cleistogamous flowers (FLOPO:0991176); present, with tufts of hair, in chasmogamous flowers (FLOPO:0991264)",
+  "fix": "'cleistogamous flowers without <part>' scopes the absence to cleistogamous flowers (FLOPO:0991176). Petals described elsewhere belong to the open (chasmogamous, FLOPO:0991264) flowers.",
+  "reason": "Violets have two kinds of flowers: showy open ones with petals, and small self-pollinating closed ones without petals.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00564",
+  "decision": "both_true",
+  "target": "leaf (PO_0025034) deciduous (plant) (PATO_0001731): leafless for most of the year; leaves present in season, subpeltate",
+  "fix": "'leafless during (part of) the year / when flowering / in the dry season' describes a seasonal state: annotate deciduous (PATO_0001731) or a stage context, never 'leaf absent'.",
+  "reason": "Adenia inermis drops its leaves for much of the year. When it has leaves, they are subpeltate.",
+  "confidence": 0.9
+ },
+ {
+  "id": "X00565",
+  "decision": "both_true",
+  "target": "stamen (PO_0009029) absent in pistillate flowers (PO_0025599); exserted in staminate (PO_0025600) and hermaphrodite flowers",
+  "fix": "'absent in ♀ flowers' / '♂' / '⚥': the sex symbols are sex context (♀ → female PATO_0000383 / PO_0025599, ♂ → male PATO_0000384 / PO_0025600), and the absence is scoped to that flower sex.",
+  "reason": "Anthospermum has separate male, female and bisexual flowers. Female flowers have no stamens.",
+  "confidence": 0.95
+ },
+ {
+  "id": "X00566",
+  "decision": "both_true",
+  "target": "involucre (PO_0009100) commonly absent (frequency-qualified); the narrowly lanceolate bracts are the bracteoles of the involucel (secondary umbels, bract PO_0009055)",
+  "fix": "'involucre absent' maps to involucre (PO_0009100), not bract. In Apiaceae, keep involucre (main umbel) and involucel (secondary umbels) apart. 'commonly absent' is a frequency-qualified absence, not an absolute one.",
+  "reason": "Apium nodiflorum usually has no involucre under the main umbel but does have involucel bracteoles under the small umbels. Both statements hold.",
+  "confidence": 0.75
+ },
+ {
+  "id": "X00567",
+  "decision": "both_true",
+  "target": "some leaves (submerged/juvenile, FLOPO:0991044 submerged) without a floating leaf lamina (PO_0020039); other leaves with a lamina with cuneate base",
+  "fix": "'without a <qualified> <part>' ('without a floating blade') denies only the part with that quality, and usually only for the leaves named in the clause. Keep the qualifier and the leaf type; never 'leaf lamina absent' at taxon level.",
+  "reason": "Aponogeton species have different leaf forms: submerged or early leaves may have no floating blade, while other leaves have a blade.",
+  "confidence": 0.6
+ },
+ {
+  "id": "X00568",
+  "decision": "both_true",
+  "target": "leaf lamina (PO_0020039) absent in the first (juvenile, phyllode-like) leaves; floating leaf lamina present in the adult leaves",
+  "fix": "In heterophyllous aquatics, 'without blade' in a clause about first, juvenile, submerged or some leaves is scoped to that leaf type or stage, not the taxon.",
+  "reason": "Aponogeton seedlings and early leaves are often strap-like without a distinct blade, while adult leaves have blades that float. The extracted text is a fragment, so this reading is not certain.",
+  "confidence": 0.55
+ },
+ {
+  "id": "X00569",
+  "decision": "absence_misread",
+  "target": "cauline leaf (PO_0000013) few or absent along most of the stem (stem leafless for most of its length); basal leaves (PO_0025034) 1/2-2/3 as long as the stem stays",
+  "fix": "'leafless for most of its length' is said of a stem: it is a positional and partial absence of cauline leaves (PO_0000013), never 'leaf absent'.",
+  "reason": "Aristea alata has basal leaves and a flowering stem that is bare over most of its length. The leaves are described.",
+  "confidence": 0.9
+ }
+]

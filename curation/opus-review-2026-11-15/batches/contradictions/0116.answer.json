@@ -1,0 +1,242 @@
+[
+ {
+  "id": "X03480",
+  "decision": "absence_misread",
+  "target": "'bladeless' describes the basal sheaths (scale leaf PO:0006003 / leaf sheath PO:0020104 with basal FLOPO:0991002), not the foliage leaves; leaf lamina PO:0020039 is present (it is light green)",
+  "fix": "'bladeless' / 'bladeless sheaths' = a sheath (or cataphyll) without a blade: annotate the sheath (leaf sheath PO:0020104 or scale leaf PO:0006003, basal), never 'leaf lamina absent' for the taxon",
+  "reason": "Cymophyllus has bladeless basal sheaths and broad, coriaceous blades on its foliage leaves; the lamina absence comes from the basal sheaths only",
+  "confidence": 0.85
+ },
+ {
+  "id": "X03481",
+  "decision": "absence_misread",
+  "target": "caudex absent: no PO class (caudex is only a synonym of stem PO:0009047 in config/po_lexicon.tsv); do not annotate as stem absent; the aerial stem is present",
+  "fix": "An absence must not pass through a narrow synonym (caudex, scape, culm, trunk) to its broader PO class: '<narrow synonym> absent' is rejected unless the narrow part has its own class",
+  "reason": "Eriogonum reniforme is an annual without a caudex but with aerial flowering stems; mapping caudex to stem turned 'caudex absent' into 'stem absent'",
+  "confidence": 0.9
+ },
+ {
+  "id": "X03482",
+  "decision": "absence_misread",
+  "target": "cauline leaf PO:0000013 absent (PATO:0000462)",
+  "fix": "'Cauline leaves absent' / 'stem leaves absent' = cauline leaf PO:0000013 absent (FLOPO:0991117 cauline restricts the bearer); never 'leaf absent'",
+  "reason": "The qualifier 'cauline' was dropped; the basal leaves exist and are rosulate",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03483",
+  "decision": "absence_misread",
+  "target": "no annotation: 'Flowers not known' is missing data, not absence",
+  "fix": "'<part> not known / not seen / unknown / not observed / not described' = no data; never annotate PATO:0000462 absent",
+  "reason": "Flowers are unknown to the authors; the inflorescence is described from fruiting material",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03484",
+  "decision": "absence_misread",
+  "target": "no annotation: 'Flowers not seen' is missing data",
+  "fix": "'<part> not seen / not known / unknown' = no data; never PATO:0000462 absent",
+  "reason": "The cymose inflorescence is described from fruiting specimens; the flowers were only not observed",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03485",
+  "decision": "absence_misread",
+  "target": "cauline leaf PO:0000013 absent (the stem or scape is leafless); the basal leaves are present",
+  "fix": "'<stem/scape/flowering stem> leafless' = cauline leaf PO:0000013 absent (or a leafless/scapose quality of the stem), never 'leaf absent' for the taxon",
+  "reason": "Youngia has basal rosette leaves (obtuse, acute, weakly pinnatifid, elliptic); 'leafless' must describe the flowering stem",
+  "confidence": 0.75
+ },
+ {
+  "id": "X03486",
+  "decision": "absence_misread",
+  "target": "bract PO:0009055 absent only for the external (lateral) bracts on the fig body; the basal bracts are present and deciduous",
+  "fix": "'sans bractées externes / latérales' (without external or lateral bracts) = absence of the lateral bracts of the fig only; a qualifier ('externes', 'latérales', 'cauline', 'interior') must restrict the absent bearer or the statement is rejected",
+  "reason": "Ficus figs often lack lateral bracts but have basal bracts; the deciduous bracts are a different set",
+  "confidence": 0.6
+ },
+ {
+  "id": "X03487",
+  "decision": "absence_misread",
+  "target": "leaf lamina PO:0020039 not punctate (negated PATO:0001512; or negated FLOPO:0991174 gland-dotted if the dots are glandular)",
+  "fix": "'<mark> absent' (dots, glands, papillae, hairs, scales) = absence of the mark on the organ in the subject, never absence of the organ; 'dot' is not a bearer (config/flora_rejected_bearer_words.tsv)",
+  "reason": "Myristica leaf description: the lower surface lacks dots; the leaf itself is described",
+  "confidence": 0.85
+ },
+ {
+  "id": "X03488",
+  "decision": "absence_misread",
+  "target": "basal bladeless sheaths: leaf sheath PO:0020104 / scale leaf PO:0006003, basal FLOPO:0991002 (the culm possibly aphyllopodic FLOPO:0991233); the leaf lamina is present and thin",
+  "fix": "'bladeless sheaths' = sheaths without a blade, annotate the sheath, never 'leaf lamina absent'",
+  "reason": "Carex plantaginea has purplish bladeless basal sheaths and broad thin blades; this is the same error as noted in docs/km-classification.md",
+  "confidence": 0.9
+ },
+ {
+  "id": "X03489",
+  "decision": "absence_misread",
+  "target": "basal sheaths bladeless (scale leaf PO:0006003 / leaf sheath PO:0020104, basal FLOPO:0991002); leaf lamina present",
+  "fix": "'bladeless' qualifying sheaths = sheath without a blade; never 'leaf lamina absent' for the taxon",
+  "reason": "Same record as X03480: the thick blades are on the foliage leaves",
+  "confidence": 0.85
+ },
+ {
+  "id": "X03490",
+  "decision": "absence_misread",
+  "target": "caudex absent: no stem absence; the aerial flowering stems are present",
+  "fix": "Do not carry absence through narrow synonyms (caudex to stem PO:0009047)",
+  "reason": "Same as X03481",
+  "confidence": 0.9
+ },
+ {
+  "id": "X03491",
+  "decision": "absence_misread",
+  "target": "cauline leaf PO:0000013 absent",
+  "fix": "'Cauline leaves absent' = cauline leaf PO:0000013 absent, never 'leaf absent'",
+  "reason": "Same as X03482; the persistent leaves are the basal leaves",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03492",
+  "decision": "absence_misread",
+  "target": "no annotation: flowers not known",
+  "fix": "'not known / not seen' = no data, never absent",
+  "reason": "The '1-fruited cymes' are fruiting inflorescences; the flowers are simply unknown",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03493",
+  "decision": "absence_misread",
+  "target": "no annotation: flowers not seen",
+  "fix": "'not known / not seen' = no data, never absent",
+  "reason": "Same as X03484",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03494",
+  "decision": "absence_misread",
+  "target": "cauline leaf PO:0000013 absent (leafless stem/scape); basal leaves present",
+  "fix": "'<axis> leafless' = cauline leaf absent, not leaf absent",
+  "reason": "Same as X03485",
+  "confidence": 0.75
+ },
+ {
+  "id": "X03495",
+  "decision": "absence_misread",
+  "target": "bract PO:0009055 absent only for the external bracts of the fig; the basal bracts are present (quickly deciduous)",
+  "fix": "'sans bractées externes' restricts the absence to the lateral bracts; drop or qualify, never 'bract absent'",
+  "reason": "Same pattern as X03486 in Ficus cyphocarpa",
+  "confidence": 0.6
+ },
+ {
+  "id": "X03496",
+  "decision": "absence_misread",
+  "target": "leaf lamina PO:0020039 not punctate (negated PATO:0001512)",
+  "fix": "'dots absent' = organ not punctate, never organ absent",
+  "reason": "Same as X03487; the leaf apex is described",
+  "confidence": 0.85
+ },
+ {
+  "id": "X03497",
+  "decision": "absence_misread",
+  "target": "basal sheaths bladeless (scale leaf PO:0006003 / leaf sheath PO:0020104); leaf lamina present",
+  "fix": "'bladeless' qualifying sheaths = sheath without blade",
+  "reason": "Same as X03480; the coriaceous blades are on the foliage leaves",
+  "confidence": 0.85
+ },
+ {
+  "id": "X03498",
+  "decision": "absence_misread",
+  "target": "caudex absent: no stem absence",
+  "fix": "Do not carry absence through narrow synonyms (caudex to stem)",
+  "reason": "Same as X03481; 'not fistulose' describes the aerial stem",
+  "confidence": 0.9
+ },
+ {
+  "id": "X03499",
+  "decision": "absence_misread",
+  "target": "cauline leaf PO:0000013 absent",
+  "fix": "'Cauline leaves absent' = cauline leaf PO:0000013 absent, never 'leaf absent'",
+  "reason": "Draba winterbottomii: the obtuse apex belongs to the basal leaves",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03500",
+  "decision": "absence_misread",
+  "target": "no annotation: flowers not known",
+  "fix": "'not known / not seen' = no data, never absent",
+  "reason": "Same as X03483; the solitary inflorescence is described from fruit",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03501",
+  "decision": "absence_misread",
+  "target": "no annotation: flowers not seen",
+  "fix": "'not known / not seen' = no data, never absent",
+  "reason": "Thalictrum fusiforme: the inflorescence is described but the flowers were not observed",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03502",
+  "decision": "absence_misread",
+  "target": "cauline leaf PO:0000013 absent (leafless stem/scape); basal leaves present",
+  "fix": "'<axis> leafless' = cauline leaf absent, not leaf absent",
+  "reason": "Same as X03485; the weakly pinnatifid leaves are the basal leaves",
+  "confidence": 0.75
+ },
+ {
+  "id": "X03503",
+  "decision": "absence_misread",
+  "target": "bract PO:0009055 absent only for the external bracts of the fig; the small bracts are basal",
+  "fix": "'sans bractées externes' restricts the absence to the lateral bracts",
+  "reason": "Same as X03495",
+  "confidence": 0.6
+ },
+ {
+  "id": "X03504",
+  "decision": "absence_misread",
+  "target": "leaf lamina PO:0020039 not punctate (negated PATO:0001512)",
+  "fix": "'dots absent' = organ not punctate, never organ absent",
+  "reason": "Same as X03487; the leaf venation is described",
+  "confidence": 0.85
+ },
+ {
+  "id": "X03505",
+  "decision": "absence_misread",
+  "target": "caudex absent: no stem absence",
+  "fix": "Do not carry absence through narrow synonyms (caudex to stem)",
+  "reason": "Same as X03481; the glabrous stem is the aerial stem",
+  "confidence": 0.9
+ },
+ {
+  "id": "X03506",
+  "decision": "absence_misread",
+  "target": "cauline leaf PO:0000013 absent",
+  "fix": "'Cauline leaves absent' = cauline leaf PO:0000013 absent",
+  "reason": "Same as X03499; the basal leaves are rosulate",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03507",
+  "decision": "absence_misread",
+  "target": "no annotation: flowers not known",
+  "fix": "'not known / not seen' = no data, never absent",
+  "reason": "Ilex ningdeensis: the fasciculate inflorescences are fruiting ones",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03508",
+  "decision": "absence_misread",
+  "target": "no annotation: flowers not seen",
+  "fix": "'not known / not seen' = no data, never absent",
+  "reason": "Same as X03501",
+  "confidence": 0.95
+ },
+ {
+  "id": "X03509",
+  "decision": "absence_misread",
+  "target": "cauline leaf PO:0000013 absent (leafless stem/scape); basal leaves present",
+  "fix": "'<axis> leafless' = cauline leaf absent, not leaf absent",
+  "reason": "Same as X03485",
+  "confidence": 0.75
+ }
+]

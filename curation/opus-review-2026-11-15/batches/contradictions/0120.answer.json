@@ -1,0 +1,242 @@
+[
+ {
+  "id": "X03600",
+  "decision": "absence_misread",
+  "target": "no annotation: 'Flowers not known' is a gap in the material, not flower (PO_0009046) absent (PATO_0000462); the infructescence statement stands",
+  "fix": "'<part> not known / not seen / unknown / not collected / inconnu(e)s / non vu(e)s' means the part was not observed; never read it as absent. Drop the statement, or flag the part as not observed.",
+  "reason": "FOC uses 'Flowers not known' for species described from fruiting material. The cyme is the infructescence, so the inflorescence clearly exists.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03601",
+  "decision": "absence_misread",
+  "target": "cauline leaf (PO_0000013) absent (PATO_0000462), or leaf + cauline (FLOPO_0991117) absent; the basal leaves stay as rosette leaf (PO_0000014) / basal (FLOPO_0991002) rosulate",
+  "fix": "Apply the bearer_quality context words ('cauline', 'stem', 'basal', 'radical' + leaf) to absence statements too: 'cauline leaves absent' = cauline leaf absent, not leaf absent. The test should only flag a conflict when both statements resolve to the same qualified bearer.",
+  "reason": "Only the stem leaves are missing; the plant has a basal rosette.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03602",
+  "decision": "both_true",
+  "target": "outer/lateral bracts of the receptacle: bract (PO_0009055) + outer (FLOPO_0991379) absent, vs the basal bracts of the fig: bract + basal (FLOPO_0991002) puberulous to glabrous",
+  "fix": "Add French 'externe(s)', 'extérieur(e)s' as bearer_quality 'outer' (FLOPO_0991379) and 'basal(e)s' as 'basal' (FLOPO_0991002) for bract. 'sans bractées externes' = outer bract absent.",
+  "reason": "In FDAC Ficus descriptions, the fig lacks lateral (external) bracts on its wall but has 2–3 basal bracts. The described bracts are the basal ones.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X03603",
+  "decision": "absence_misread",
+  "target": "scape / flowering stalk: peduncle (PO_0009053) leafless, i.e. no leaves on the peduncle; not leaf (PO_0009025) absent for the plant",
+  "fix": "'leafless' in a stalk/scape/stem/flowering-stem sentence describes that axis (no leaves on it), not leaf absence for the whole plant. Attach it to the axis named in the sentence and never to leaf.",
+  "reason": "Scilla siberica has basal strap-shaped leaves (shiny green, blunt tip). The leafless part is the scape.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03604",
+  "decision": "absence_misread",
+  "target": "no annotation: 'Flowers not seen' is not flower absent (PATO_0000462)",
+  "fix": "'<part> not seen / not known / unknown' = not observed. Do not create an absence statement.",
+  "reason": "Premna sp. a was described from fruiting material. Its inflorescence is described, so flowers exist.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03605",
+  "decision": "absence_misread",
+  "target": "no PO class for caudex (it is only a narrow synonym of stem PO_0009047); keep as text, or plant without a caudex. Never stem absent",
+  "fix": "Absence of a part known only through a NARROW synonym (caudex → stem, scape → peduncle) must not be read as absence of the broad class. Block absence statements whose bearer was reached through a narrow synonym.",
+  "reason": "FNA Eriogonum: 'caudex absent' while the aerial flowering stems are described. Only the woody base is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03606",
+  "decision": "absence_misread",
+  "target": "no annotation (flowers not observed)",
+  "fix": "'<part> not known / not seen' = not observed, never absent.",
+  "reason": "Same FOC wording. The inflorescence is described from fruit.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03607",
+  "decision": "absence_misread",
+  "target": "cauline leaf (PO_0000013) absent (PATO_0000462); basal leaves = rosette leaf (PO_0000014) rosulate",
+  "fix": "Keep the 'cauline' / 'basal' qualifier on absence statements.",
+  "reason": "Only the stem leaves are missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03608",
+  "decision": "both_true",
+  "target": "bract + outer (FLOPO_0991379) absent vs bract + basal (FLOPO_0991002) persistent",
+  "fix": "French 'externes' = outer (FLOPO_0991379); 'basales' = basal. Keep both qualifiers on the bearer.",
+  "reason": "Lateral bracts are missing; the basal bracts of the fig are persistent.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X03609",
+  "decision": "absence_misread",
+  "target": "peduncle / scape (PO_0009053) leafless; leaf blunt stands",
+  "fix": "'leafless' describes the axis in its sentence (scape/stalk), not leaf absence.",
+  "reason": "The leaves taper to a blunt point. The leafless part is the flower stalk.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03610",
+  "decision": "absence_misread",
+  "target": "no annotation (flowers not seen)",
+  "fix": "'<part> not seen' = not observed, never absent.",
+  "reason": "Same as X03604.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03611",
+  "decision": "absence_misread",
+  "target": "no stem absence; the caudex has no own class",
+  "fix": "No absence through a narrow synonym (caudex → stem).",
+  "reason": "The aerial stems exist and are erect.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03612",
+  "decision": "absence_misread",
+  "target": "no annotation (flowers not observed)",
+  "fix": "'<part> not known' = not observed, never absent.",
+  "reason": "Same as X03600.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03613",
+  "decision": "absence_misread",
+  "target": "cauline leaf (PO_0000013) absent; basal leaf (leaf + FLOPO_0991002) petiolate",
+  "fix": "Keep the 'cauline' / 'basal' qualifier on absence statements.",
+  "reason": "Only the stem leaves are missing; the basal leaves are petiolate.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03614",
+  "decision": "both_true",
+  "target": "outer bract absent vs basal bract connate at the base",
+  "fix": "'externes' → outer; 'basales' → basal (French context words for bract).",
+  "reason": "These are different bracts of the fig.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X03615",
+  "decision": "absence_misread",
+  "target": "stem (PO_0009047) without foliage leaves (leafless culm); leaves = scale leaf (PO_0006003, synonym cataphyll) present. Not leaf absent",
+  "fix": "'leafless' in a stem/culm sentence = no leaves on that axis. 'leaves reduced to cataphylls' = scale leaf present (PO_0006003), not leaf absent or leaf decreased size.",
+  "reason": "Juncus effusus stems are leafless; the leaves are reduced to basal sheathing cataphylls. The present statement should also go to scale leaf.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03616",
+  "decision": "absence_misread",
+  "target": "no annotation (flowers not seen)",
+  "fix": "'<part> not seen' = not observed.",
+  "reason": "Same as X03604.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03617",
+  "decision": "absence_misread",
+  "target": "no stem absence. Also, 'not fistulose' should be stem not hollow / solid, not hollow (PATO_0002078)",
+  "fix": "Narrow-synonym absences are blocked. Negated qualities ('not fistulose') must be negated, never asserted.",
+  "reason": "The caudex is missing, not the stem. The present statement is also wrongly asserted from a negation.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03618",
+  "decision": "absence_misread",
+  "target": "no annotation (flowers not observed)",
+  "fix": "'<part> not known' = not observed.",
+  "reason": "Same as X03600.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03619",
+  "decision": "absence_misread",
+  "target": "cauline leaf (PO_0000013) absent; basal leaf ternately compound",
+  "fix": "Keep the 'cauline' / 'basal' qualifier on absence statements.",
+  "reason": "The basal leaves are compound; only the stem leaves are missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03620",
+  "decision": "both_true",
+  "target": "outer bract absent vs basal bracts partly deciduous",
+  "fix": "'externes' → outer (FLOPO_0991379) for bract.",
+  "reason": "These are different bracts of the fig.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X03621",
+  "decision": "both_true",
+  "target": "stage/state: plant often leafless (leaves early caducous / leafless when flowering); leaves narrow when present",
+  "fix": "'leafless' together with described leaves for the same taxon: check for 'often', 'usually', 'when flowering', 'below', 'in dry season', and keep the qualifier, or read it as a stem/branch state. Never assert leaf absent for the taxon.",
+  "reason": "The Kleinia vermicularis leaves are described (narrow, spine-like), so 'leafless' must be a stage or part of the stem.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X03622",
+  "decision": "absence_misread",
+  "target": "no annotation (flowers not seen)",
+  "fix": "'<part> not seen' = not observed.",
+  "reason": "The inflorescence is described from fruiting material.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03623",
+  "decision": "absence_misread",
+  "target": "no stem absence (caudex)",
+  "fix": "No absence through a narrow synonym.",
+  "reason": "Same as X03605.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03624",
+  "decision": "absence_misread",
+  "target": "no annotation (flowers not known)",
+  "fix": "'<part> not known' = not observed.",
+  "reason": "Same as X03600.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03625",
+  "decision": "absence_misread",
+  "target": "cauline leaf (PO_0000013) absent; basal leaf petiolate",
+  "fix": "Keep the 'cauline' qualifier on absence statements.",
+  "reason": "'nudicaule' = naked stem: only the stem leaves are missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03626",
+  "decision": "both_true",
+  "target": "outer bract absent vs basal bracts deltoid",
+  "fix": "'externes' → outer; 'basales' → basal.",
+  "reason": "These are different bracts of the fig.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X03627",
+  "decision": "both_true",
+  "target": "stage/state: leafless (leaves early falling or plant mostly leafless) vs leaves spine-like when present",
+  "fix": "'leafless' beside described leaves: keep the qualifier ('often', 'when flowering', 'stems'). Never assert leaf absent for the taxon.",
+  "reason": "Same as X03621.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X03628",
+  "decision": "absence_misread",
+  "target": "no annotation (flowers not seen)",
+  "fix": "'<part> not seen' = not observed.",
+  "reason": "The inflorescence is described from fruiting material.",
+  "confidence": "high"
+ },
+ {
+  "id": "X03629",
+  "decision": "absence_misread",
+  "target": "no stem absence (caudex)",
+  "fix": "No absence through a narrow synonym.",
+  "reason": "Same as X03605.",
+  "confidence": "high"
+ }
+]

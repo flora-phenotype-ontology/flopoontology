@@ -1,0 +1,242 @@
+[
+ {
+  "id": "X01590",
+  "decision": "absence_misread",
+  "target": "basal leaf sheaths (leaf sheath PO:0020104) dark brown and bladeless; the foliage leaf lamina (PO:0020039) is flat",
+  "fix": "Same rule as X01581: when 'bladeless' modifies 'sheaths' (with or without colour adjectives such as 'dark brown'), it describes the basal cataphylls only. Never record leaf lamina absent for the taxon",
+  "reason": "Carex: bladeless basal sheaths beside flat bladed leaves. This is the known pattern in docs/km-classification.md",
+  "confidence": 0.95
+ },
+ {
+  "id": "X01591",
+  "decision": "absence_misread",
+  "target": "inflorescence bracts (bract PO:0009055) present but not sheathing (no bract sheath). No term for a sheathless bract, so reject. The glumes (pistillate scales) are present and membranous",
+  "fix": "'<part> without sheaths' / 'sheathless' denies a sheath on the part, not the part. In Carex 'bracts without sheaths' is a bract feature; never record bract absent. Glume (PO:0009039) is a kind of bract, so a bract absence always conflicts with the described glumes",
+  "reason": "Carex bracts are either sheathing or sheathless; the bracts themselves are present",
+  "confidence": 0.9
+ },
+ {
+  "id": "X01592",
+  "decision": "absence_misread",
+  "target": "fruit bract (bract PO:0009055) present, inner margin without a basal lobe (not auriculate PATO:0001981 at the base). No negated-quality class, so reject the absence. The bract is subfalcate",
+  "fix": "'without <lobe | tooth | auricle | appendage>' denies a feature of the organ in context. It is a shape quality of that organ (or nothing), never absence of the organ",
+  "reason": "Carpinus fruit bracts are described by whether the inner margin has a basal lobe or auricle; the bract is present and described",
+  "confidence": 0.93
+ },
+ {
+  "id": "X01593",
+  "decision": "present_misread",
+  "target": "'glandular' belongs to the part named in its own clause (most likely the peduncle PO:0009053 or the pedicel), not the stem. The plant is stemless (acaulescent): leaves in a basal rosette (rosette leaf PO:0000014) on a rhizome. Keep the stem absence only if 'stem' means the aerial leafy stem",
+  "fix": "'stemless' / 'acaulescent' means no aerial leafy stem; the leaves form a basal rosette. When a quality is attached to a part the same taxon says it lacks, attach the quality to the nearest part named in its own clause (peduncle, scape, pedicel). Better still, record 'stemless' as rosette leaves present, not stem PO:0009047 absent, because PO stem includes scape and caudex",
+  "reason": "Chirita (Primulina) species are rosette herbs with glandular peduncles and pedicels; they do not have a glandular aerial stem",
+  "confidence": 0.65
+ },
+ {
+  "id": "X01594",
+  "decision": "absence_misread",
+  "target": "No annotation: 'Flowers not seen' means no flowering material. The compound corymb is the infructescence (PO:0006342), not an inflorescence class",
+  "fix": "'<part> not seen / not known / unknown' reports missing material and is never an absence; drop it. A structure described in a fruiting specimen maps to infructescence PO:0006342",
+  "reason": "The flora describes fruiting material only; the plant has flowers",
+  "confidence": 0.95
+ },
+ {
+  "id": "X01595",
+  "decision": "absence_misread",
+  "target": "the upper stem or flowering branches are leafless; middle stem leaves (cauline leaf PO:0000013) are present, sessile and linear. No term for a leafless stem region, so drop the absence",
+  "fix": "'leafless' that follows a stem, branch, scape or a stem region ('upper part', 'above', 'branches leafless') limits the absence to that region. Never record leaf absent when stem or basal leaves are described for the same taxon",
+  "reason": "Crepis bodinieri has stem leaves; 'leafless' must refer to a part of the stem or the synflorescence branches",
+  "confidence": 0.85
+ },
+ {
+  "id": "X01596",
+  "decision": "both_true",
+  "target": "stem almost leafless: cauline leaves (PO:0000013) few, remote, bractlike or absent. Basal leaves (rosette leaf PO:0000014) are present. Context: 'almost', and stem vs basal",
+  "fix": "'almost / nearly / ± / subleafless' is a reduction, never an absence. Record cauline leaf reduced or few if a term exists, otherwise drop. Never record leaf absent",
+  "reason": "The flora itself says stem leaves are few and bractlike if present; the subscapose plant has basal leaves",
+  "confidence": 0.85
+ },
+ {
+  "id": "X01597",
+  "decision": "absence_misread",
+  "target": "auricles absent: leaf sheath auricle (PO:0020106) absent (PATO:0000462) for leaf sheaths; a culm sheath auricle has no term, so reject in that case. Not stipule. The 'leathery' statement most likely describes the culm sheath, not a stipule either",
+  "fix": "In grass and bamboo descriptions, 'auricles' means sheath auricles: leaf sheath auricle PO:0020106 for leaf sheaths, or no term for culm sheaths. Never map 'auricle' to stipule PO:0020041. Qualities in a culm-sheath paragraph belong to the culm sheath, not to stipule",
+  "reason": "Dendrocalamus (bamboo) has no stipules; 'auricles absent' and 'leathery' are culm or leaf sheath characters",
+  "confidence": 0.9
+ },
+ {
+  "id": "X01598",
+  "decision": "absence_misread",
+  "target": "the stem is leafless in its lower part; leaves (PO:0025034) are present and shortly petiolate. No term for a leafless stem region, so drop the absence",
+  "fix": "'leafless in lower part', 'leafless below' and 'leafless at base' limit the absence to a stem region. Never record leaf absent for the taxon",
+  "reason": "The statement itself names the region; the plant's leaves are described",
+  "confidence": 0.95
+ },
+ {
+  "id": "X01599",
+  "decision": "absence_misread",
+  "target": "lower glume (PO:0006002) absent (PATO:0000462); the pubescence belongs to upper glume (PO:0006004) or the lower lemma",
+  "fix": "'lower glume absent' → lower glume PO:0006002 absent, never glume PO:0009039 absent. Keep 'lower' or 'upper' (and 'first' or 'second') when mapping glume statements, so the two glumes are separate bearers",
+  "reason": "In Digitaria the lower glume is absent or minute while the upper glume is present and hairy",
+  "confidence": 0.93
+ },
+ {
+  "id": "X01600",
+  "decision": "both_true",
+  "target": "ray achenes without pappus vs disk achenes with pappus of serrate (barbellate) bristles (pappus PO:0025393). Context: ray vs disk floret",
+  "fix": "In Asteraceae, 'pappus absent' / 'without pappus' is usually said of ray or marginal achenes and the pappus of disk achenes is described next. Keep the ray or disk context; without it, drop the absence",
+  "reason": "Doronicum has epappose ray achenes and pappose disk achenes",
+  "confidence": 0.85
+ },
+ {
+  "id": "X01601",
+  "decision": "unclear",
+  "target": "either 'rarely ciliate' describes the leaf blade margin (leaf lamina PO:0020039) after 'petiole absent' (then present_misread), or the two statements are about different leaves, such as cauline vs basal leaves (then both_true). Check the source text",
+  "fix": "When a part is stated absent, a following quality in the same leaf description belongs to the next named part (blade, margin), not to the absent part. A quality must never be attached to a part that the same clause says is absent",
+  "reason": "Draba leaves are often sessile with ciliate blade margins; the extract does not show which part 'rarely ciliate' describes",
+  "confidence": 0.5
+ },
+ {
+  "id": "X01602",
+  "decision": "absence_misread",
+  "target": "sheath auricles and oral setae absent: leaf sheath auricle (PO:0020106) absent for leaf sheaths; culm sheath auricles and oral setae have no term, so reject. 'abaxially yellow setose' describes the culm sheath, not a stipule",
+  "fix": "Same rule as X01597: bamboo 'auricles' and 'oral setae' are sheath characters, never stipule PO:0020041. Read 'A and B absent' as absence of both A and B, and keep it on the sheath named in the paragraph",
+  "reason": "Drepanostachyum is a bamboo without stipules; both statements are about the culm sheath",
+  "confidence": 0.9
+ },
+ {
+  "id": "X01603",
+  "decision": "absence_misread",
+  "target": "staminate flowers: pistillode (PO:0009078) absent (PATO:0000462). The pistillate flower's plant ovary (PO:0009072) is present and ovoid (PATO:0001891, synonym ovoid)",
+  "fix": "'rudimentary ovary', 'ovary rudiment', 'vestigial ovary' and 'pistillode' → pistillode PO:0009078, never plant ovary. Its absence belongs to the male flowers",
+  "reason": "Drypetes is dioecious; the absent rudimentary ovary is in the male flowers, and the female ovary is described",
+  "confidence": 0.95
+ },
+ {
+  "id": "X01604",
+  "decision": "absence_misread",
+  "target": "involucre without a calyculus (no outer bracteoles at its base). No calyculus term, so reject. The phyllaries (involucral bract PO:0009045) are present and yellow-green",
+  "fix": "'involucre not bracteate', 'ecalyculate' and 'without outer bracts' deny the calyculus only, never bract or involucral bract absent. Same rule as X01560",
+  "reason": "Emilia has a single row of phyllaries and no calyculus; the phyllaries are described",
+  "confidence": 0.9
+ },
+ {
+  "id": "X01605",
+  "decision": "absence_misread",
+  "target": "stipule (PO:0020041) present and caducous (deciduous PATO:0001730, or fugacious FLOPO:0991231). 'not seen' only means they had fallen",
+  "fix": "'caducous, not seen' and 'falling early, not seen' mean the part is present and falls early. Record the deciduous quality and never record absent (same rule as the earlier bract case)",
+  "reason": "The flora gives the reason the stipules were not seen: they fall early",
+  "confidence": 0.95
+ },
+ {
+  "id": "X01606",
+  "decision": "present_misread",
+  "target": "leaf sheath auricle (PO:0020106) absent (PATO:0000462). The 'present' record from the same text lost the negation; drop it. Oral setae absent has no term",
+  "fix": "'<A> and <B> absent' applies the absence to every coordinated noun. Never emit '<A> present' from a coordinated absence: the negation word at the end of the coordination scopes over all of its members",
+  "reason": "Both records come from the same phrase 'auricles and oral setae absent'; the present record is a parser error",
+  "confidence": 0.9
+ },
+ {
+  "id": "X01607",
+  "decision": "absence_misread",
+  "target": "leaf sheath auricle (PO:0020106) absent (PATO:0000462). The leaf (blade margins serrulate) is present",
+  "fix": "Same rule as X01597: 'auricles absent' in a grass or bamboo leaf description → leaf sheath auricle absent, never leaf absent",
+  "reason": "Fargesia leaf sheaths lack auricles; the leaf blade is described",
+  "confidence": 0.95
+ },
+ {
+  "id": "X01608",
+  "decision": "absence_misread",
+  "target": "culm (stem PO:0009047) without longitudinal ribs: not ribbed (FLOPO:0991062, negated). No negated class, so drop the absence. The culm is present and glabrous",
+  "fix": "'<surface feature> absent' (ribs, ridges, grooves, wax, rings) is a surface quality of the part in context, such as ribbed FLOPO:0991062 negated. It is never absence of that part",
+  "reason": "Fargesia culm internodes are described with or without longitudinal ribs; the culm exists",
+  "confidence": 0.95
+ },
+ {
+  "id": "X01609",
+  "decision": "present_misread",
+  "target": "leaf sheath auricle (PO:0020106) absent (PATO:0000462), as both texts say. The 'present' record from 'auricles and oral setae absent' lost the negation; drop it",
+  "fix": "Same rule as X01606: a coordinated absence ('A and B absent') negates every member and never yields 'A present'",
+  "reason": "Both source texts say auricles are absent; there is no description of present auricles",
+  "confidence": 0.9
+ },
+ {
+  "id": "X01610",
+  "decision": "absence_misread",
+  "target": "involucral bract (PO:0009045) absent (PATO:0000462); the glumes (PO:0009039) are present and greenish white",
+  "fix": "'involucral bracts absent' → involucral bract PO:0009045 absent, never bract PO:0009055. Glumes and spikelet scales are bracts, so a generic bract absence contradicts them",
+  "reason": "Fimbristylis spikelets have glumes; only the involucral bracts below the inflorescence are absent",
+  "confidence": 0.9
+ },
+ {
+  "id": "X01611",
+  "decision": "both_true",
+  "target": "two kinds of legume: small sterile pods without seeds vs normal pods with brown seeds (seed PO:0009010). Context: the sterile dwarf pod form",
+  "fix": "'without seeds' / 'seedless' said of one kind of fruit ('sterile pods', 'some fruits') limits the absence to that fruit form. Keep the fruit-form context, or drop the absence when seeds are described",
+  "reason": "Gleditsia sinensis is described as having normal seeded pods and also small, curved, seedless pods",
+  "confidence": 0.85
+ },
+ {
+  "id": "X01612",
+  "decision": "absence_misread",
+  "target": "sterile flowers absent: flower (PO:0009046) with sterile (PATO:0000956) absent. Fertile flowers and the pubescent inflorescence (PO:0009049) are present",
+  "fix": "Same rule as X01325: 'sterile flowers absent' denies only the sterile (showy marginal) flowers, never flower absent",
+  "reason": "Hydrangea coenobialis lacks marginal sterile flowers but has fertile flowers in a corymb",
+  "confidence": 0.95
+ },
+ {
+  "id": "X01613",
+  "decision": "absence_misread",
+  "target": "No annotation: 'Flowers not known' reports missing material. The cymes are infructescences (PO:0006342), not cyme inflorescence",
+  "fix": "'not known' is never an absence; drop it. 'Infructescences: ...' maps to infructescence PO:0006342, never to an inflorescence class",
+  "reason": "Only fruiting material is known for Ilex atrata",
+  "confidence": 0.95
+ },
+ {
+  "id": "X01614",
+  "decision": "absence_misread",
+  "target": "No annotation: male flowers have not been collected. The fasciculate inflorescence (female or fruiting) is present",
+  "fix": "'<sex> flowers not known' reports missing material, never an absence of flowers (same rule as X01327)",
+  "reason": "Ilex kengii is dioecious and known from female or fruiting material only",
+  "confidence": 0.95
+ },
+ {
+  "id": "X01615",
+  "decision": "both_true",
+  "target": "bracts absent on one axis (the primary or secondary axes, or the pedicels) vs broadly deltoid bracts at the tertiary axis (bract PO:0009055). Context: the axis order",
+  "fix": "In descriptions of compound cymes, 'bracts absent' and 'with bracts' are usually said of different axis orders or of the pedicels. Keep the axis context ('primary', 'secondary', 'tertiary', 'pedicel'), or drop the absence when bracts are described on another axis",
+  "reason": "The present statement names the tertiary axis explicitly; the absence must belong to another axis",
+  "confidence": 0.65
+ },
+ {
+  "id": "X01616",
+  "decision": "absence_misread",
+  "target": "lateral united petals (petal PO:0009032) without a dorsal auricle: not auriculate (PATO:0001981, negated). No negated class, so drop the absence. The petals are present with an acute apex",
+  "fix": "'auricle absent' / 'without auricle' in an Impatiens petal or sepal description denies an auricle of that organ. It is a quality of the organ (not auriculate), never absence of the organ",
+  "reason": "Impatiens keys use the presence or absence of a dorsal auricle on the lateral united petals; the petals are described",
+  "confidence": 0.9
+ },
+ {
+  "id": "X01617",
+  "decision": "absence_misread",
+  "target": "stem (scape) ± leafless: cauline leaves (PO:0000013) few or absent. The pinnatisect leaves are basal (rosette leaf PO:0000014)",
+  "fix": "'± leafless', 'subscapose' and 'stems leafless' describe the stem, so they are at most cauline-leaf absence and never leaf absent. Map the following leaf description to rosette leaf when it says 'basal'",
+  "reason": "Lapsanastrum has basal rosettes of pinnatisect leaves with ± leafless flowering stems",
+  "confidence": 0.9
+ },
+ {
+  "id": "X01618",
+  "decision": "absence_misread",
+  "target": "frond without a green stalk (stipe) at its base; the stalk has no term, so reject. The frond (vascular leaf PO:0009025, synonym frond) is present and papillose",
+  "fix": "'without <qualified sub-part>' ('green stalk', 'stipe', 'root sheath wing') is absence or colour of that sub-part, never absence of the organ in context. Reject when no term exists",
+  "reason": "Lemma keys contrast fronds with or without a green stalk at the base; the frond itself is described",
+  "confidence": 0.88
+ },
+ {
+  "id": "X01619",
+  "decision": "absence_misread",
+  "target": "No annotation: 'Basal leaves not seen' reports missing material. Middle stem leaves are cauline leaf (PO:0000013), sessile",
+  "fix": "'<part> not seen' is never an absence; drop it. Map 'stem leaves', 'middle stem leaves' and 'cauline leaves' to cauline leaf PO:0000013, so they never collide with basal-leaf statements",
+  "reason": "The specimens lacked basal leaves; the flora does not say the plant has none",
+  "confidence": 0.95
+ }
+]

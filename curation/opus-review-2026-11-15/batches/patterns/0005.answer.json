@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P00200",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'infrequently lighter' says only that some capsules are paler than the chestnut or dark brown just listed. It names no colour and no reference, so it is too vague. The colours themselves are annotated from the same clause.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00201",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Return the second part: 'galea' (the hood-shaped upper corolla lip of Pedicularis), which was dropped from the transcription. Then annotate under docs/odp/09-relation-to-another-part.md: lower corolla lip, decreased length, towards galea. 'galea' needs a grounding (a synonym of an upper-lip class) so that comparison() can resolve it.",
+  "reason": "The reason 'stated without its second term' is wrong: the text says 'shorter than galea'. The second part was dropped in transcription.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00202",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "'stamens numerous' is the pattern's own example: stamen, has number of, amount many. Re-annotate the row with pattern 13. The held reason (count_or_non_length_measurement) comes from before the pattern existed.",
+  "reason": "An indefinite count with the cue 'numerous'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00203",
+  "decision": "new_pattern",
+  "target": "habit noun as phenotype",
+  "fix": "Split a habit noun into the whole plant (PO:0000003) plus its qualities: 'climbing shrub' = climbing (FLOPO:0991108) and woody, shrub growth form. In OWL this is an intersection of has_characteristic restrictions on the whole plant. RDF keeps the noun as the cue. Use a reviewed table from noun to qualities (climbing shrub, liana, vine, climber, trepadora).",
+  "reason": "'Climbing shrub' is a growth form stated as a noun. The annotator found a FLOPO phenotype class with no entity–quality definition and stopped.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00204",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "The counted part is leaf, not 'per ultimate branch'. Read 'per ultimate branch' as a per-unit count_position (like per_node or per_axil), with the landmark the ultimate branch or branchlet (a PO branch class). 'N or M' is the range 4-5.",
+  "reason": "'Leaves 4 or 5 per ultimate branch' is a count per unit. The transcription put the position phrase in the entity slot.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00205",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "'central' is already in flora_context_words.tsv as median (FLOPO_0991381) for leaflets. It sits at the head of the clause chain ('central leaflet with petiolule ..., blade ..., apex acuminate') and was not carried to the apex. Carry it through, with the leaflet apex as bearer (slot 1 region) and acuminate as the value.",
+  "reason": "There is no stage in the text. The qualifier is which member of the series (central leaflet), which is already covered.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00206",
+  "decision": "new_pattern",
+  "target": "habit noun as phenotype",
+  "fix": "'Vines woody' = whole plant, climbing (FLOPO:0991108) and woody. Same table from noun to qualities as for 'climbing shrub'. 'woody' after the noun is an ordinary value of the same bearer.",
+  "reason": "A habit noun with no entity–quality definition.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00207",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'keeled → keel' is already in flora_counted_parts.tsv. Send 'N-keeled' to the count pattern before the measurement parser, which read '2' as a number with no unit. Ground 'keel' as a ridge of the prophyll, not the legume keel petal.",
+  "reason": "A count in one word ('2-keeled'), read wrongly as a measurement with no unit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00208",
+  "decision": "new_pattern",
+  "target": "habit noun as phenotype",
+  "fix": "'Climbing shrubs and lianes' = whole plant, climbing (FLOPO:0991108) and woody. The two nouns name one growth form, so no alternative is needed. Add 'liane' (a French spelling) to the noun table.",
+  "reason": "Habit nouns with no entity–quality definition.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00209",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "Seed colour in rotting fruit is a state of decay, not a trait of the living plant. The usable statement (seed ochraceous in fruit) is a separate clause.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00210",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read 'N to M flowered' (spaces, no hyphen) like 'N-M-flowered' through the 'flowered → flower' row. The container is the subject 'spikelet' (PO spikelet class): flower, count 5-8, part of spikelet.",
+  "reason": "A count in a compound word, with the container spikelet stated in the sentence.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00211",
+  "decision": "existing_pattern",
+  "target": "docs/odp/12-part-of-qualified-whole.md",
+  "fix": "The qualifier is the section heading 'Staminate flowers:'. The bearer is pistillode (PO_0078) as part of a male flower, with value hairy. A pistillode only occurs in staminate flowers anyway, so leaving the qualifier out is also safe.",
+  "reason": "Held as a stage, but the qualifier is the sex of the whole flower (kind B on a part).",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00212",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Read '10(20)' with no dash as a usual count of 10 and a maximum of 20. The bearer is tooth, part of the androphore disc ('androphore' needs a grounding). 'obtuses' is a separate value: tooth, obtuse.",
+  "reason": "A count with an extreme in parentheses on a part of a part. No position is involved.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00213",
+  "decision": "new_pattern",
+  "target": "habit noun as phenotype",
+  "fix": "'trepadora' (Spanish, climber) = whole plant, climbing (FLOPO:0991108). The list 'Arbolito, trepadora, liana' is a set of alternatives (pattern 07) over habit-noun operands.",
+  "reason": "A habit noun in Spanish with no entity–quality definition.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00214",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Seed, embedded or immersed, towards the fruit pulp (the viscin layer, the mesocarp of the berry). This needs a PATO or FLOPO 'embedded in' relational value and a grounding of 'pulp' to mesocarp. 'white viscid' are values of the pulp, not of the seed.",
+  "reason": "A position relative to another part, which the annotator stored as one long quality phrase.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00215",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Pattern 13 sends 'several to many' to the alternatives. Here: flowers part of raceme, either amount several (pattern 13) or a count above 10 (lower bound, pattern 02). Add 'more than' before an '-N-flowered' compound as a lower-bound cue.",
+  "reason": "An indefinite count joined to a bounded count.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00216",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Both operands mean hairy, so annotate inflorescence hairy. Put the density alternatives sparse (PATO_0001609) and dense (PATO_0001164) on the hairs, as a one_of. Add that pair to flora_union_pairs.tsv. 'hairs 0.1 mm or less' is a separate bounded hair length (pattern 02).",
+  "reason": "The disjunction is only about hair density. 'hairy' holds whichever density applies.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00217",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Entity: trichome (hair) of the stem. Quality: length (PATO_0000122), up to 2 mm (an upper bound, pattern 02). 'hairs' is not a quality.",
+  "reason": "The noun 'hairs' was put in the quality slot and the stem in the entity slot.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00218",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (negation)",
+  "fix": "Accept a word with a negating prefix as its own negation cue, through a reviewed table: acaulescent = stem above ground absent (negated presence of stem), eglandular = glandular (PATO_0002117) negated. The registry already holds 'whole plant acaulescent' (FLOPO_0980080).",
+  "reason": "The negation is in the a- prefix, so no separate negation word stands in the span.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00219",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "'beneath' was not taken as the second side. Comparing the two sides of one leaf is open ('comparison with an implied second term', annotation-context-patterns update 2026-11-14). The fix there is the leaflet's lower (abaxial) epidermis, paler, towards its upper (adaxial) epidermis, with 'slightly' as degree.",
+  "reason": "The second side is implied by 'beneath' (versus the upper side).",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00220",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Allow '±' between the 'to' cue and the number (an approximately qualifier, pattern 01). Read 'to A × B cm' as upper bounds on both length (19 cm) and width (10 cm) of the leaf blade.",
+  "reason": "'to' is a known cue. The '±' and the L × W form blocked it.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00221",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Entity: phyllary (involucral bract), whose faces are eglandular, not the peduncle. Then read the negating prefix as in P00218.",
+  "reason": "The context is the phyllary description. No peduncle is mentioned near 'eglandular'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00222",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Limit the disjunction to its comma item ('green or green-brown'). 'herbaceous' (PATO_0002352) is a separate value of the stipule with no alternative. Split comma lists before the explicit_disjunction check.",
+  "reason": "The 'or' belongs to the colour item only, not to 'herbaceous'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00223",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (kind C, slot 1)",
+  "fix": "Add context-word rows: 'adaxially' and 'abaxially' on a vein bearer with raised or impressed values = the side of the lamina where the vein is seen. Bearer: secondary vein, scoped to the upper (adaxial) surface. Value: impressed. It is not a stage.",
+  "reason": "A place on the part (kind C), held wrongly as a stage.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00224",
+  "decision": "new_pattern",
+  "target": "extent of a positional quality",
+  "fix": "A qualitative value (decurrent, PATO_0001984) plus the measured length over which it extends (5 mm, extreme 8 mm). OWL: spine-shield has_characteristic decurrent. RDF: fb:extentLength with a range and extremes (pattern 05) on the same record.",
+  "reason": "The number measures how far the decurrence runs, not a dimension of the spine-shield.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00225",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Entity: apex of the perigynium (PO_0009044), not fruit. Value: emarginate (PATO_0002234), with 'minutely' as degree.",
+  "reason": "The context describes the Carex perigynium. The achene follows after the semicolon.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00226",
+  "decision": "new_pattern",
+  "target": "qualities copied from another part",
+  "fix": "Resolve 'X same as Y' by copying the annotations of Y (the stipe) in the same taxon description to each listed bearer (rachis, costa, stalk). Each copy records the source statement and the 'same as' cue. No new OWL beyond the copied expressions.",
+  "reason": "No attribute is named. The statement points to everything said about the stipe.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00227",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept a bound in parentheses after a quality word ('long petiolate (to 4 cm)'). Petiole length up to 4 cm, with 'long' as part of the same cue. The bearer is the petiole of a proximal leaf: proximal from flora_context_words.tsv (pattern 04).",
+  "reason": "'to' is a known cue. The parentheses and the 'proximal ones' bearer blocked it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00228",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Read 'up to 15 cm, but not usually exceeding 10 cm' as a usual upper bound of 10 cm and a maximum of 15 cm. Add 'not usually exceeding' as a usual-bound cue. The bearer is a male raceme (kind B, pattern 04).",
+  "reason": "Two bounds of one length, one usual and one rare.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00229",
+  "decision": "new_pattern",
+  "target": "timing of a change",
+  "fix": "Bearer: leaf apex. Values: dry (PATO_0001824) and brown, as states the part comes to have. RDF: fb:timing 'early' with its cue. OWL: only the end state, as a transition (white becoming pink pattern) when a start state is given.",
+  "reason": "A state change with a relative time ('early'). There is no pattern for when a change happens.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00230",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "Fruit failing to mature because of insect attack is damage and ecology, not a phenotype of the taxon.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00231",
+  "decision": "new_pattern",
+  "target": "habit noun as phenotype",
+  "fix": "'liana' = whole plant, climbing (FLOPO:0991108) and woody. The list 'Shrub, tree or liana' is a set of alternatives (pattern 07) whose operands are habit nouns.",
+  "reason": "A habit noun with no entity–quality definition.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00232",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "'in each furrow' is a per-unit position (the landmark is the furrow between the fruit's ribs). 'on commissure' is at_region (the joining face of the two half-fruits). Both 'vitta' (oil duct) and 'furrow' need groundings to anatomy classes.",
+  "reason": "A count at a position, held because the parts are not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00233",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Entity: style. Quality: count 2-3 (pattern 03). The female flower is the whole the style belongs to (pattern 12).",
+  "reason": "The count phrase was put in the quality slot and the containing flower in the entity slot.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00234",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "'young' is in flora_context_words.tsv (PATO_0000309, no bearer limit). Match it regardless of capitals at the start of a sentence ('Young branches'). Branch, glabrous and reddish brown, with the bearer quality young.",
+  "reason": "A covered stage word (kind A) that the annotator missed.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00235",
+  "decision": "new_pattern",
+  "target": "bound on the maximum",
+  "fix": "'to at least 80 cm' gives a lower bound (80 cm) on the largest length. RDF: the bound on the maximum value with its cue. OWL: nothing about every plant, since the usual range is unknown.",
+  "reason": "A lower bound on the maximum, listed as open in annotation-context-patterns.md.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00236",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Add the hyphenated cue 'per leaf-axil' to per_axil. The counted part is the male inflorescence (the subject of the previous sentence), not 'per leaf-axil'. 'or forming a terminal leafless panicle' is an alternative.",
+  "reason": "A count per axil whose cue was not recognized because of the hyphen.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00237",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add 'to nearly' as an upper-bound cue with value_qualifier approximately: whole plant height at most about 1 m.",
+  "reason": "An upper bound with an approximation word between the cue and the number.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00238",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "'rays several' = amount several. In Apiaceae, ground 'ray' as a primary branch of the compound umbel, not a ray floret.",
+  "reason": "An indefinite count with the cue 'several'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00239",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'1 or 2' is the range 1-2. The count is of spikes, with 'female' as bearer state (pattern 04). The value is the count, not 'female'. Remote, narrowly oblong and the length are separate values.",
+  "reason": "The disjunction is a count range that is already covered.",
+  "confidence": "medium"
+ }
+]

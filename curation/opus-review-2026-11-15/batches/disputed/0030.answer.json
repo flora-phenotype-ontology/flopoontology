@@ -1,0 +1,212 @@
+[
+ {
+  "rule_id": "R3095",
+  "decision": "drop",
+  "target": "",
+  "reason": "Mapping the whole phrase to trichome loses 'simple'. Without this rule the phrase splits into bearer trichome (PO_0000282, synonym 'hair') plus quality simple (PATO_0001503) or unbranched (PATO_0000414), which is the right annotation.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3096",
+  "decision": "drop",
+  "target": "",
+  "reason": "Singular of R3095. Let the normal parse give trichome (PO_0000282) plus simple (PATO_0001503).",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3097",
+  "decision": "retarget",
+  "target": "stigma (PO_0009073)",
+  "reason": "A stigmatic line is the receptive surface running along the style or stigma, not a separate lobe. Stigma lobe (FLOPO_0986009) is too narrow, and stigma is the existing class that contains it.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3098",
+  "decision": "keep",
+  "target": "",
+  "reason": "PO glandular trichome is 'a trichome that secretes or sequesters a portion of plant substance'. Stinging hairs hold and inject an irritant fluid, and plant anatomy texts (Esau, Fahn) class them as secretory or glandular hairs. There is no PATO 'stinging' quality, and 'stinging' was rejected as a bearer word in the previous review, so the subclass is the best place to keep the meaning.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3099",
+  "decision": "keep",
+  "target": "",
+  "reason": "Singular of R3098. A stinging hair is a secretory (sequestering) trichome, which fits the PO glandular trichome definition.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3100",
+  "decision": "keep",
+  "target": "",
+  "reason": "Urticating hair is a synonym of stinging hair. Same reasoning as R3098.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3103",
+  "decision": "drop",
+  "target": "",
+  "reason": "The context word 'lateral' (FLOPO_0991380) already applies to pinnules. Without this rule, 'lateral' plus 'pinnule' (FLOPO_0985028) gives pinnule plus lateral. The phrase rule would hide the position.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3104",
+  "decision": "drop",
+  "target": "",
+  "reason": "Same as R3103. The French 'latérale' has no context word yet. Adding 'latéral(e)(s)/latéraux' to flora_context_words.tsv (FLOPO_0991380) would be better than a phrase rule that loses the position.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3108",
+  "decision": "drop",
+  "target": "",
+  "reason": "Perianth lobe is its own FLOPO-local class (FLOPO_0986004), and there is no 'perianth lobe margin' class. The margin of the free lobe of a fused perianth is not strictly PO tepal margin. This needs a margin-of-part pattern or a new class, not a rule.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3110",
+  "decision": "keep",
+  "target": "",
+  "reason": "A sheath described as scale-like is a reduced, bladeless leaf (a cataphyll), as on rhizomes or at the base of culms in grasses, sedges and rushes. That is PO scale leaf (synonym cataphyll). A normal leaf sheath would not be called scale-like.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3111",
+  "decision": "keep",
+  "target": "",
+  "reason": "Spelling variant of R3110.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3112",
+  "decision": "retarget",
+  "target": "leaf sheath (PO_0020104)",
+  "reason": "A basal sheath is the sheath of a basal leaf (grasses, sedges, palms), and it may or may not carry a blade. It is always a leaf sheath, but only sometimes a cataphyll. A phrase rule is needed because bare 'sheath' was rejected as a generic part.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3117",
+  "decision": "drop",
+  "target": "",
+  "reason": "The context word 'lateral' (FLOPO_0991380) applies to petals. Without the rule, petal (PO_0009032) plus lateral keeps the position. Wing petal (PO_0025325) fits legumes only, not Polygala, Viola or orchids, so it cannot be the general target.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3118",
+  "decision": "drop",
+  "target": "",
+  "reason": "Plural of R3117.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3119",
+  "decision": "drop",
+  "target": "",
+  "reason": "French form of R3117. A French context word 'latéral' should carry the position, rather than a rule that loses it.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3120",
+  "decision": "drop",
+  "target": "",
+  "reason": "French plural of R3117. Same as R3119.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3121",
+  "decision": "drop",
+  "target": "",
+  "reason": "The context word 'outer' (FLOPO_0991379, added 2026-11-14) applies to perianth, segment and tepal. Without the rule, tepal plus outer keeps the whorl. The previous review's acceptance of 'outer tepal' (C374) came before that context word existed.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3122",
+  "decision": "drop",
+  "target": "",
+  "reason": "Plural of R3121.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3123",
+  "decision": "drop",
+  "target": "",
+  "reason": "Same as R3121. 'Outer' plus 'tepals' gives tepal (PO_0009033) plus outer (FLOPO_0991379).",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3124",
+  "decision": "constrain",
+  "target": "leaf|leaves|leaflet|lamina|blade|pinna|pinnule",
+  "reason": "A venule is a smallest-order vein. It is a leaf lamina vein only on leaf parts. On petals or bracts it must not map to a leaf vein. Tertiary leaf vein (PO_0008021) would wrongly fix the order, so the broader lamina vein with a part limit is right.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3125",
+  "decision": "constrain",
+  "target": "leaf|leaves|leaflet|lamina|blade|pinna|pinnule",
+  "reason": "Plural of R3124.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3126",
+  "decision": "retarget",
+  "target": "oil gland (PO_0005669)",
+  "reason": "Oil globules are often embedded oil cavities (Myrtaceae, Rutaceae). PO oil gland is 'a gland or a cavity lined with cells that secrete oils', which covers both cavities and surface glands. Glandular trichome is too specific.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3127",
+  "decision": "retarget",
+  "target": "oil gland (PO_0005669)",
+  "reason": "Plural of R3126.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3128",
+  "decision": "keep",
+  "target": "",
+  "reason": "'Sessile' oil globules sit on the surface, as in the Flora of China Lamiaceae ('yellow sessile oil globules'). These are sessile, peltate glandular trichomes, not embedded cavities, so glandular trichome is right here.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3133",
+  "decision": "constrain",
+  "target": "moss|capsule|seta|peristome|sporophyte|operculum|calyptra",
+  "reason": "Spore capsule mouth (PO_0030017) is the moss sporangium mouth. In flowering plants 'capsule rim' is the edge of a capsule fruit (PO_0030091), which has no rim class, so the rule must be limited to moss contexts.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3135",
+  "decision": "retarget",
+  "target": "leaf lamina (PO_0020039)",
+  "reason": "'Basal lamina(e)' is either the lower part of the lamina or the laminae of basal leaves. Both are leaf lamina, and neither is the leaf base (the attachment region). The 'basal' position is lost, but the bearer is right.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3136",
+  "decision": "retarget",
+  "target": "leaf lamina (PO_0020039)",
+  "reason": "Plural of R3135.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3142",
+  "decision": "constrain",
+  "target": "feuille|feuilles|foliole|limbe|penne|leaf|lamina",
+  "reason": "On a leaf, 'nervure latérale' is the secondary vein (as 'lateral nerve' C274 was accepted). On sepals, bracts or petals it must not become a leaf vein.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R3143",
+  "decision": "constrain",
+  "target": "feuille|tige|fruit|calice|ovaire|pétiole|pédicelle|bractée|leaf|stem|calyx|ovary|petiole|pedicel|bract",
+  "reason": "French 'soie' is a bristle (PO trichome, synonym bristle) on ordinary organs. In bryophytes it is the seta (PO_0030032), and in grasses it may be an awn (PO_0025349), so it must be limited to these parts. French part names are included because the source text is French.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R3144",
+  "decision": "constrain",
+  "target": "feuille|tige|fruit|calice|ovaire|pétiole|pédicelle|bractée|leaf|stem|calyx|ovary|petiole|pedicel|bract",
+  "reason": "Plural of R3143.",
+  "confidence": "medium"
+ }
+]

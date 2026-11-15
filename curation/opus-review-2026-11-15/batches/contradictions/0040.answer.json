@@ -1,0 +1,242 @@
+[
+ {
+  "id": "X01200",
+  "decision": "absence_misread",
+  "target": "Trichome PO:0000282 absent (PATO:0000462) on the leaf (PO:0025034). The other statement should be stomatal complex PO:0002000 present on the abaxial leaf surface, not 'leaf present'",
+  "fix": "In leaf anatomy sections written as '<Part>: absent' or '<Part>: present' (Hairs, Stomata, Crystals, Tannins), the heading word is the bearer. Never let the absence or presence fall back to the section's organ (leaf).",
+  "reason": "The leaf is described in detail. Only its hairs are absent.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01201",
+  "decision": "absence_misread",
+  "target": "Only the lateral veins are absent. The thallus (PO:0030027) has a midrib, which is tomentose. This is a brown alga, so neither vascular bundle PO:0005020 nor leaf midvein PO:0020139 applies. Better to leave both statements out of the plant annotation",
+  "fix": "'lacking any veins' beside a described midrib means no lateral veins. Never record 'vascular bundle absent'. Taxa that are algae (Phaeophyceae: Dictyopteris, Sphacelaria) should not get PO vascular-plant terms.",
+  "reason": "Dictyopteris has a midrib but no lateral veins, and it has no vascular tissue at all.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X01202",
+  "decision": "absence_misread",
+  "target": "Soredia and isidia absent on a lichen thallus. There is no PO term for them, so drop it. 'imbricatis' (Latin: lobes overlapping) belongs to the thallus lobes, not to 'leaf present'",
+  "fix": "'soredia lacking' and 'isidia lacking' are about lichen propagules, never about a leaf. Lichen taxa (Hypotrachyna, Parmelia and similar) should be excluded from PO annotation. A Latin adjective on its own ('imbricatis') never asserts that a leaf is present.",
+  "reason": "Hypotrachyna is a foliose lichen: it has no leaves, and the two statements are about other structures.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01203",
+  "decision": "absence_misread",
+  "target": "Nothing is absent from the plant. Secondary transverse cell walls were not seen in the filament segments. Both statements are about the algal filament (thallus PO:0030027), not a leaf. Drop them",
+  "fix": "'<cell feature> not seen' and 'not observed' report what was seen under the microscope. They are never the absence of an organ. 'segments' in algae are filament segments, never leaves.",
+  "reason": "Sphacelaria is a filamentous brown alga with no leaves.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01204",
+  "decision": "absence_misread",
+  "target": "Crystal and tannin cells (idioblast PO:0000283, context 'crystal' or 'tannin') absent in the leaf lamina, or drop the statement. 'cuticle fairly thick' should be plant cuticle PO:0000022 with increased thickness PATO:0000591, not the lamina",
+  "fix": "'Crystals: not observed' and 'Tannins: absent' in anatomy sections are about cell contents or idioblasts. Never record the organ as absent. A quality whose subject is 'cuticle' goes to plant cuticle PO:0000022.",
+  "reason": "The lamina is clearly present. Only crystals and tannins were not seen.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01205",
+  "decision": "absence_misread",
+  "target": "Crystals (idioblast PO:0000283, context 'crystal') not observed in the leaf, or drop it. The other statement should be trichome PO:0000282 present on the leaf",
+  "fix": "Same as for headed anatomy fields: in 'Crystals: not observed' and 'Hairs: present', the heading is the bearer, never the leaf.",
+  "reason": "The leaf bears hairs, so it cannot be absent.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01206",
+  "decision": "absence_misread",
+  "target": "Cauline leaf PO:0000013 absent (PATO:0000462): the flowering stem (scape, PO:0009047) has no leaves. The basal leaves are present and long and narrow",
+  "fix": "'leafless stem', 'leafless scape' and 'stem leafless' mean that cauline leaf PO:0000013 is absent. They never mean leaf PO:0025034 is absent.",
+  "reason": "Camassia has basal leaves and a leafless scape.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01207",
+  "decision": "absence_misread",
+  "target": "The leaves are reduced to small scales (scale leaf PO:0006003 present). Nothing is absent. 'the rest light green' is most likely about the green twigs (stem PO:0009047), not the leaves",
+  "fix": "'practically leafless', 'nearly leafless' and 'almost leafless' describe how few or how reduced the leaves are. They are never an absence. In Ephedra and similar switch plants, colour words after them usually describe the stems.",
+  "reason": "Ephedra has scale leaves and green photosynthetic stems.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X01208",
+  "decision": "source_contradiction",
+  "target": "At most, cauline leaf PO:0000013 absent on the upper stem or flowering branches (peduncle PO:0009053). This species has a leafy stem with clasping cauline leaves, so the plant guide's 'leafless stem' is wrong or loosely worded",
+  "fix": "Read 'leafless stem' as cauline leaf PO:0000013 absent, never leaf absent. When the same taxon has clasping or cauline leaves, flag it for review instead of keeping both statements.",
+  "reason": "Erigeron philadelphicus has clasping cauline leaves. The guide also says the leaves clasp the stem.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X01209",
+  "decision": "both_true",
+  "target": "Awn PO:0025349 absent only in the beardless type (subsp. inermis). Keep 'beardless type' as the context. Other plants have a divergent awn",
+  "fix": "'except on the <form> type where X is lacking' and 'X absent in var./subsp./form Y' limit the absence to that form. Keep the form as the context and never record a taxon-wide absence.",
+  "reason": "Bluebunch wheatgrass has an awned form and an awnless (beardless) form.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01210",
+  "decision": "absence_misread",
+  "target": "The allomorphic pistillate flowers are what is absent: pistillate flower PO:0025599 absent with context 'allomorphic'. Bracts (PO:0009055) are present and deltate",
+  "fix": "'(bracts/pedicels) of allomorphic flowers absent' and 'allomorphic flowers absent' (Acalypha) deny only the allomorphic flowers. Keep 'allomorphic' as the context. Never record 'bract absent' or 'flower absent'.",
+  "reason": "Acalypha arvensis has prominent deltate pistillate bracts, and 'allomorphic' is a standard FNA Acalypha character.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X01211",
+  "decision": "absence_misread",
+  "target": "Pistillate flower PO:0025599 absent with context 'allomorphic'. Ordinary flowers are present in axillary inflorescences",
+  "fix": "Modifiers on a flower word ('allomorphic pistillate flowers', 'staminate flowers') must be kept. The absence goes to the most specific class with the modifier as context, and never falls back to flower PO:0009046.",
+  "reason": "The plant flowers. Only the special allomorphic flowers are missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01212",
+  "decision": "both_true",
+  "target": "Bract PO:0009055 absent only on staminate inflorescences (PO:0025601). The bracts of the pistillate or bisexual inflorescences are present and glabrous abaxially",
+  "fix": "'X on staminate inflorescences absent' and 'X absent in male flowers' limit the absence to that sex or member. Keep it as the context.",
+  "reason": "In Acalypha only the pistillate parts carry the large bracts.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01213",
+  "decision": "absence_misread",
+  "target": "The leaf lamina lobes are not incised: leaf lamina PO:0020039 with cut PATO:0001978 negated (or incisions between the lobes absent). The lamina is present. ('sometimes glaucous' was also mislabelled 'green': it should be PATO:0104277 glaucous, sometimes)",
+  "fix": "'incisions absent', 'teeth absent', 'sinus absent' and similar margin features deny the feature, never the lamina. Map them to the negated division quality, or to the absence of the feature.",
+  "reason": "In Alchemilla, 'incisions' are the cuts between the leaf lobes. The blade itself is described.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01214",
+  "decision": "present_misread",
+  "target": "Rhizome PO:0004542 absent is correct. The other statement is about the bulbs (PO:0025356): 'not clustered on a stout primary rhizome'. It is a negation and asserts no rhizome",
+  "fix": "'not <quality> on <part>' and 'not clustered on a rhizome' are negated statements about the subject (bulbs). The part after 'on' is a location under the negation and must never become '<part> present'.",
+  "reason": "This is a standard FNA Allium couplet: rhizomes absent, bulbs not clustered on a rhizome.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01215",
+  "decision": "absence_misread",
+  "target": "Only the syrinx (the raised ring at the mouth of the perianth tube) is absent: perianth PO:0009058 with context 'syrinx'. 'tube bent' is the calyx or perianth tube (calyx PO:0009060), not the corolla",
+  "fix": "'syrinx absent' and 'annulus absent' (Aristolochiaceae) deny only that ring inside the perianth. In Aristolochia, map perianth words ('tube', 'limb', 'utricle') to calyx PO:0009060 or perianth PO:0009058, never to corolla.",
+  "reason": "Aristolochia has a single, calyx-derived perianth with a bent tube. The syrinx is a small structure in it.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01216",
+  "decision": "absence_misread",
+  "target": "Only the syrinx is absent (calyx PO:0009060 or perianth PO:0009058 with context 'syrinx'). The calyx limb is present and purple",
+  "fix": "'syrinx absent' never means calyx or corolla absent. Keep 'syrinx' as the context of the perianth.",
+  "reason": "The perianth is described (purple limb), so it is present.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01217",
+  "decision": "absence_misread",
+  "target": "Only the annulus (the ring at the mouth of the perianth tube) is absent: perianth PO:0009058 or calyx PO:0009060 with context 'annulus'. The cylindric tube is the perianth or calyx, not the corolla",
+  "fix": "'annulus absent' (Aristolochiaceae) denies only the ring. 'annulus' always needs its organ (perianth here, spore capsule in mosses and ferns). It never means the organ is absent.",
+  "reason": "The perianth is present and cylindric. Aristolochia has no corolla.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01218",
+  "decision": "absence_misread",
+  "target": "Nothing is absent. The fruit septa (fruit septum PO:0025268) are not attached to the valves (fruit valve PO:0000033) at dehiscence, and they are entire. Both statements belong to fruit septum, not fruit",
+  "fix": "'not attached to <part>' and 'free from <part>' are negated relations, never an absence. In capsule descriptions, the subject 'septa' goes to fruit septum PO:0025268.",
+  "reason": "This is a standard description of a capsule's septa. The fruit is present.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01219",
+  "decision": "absence_misread",
+  "target": "Colleter FLOPO_0986023 absent (PATO:0000462) on the leaf lamina PO:0020039 (laminar colleters). The lamina is present and glabrous",
+  "fix": "'<adjective of organ> <part> absent' ('laminar colleters', 'petiolar glands', 'stipular hairs') denies the part, located on the organ. Never deny the organ.",
+  "reason": "This is a standard Asclepias character: colleters on the blade base.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01220",
+  "decision": "both_true",
+  "target": "Leaf PO:0025034 absent only as leaves arising from the rhizome (rhizome PO:0004542, context 'rhizomal'). Basal and cauline leaves are present and simple",
+  "fix": "'rhizomal leaves absent' and 'basal leaves absent at flowering' deny one kind of leaf by position or timing. Keep that as the context, or use cauline leaf PO:0000013 or a position, and never record a taxon-wide leaf absence.",
+  "reason": "In Cardamine, rhizomal leaves are a separate character from cauline leaves.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01221",
+  "decision": "absence_misread",
+  "target": "The basal sheaths are bladeless: scale leaf PO:0006003 present (or leaf sheath PO:0020104 with context 'basal'). The leaf lamina of the foliage leaves is present and flat",
+  "fix": "'bladeless', 'bladeless sheaths' and 'basal sheaths bladeless' (Cyperaceae, Poaceae, Juncaceae) describe basal cataphylls. Map them to scale leaf PO:0006003. Never record 'leaf lamina absent' or 'leaf absent'.",
+  "reason": "Carex has blades on its foliage leaves. Only the lowest sheaths lack blades.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01222",
+  "decision": "absence_misread",
+  "target": "Awn PO:0025349 absent on the pistillate scale (bract PO:0009055). The scale is present and acute",
+  "fix": "'awns absent' and 'awnless' after a scale or bract deny the awn on that bearer (awn PO:0025349 absent). They never deny the bract.",
+  "reason": "The scale is described as acute, so it is present.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01223",
+  "decision": "absence_misread",
+  "target": "Basal sheaths maroon and bladeless: scale leaf PO:0006003 present and maroon. The leaf lamina is present and flat",
+  "fix": "Same as for 'bladeless sheaths': map them to scale leaf PO:0006003 and never to 'leaf lamina absent'.",
+  "reason": "The blades are described as flat.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01224",
+  "decision": "absence_misread",
+  "target": "The bladeless structures are the basal sheaths (scale leaf PO:0006003). The leaves are present and pilose",
+  "fix": "A bare 'bladeless' in a Carex stem or sheath description refers to the basal sheaths. Map it to scale leaf PO:0006003 and never to leaf PO:0025034 absent.",
+  "reason": "The leaves are described as pilose.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01225",
+  "decision": "absence_misread",
+  "target": "The leaf sheath PO:0020104 is not spotted (PATO:0000333 spotted, negated). The sheath is present. 'sheaths all with blades' also implies leaf lamina PO:0020039 present",
+  "fix": "'lacking spots', 'lacking hairs' and 'lacking glands' deny a pattern or surface feature. Map them to the negated quality or to the feature's absence, never to the bearer.",
+  "reason": "The sheath is described, so it exists.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01226",
+  "decision": "absence_misread",
+  "target": "Bladeless basal sheaths: scale leaf PO:0006003 present. The leaf lamina is present and flat",
+  "fix": "Same as for 'bladeless basal sheaths': map them to scale leaf PO:0006003 and never to 'leaf lamina absent'.",
+  "reason": "The blades are described as flat.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01227",
+  "decision": "absence_misread",
+  "target": "The proximal leaves are bladeless: scale leaf PO:0006003 (or leaf sheath PO:0020104 with context 'proximal'). The leaf lamina of the other leaves is present and coriaceous",
+  "fix": "'sheaths of proximal (lower) leaves bladeless' denies the blade only on the proximal leaves. Map it to scale leaf PO:0006003 or keep 'proximal' as the context. Never record a taxon-wide 'leaf lamina absent'.",
+  "reason": "The blades are described in detail, so they are present.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01228",
+  "decision": "absence_misread",
+  "target": "Axillary leafy short shoots (leaf tufts in the leaf axils) are absent: shoot axis PO:0025029 with context 'axillary tuft', or leaf with context 'axillary fascicle'. The leaves are present. The other statement also lost its negation: it should be leaf PO:0025034 not marcescent (FLOPO:0991181, negated)",
+  "fix": "'axillary tufts of leaves absent' and 'axillary fascicles absent' deny short shoots in the leaf axils, never the leaves. 'not <quality>' must keep the negation.",
+  "reason": "Cerastium leaves are described. Only the axillary tufts are missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01229",
+  "decision": "unclear",
+  "target": "Probably different members, for example awns on the involucre teeth versus awns absent on other teeth or on the perianth. The snippets are too short to tell",
+  "fix": "When '<part> absent' and '<part> <quality>' come from different sentences of one description, check which organ each sentence is about before asserting an absence for the whole taxon.",
+  "reason": "In Chorizanthe the involucre teeth are usually awned. Without the subject of 'awns absent', the context cannot be found.",
+  "confidence": "low"
+ }
+]

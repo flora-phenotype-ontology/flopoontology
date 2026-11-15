@@ -1,0 +1,242 @@
+[
+ {
+  "id": "X01110",
+  "decision": "absence_misread",
+  "target": "domatium (no PO term) + absent PATO:0000462, frequency 'sometimes'; leaf lamina PO:0020039 stays present",
+  "fix": "In '<part> of <structure>..., sometimes absent', the absence applies to the subject of the clause (here the domatia), never to the part that carries it. 'Sometimes absent' is variation, not a plain absence.",
+  "reason": "The domatia in the vein axils are sometimes missing. The lamina is always there and is cuneate at the base.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01111",
+  "decision": "absence_misread",
+  "target": "no annotation (nodal scales, i.e. intravaginal squamules, not observed); the bract: purple record stays",
+  "fix": "'not seen', 'not known', 'not observed' mean missing data, never absence. Also, 'nodal scales' in Hydrocharitaceae are intravaginal squamules, not bracts.",
+  "reason": "The author did not see the scales. That says nothing about absence, and the scales are not bracts.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01112",
+  "decision": "absence_misread",
+  "target": "secondary leaf vein PO:0020140 + absent PATO:0000462 (or, more likely, intersecondary/tertiary veins absent, as the source wording allows)",
+  "fix": "'<kind of> nerves/veins absent' gives an absence on that vein order (PO:0020140 secondary leaf vein, PO:0025413 primary leaf vein), never on the leaf lamina.",
+  "reason": "The absence is about a vein order. The lamina is present, with an acuminate to emarginate apex.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01113",
+  "decision": "absence_misread",
+  "target": "third order inflorescence axis PO:0006322 (secondary inflorescence branch) + absent PATO:0000462",
+  "fix": "'secondary/tertiary branches absent/not present' in an inflorescence description gives an absence on that branch order (PO:0006321/PO:0006322/PO:0025105), never on the inflorescence.",
+  "reason": "A compact inflorescence without secondary branches. Only the branching order is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01114",
+  "decision": "absence_misread",
+  "target": "upper stem PO:0009047 bearing only reduced leaves: cauline leaf PO:0000013 + decreased size PATO:0000587, context: upper stem / subtending peduncles; no leaf absence",
+  "fix": "'leafless except for X' and 'leafless above/below' describe a region of the axis that bears few or reduced leaves. They never give 'leaf absent' for the taxon.",
+  "reason": "The flowering stem has no normal leaves above, only small leaves under the peduncles. Basal and lower leaves exist and get smaller upward.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01115",
+  "decision": "present_misread",
+  "target": "involucre PO:0009100 + absent PATO:0000462; involucel (no PO term) + absent PATO:0000462",
+  "fix": "'A and B absent' gives an absence for each listed part and must never also produce a 'present' statement for any of them.",
+  "reason": "Both records come from the one sentence 'involucre and involucel absent'. The 'present' record is a parser artifact.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01116",
+  "decision": "absence_misread",
+  "target": "vascular bundle PO:0005020 + absent PATO:0000462, context: interlacunar (stem cortex)",
+  "fix": "In stem anatomy, '<tissue/bundle/cell> absent' gives an absence on that tissue (vascular bundle PO:0005020, sclerenchyma PO:0005427), never on the stem.",
+  "reason": "Potamogeton stems are described by their cortical bundles. Missing interlacunar bundles do not mean the stem is missing, and the stem is terete.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01117",
+  "decision": "absence_misread",
+  "target": "no leaf absence; stem PO:0009047 above the described leaves without foliage leaves (sheaths only)",
+  "fix": "'otherwise leafless' applies only to the axis apart from the leaves just described. It never gives 'leaf absent' for the taxon.",
+  "reason": "Satyrium has foliage leaves (here with acute tips). 'Otherwise leafless' means the stem has no more leaves beyond those.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01118",
+  "decision": "absence_misread",
+  "target": "rosette PO:0025615 + absent PATO:0000462 (basal)",
+  "fix": "'without (basal) leaf rosette' gives an absence on the rosette PO:0025615, not on leaf PO:0025034. A compound noun names the head noun, not its modifier.",
+  "reason": "The plant has sessile cauline leaves but no basal rosette.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01119",
+  "decision": "absence_misread",
+  "target": "leaf PO:0025034 + decreased size PATO:0000587 (few, much reduced leaves); no absence",
+  "fix": "'nearly/almost/sub-leafless', 'X-less or nearly so' mean reduced or few, never absent. Annotate reduction, or nothing.",
+  "reason": "Thesium has few, small linear leaves. 'Nearly leafless' is a hedge, not an absence.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01120",
+  "decision": "both_true",
+  "target": "sex: bracteoles absent in female flowers (T. latifolia) vs linear bracteole-like hairs with the male flowers",
+  "fix": "In unisexual-flowered taxa, keep the flower-sex context of the sentence ('male flowers ...', 'female flowers ...') on every statement drawn from it, and do not assert a plain absence for the taxon.",
+  "reason": "In Typha latifolia, female flowers have no bracteoles (unlike T. angustifolia), while the male flowers come with linear hairs or scales. The two statements are about different flower sexes.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X01121",
+  "decision": "absence_misread",
+  "target": "stem PO:0009047, lower part leafless (leaves crowded towards branch tips); no leaf absence",
+  "fix": "'leafless below/above', 'leafless in the lower part' describe a region of the axis. Give no leaf absence; keep the position as context.",
+  "reason": "The shrub keeps its spathulate leaves near the branch tips and is bare below.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01122",
+  "decision": "both_true",
+  "target": "stage: flowering stems leafless at flowering (flowers before the leaves) vs leaves described later",
+  "fix": "'leafless flowering stems', 'flowering when leafless', 'flowers before the leaves' are stage-bound statements about the flowering shoot. Keep the stage context and do not assert leaf absence for the taxon.",
+  "reason": "Vernonia denudata is a fire-adapted subshrub that flowers on bare stems. The leaves with acute or rounded tips come at another time.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X01123",
+  "decision": "absence_misread",
+  "target": "aril PO:0009090 + absent PATO:0000462 (rim-aril)",
+  "fix": "'(rim-)aril not developed/absent' gives an absence on aril PO:0009090, not on seed. 'not developed' after a seed appendage is an absence of that appendage.",
+  "reason": "The seed is present and described as slightly pointed. Only the rim-aril is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01124",
+  "decision": "absence_misread",
+  "target": "no annotation (flowers, fruits and seeds unknown); the inflorescence: spike record stays",
+  "fix": "'not known', 'unknown', 'not seen' mean missing data, never absence; produce no statement.",
+  "reason": "An undescribed Xyris known only from incomplete material. The flowers are unknown, not absent.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01125",
+  "decision": "both_true",
+  "target": "frequency: awn usually present (hispidulous), rarely absent",
+  "fix": "'rarely/sometimes/occasionally X-less' is variation within the taxon. Do not assert a plain absence; keep the frequency qualifier, or drop the absence when it is the rare state.",
+  "reason": "The lemma usually ends in a hispidulous awn and only rarely lacks it.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01126",
+  "decision": "absence_misread",
+  "target": "lower leaves / basal sheaths bladeless or nearly so: culm PO:0009047 + aphyllopodic FLOPO:0991233 if the basal sheaths are meant; otherwise leaf sheath PO:0020104, context lower leaves, blade absent or reduced",
+  "fix": "In Carex and other graminoids, 'bladeless' qualifies particular sheaths (lower/basal/bract sheaths), never leaf lamina for the taxon. 'lowest/lower leaves (reduced to) bladeless sheaths' → culm + aphyllopodic FLOPO:0991233.",
+  "reason": "The normal leaves have long-attenuate blades. Only the basal sheaths lack a blade, the case noted in docs/km-classification.md.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X01127",
+  "decision": "absence_misread",
+  "target": "culm PO:0009047 + aphyllopodic FLOPO:0991233 (lower leaves reduced to bladeless sheaths)",
+  "fix": "'(lower leaves) reduced to bladeless sheaths' → culm + aphyllopodic FLOPO:0991233. Never leaf lamina absent.",
+  "reason": "The upper leaves have blades with rough margins. Only the lower leaves are bladeless sheaths.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01128",
+  "decision": "absence_misread",
+  "target": "inflorescence bract PO:0009054, sheathing, without a blade (bract reduced to a sheath); no leaf lamina absence",
+  "fix": "'bracts bladeless' describes the bracts (sheath only), so the bearer is inflorescence bract PO:0009054, never the leaf lamina of the foliage leaves.",
+  "reason": "The foliage leaves have thick blades. Only the inflorescence bracts have no blade.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01129",
+  "decision": "absence_misread",
+  "target": "culm PO:0009047 + aphyllopodic FLOPO:0991233 (lowest sheaths bladeless)",
+  "fix": "'the lowest/lower (sheaths) bladeless' after a leaf or sheath description → culm + aphyllopodic FLOPO:0991233, or the context 'lowest leaves' on the absence. Never a plain leaf lamina absence.",
+  "reason": "The blades are light green. Only the lowest sheaths have no blade.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01130",
+  "decision": "absence_misread",
+  "target": "inflorescence bract PO:0009054 reduced to a bladeless sheath (Carex eburnea bracts are sheathing, bladeless); no leaf lamina absence",
+  "fix": "'the sheath bladeless' refers to the sheath just named (bract or lowest leaf). Attach it to that bearer, not to leaf lamina of the taxon.",
+  "reason": "The leaves have long-attenuate blades. In C. eburnea the bladeless sheaths are the bracts of the spikes.",
+  "confidence": "medium"
+ },
+ {
+  "id": "X01131",
+  "decision": "absence_misread",
+  "target": "culm PO:0009047 + aphyllopodic FLOPO:0991233 (lower sheaths bladeless)",
+  "fix": "Same rule: 'the lower (sheaths) bladeless' → culm + aphyllopodic FLOPO:0991233, never leaf lamina absent.",
+  "reason": "The blades are deep green. Only the lower sheaths lack blades.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01132",
+  "decision": "absence_misread",
+  "target": "culm PO:0009047 + aphyllopodic FLOPO:0991233 (lower leaves of the year reduced to bladeless sheaths)",
+  "fix": "Same rule: '(lower leaves) reduced to bladeless sheaths' → culm + aphyllopodic FLOPO:0991233.",
+  "reason": "The other leaves have thick blades. Only the lower leaves of the season are sheaths.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01133",
+  "decision": "absence_misread",
+  "target": "spike inflorescence PO:0030117 + absent PATO:0000462, context: basal position (no basal spikes on long peduncles)",
+  "fix": "'<position> X absent' ('basal spikes absent', 'lower flowers absent') restricts the absence to X in that position. Keep the position as context; never give a plain absence of X.",
+  "reason": "The plant has linear spikes along the culm. It only lacks spikes arising from the base.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01134",
+  "decision": "absence_misread",
+  "target": "culm PO:0009047 + aphyllopodic FLOPO:0991233 (lower sheaths bladeless)",
+  "fix": "Same rule: 'the lower sheaths bladeless' → culm + aphyllopodic FLOPO:0991233, never leaf lamina absent.",
+  "reason": "The blades are erect. Only the lower sheaths have no blade.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01135",
+  "decision": "absence_misread",
+  "target": "culm PO:0009047 + aphyllopodic FLOPO:0991233 (very lowest leaves bladeless)",
+  "fix": "Same rule: '(very) lowest leaves bladeless' → culm + aphyllopodic FLOPO:0991233.",
+  "reason": "The leaf blades are rough towards the apex. Only the lowest leaves are bladeless.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01136",
+  "decision": "absence_misread",
+  "target": "no absence (stipels not seen); stipel PO:0020051, not stipule PO:0020041; 'probably minute' is a guess, so no decreased size either",
+  "fix": "'not seen' means missing data, never absence. 'stipel(s)' maps to stipel PO:0020051, never to stipule. Hedged guesses ('probably minute') give no quality.",
+  "reason": "Both records come from one sentence that says the stipels were not observed. Both are mapped to the wrong part, and neither is a real observation.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01137",
+  "decision": "absence_misread",
+  "target": "no annotation for basal leaves (not known); the stem-leaves purplish record → cauline leaf PO:0000013 + purple",
+  "fix": "'<position> leaves not known' is missing data, never absence. 'stem-leaves' map to cauline leaf PO:0000013, keeping them apart from basal leaves.",
+  "reason": "Basal leaves were not available to the author. The cauline leaves are present and purplish.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01138",
+  "decision": "absence_misread",
+  "target": "stereid PO:0030045 + absent PATO:0000462, context: costa PO:0030072 (no stereid band in the costa)",
+  "fix": "In moss leaf anatomy, 'no stereid band(s)', 'stereids absent' give an absence on stereid PO:0030045 (context costa PO:0030072), never on the leaf.",
+  "reason": "The moss leaf is present and very acute. Only the stereid band in the costa cross-section is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "X01139",
+  "decision": "absence_misread",
+  "target": "sclerenchyma PO:0005427 + absent PATO:0000462, context: mericarp (fruit) ribs",
+  "fix": "'strengthening cells/tissue absent' gives an absence on sclerenchyma PO:0005427 (or sclerenchyma cell PO:0000077) in the part named, never on the part itself.",
+  "reason": "Hydrocotyle fruits are described by the presence or absence of strengthening tissue in the mericarp. The fruit is present, with an acute dorsal surface.",
+  "confidence": "medium"
+ }
+]

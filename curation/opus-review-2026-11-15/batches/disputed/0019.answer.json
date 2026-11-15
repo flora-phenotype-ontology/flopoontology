@@ -1,0 +1,212 @@
+[
+ {
+  "rule_id": "R2354",
+  "decision": "drop",
+  "target": "",
+  "reason": "Floras use 'pseudo-staminodium' for structures that look like staminodes but are set apart from true staminodes, often because they may not come from a stamen. Mapping it to staminode (PO_0009077, 'sterile stamen') states an origin the text denies. With no safe general class, it is better rejected, like R2353.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2356",
+  "decision": "keep",
+  "target": "",
+  "reason": "The rule matches only the bearer field, so it fires only when 'syncarpe' is the noun (the compound fruit of Annonaceae). PO lists 'syncarp' as a synonym of fruit (PO_0009001). The adjective ('ovaire syncarpe', 'fruits syncarpes') appears as a quality and is already handled by R0754 (connate), so no constraint is needed.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2372",
+  "decision": "keep",
+  "target": "",
+  "reason": "PO lists 'sporangium neck' and 'apophysis' as synonyms of sporangium base (PO_0030040). All 54 examples are moss capsules. Angiosperm floras rarely write 'capsule neck', and the suggested constraint ('moss|bryophyte sporophyte capsule') is not a part name the matcher could use.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2373",
+  "decision": "keep",
+  "target": "",
+  "reason": "Same as R2372: the neck (apophysis) of a moss capsule is PO's sporangium base.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2374",
+  "decision": "keep",
+  "target": "",
+  "reason": "Plural of R2372. Same reason.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2375",
+  "decision": "keep",
+  "target": "",
+  "reason": "'Cone scale' is an exact PO synonym of megasporophyll (PO_0009027, also 'ovuliferous scale'). The examples (woody, flattened, reddish brown inside) are scales of seed cones. Pollen-cone scales are usually written 'pollen cone scales' or 'microsporophylls', which are other keys. A constraint on 'seed cone' would miss the common wording 'Cones ... cone scales woody'.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2376",
+  "decision": "keep",
+  "target": "",
+  "reason": "Plural of R2375. Same reason.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2386",
+  "decision": "drop",
+  "target": "",
+  "reason": "'Aristés' is the French adjective 'awned', not a part name. It should become a rule saying an awn (PO_0025349) is present, on the glume or lemma it describes, not a bearer rule.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2406",
+  "decision": "drop",
+  "target": "",
+  "reason": "A hair-point is a slender, often hyaline extension beyond the leaf apex (PO_0020137). Its length or toothing is not a quality of the apex. Awn (PO_0025349) is defined only for glumes, lemmas and paleas, so it does not fit either. The shape is already covered by the value term hair-pointed (FLOPO:0991249, whose bearers include leaf apex). Statements about the hair-point itself would need a new class.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2407",
+  "decision": "drop",
+  "target": "",
+  "reason": "Plural of R2406. Same reason.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2408",
+  "decision": "drop",
+  "target": "",
+  "reason": "Variant spelling of R2406. Same reason.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2409",
+  "decision": "drop",
+  "target": "",
+  "reason": "Same as R2406. On top of that, the key contains a quality ('hyaline'), which a bearer rule would lose.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2418",
+  "decision": "keep",
+  "target": "",
+  "reason": "The rule matches only the bearer field, so it fires when 'serration(s)' is the part being described ('serrations 3 per cm', 'serrations gland-tipped'): that is a tooth. 'Margin serrate' has the margin as bearer and is not touched. Phyllome lamina tooth (PO_0025515) also covers leaflets and calyx lobes.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2419",
+  "decision": "keep",
+  "target": "",
+  "reason": "Same as R2418. As a bearer, 'crenation' is a rounded tooth. The crenate state of the margin stays a quality of the margin.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2420",
+  "decision": "drop",
+  "target": "",
+  "reason": "'Stock' is ambiguous: it can be a rootstock (rhizome), a caudex, which can include the root crown, or a grafting stock. The previous review handled 'caudex' and 'root-stock' as separate words. A bare 'stock' rule would carry these meanings into stem. Reject it and let the existing caudex and rootstock rules do the work.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2423",
+  "decision": "keep",
+  "target": "",
+  "reason": "Colleter (FLOPO_0986023) is the right class, but the rule's evidence text is wrong ('plural'). Add the calyx (PO_0009060) as container_id, as was done for 'stipular colleter' (R3712, container stipule), so that it reads colleter part of calyx.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2428",
+  "decision": "keep",
+  "target": "",
+  "reason": "The examples (Solidago, Symphyotrichum, Emilia: hyaline, unequal, in 1 series) are phyllaries, and 'phyllary' is a PO synonym of involucral bract (PO_0009045). The rule correctly recovers these statements. The broken token should still be fixed in the extractor; the rule can be removed once that is done.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2432",
+  "decision": "retarget",
+  "target": "phyllome margin (PO_0025018)",
+  "reason": "The curator treats corolla lobe (FLOPO_0986006) as a part distinct from petal, so petal margin is not consistent. Following the 'bract lobe' and 'style base' rules (R3663, R3668), the bearer should be phyllome margin, with corolla lobe FLOPO_0986006 as container_id.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2433",
+  "decision": "retarget",
+  "target": "phyllome margin (PO_0025018)",
+  "reason": "Same as R2432: phyllome margin with corolla lobe FLOPO_0986006 as container_id.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2434",
+  "decision": "retarget",
+  "target": "phyllome margin (PO_0025018)",
+  "reason": "French form of R2432: phyllome margin with corolla lobe FLOPO_0986006 as container_id.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2435",
+  "decision": "drop",
+  "target": "",
+  "reason": "'With domatia' says the part is present; it is not a part name. The quality rule R1180 (domatium present) already handles it, and this bearer rule would compete with it.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2436",
+  "decision": "drop",
+  "target": "",
+  "reason": "French form of R2435. It needs a rule saying the domatium (FLOPO_0986021) is present, not a bearer rule.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2440",
+  "decision": "constrain",
+  "target": "ovule|ovules",
+  "reason": "It is right for ovules (including the micropylar tube of Ephedra and Gnetum). In ripe-seed statements ('brown, smooth', 'brittle') the bearer is the seed coat (PO_0009088), as the rule's own evidence says.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2441",
+  "decision": "constrain",
+  "target": "ovule|ovules",
+  "reason": "Plural of R2440.",
+  "confidence": "high"
+ },
+ {
+  "rule_id": "R2442",
+  "decision": "constrain",
+  "target": "ovule|ovules",
+  "reason": "French 'tégument' is most often the seed coat. Keep the ovule integument mapping only in ovule statements. A separate rule constrained to seeds ('graine') could map it to seed coat (PO_0009088).",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2445",
+  "decision": "retarget",
+  "target": "inflorescence (PO_0009049)",
+  "reason": "A pseudo-umbel looks like an umbel but its branching is not always cymose. As with pseudo-raceme (R2306, also mapped to inflorescence), the general class is the safe bearer. The umbel-like look is already a quality: umbelliform (FLOPO_0991031), via R1203 and R0956.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2446",
+  "decision": "retarget",
+  "target": "inflorescence (PO_0009049)",
+  "reason": "Same as R2445.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2447",
+  "decision": "retarget",
+  "target": "inflorescence (PO_0009049)",
+  "reason": "French form of R2445.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2453",
+  "decision": "keep",
+  "target": "",
+  "reason": "'Epicalyx lobes' are either free bracteoles or the free tips of connate bracteoles. In both cases the counted unit ('epicalyx lobes 4') and its shape ('lanceolate') belong to an epicalyx bract (PO_0025577). Retargeting to epicalyx (PO_0009063) would put counts and shapes on the whole whorl, which is wrong.",
+  "confidence": "medium"
+ },
+ {
+  "rule_id": "R2454",
+  "decision": "keep",
+  "target": "",
+  "reason": "Hyphenated form of R2453. Same reason.",
+  "confidence": "medium"
+ }
+]
