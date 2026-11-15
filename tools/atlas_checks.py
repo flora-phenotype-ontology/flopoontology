@@ -197,7 +197,7 @@ def crawl(base: str, out: Path, report: Report, taxa: int = 10) -> None:
     taxon_routes = ["#/taxon/" + urllib.parse.quote(r["t"].removeprefix(DATA_NS + "taxon/"), safe="") for r in pick[:taxa]]
     fac = rows(select(endpoint, "SELECT ?c WHERE { ?c <http://www.w3.org/2002/07/owl#equivalentClass> ?x "
                                 f"FILTER(STRSTARTS(STR(?c), '{DATA_NS}annotation-class/')) }} LIMIT 1")[0])
-    routes = ["#/", "#/taxa", *taxon_routes, "#/traits", "#/identify", "#/coverage", "#/query"]
+    routes = ["#/", "#/taxa", *taxon_routes, "#/traits", "#/identify", "#/coverage", "#/map", "#/query"]
     if fac:
         routes.append("#/query?describe=" + urllib.parse.quote(fac[0]["c"], safe=""))
 
@@ -227,8 +227,12 @@ def crawl(base: str, out: Path, report: Report, taxa: int = 10) -> None:
         page.on("request", on_request)
 
         def visit(route: str) -> None:
-            page.goto(urllib.parse.urljoin(base, route), wait_until="networkidle", timeout=180_000)
-            page.wait_for_function("() => !document.querySelector('#view .loading')", timeout=180_000)
+            try:
+                page.goto(urllib.parse.urljoin(base, route), wait_until="networkidle", timeout=180_000)
+                page.wait_for_function("() => !document.querySelector('#view .loading')", timeout=300_000)
+            except Exception as exc:  # noqa: BLE001 - name the page that did not load
+                problems.append(f"{route}: did not finish loading ({type(exc).__name__})")
+                return
             if page.query_selector("#view .error") or "Something went wrong" in page.inner_text("#view"):
                 problems.append(f"{route}: {page.inner_text('#view')[:200]}")
 
