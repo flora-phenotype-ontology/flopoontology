@@ -39,7 +39,8 @@ from pathlib import Path
 OUT = Path("curation/opus-review-2026-11-14")
 REVIEWED = Path("curation/flopo-flora-candidate-review-2026-11-13.tsv")
 BATCH = {"values": 30, "bearers": 30, "unions": 40, "patterns": 40, "definitions": 25,
-         "combinations": 60, "contradictions": 30, "rules": 50, "newdefs": 25, "unsat": 25}
+         "combinations": 60, "contradictions": 30, "rules": 50, "newdefs": 25, "unsat": 25,
+         "audit": 30, "disputed": 30}
 # Opus where the answer is a judgment about botany and modelling; Sonnet for the yes/no pairs.
 MODEL = {"unions": "sonnet", "combinations": "sonnet", "rules": "sonnet"}
 PATTERN_REASONS = (
@@ -235,6 +236,144 @@ Fields per item: class, decision, target, fix, reason, confidence.
 """
 
 
+PROMPTS["audit"] = COMMON + """
+TASK: audit annotations that the pipeline made and accepted. Each item is one annotation of one
+statement of a flora: the statement (the words it was made from), the context around it, and the
+annotation: the part (bearer), the quality, further values, numbers with their unit, negation,
+and what else the record says (stratum names the pattern it was sampled for; extras lists the
+context slots, see docs/odp/). Judge only whether the annotation says what the flora says:
+
+- "correct"
+- "wrong_bearer": the quality is said of another part
+- "wrong_quality": the word means another quality here (give it in target)
+- "wrong_value": a number, unit, range or alternative is wrong
+- "wrong_negation": presence and absence are confused, or the negation has the wrong scope
+- "wrong_context": the stage, place, state, whole or position slot is wrong or missing so that the
+  statement is false without it
+- "not_in_source": the flora does not say this
+- "unclear"
+
+In fix, name the general cause when you see one (a wording pattern and its right reading).
+Fields per item: id, decision, target, fix, reason, confidence ("high" | "medium" | "low").
+"""
+
+PROMPTS["disputed"] = COMMON + """
+TASK: rules that map a word of the flora transcriptions to a class
+(flopo2/ingest/flora_review_rules.tsv) and that a first check did not accept. Each item has the
+rule (word, kind, target, constraint), the first check's verdict (first_decision, first_target,
+first_reason). Look up the target and its neighbours and give the final decision:
+
+- "keep": the rule is right as it is (the first check was too strict)
+- "constrain": right for some parts only; target: the parts as "a|b|c" (words of part names)
+- "retarget": another existing class is right; target: "<label> (ID)"
+- "drop": no rule should map this word (it needs a new class, a pattern, or is ambiguous)
+
+Fields per item: rule_id, decision, target, reason, confidence.
+"""
+
+
+def _all_labels() -> dict[str, str]:
+    labels = _labels()
+    with open("config/flopo_id_registry.tsv", encoding="utf-8") as handle:
+        for row in csv.DictReader(handle, delimiter="\t"):
+            labels.setdefault(row["flopo_iri"].rsplit("/", 1)[-1], row["label"])
+    return labels
+
+
+def _stratum(a: dict) -> str:
+    rules = " ".join(a.get("mapping_provenance") or [])
+    if a.get("count_word") or a.get("count_position"):
+        return "count word or position"
+    if a.get("source_unit"):
+        return "converted unit"
+    if a.get("qualitative_value_relation"):
+        return "relation between two values"
+    if a.get("value_operator") == "one_of":
+        return "alternatives"
+    if a.get("towards"):
+        return "relation to another part"
+    if a.get("bearer_scope") or a.get("part_restrictions"):
+        return "place on the part"
+    if a.get("bearer_context_qualities") or a.get("developmental_stage_contexts") or a.get("bearer_whole"):
+        return "stage, state or whole"
+    if a.get("negated"):
+        return "negation"
+    if a.get("value_low") is not None or a.get("value_high") is not None:
+        return "count" if a.get("unit") == "count" else "measurement"
+    if "reviewed rule R" in rules:
+        return "rule of the second-model review"
+    if a.get("value_qualifier") == "approximately":
+        return "approximate"
+    return "plain"
+
+
+def _audit(seed: int = 20261115, per_stratum: int = 600) -> list[dict]:
+    """Accepted annotations, sampled evenly over the patterns and over all floras."""
+
+    rng = random.Random(seed)
+    labels = _all_labels()
+    sample: dict[str, list] = defaultdict(list)
+    seen: Counter = Counter()
+    for path in sorted(glob.glob("local-corpora/*/derived/*-annotated.jsonl")):
+        source = Path(path).name.removesuffix("-annotated.jsonl")
+        if source == "wfo":
+            continue
+        with open(path, encoding="utf-8") as handle:
+            for line in handle:
+                if rng.random() > 0.2:  # a fifth of the records is plenty and saves parsing
+                    continue
+                try:
+                    record = json.loads(line)
+                except json.JSONDecodeError:
+                    continue  # a file that is being rewritten
+                text = record.get("text") or ""
+                for a in record.get("assertions") or []:
+                    if (a.get("gate") or {}).get("status") != "accepted":
+                        continue
+                    stratum = _stratum(a)
+                    seen[stratum] += 1
+                    bucket = sample[stratum]
+                    slot = len(bucket) if len(bucket) < per_stratum else rng.randrange(seen[stratum])
+                    if slot >= per_stratum:
+                        continue
+                    start, end = int(a.get("source_start") or 0), int(a.get("source_end") or 0)
+                    extras = {k: a[k] for k in (
+                        "bearer_container", "bearer_context_qualities", "developmental_stage_contexts", "bearer_whole",
+                        "bearer_scope", "part_restrictions", "towards", "qualitative_value_relation", "count_word",
+                        "count_position", "source_unit", "value_min_extreme", "value_max_extreme",
+                        "frequency_qualifier", "value_qualifier", "specimen_condition") if a.get(k) not in (None, "", [], "exact", "unspecified")}
+                    item = {
+                        "flora": source, "taxon": record.get("taxon", ""), "stratum": stratum,
+                        "statement": a.get("source_text", ""), "context": text[max(0, start - 150):end + 100],
+                        "bearer": f"{labels.get(a.get('po_id', ''), '')} ({a.get('po_id', '')})",
+                        "quality": f"{labels.get(a.get('pato_id', ''), '')} ({a.get('pato_id', '')})",
+                        "values": [f"{labels.get(v, '')} ({v})" for v in a.get("value_terms") or []],
+                        "negated": bool(a.get("negated")),
+                    }
+                    if a.get("value_low") is not None or a.get("value_high") is not None:
+                        item["numbers"] = [a.get("value_low"), a.get("value_high"), a.get("unit")]
+                    if extras:
+                        item["extras"] = json.loads(json.dumps(extras, default=str))
+                    if slot == len(bucket):
+                        bucket.append(item)
+                    else:
+                        bucket[slot] = item
+    (OUT / "audit-population.json").write_text(json.dumps(seen, indent=1), encoding="utf-8")
+    items = [item for bucket in sample.values() for item in bucket]
+    rng.shuffle(items)
+    for index, item in enumerate(items):
+        item["id"] = f"A{index:05d}"
+    return items
+
+
+def _disputed() -> list[dict]:
+    with (OUT / "rules.tsv").open(encoding="utf-8") as handle:
+        first = {row["rule_id"]: row for row in csv.DictReader(handle, delimiter="\t")}
+    return [{**rule, "first_decision": first[rule["rule_id"]]["decision"], "first_target": first[rule["rule_id"]].get("target", ""),
+             "first_reason": first[rule["rule_id"]].get("reason", "")}
+            for rule in _rules() if first.get(rule["rule_id"], {}).get("decision") in ("too_broad", "wrong", "needs_constraint")]
+
+
 def _combinations(top: int = 6000) -> list[dict]:
     """(part, quality) pairs that keep statements in review, most used first."""
 
@@ -417,7 +556,7 @@ def prepare(queues: list[str]) -> None:
         "bearers": lambda: _candidates("bearer_candidates.tsv", "candidate_bearer", "qualities_seen"),
         "unions": _unions, "patterns": _patterns, "definitions": _definitions,
         "combinations": _combinations, "contradictions": _contradictions, "rules": _rules,
-        "newdefs": _newdefs, "unsat": _unsat,
+        "newdefs": _newdefs, "unsat": _unsat, "audit": _audit, "disputed": _disputed,
     }
     for queue in queues:
         folder = OUT / "batches" / queue
