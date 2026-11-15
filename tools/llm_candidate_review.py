@@ -40,7 +40,7 @@ OUT = Path("curation/opus-review-2026-11-14")
 REVIEWED = Path("curation/flopo-flora-candidate-review-2026-11-13.tsv")
 BATCH = {"values": 30, "bearers": 30, "unions": 40, "patterns": 40, "definitions": 25,
          "combinations": 60, "contradictions": 30, "rules": 50, "newdefs": 25, "unsat": 25,
-         "audit": 30, "disputed": 30, "causes": 150, "gold": 5}
+         "audit": 30, "disputed": 30, "causes": 150, "gold": 5, "causes2": 1200, "gold2": 5}
 # Opus where the answer is a judgment about botany and modelling; Sonnet for the yes/no pairs.
 MODEL = {"unions": "sonnet", "combinations": "sonnet", "rules": "sonnet"}
 PATTERN_REASONS = (
@@ -288,7 +288,7 @@ table), detectable (how the annotator could detect the case in existing rows wit
 language model, or "no"), example.
 """
 
-PROMPTS["gold"] = """You are a botanist preparing a gold standard for a pipeline that turns flora
+PROMPTS["gold"] = PROMPTS["gold2"] = """You are a botanist preparing a gold standard for a pipeline that turns flora
 descriptions into phenotype statements. For each treatment below, list EVERY statement of the
 description about the plant's form as one row. Be exact about what each quality is said of:
 "veins raised beneath" is about the veins on the lower side of the leaf, not about the leaf;
@@ -333,6 +333,41 @@ def _causes() -> list[dict]:
                                   "reason": (row.get("reason") or "")[:260], "fix": (row.get("fix") or "")[:260]})
     random.Random(5).shuffle(items)
     return items
+
+
+PROMPTS["causes2"] = COMMON + """
+TASK: the items are causes of annotation errors, each found in one batch of review notes of this
+pipeline (see the pipeline's two steps below), with the number of notes it covers, the step it
+belongs to and a remedy. The same cause appears many times in different words. Merge them into
+ONE list of at most 40 causes, the largest first, adding the counts. Keep a cause apart from
+another when the remedy differs. The pipeline: a language model TRANSCRIBES each flora
+description into rows (part, quality, numbers, qualifiers, source words), and a deterministic
+ANNOTATOR (flopo2/ingest/ncvc_annotate.py) grounds the rows with reviewed tables and patterns
+(docs/odp/). Read the annotator's relevant functions and tables before you write a remedy, so
+that it names the function, table or prompt to change.
+
+Fields per cause: cause, count, step ("transcription" | "annotator" | "table" | "ontology"),
+remedy (concrete and complete: the instruction for the transcription prompt, or the rule and
+where it goes, or the table rows), detectable (how to find affected rows in the existing data
+without the language model, or "no"), member_ids (ids of the merged items), example.
+"""
+
+
+def _causes2() -> list[dict]:
+    items = json.loads((OUT / "causes-all.json").read_text(encoding="utf-8"))
+    return [{"id": f"C{index:04d}", "count": c.get("count"), "step": c.get("step"), "cause": str(c.get("cause") or "")[:300],
+             "remedy": str(c.get("remedy") or "")[:400], "detectable": str(c.get("detectable") or "")[:200]}
+            for index, c in enumerate(items)]
+
+
+def _gold2() -> list[dict]:
+    """2,500 further treatments, not those of the first gold sample."""
+
+    first = set()
+    for path in (OUT / "batches" / "gold").glob("[0-9]*.json"):
+        if path.name.count(".") == 1:
+            first |= {item["id"] for item in json.loads(path.read_text(encoding="utf-8"))}
+    return [item for item in _gold(seed=20261116, total=3200) if item["id"] not in first][:2500]
 
 
 def _gold(seed: int = 20261115, total: int = 600) -> list[dict]:
@@ -650,7 +685,7 @@ def prepare(queues: list[str]) -> None:
         "unions": _unions, "patterns": _patterns, "definitions": _definitions,
         "combinations": _combinations, "contradictions": _contradictions, "rules": _rules,
         "newdefs": _newdefs, "unsat": _unsat, "audit": _audit, "disputed": _disputed,
-        "causes": _causes, "gold": _gold,
+        "causes": _causes, "gold": _gold, "causes2": _causes2, "gold2": _gold2,
     }
     for queue in queues:
         folder = OUT / "batches" / queue
