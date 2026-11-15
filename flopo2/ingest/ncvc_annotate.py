@@ -3058,7 +3058,9 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
             if any(((rel.get(f"{side}_operand") or {}).get("frequency_qualifier") or "unspecified") != "unspecified"
                    for side in ("from", "to")):
                 # "erect, ascending or rarely procumbent": this pair states its own frequency
-                other.update({"frequency_qualifier": "unspecified", "modality_text": "",
+                # (and the cue copied from the first pair, "purplish" as approximately purple,
+                # is not a cue of this pair: "purplish, pink, or sometimes white")
+                other.update({"frequency_qualifier": "unspecified", "value_qualifier": "exact", "modality_text": "",
                               "modality_start": None, "modality_end": None})
             other["mapping_provenance"] = [
                 *[p for p in assertion["mapping_provenance"] if not p.startswith("relation:")],
