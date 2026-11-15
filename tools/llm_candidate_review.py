@@ -664,7 +664,7 @@ def collect(queues: list[str]) -> None:
                 merged = {**{k: v for k, v in given.items() if k not in ("examples", "with", "context")}, **row,
                           "example": " ; ".join(given.get("examples") or [])[:300] or given.get("example", "")
                           or given.get("context", "")[:300], "batch": answer.name[:4]}
-                rows.append({k: "|".join(v) if isinstance(v, list) else v for k, v in merged.items()})
+                rows.append({k: "|".join(map(str, v)) if isinstance(v, list) else (json.dumps(v, ensure_ascii=False) if isinstance(v, dict) else v) for k, v in merged.items()})
         if not rows:
             continue
         fields = list(dict.fromkeys(k for row in rows for k in row))

@@ -139,7 +139,10 @@ if [[ $SKIP_TESTS == 0 ]]; then
     || die "C1 tests failed"
 fi
 log "release $STAMP"
-if [[ $WEB_ONLY == 1 ]]; then
+if [[ ${REUSE_RELEASE:-0} == 1 && -f $REL/release.json ]]; then
+  # a release that was staged and failed its pre-flight for a reason outside the data: check it again
+  log "the staged files of $STAMP are used again"
+elif [[ $WEB_ONLY == 1 ]]; then
   "$PY" -m tools.atlas_release --stamp "$STAMP" --base-release "$RELEASES/$LIVE_STAMP"
 else
   "$PY" -m tools.atlas_release --stamp "$STAMP"
