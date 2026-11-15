@@ -40,7 +40,7 @@ OUT = Path("curation/opus-review-2026-11-14")
 REVIEWED = Path("curation/flopo-flora-candidate-review-2026-11-13.tsv")
 BATCH = {"values": 30, "bearers": 30, "unions": 40, "patterns": 40, "definitions": 25,
          "combinations": 60, "contradictions": 30, "rules": 50, "newdefs": 25, "unsat": 25,
-         "audit": 30, "disputed": 30}
+         "audit": 30, "disputed": 30, "causes": 150, "gold": 5}
 # Opus where the answer is a judgment about botany and modelling; Sonnet for the yes/no pairs.
 MODEL = {"unions": "sonnet", "combinations": "sonnet", "rules": "sonnet"}
 PATTERN_REASONS = (
@@ -270,6 +270,99 @@ first_reason). Look up the target and its neighbours and give the final decision
 
 Fields per item: rule_id, decision, target, reason, confidence.
 """
+
+
+PROMPTS["causes"] = COMMON + """
+TASK: the items are notes from earlier reviews of this pipeline: each says what was wrong with
+one annotation (reason) and what general rule would prevent it (fix). The pipeline has two
+steps: a language model TRANSCRIBES each flora description into rows (part, quality, numbers,
+qualifiers, the source words), and a deterministic ANNOTATOR (flopo2/ingest/ncvc_annotate.py)
+grounds the rows to ontology classes with reviewed tables and patterns (docs/odp/). Group the
+notes into causes. A cause is one mechanism with one remedy, stated generally. Give at most 25
+causes, the largest first, and put what does not fit in a last cause "other".
+
+Fields per cause: cause (one sentence), count (how many of the items), ids (up to 8 item ids),
+step ("transcription" | "annotator" | "table" | "ontology"), remedy (the concrete change: an
+instruction to add to the transcription prompt, a rule or check in the annotator, rows of a
+table), detectable (how the annotator could detect the case in existing rows without the
+language model, or "no"), example.
+"""
+
+PROMPTS["gold"] = """You are a botanist preparing a gold standard for a pipeline that turns flora
+descriptions into phenotype statements. For each treatment below, list EVERY statement of the
+description about the plant's form as one row. Be exact about what each quality is said of:
+"veins raised beneath" is about the veins on the lower side of the leaf, not about the leaf;
+"apex acute" of a leaf lobe is about the apex of the lobe. Do not use any tool; do not look at
+files.
+
+Fields per row:
+- part: the plant part the quality is said of, in the flora's own words, singular ("lateral vein")
+- part_of: the chain of wholes it belongs to in this sentence, innermost first (["leaflet", "leaf"])
+- place: a region or side of the part when stated ("apex", "lower side", "margin"), else ""
+- member: which members when not all ("basal", "upper", "male flowers", "outer"), else ""
+- quality: the quality word or phrase as in the flora ("ovate", "glabrous"); for a measurement the
+  dimension ("length", "width", "diameter", "height", "count")
+- low, high, unit: numbers of a measurement or count (the usual range), else null
+- extremes: [min, max] printed in parentheses, else null
+- alternatives: other values the flora gives as alternatives ("or", "to") for this statement
+- negated: true when the flora says the part lacks the quality or the part is absent
+- frequency: "usually", "often", "sometimes", "rarely" when stated, else ""
+- stage: a stage or condition when stated ("in fruit", "when young", "when dry"), else ""
+- relation_to: the other part of a comparison or attachment ("corolla tube"), else ""
+- source: the exact words of the description this row is taken from
+
+Answer with ONE fenced ```json block: an array with one object per treatment, in the order
+given, each {"id": ..., "rows": [...]}, and nothing after it.
+"""
+
+
+def _causes() -> list[dict]:
+    items = []
+    for queue, wanted in (("audit", lambda r: r["decision"] not in ("correct", "unclear")),
+                          ("contradictions", lambda r: r["decision"] in ("absence_misread", "present_misread")),
+                          ("patterns", lambda r: r["decision"] in ("existing_pattern", "transcription_error")),
+                          ("unsat", lambda r: True)):
+        path = OUT / f"{queue}.tsv"
+        if not path.exists():
+            continue
+        with path.open(encoding="utf-8") as handle:
+            for index, row in enumerate(csv.DictReader(handle, delimiter="\t")):
+                if wanted(row) and (row.get("fix") or row.get("reason")):
+                    items.append({"id": f"{queue[:3]}-{row.get('id') or index}", "from": queue, "decision": row["decision"],
+                                  "statement": (row.get("statement") or row.get("absent_text") or row.get("example") or "")[:100],
+                                  "reason": (row.get("reason") or "")[:260], "fix": (row.get("fix") or "")[:260]})
+    random.Random(5).shuffle(items)
+    return items
+
+
+def _gold(seed: int = 20261115, total: int = 600) -> list[dict]:
+    """Treatments of all floras, for a transcription made independently of the pipeline's."""
+
+    rng = random.Random(seed)
+    picked = []
+    paths = [p for p in sorted(glob.glob("local-corpora/*/raw/*-qwen.jsonl")) if "/wfo/" not in p]
+    for path in paths:
+        source = path.split("/")[1]
+        bucket, seen = [], 0
+        with open(path, encoding="utf-8", errors="replace") as handle:
+            for line in handle:
+                try:
+                    record = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                text = str(record.get("segment_text") or "")
+                if not 300 <= len(text) <= 1800 or not record.get("phenotypes"):
+                    continue
+                seen += 1
+                item = {"id": record.get("source_id", ""), "flora": source, "taxon": record.get("taxon", ""),
+                        "language": record.get("language", ""), "description": text}
+                if len(bucket) < total // len(paths) + 1:
+                    bucket.append(item)
+                elif rng.randrange(seen) < len(bucket):
+                    bucket[rng.randrange(len(bucket))] = item
+        picked += bucket
+    rng.shuffle(picked)
+    return picked[:total]
 
 
 def _all_labels() -> dict[str, str]:
@@ -557,6 +650,7 @@ def prepare(queues: list[str]) -> None:
         "unions": _unions, "patterns": _patterns, "definitions": _definitions,
         "combinations": _combinations, "contradictions": _contradictions, "rules": _rules,
         "newdefs": _newdefs, "unsat": _unsat, "audit": _audit, "disputed": _disputed,
+        "causes": _causes, "gold": _gold,
     }
     for queue in queues:
         folder = OUT / "batches" / queue
