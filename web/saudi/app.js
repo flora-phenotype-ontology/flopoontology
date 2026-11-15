@@ -200,7 +200,7 @@ async function overview() {
         <h1>Plant traits across floras</h1>
         <p class="lede">Explore annotated plant traits from ${n(keys.length)} flora sources. Each annotation links a taxon,
           a FLOPO phenotype built from a Plant Ontology part and a PATO quality, and its source sentence.
-          The collection includes selected extracts and small pilot samples, not complete coverage of every flora.</p>
+          Most floras are included in full; the <a href="#/coverage">coverage</a> page gives the numbers for each, and the <a href="#/map">map</a> shows where the taxa are recorded.</p>
         <div class="figures">
           <div class="figure"><b class="num">${n(s.taxa.taxa)}</b><span>taxa, ${n(s.taxa.with_wfo)} with a recorded WFO mapping</span></div>
           <div class="figure"><b class="num">${n(records)}</b><span>trait annotations</span></div>
@@ -682,35 +682,173 @@ async function query(params) {
 }
 
 /* ---------------------------------------------------------------- coverage */
+/* One table for all floras, with totals; a flora opens to the reasons its statements are held. */
+let coverageSort = { key: "rows", dir: -1 };
 async function coverage() {
   const [s, src, reasons] = await Promise.all([
     summary(),
     sources(),
-    sparql(`SELECT ?src ?reason (COUNT(*) AS ?n) WHERE { ?p a fb:PendingStatement ; fb:reason ?reason ; fb:source/rdfs:label ?src } GROUP BY ?src ?reason ORDER BY DESC(?n)`),
+    cached("pending-reasons", () =>
+      sparql(`SELECT ?src ?reason (COUNT(*) AS ?n) WHERE { ?p a fb:PendingStatement ; fb:reason ?reason ; fb:source/rdfs:label ?src } GROUP BY ?src ?reason ORDER BY DESC(?n)`)
+    ),
   ]);
   const keys = Object.keys(s).filter((k) => s[k] && s[k].phenotype_rows !== undefined);
-  const blocks = keys
-    .map((k) => {
-      const meta = src.find((x) => x.s.endsWith("/" + k)) || { label: k };
-      const sk = s[k];
-      const mine = reasons.filter((r) => r.src === meta.label);
+  const data = keys.map((k) => {
+    const meta = src.find((x) => x.s.endsWith("/" + k)) || { label: k, title: k };
+    const sk = s[k];
+    return {
+      key: k, label: meta.label, title: meta.title || "", taxa: s.taxa.per_source[k] || 0, rows: sk.phenotype_rows || 0,
+      formal: sk.rows_formalized || 0, accepted: sk.gate_accepted || 0, review: sk.gate_review || 0, pending: sk.pending || 0,
+      share: sk.phenotype_rows ? sk.rows_formalized / sk.phenotype_rows : 0,
+    };
+  });
+  const total = (f) => data.reduce((a, d) => a + d[f], 0);
+  const all = { rows: total("rows"), formal: total("formal"), accepted: total("accepted"), review: total("review"), pending: total("pending") };
+  const pct = (a, b) => Math.round((100 * a) / Math.max(1, b));
+  // reasons over all floras; the many "alternatives ... unreviewed: A|B" reasons are one kind
+  const kind = (reason) => reason.replace(/^(alternatives_across_attributes_unreviewed):.*/, "$1").replace(/^merged_into:.*/, "merged_into");
+  const overall = new Map();
+  for (const r of reasons) overall.set(kind(r.reason), (overall.get(kind(r.reason)) || 0) + +r.n);
+  const top = [...overall.entries()].filter(([k]) => k !== "merged_into").sort((a, b) => b[1] - a[1]).slice(0, 14);
+  const topMax = Math.max(1, ...top.map(([, v]) => v));
+
+  const columns = [
+    ["label", "Flora"], ["taxa", "Taxa"], ["rows", "Statements"], ["share", "Annotated"],
+    ["accepted", "Accepted"], ["review", "Under review"], ["pending", "Not yet annotated"],
+  ];
+  const draw = () => {
+    const { key, dir } = coverageSort;
+    const sorted = [...data].sort((a, b) => (typeof a[key] === "string" ? a[key].localeCompare(b[key]) : a[key] - b[key]) * dir);
+    const body = sorted
+      .map((d) => `<tr class="cov-row" data-src="${esc(d.label)}" tabindex="0" title="${esc(d.title)}">
+        <th scope="row">${esc(d.label)}</th><td class="num">${n(d.taxa)}</td><td class="num">${n(d.rows)}</td>
+        <td><span class="cov-bar" title="${n(d.formal)} of ${n(d.rows)}"><i style="width:${(100 * d.accepted) / Math.max(1, d.rows)}%"></i><i class="part" style="width:${(100 * d.review) / Math.max(1, d.rows)}%"></i></span><span class="num cov-pct">${pct(d.formal, d.rows)}%</span></td>
+        <td class="num">${n(d.accepted)}</td><td class="num">${n(d.review)}</td><td class="num">${n(d.pending)}</td></tr>
+        <tr class="cov-detail" hidden><td colspan="7"></td></tr>`)
+      .join("");
+    view.querySelector("#cov-table").innerHTML = `<thead><tr>${columns
+      .map(([k, label]) => `<th scope="col" class="${k === "label" ? "" : "num"}"><button type="button" data-sort="${k}" aria-pressed="${k === key}">${label}${k === key ? (dir < 0 ? " ▾" : " ▴") : ""}</button></th>`)
+      .join("")}</tr></thead><tbody>${body}</tbody>
+      <tfoot><tr><th scope="row">All ${n(data.length)} floras</th><td class="num">${n(s.taxa.taxa)}</td><td class="num">${n(all.rows)}</td>
+        <td><span class="cov-bar"><i style="width:${(100 * all.accepted) / Math.max(1, all.rows)}%"></i><i class="part" style="width:${(100 * all.review) / Math.max(1, all.rows)}%"></i></span><span class="num cov-pct">${pct(all.formal, all.rows)}%</span></td>
+        <td class="num">${n(all.accepted)}</td><td class="num">${n(all.review)}</td><td class="num">${n(all.pending)}</td></tr></tfoot>`;
+    view.querySelectorAll("#cov-table [data-sort]").forEach((b) =>
+      b.addEventListener("click", () => {
+        coverageSort = { key: b.dataset.sort, dir: coverageSort.key === b.dataset.sort ? -coverageSort.dir : b.dataset.sort === "label" ? 1 : -1 };
+        draw();
+      })
+    );
+    const open = (row) => {
+      const detail = row.nextElementSibling;
+      detail.hidden = !detail.hidden;
+      row.classList.toggle("open", !detail.hidden);
+      if (detail.hidden || detail.dataset.loaded) return;
+      detail.dataset.loaded = "1";
+      const mine = reasons.filter((r) => r.src === row.dataset.src && !r.reason.startsWith("merged_into"));
       const max = Math.max(1, ...mine.map((r) => +r.n));
-      return `<h2>${esc(meta.label)}</h2>
-        <dl class="kv">
-          <dt>Trait statements transcribed</dt><dd class="num">${n(sk.phenotype_rows)}</dd>
-          <dt>Annotated with FLOPO, PO and PATO</dt><dd class="num">${n(sk.rows_formalized)} (${Math.round((100 * sk.rows_formalized) / Math.max(1, sk.phenotype_rows))}%), of which ${n(sk.gate_accepted || 0)} accepted by the gates and ${n(sk.gate_review || 0)} under review</dd>
-          <dt>Kept as text, not yet annotated</dt><dd class="num">${n(sk.pending)}</dd>
-        </dl>
-        <h3>Why statements are not yet annotated</h3>
-        <p class="muted">Open a reason to list the transcribed qualities, most frequent first; open one to see the plant part and the sentences it comes from.</p>
-        <div class="reasons">${mine
-          .map((r) => `<details class="reason" data-src="${esc(meta.label)}" data-reason="${esc(r.reason)}"><summary><span class="reason-name">${esc(reasonLabel(r.reason))}</span><span class="num">${n(r.n)}</span><span class="bar"><i class="part" style="width:${(100 * r.n) / max}%"></i></span></summary><div class="reason-body"></div></details>`)
-          .join("")}</div>`;
-    })
-    .join("");
-  setView(`<h1>Coverage</h1><p>The included source extracts were transcribed into trait statements, one per plant part and quality. A statement becomes an annotation when its part and quality match ontology terms and it passes FLOPO's checks. The rest are kept with the reason, so they can be added later.</p>
-    <p class="muted">Taxa: ${n(s.taxa.taxa)} in total, ${n(s.taxa.with_wfo)} matched to World Flora Online, ${n(s.taxa.families)} families${keys.length > 1 ? `, ${n(s.taxa.in_all_sources)} described in every source` : ""}.</p>${blocks}`);
-  view.querySelectorAll("details.reason").forEach((d) => d.addEventListener("toggle", () => { if (d.open) pendingPhrases(d); }));
+      detail.firstElementChild.innerHTML = mine.length
+        ? `<p class="muted">Why statements of ${esc(row.dataset.src)} are not yet annotated. Open a reason to list the transcribed qualities, most frequent first.</p>
+          <div class="reasons">${mine
+            .map((r) => `<details class="reason" data-src="${esc(row.dataset.src)}" data-reason="${esc(r.reason)}"><summary><span class="reason-name">${esc(reasonLabel(r.reason))}</span><span class="num">${n(r.n)}</span><span class="bar"><i class="part" style="width:${(100 * r.n) / max}%"></i></span></summary><div class="reason-body"></div></details>`)
+            .join("")}</div>`
+        : `<p class="muted">Every transcribed statement of this flora is annotated.</p>`;
+      detail.querySelectorAll("details.reason").forEach((d) => d.addEventListener("toggle", () => { if (d.open) pendingPhrases(d); }));
+    };
+    view.querySelectorAll("tr.cov-row").forEach((row) => {
+      row.addEventListener("click", () => open(row));
+      row.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(row); } });
+    });
+  };
+
+  setView(html`<h1>Coverage</h1>
+    <p class="lede">Each flora description is transcribed into trait statements, one per plant part and quality. A statement becomes an annotation when its part and quality match ontology terms and it fits one of the annotation patterns. The rest are kept as text with the reason, so they can be added later.</p>
+    <div class="figures cov-figures">
+      <div class="figure"><b class="num">${n(all.rows)}</b><span>trait statements transcribed from ${n(data.length)} floras</span></div>
+      <div class="figure"><b class="num">${pct(all.formal, all.rows)}%</b><span>annotated with FLOPO, PO and PATO</span></div>
+      <div class="figure"><b class="num">${n(all.accepted)}</b><span>annotations accepted by the checks; ${n(all.review)} more under review</span></div>
+      <div class="figure"><b class="num">${n(s.taxa.taxa)}</b><span>taxa in ${n(s.taxa.families)} families, ${n(s.taxa.with_wfo)} matched to World Flora Online</span></div>
+    </div>
+    <h2>By flora</h2>
+    <p class="muted">Select a column to sort, and a flora to see why its remaining statements are not yet annotated. The bar shows accepted annotations <span class="key key-acc"></span> and those under review <span class="key key-rev"></span>, as a share of all statements.</p>
+    <div class="tablewrap" tabindex="0" role="region" aria-label="Coverage by flora"><table id="cov-table" class="coverage"></table></div>
+    <h2>Why statements are not yet annotated</h2>
+    <p class="muted">All floras together, the most frequent reasons. A flora's own list, with the statements, opens from the table above.</p>
+    <div class="reasons overall">${top
+      .map(([reason, count]) => `<div class="reason-line"><span>${esc(reasonLabel(reason))}</span><span class="num">${n(count)}</span><span class="bar"><i class="part" style="width:${(100 * count) / topMax}%"></i></span></div>`)
+      .join("")}</div>`);
+  draw();
+}
+
+/* ---------------------------------------------------------------- map */
+/* Where the taxa are recorded, by country (places.json, built by tools/atlas_places.py). */
+async function placesMap() {
+  const [places, shapes] = await Promise.all([
+    cached("places", () => requestJson(new URL("places.json", document.baseURI).href)),
+    cached("countries", () => requestJson(new URL("data/countries.geojson", document.baseURI).href)),
+  ]);
+  const src = await sources();
+  const label = (key) => (src.find((x) => x.s.endsWith("/" + key)) || {}).label || key;
+  const countries = places.countries || {};
+  const max = Math.max(1, ...Object.values(countries).map((c) => c.taxa));
+  const steps = [1, 10, 100, 1000, 10000].filter((v) => v <= max * 10);
+  const shades = ["#e3ede8", "#bcd6cb", "#8cbba9", "#5d9c86", "#3a7b66", "#1f5a49"];
+  const shade = (taxa) => (taxa ? shades[Math.min(shades.length - 1, 1 + Math.floor(Math.log10(taxa)))] : "transparent");
+  const total = Object.keys(countries).length;
+  setView(html`<h1>Map</h1>
+    <p class="lede">Where the taxa of the atlas are recorded. The floras name countries, states and provinces in words; ${n(places.matched)} of ${n(places.records)} place records could be assigned to one of ${n(total)} countries. Select a country for its floras and taxa.</p>
+    <div class="map-layout">
+      <div>
+        <div id="world" class="worldmap" role="img" aria-label="World map of taxa recorded per country"></div>
+        <div class="map-legend"><span class="muted">Taxa recorded</span>${steps
+          .map((v, i) => `<span><i style="background:${shades[i + 1]}"></i>${n(v)}${i === steps.length - 1 ? "+" : "–" + n(steps[i + 1] - 1)}</span>`)
+          .join("")}<span><i class="none"></i>none</span></div>
+      </div>
+      <aside id="country" class="country-panel" aria-live="polite"><p class="muted">No country selected.</p>
+        <h3>Most taxa</h3><ol class="country-top">${Object.entries(countries).sort((a, b) => b[1].taxa - a[1].taxa).slice(0, 12)
+          .map(([a3, c]) => `<li><button type="button" class="link" data-a3="${a3}">${esc((shapes.features.find((f) => f.properties.a3 === a3) || { properties: { name: a3 } }).properties.name)}</button> <span class="num muted">${n(c.taxa)}</span></li>`)
+          .join("")}</ol>
+        ${places.unmatched && places.unmatched.length ? `<h3>Not placed in a country</h3><p class="muted">${places.unmatched.slice(0, 14).map(([name, count]) => `${esc(name)} (${n(count)})`).join(", ")}, …</p>` : ""}
+      </aside>
+    </div>`);
+  if (!window.L) return;
+  const map = L.map("world", { scrollWheelZoom: false, worldCopyJump: true, minZoom: 1, maxZoom: 6, attributionControl: true }).setView([22, 15], 2);
+  map.attributionControl.setPrefix("").addAttribution("Country outlines: Natural Earth");
+  const panel = document.getElementById("country");
+  const show = async (a3, name) => {
+    const c = countries[a3];
+    if (!c) { panel.innerHTML = `<h2>${esc(name)}</h2><p class="muted">No taxa recorded for this country in the floras of the atlas.</p>`; return; }
+    panel.innerHTML = `<h2>${esc(name)}</h2>
+      <dl class="kv"><dt>Taxa recorded</dt><dd class="num">${n(c.taxa)}</dd><dt>Place records</dt><dd class="num">${n(c.records)}</dd></dl>
+      <h3>Floras</h3><ul class="plain">${Object.entries(c.sources).map(([k, v]) => `<li>${esc(label(k))} <span class="num muted">${n(v)}</span></li>`).join("")}</ul>
+      <h3>Named as</h3><p class="muted">${c.localities.slice(0, 24).map(esc).join(", ")}${c.localities.length > 24 ? ", …" : ""}</p>
+      <h3>Taxa</h3><div id="country-taxa"><p class="muted">Loading…</p></div>`;
+    try {
+      const values = c.localities.map((l) => JSON.stringify(l)).join(" ");
+      const rows = await sparql(`SELECT ?t ?name (COUNT(?o) AS ?n) WHERE { VALUES ?l { ${values} } ?o a fb:Occurrence ; fb:locality ?l ; fb:taxon ?t . ?t rdfs:label ?name } GROUP BY ?t ?name ORDER BY ?name LIMIT 400`);
+      const box = document.getElementById("country-taxa");
+      if (box) box.innerHTML = `<ul class="plain taxa-list">${rows.map((r) => `<li><a href="${taxonHref(r.t)}"><i>${esc(r.name)}</i></a></li>`).join("")}</ul>${rows.length >= 400 ? `<p class="muted">The first 400 of ${n(c.taxa)}, in alphabetical order.</p>` : ""}`;
+    } catch (err) {
+      const box = document.getElementById("country-taxa");
+      if (box) box.innerHTML = `<p class="error">${esc(err.message)}</p>`;
+    }
+  };
+  let selected = null;
+  const layer = L.geoJSON(shapes, {
+    style: (f) => ({ color: "#7d8a83", weight: 0.6, fillColor: shade((countries[f.properties.a3] || {}).taxa), fillOpacity: (countries[f.properties.a3] || {}).taxa ? 0.9 : 0.05 }),
+    onEachFeature: (f, l) => {
+      const c = countries[f.properties.a3];
+      l.bindTooltip(`${esc(f.properties.name)}: ${c ? n(c.taxa) + " taxa" : "none"}`, { sticky: true });
+      l.on("click", () => {
+        if (selected) layer.resetStyle(selected);
+        selected = l;
+        l.setStyle({ weight: 2, color: "#b8862b" });
+        show(f.properties.a3, f.properties.name);
+      });
+    },
+  }).addTo(map);
+  view.querySelectorAll("[data-a3]").forEach((b) =>
+    b.addEventListener("click", () => layer.eachLayer((l) => { if (l.feature.properties.a3 === b.dataset.a3) { map.fitBounds(l.getBounds(), { maxZoom: 4 }); l.fire("click"); } }))
+  );
 }
 
 const reasonLabel = (reason) => reason.replace(/_/g, " ").replace(/^no ontology term:/, "no ontology term: ");
@@ -797,6 +935,7 @@ async function renderRoute() {
     else if (section === "identify") await identify();
     else if (section === "query") await query(new URLSearchParams(qs || ""));
     else if (section === "coverage") await coverage();
+    else if (section === "map") await placesMap();
     else setView(`<h1>Page not found</h1><p><a href="#/">Go to the overview</a>.</p>`);
   } catch (err) {
     setView(`<h1>Could not load the atlas</h1><p class="error">${esc(err.message)}</p>

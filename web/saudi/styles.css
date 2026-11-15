@@ -220,3 +220,47 @@ textarea.sparql { width: 100%; min-height: 220px; padding: 12px; border: 1px sol
 .inat-gallery figcaption { margin-top: .4rem; font-size: .75rem; line-height: 1.4; overflow-wrap: anywhere; }
 .inat-panel > .muted { max-width: 75ch; font-size: .85rem; }
 .inat-updated { font-size: .75rem; }
+
+/* coverage table */
+.cov-figures { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+table.coverage { width: 100%; border-collapse: collapse; font-size: 0.93rem; }
+table.coverage th, table.coverage td { padding: 6px 10px 6px 0; border-bottom: 1px solid var(--wadi); text-align: left; vertical-align: middle; }
+table.coverage td.num, table.coverage th.num { text-align: right; }
+table.coverage thead th { border-bottom: 1px solid var(--basalt); }
+table.coverage thead button { all: unset; cursor: pointer; color: var(--muted); font-weight: 500; }
+table.coverage thead button[aria-pressed="true"] { color: var(--basalt); }
+table.coverage thead button:focus-visible { outline: 2px solid var(--ochre); outline-offset: 2px; }
+table.coverage tbody th { font-weight: 500; }
+table.coverage tr.cov-row { cursor: pointer; }
+table.coverage tr.cov-row:hover, table.coverage tr.cov-row.open { background: var(--ochre-soft); }
+table.coverage tr.cov-row th::before { content: "▸"; display: inline-block; width: 1.1em; color: var(--muted); }
+table.coverage tr.cov-row.open th::before { content: "▾"; }
+table.coverage tr.cov-detail td { padding: 6px 0 18px 1.1em; background: var(--paper); }
+table.coverage tfoot th, table.coverage tfoot td { border-top: 1px solid var(--basalt); border-bottom: 0; font-weight: 600; }
+.cov-bar { display: inline-flex; width: 9rem; height: 10px; background: var(--wadi); border-radius: 2px; overflow: hidden; vertical-align: middle; }
+.cov-bar i { display: block; height: 100%; background: var(--juniper); }
+.cov-bar i.part { background: var(--ochre); }
+.cov-pct { display: inline-block; width: 3.2em; text-align: right; }
+.key { display: inline-block; width: 0.9em; height: 0.7em; border-radius: 2px; vertical-align: baseline; }
+.key-acc { background: var(--juniper); } .key-rev { background: var(--ochre); }
+.reasons.overall .reason-line { display: grid; grid-template-columns: 45% 10% 1fr; gap: 8px; align-items: center; padding: 6px 4px; border-bottom: 1px solid var(--wadi); font-size: 0.92rem; }
+/* map */
+.map-layout { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 3fr); gap: 28px; align-items: start; }
+.worldmap { height: 520px; background: var(--paper); border: 1px solid var(--wadi); }
+.worldmap.leaflet-container { background: var(--paper); font-family: var(--sans); }
+.map-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; margin-top: 8px; font-size: 0.82rem; }
+.map-legend i { display: inline-block; width: 1em; height: 0.8em; margin-right: 5px; border: 1px solid var(--wadi); vertical-align: baseline; }
+.map-legend i.none { background: transparent; }
+.country-panel h2 { margin-top: 0; }
+.country-panel h3 { margin: 18px 0 4px; font-size: 0.95rem; }
+.country-top { margin: 0; padding-left: 1.4em; }
+ul.plain { list-style: none; margin: 0; padding: 0; }
+ul.taxa-list { max-height: 22rem; overflow-y: auto; border: 1px solid var(--wadi); padding: 6px 10px; }
+button.link { all: unset; cursor: pointer; color: var(--juniper); text-decoration: underline; text-underline-offset: 2px; }
+button.link:focus-visible { outline: 2px solid var(--ochre); outline-offset: 2px; }
+@media (max-width: 900px) {
+  .map-layout { grid-template-columns: 1fr; }
+  .cov-figures { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .worldmap { height: 360px; }
+  .cov-bar { width: 5rem; }
+}

@@ -66,6 +66,16 @@ def export_graph(source: Path, graph: str, target: Path, tag: str) -> int:
     return count
 
 
+def _places(release: Path, data: Path) -> None:
+    """places.json of the Map page: taxa per country, from the place records of this release."""
+
+    from tools.atlas_places import aggregate
+
+    (release / "web" / "places.json").write_text(
+        json.dumps(aggregate(data / "rdf"), ensure_ascii=False, separators=(",", ":")), encoding="utf-8"
+    )
+
+
 def build(stamp: str, out: Path = RELEASES, data: Path = DATA, web: Path = WEB) -> Path:
     release = out / stamp
     if release.exists():
@@ -81,6 +91,7 @@ def build(stamp: str, out: Path = RELEASES, data: Path = DATA, web: Path = WEB) 
         print(f"{graph}: {triples} triples ({time.time() - started:.1f}s)", file=sys.stderr)
     shutil.copytree(web, release / "web")
     shutil.copy2(data / "summary.json", release / "web" / "summary.json")
+    _places(release, data)
     inat = data / "inaturalist.json"
     if inat.exists():
         shutil.copy2(inat, release / "web" / "inaturalist.json")
@@ -122,6 +133,7 @@ def build_web(stamp: str, base: Path, out: Path = RELEASES, data: Path = DATA, w
         (release / "index").symlink_to((base / "index").resolve(), target_is_directory=True)
     shutil.copytree(web, release / "web")
     shutil.copy2(base / "web" / "summary.json", release / "web" / "summary.json")
+    _places(release, base if (base / "rdf").is_dir() else data)
     inat = data / "inaturalist.json"
     if inat.exists():
         shutil.copy2(inat, release / "web" / "inaturalist.json")
