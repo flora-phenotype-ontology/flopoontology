@@ -2,10 +2,10 @@
 
 - **Records processed**: 184
 - **Extracted trait rows**: 2,890
-- **Formal assertions emitted**: 1,749
-- **Distinct candidate value terms**: 61
+- **Formal assertions emitted**: 1,766
+- **Distinct candidate value terms**: 65
 - **Distinct candidate anatomical bearers**: 13
-- **Distinct novel PO × PATO/FLOPO combinations**: 140
+- **Distinct novel PO × PATO/FLOPO combinations**: 136
 
 ## Top Candidate FLOPO Value Terms (`value_term_candidates.tsv`)
 
@@ -28,14 +28,14 @@
 | `thin-shelled` | 2 | 2 | `PATO:0000141` (structure) | `PO_0009001` |
 | `well-developed` | 2 | 2 | `PATO:0000141` (structure) | `PO_0009005|PO_0009009` |
 | `widespread` | 2 | 2 | `PATO:0000141` (structure) | `PO_0009005` |
+| `acid` | 1 | 1 | `PATO:0000141` (structure) | `PO_0009001` |
 | `adventitious` | 1 | 1 | `PATO:0000141` (structure) | `PO_0009005` |
 | `berrylike` | 1 | 1 | `PATO:0000052` (shape) | `PO_0009001` |
+| `carrot-like` | 1 | 1 | `PATO:0000052` (shape) | `PO_0009005` |
 | `cigarlike` | 1 | 1 | `PATO:0000052` (shape) | `PO_0009001` |
+| `corrugated` | 1 | 1 | `PATO:0000141` (structure) | `PO_0009001` |
 | `cotyledon` | 1 | 1 | `PATO:0000141` (structure) | `PO_0008037` |
 | `cucumber-shaped` | 1 | 1 | `PATO:0000052` (shape) | `PO_0009001` |
-| `double` | 1 | 1 | `PATO:0000141` (structure) | `PO_0009001` |
-| `drought resistant` | 1 | 1 | `PATO:0000141` (structure) | `PO_0009005` |
-| `ectomycorrhizal` | 1 | 1 | `PATO:0000141` (structure) | `PO_0009005` |
 
 ## Top Candidate Anatomical Bearers (`bearer_candidates.tsv`)
 
@@ -62,15 +62,15 @@
 | `PO_0000003` | whole plant | `FLOPO_0991071` | monoecious | `EQ|PO_0000003|FLOPO_0991071` | `allowed` / `new_class_candidate` | 107 | 107 |
 | `PO_0000003` | whole plant | `FLOPO_0991072` | dioecious | `EQ|PO_0000003|FLOPO_0991072` | `allowed` / `new_class_candidate` | 26 | 26 |
 | `PO_0009010` | seed | `FLOPO_0991036` | aerial | `EQ|PO_0009010|FLOPO_0991036` | `allowed` / `new_class_candidate` | 19 | 18 |
-| `PO_0030099` | samara fruit | `PATO_0000467` | present | `EQ|PO_0030099|PATO_0000467` | `novel` / `new_class_candidate` | 9 | 9 |
-| `PO_0009001` | fruit | `PATO_0104354` | winged | `EQ|PO_0009001|PATO_0104354` | `novel` / `new_class_candidate` | 7 | 7 |
-| `PO_0009005` | root | `PATO_0104356` | spreading | `EQ|PO_0009005|PATO_0104356` | `novel` / `new_class_candidate` | 6 | 6 |
+| `PO_0030099` | samara fruit | `PATO_0000467` | present | `EQ|PO_0030099|PATO_0000467` | `blocked` / `new_class_candidate` | 9 | 9 |
+| `PO_0009001` | fruit | `PATO_0104354` | winged | `EQ|PO_0009001|PATO_0104354` | `allowed` / `new_class_candidate` | 7 | 7 |
+| `PO_0009005` | root | `PATO_0104356` | spreading | `EQ|PO_0009005|PATO_0104356` | `allowed` / `new_class_candidate` | 6 | 6 |
 | `PO_0009010` | seed | `FLOPO_0991035` | subterranean | `EQ|PO_0009010|FLOPO_0991035` | `allowed` / `new_class_candidate` | 6 | 6 |
 | `PO_0009046` | flower | `PATO_0000070` | amount | `EQC|PO_0009046|n|PATO_0000070` | `allowed` / `new_class_candidate` | 5 | 4 |
 | `PO_0000003` | whole plant | `FLOPO_0991285` | polygamodioecious | `EQ|PO_0000003|FLOPO_0991285` | `allowed` / `new_class_candidate` | 3 | 3 |
-| `PO_0009010` | seed | `PATO_0000586` | increased size | `EQ|PO_0009010|PATO_0000586` | `novel` / `new_class_candidate` | 3 | 3 |
+| `PO_0009010` | seed | `PATO_0000586` | increased size | `EQ|PO_0009010|PATO_0000586` | `allowed` / `new_class_candidate` | 3 | 3 |
 | `PO_0009049` | inflorescence | `PATO_0001861` | fasciculated | `EQ|PO_0009049|PATO_0001861` | `novel` / `new_class_candidate` | 3 | 3 |
-| `PO_0030112` | pedicel | `PATO_0000573` | increased length | `EQ|PO_0030112|PATO_0000573` | `novel` / `new_class_candidate` | 3 | 3 |
+| `PO_0030112` | pedicel | `PATO_0000573` | increased length | `EQ|PO_0030112|PATO_0000573` | `allowed` / `new_class_candidate` | 3 | 3 |
 | `PO_0000003` | whole plant | `FLOPO_0991177` | polygamous | `EQ|PO_0000003|FLOPO_0991177` | `allowed` / `new_class_candidate` | 2 | 2 |
 | `PO_0020063` | hilum | `PATO_0000665` | high brightness | `EQ|PO_0020063|PATO_0000665` | `novel` / `new_class_candidate` | 2 | 2 |
 | `PO_0025025` | root system | `PATO_0104356` | spreading | `EQ|PO_0025025|PATO_0104356` | `novel` / `new_class_candidate` | 2 | 2 |
@@ -78,9 +78,9 @@
 | `PO_0025083` | strobilus | `FLOPO_0988082` | light brown | `EQ|PO_0025083|FLOPO_0988082` | `novel` / `new_class_candidate` | 2 | 2 |
 | `PO_0025083` | strobilus | `PATO_0000574` | decreased length | `EQ|PO_0025083|PATO_0000574` | `novel` / `new_class_candidate` | 2 | 1 |
 | `PO_0025083` | strobilus | `PATO_0104035` | pendent | `EQ|PO_0025083|PATO_0104035` | `novel` / `new_class_candidate` | 2 | 2 |
-| `PO_0030112` | pedicel | `PATO_0000591` | increased thickness | `EQ|PO_0030112|PATO_0000591` | `novel` / `new_class_candidate` | 2 | 2 |
-| `PO_0030112` | pedicel | `PATO_0002165` | drooping | `EQ|PO_0030112|PATO_0002165` | `novel` / `new_class_candidate` | 2 | 2 |
+| `PO_0030112` | pedicel | `PATO_0000591` | increased thickness | `EQ|PO_0030112|PATO_0000591` | `allowed` / `new_class_candidate` | 2 | 2 |
+| `PO_0030112` | pedicel | `PATO_0002165` | drooping | `EQ|PO_0030112|PATO_0002165` | `allowed` / `new_class_candidate` | 2 | 2 |
 | `PO_0030112` | pedicel | `PATO_0002212` | slender | `EQ|PO_0030112|PATO_0002212` | `allowed` / `new_class_candidate` | 2 | 2 |
 | `FLOPO_0986005` | calyx lobe | `FLOPO_0991102` | equal | `EQ|FLOPO_0986005|FLOPO_0991102` | `novel` / `new_class_candidate` | 1 | 1 |
-| `FLOPO_0986024` | drupelet | `PATO_0000467` | present | `EQ|FLOPO_0986024|PATO_0000467` | `novel` / `new_class_candidate` | 1 | 1 |
-| `FLOPO_0986026` | pyrene | `FLOPO_0988084` | dark brown | `EQ|FLOPO_0986026|FLOPO_0988084` | `novel` / `new_class_candidate` | 1 | 1 |
+| `FLOPO_0986024` | drupelet | `PATO_0000467` | present | `EQ|FLOPO_0986024|PATO_0000467` | `allowed` / `new_class_candidate` | 1 | 1 |
+| `FLOPO_0986026` | pyrene | `FLOPO_0988084` | dark brown | `EQ|FLOPO_0986026|FLOPO_0988084` | `allowed` / `new_class_candidate` | 1 | 1 |

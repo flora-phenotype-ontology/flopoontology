@@ -2,10 +2,10 @@
 
 - **Records processed**: 129
 - **Extracted trait rows**: 6,736
-- **Formal assertions emitted**: 5,523
-- **Distinct candidate value terms**: 56
-- **Distinct candidate anatomical bearers**: 8
-- **Distinct novel PO × PATO/FLOPO combinations**: 444
+- **Formal assertions emitted**: 5,559
+- **Distinct candidate value terms**: 62
+- **Distinct candidate anatomical bearers**: 9
+- **Distinct novel PO × PATO/FLOPO combinations**: 430
 
 ## Top Candidate FLOPO Value Terms (`value_term_candidates.tsv`)
 
@@ -19,8 +19,11 @@
 | `parallel` | 3 | 3 | `PATO:0000141` (structure) | `PO_0009066|intersecondary` |
 | `oily` | 2 | 2 | `PATO:0000141` (structure) | `PO_0009010` |
 | `overlapping to the left` | 2 | 1 | `PATO:0000141` (structure) | `PO_0009032` |
+| `soft-wooded` | 2 | 2 | `PATO:0000141` (structure) | `PO_0009047|PO_0000003` |
 | `abrupt` | 1 | 1 | `PATO:0000141` (structure) | `PO_0025034` |
 | `arcuate-venose` | 1 | 1 | `PATO:0000141` (structure) | `PO_0025034` |
+| `basifix` | 1 | 1 | `PATO:0000141` (structure) | `PO_0009066` |
+| `bean-shaped` | 1 | 1 | `PATO:0000052` (shape) | `PO_0009010` |
 | `biconical` | 1 | 1 | `PATO:0000052` (shape) | `PO_0009010` |
 | `bilocular` | 1 | 1 | `PATO:0000141` (structure) | `PO_0009066` |
 | `bird-dispersed` | 1 | 1 | `PATO:0000141` (structure) | `PO_0009001` |
@@ -33,9 +36,6 @@
 | `explosively dehiscent` | 1 | 1 | `PATO:0000141` (structure) | `PO_0009001` |
 | `fast-growing` | 1 | 1 | `PATO:0000141` (structure) | `PO_0000003` |
 | `ferrugineous-tinged` | 1 | 1 | `PATO:0000141` (structure) | `PO_0025034` |
-| `fig-like` | 1 | 1 | `PATO:0000052` (shape) | `PO_0009001` |
-| `heterodistylous` | 1 | 1 | `PATO:0000141` (structure) | `PO_0009046` |
-| `high` | 1 | 1 | `PATO:0000141` (structure) | `stylar column` |
 
 ## Top Candidate Anatomical Bearers (`bearer_candidates.tsv`)
 
@@ -43,6 +43,7 @@
 |---|---:|---:|---|
 | `antherode` | 2 | 1 | `length|width` |
 | `aril lobe` | 2 | 1 | `strap-shaped|bifid` |
+| `bloom` | 2 | 2 | `present` |
 | `intersecondary nerve` | 2 | 1 | `amount|parallel` |
 | `stylar arm` | 2 | 1 | `erect|length` |
 | `brachlet` | 1 | 1 | `glabrous` |
@@ -59,23 +60,23 @@
 | `PO_0009001` | fruit | `FLOPO_0991149` | dehiscent | `EQ|PO_0009001|FLOPO_0991149` | `allowed` / `new_class_candidate` | 8 | 5 |
 | `PO_0000003` | whole plant | `FLOPO_0991072` | dioecious | `EQ|PO_0000003|FLOPO_0991072` | `allowed` / `new_class_candidate` | 7 | 6 |
 | `PO_0009047` | stem | `FLOPO_0991138` | buttressed | `EQ|PO_0009047|FLOPO_0991138` | `allowed` / `new_class_candidate` | 7 | 7 |
-| `PO_0020039` | leaf lamina | `PATO_0104359` | entire | `EQ|PO_0020039|PATO_0104359` | `novel` / `new_class_candidate` | 7 | 7 |
+| `PO_0020039` | leaf lamina | `PATO_0104359` | entire | `EQ|PO_0020039|PATO_0104359` | `allowed` / `new_class_candidate` | 7 | 7 |
 | `PO_0020049` | leaflet | `PATO_0000070` | amount | `EQC|PO_0020049|2|PATO_0000070` | `allowed` / `new_class_candidate` | 6 | 6 |
-| `PO_0020049` | leaflet | `PATO_0104359` | entire | `EQ|PO_0020049|PATO_0104359` | `novel` / `new_class_candidate` | 5 | 5 |
+| `PO_0020049` | leaflet | `PATO_0104359` | entire | `EQ|PO_0020049|PATO_0104359` | `allowed` / `new_class_candidate` | 5 | 5 |
 | `PO_0025034` | leaf | `FLOPO_0991100` | reticulate | `EQ|PO_0025034|FLOPO_0991100` | `allowed` / `new_class_candidate` | 5 | 5 |
-| `FLOPO_0986025` | floral disc | `PATO_0002351` | fleshy | `EQ|FLOPO_0986025|PATO_0002351` | `novel` / `new_class_candidate` | 4 | 3 |
+| `FLOPO_0986025` | floral disc | `PATO_0002351` | fleshy | `EQ|FLOPO_0986025|PATO_0002351` | `allowed` / `new_class_candidate` | 4 | 3 |
 | `PO_0009001` | fruit | `FLOPO_0991103` | depressed | `EQ|PO_0009001|FLOPO_0991103` | `allowed` / `new_class_candidate` | 4 | 4 |
 | `PO_0009046` | flower | `PATO_0000070` | amount | `EQC|PO_0009046|n|PATO_0000070` | `allowed` / `new_class_candidate` | 4 | 3 |
 | `PO_0009049` | inflorescence | `PATO_0001861` | fasciculated | `EQ|PO_0009049|PATO_0001861` | `novel` / `new_class_candidate` | 4 | 4 |
 | `PO_0025034` | leaf | `FLOPO_0991106` | dull | `EQ|PO_0025034|FLOPO_0991106` | `allowed` / `new_class_candidate` | 4 | 4 |
-| `PO_0025323` | flower fascicle | `PATO_0000467` | present | `EQ|PO_0025323|PATO_0000467` | `novel` / `new_class_candidate` | 4 | 4 |
 | `FLOPO_0985030` | tree crown | `PATO_0001733` | evergreen (plant) | `EQ|FLOPO_0985030|PATO_0001733` | `novel` / `new_class_candidate` | 3 | 3 |
-| `FLOPO_0986006` | corolla lobe | `PATO_0002006` | 2-D shape | `QUALREL|FLOPO_0986006|PATO_0002006|continuum|PATO_0000947|PATO_0000946` | `novel` / `structured_annotation_only` | 3 | 2 |
-| `FLOPO_0986009` | stigma lobe | `PATO_0000070` | amount | `EQ|FLOPO_0986009|PATO_0000070` | `novel` / `new_class_candidate` | 3 | 3 |
-| `FLOPO_0986025` | floral disc | `PATO_0000591` | increased thickness | `EQ|FLOPO_0986025|PATO_0000591` | `novel` / `new_class_candidate` | 3 | 3 |
-| `FLOPO_0986025` | floral disc | `PATO_0001979` | lobed | `EQ|FLOPO_0986025|PATO_0001979` | `novel` / `new_class_candidate` | 3 | 2 |
-| `PO_0005020` | vascular bundle | `PATO_0000464` | inconspicuous | `EQ|PO_0005020|PATO_0000464` | `novel` / `new_class_candidate` | 3 | 2 |
+| `FLOPO_0986009` | stigma lobe | `PATO_0000070` | amount | `EQ|FLOPO_0986009|PATO_0000070` | `allowed` / `new_class_candidate` | 3 | 3 |
+| `FLOPO_0986025` | floral disc | `PATO_0000591` | increased thickness | `EQ|FLOPO_0986025|PATO_0000591` | `allowed` / `new_class_candidate` | 3 | 3 |
+| `FLOPO_0986025` | floral disc | `PATO_0001979` | lobed | `EQ|FLOPO_0986025|PATO_0001979` | `allowed` / `new_class_candidate` | 3 | 2 |
+| `PO_0005020` | vascular bundle | `PATO_0000464` | inconspicuous | `EQ|PO_0005020|PATO_0000464` | `allowed` / `new_class_candidate` | 3 | 2 |
 | `PO_0009029` | stamen | `FLOPO_0991121` | included | `EQ|PO_0009029|FLOPO_0991121` | `allowed` / `new_class_candidate` | 3 | 3 |
 | `PO_0009046` | flower | `FLOPO_0991175` | cauliflorous | `EQ|PO_0009046|FLOPO_0991175` | `allowed` / `new_class_candidate` | 3 | 3 |
 | `PO_0009049` | inflorescence | `FLOPO_0991175` | cauliflorous | `EQ|PO_0009049|FLOPO_0991175` | `allowed` / `new_class_candidate` | 3 | 3 |
-| `PO_0009060` | calyx | `FLOPO_0991082` | accrescent | `EQ|PO_0009060|FLOPO_0991082` | `allowed` / `new_class_candidate` | 3 | 3 |
+| `PO_0020139` | leaf midvein | `FLOPO_0991049` | puberulous | `EQ|PO_0020139|FLOPO_0991049` | `allowed` / `new_class_candidate` | 3 | 2 |
+| `PO_0020140` | secondary leaf vein | `PATO_0000070` | amount | `EQC|PO_0020140|2|PATO_0000070` | `allowed` / `new_class_candidate` | 3 | 3 |
+| `PO_0020140` | secondary leaf vein | `PATO_0002416` | sunken | `EQ|PO_0020140|PATO_0002416` | `allowed` / `new_class_candidate` | 3 | 3 |

@@ -2,10 +2,10 @@
 
 - **Records processed**: 13
 - **Extracted trait rows**: 669
-- **Formal assertions emitted**: 478
+- **Formal assertions emitted**: 476
 - **Distinct candidate value terms**: 14
-- **Distinct candidate anatomical bearers**: 1
-- **Distinct novel PO × PATO/FLOPO combinations**: 35
+- **Distinct candidate anatomical bearers**: 2
+- **Distinct novel PO × PATO/FLOPO combinations**: 32
 
 ## Top Candidate FLOPO Value Terms (`value_term_candidates.tsv`)
 
@@ -31,20 +31,18 @@
 | Bearer word | Count | Taxa | Qualities seen |
 |---|---:|---:|---|
 | `pinnulate` | 1 | 1 | `amount` |
+| `pseudostaminode` | 1 | 1 | `absent` |
 
 ## Top Novel PO × PATO / FLOPO Class Candidates (`novel_po_pato_combinations.tsv`)
 
 | PO ID | PO Label | Quality ID | Quality Label | Signature | Status | Count | Taxa |
 |---|---|---|---|---|---|---:|---:|
 | `PO_0009010` | seed | `FLOPO_0991089` | biseriate | `EQ|PO_0009010|FLOPO_0991089` | `allowed` / `new_class_candidate` | 2 | 2 |
-| `PO_0009055` | bract | `PATO_0104359` | entire | `EQ|PO_0009055|PATO_0104359` | `novel` / `new_class_candidate` | 2 | 2 |
+| `PO_0009055` | bract | `PATO_0104359` | entire | `EQ|PO_0009055|PATO_0104359` | `allowed` / `new_class_candidate` | 2 | 2 |
 | `PO_0025034` | leaf | `FLOPO_0991284` | bipinnatisect | `EQ|PO_0025034|FLOPO_0991284` | `allowed` / `new_class_candidate` | 2 | 2 |
 | `PO_0025034` | leaf | `FLOPO_0991005` | rosulate | `EQ|PO_0025034|FLOPO_0991005` | `allowed` / `new_class_candidate` | 2 | 2 |
-| `PO_0025034` | leaf | `PATO_0104359` | entire | `EQ|PO_0025034|PATO_0104359` | `novel` / `new_class_candidate` | 2 | 1 |
-| `FLOPO_0985026` | frond | `PATO_0002006` | 2-D shape | `QUALREL|FLOPO_0985026|PATO_0002006|continuum|PATO_0001935|PATO_0001955` | `novel` / `structured_annotation_only` | 1 | 1 |
+| `PO_0025034` | leaf | `PATO_0104359` | entire | `EQ|PO_0025034|PATO_0104359` | `allowed` / `new_class_candidate` | 2 | 1 |
 | `FLOPO_0985027` | pinna | `PATO_0000070` | amount | `EQC|FLOPO_0985027|2|PATO_0000070` | `allowed` / `new_class_candidate` | 1 | 1 |
-| `FLOPO_0986005` | calyx lobe | `FLOPO_0991058` | scabrous | `EQ|FLOPO_0986005|FLOPO_0991058` | `novel` / `existing` | 1 | 1 |
-| `FLOPO_0986006` | corolla lobe | `FLOPO_0991095` | acute (sensu botany) | `EQ|FLOPO_0986006|FLOPO_0991095` | `novel` / `existing` | 1 | 1 |
 | `PO_0009001` | fruit | `FLOPO_0991121` | included | `EQ|PO_0009001|FLOPO_0991121` | `allowed` / `new_class_candidate` | 1 | 1 |
 | `PO_0009010` | seed | `FLOPO_0991100` | reticulate | `EQ|PO_0009010|FLOPO_0991100` | `allowed` / `new_class_candidate` | 1 | 1 |
 | `PO_0009031` | sepal | `FLOPO_0991046` | membranous | `EQ|PO_0009031|FLOPO_0991046` | `allowed` / `new_class_candidate` | 1 | 1 |
@@ -57,7 +55,10 @@
 | `PO_0009073` | stigma | `FLOPO_0991006` | capitate | `EQ|PO_0009073|FLOPO_0991006` | `allowed` / `new_class_candidate` | 1 | 1 |
 | `PO_0009074` | style | `FLOPO_0991121` | included | `EQ|PO_0009074|FLOPO_0991121` | `allowed` / `new_class_candidate` | 1 | 1 |
 | `PO_0020039` | leaf lamina | `PATO_0000150` | texture | `EQ|PO_0020039|PATO_0000150` | `allowed` / `new_class_candidate` | 1 | 1 |
-| `PO_0020049` | leaflet | `PATO_0104359` | entire | `EQ|PO_0020049|PATO_0104359` | `novel` / `new_class_candidate` | 1 | 1 |
-| `PO_0020050` | petiolule | `PATO_0000467` | present | `EQ|PO_0020050|PATO_0000467` | `novel` / `new_class_candidate` | 1 | 1 |
+| `PO_0020049` | leaflet | `PATO_0104359` | entire | `EQ|PO_0020049|PATO_0104359` | `allowed` / `new_class_candidate` | 1 | 1 |
+| `PO_0020050` | petiolule | `PATO_0000467` | present | `EQ|PO_0020050|PATO_0000467` | `allowed` / `new_class_candidate` | 1 | 1 |
 | `PO_0020075` | mericarp | `FLOPO_0991095` | acute (sensu botany) | `EQ|PO_0020075|FLOPO_0991095` | `novel` / `existing` | 1 | 1 |
 | `PO_0020138` | leaf lamina vein | `PATO_0000690` | discontinuous | `EQ|PO_0020138|PATO_0000690` | `novel` / `new_class_candidate` | 1 | 1 |
+| `PO_0020138` | leaf lamina vein | `PATO_0001473` | duplicated | `EQ|PO_0020138|PATO_0001473` | `novel` / `new_class_candidate` | 1 | 1 |
+| `PO_0025034` | leaf | `FLOPO_0991212` | monomorphic | `EQ|PO_0025034|FLOPO_0991212` | `allowed` / `new_class_candidate` | 1 | 1 |
+| `PO_0025034` | leaf | `FLOPO_0991100` | reticulate | `EQ|PO_0025034|FLOPO_0991100` | `allowed` / `new_class_candidate` | 1 | 1 |

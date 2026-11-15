@@ -2725,8 +2725,8 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                 # "peduncle ebracteate", "stems leafless": the part is absent from the organ
                 # described, which is not a statement about the other organs of the plant
                 organ = ground_bearer(res, phenotype)[0]
-                if organ and organ not in {grounding.po_id, WHOLE_PLANT} and not container_po:
-                    container_po = organ
+                if organ and organ not in {grounding.po_id, WHOLE_PLANT} and not container_po and bearer_whole is None:
+                    container_po = organ  # (a qualified whole already says where the part is absent)
                     grounding.provenance.append(f"negation: absent from {organ}, the organ described")
             else:
                 reason = absence_scope_problem(span_text, [phenotype.get("entity_en"), phenotype.get("po_label")])
