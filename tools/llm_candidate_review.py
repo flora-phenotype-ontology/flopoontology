@@ -38,9 +38,10 @@ from pathlib import Path
 
 OUT = Path("curation/opus-review-2026-11-14")
 REVIEWED = Path("curation/flopo-flora-candidate-review-2026-11-13.tsv")
-BATCH = {"values": 30, "bearers": 30, "unions": 40, "patterns": 40, "definitions": 25}
+BATCH = {"values": 30, "bearers": 30, "unions": 40, "patterns": 40, "definitions": 25,
+         "combinations": 60, "contradictions": 30, "rules": 50, "newdefs": 25, "unsat": 25}
 # Opus where the answer is a judgment about botany and modelling; Sonnet for the yes/no pairs.
-MODEL = {"unions": "sonnet"}
+MODEL = {"unions": "sonnet", "combinations": "sonnet", "rules": "sonnet"}
 PATTERN_REASONS = (
     "taxon_level_alternatives_or_continuum", "atomic_clause_contains_disjunction", "explicit_disjunction",
     "developmental_stage_context", "relation_to_another_part",
@@ -160,6 +161,160 @@ Fields per item: flopo_id, label, decision, definition, parent, target, reason, 
 }
 
 
+PROMPTS["combinations"] = COMMON + """
+TASK: pairs of a plant part and a quality that the annotator produced and that are not yet in
+config/valid_combinations.tsv (po_id, pato_id, status). Statements with such a pair wait in
+"review". The quality is a PATO attribute (shape, colour) or a PATO value (glabrous). Decide for
+each pair whether a plant part of that kind can have that quality, in the sense the examples
+show:
+
+- "allowed": botanically meaningful and the examples are annotated correctly
+- "blocked": never meaningful for this part, or the pair exists only through a wrong reading
+  (the PATO term means something else, the part is the wrong one); say which in reason
+- "unsure": depends on the case; say what a rule would need to tell the cases apart
+
+Fields per item: po_id, pato_id, decision, reason, confidence ("high" | "medium" | "low").
+"""
+
+PROMPTS["contradictions"] = COMMON + """
+TASK: pairs of statements about ONE taxon that contradict each other in the annotation: one
+states that a part is absent, the other describes that part. Read docs/km-classification.md
+(section "One taxon at a time"). Each item has the taxon, the absence statement (absent_label,
+absent_text) and the other statement (present_label, present_text). Decide what went wrong:
+
+- "absence_misread": the absence statement is about something else ("without simple hairs" read
+  as "stem absent"); target: what it should be (part and quality, with identifiers)
+- "present_misread": the other statement is annotated to the wrong part
+- "both_true": no contradiction in the plant: the two statements are about different members,
+  sexes, stages or forms ("petals absent in female flowers", "sometimes absent"); target: the
+  context that tells them apart
+- "source_contradiction": the flora itself is inconsistent
+- "unclear"
+
+In fix, give a general rule that would prevent this kind of error (a wording pattern and its
+correct reading), not a repair of the one record. Fields per item: id, decision, target, fix,
+reason, confidence.
+"""
+
+PROMPTS["rules"] = COMMON + """
+TASK: check rules that map a word of the flora transcriptions to a class. They were proposed by
+an earlier review and are in flopo2/ingest/flora_review_rules.tsv. Each item has the word
+(match_key), whether it is matched as a quality or as a bearer (match_field), the kind of rule
+(pato | flopo_value | negated_value | entity_presence | entity_absence | bearer), the target
+identifiers and label, an optional bearer_constraint (regular expression on the part) and, for
+bearer rules, an optional container_id (the whole the part belongs to). Look the target up and
+decide:
+
+- "correct": the word means the target in botanical descriptions, whatever the part
+- "needs_constraint": correct only for some parts; give the parts in target as "a|b|c"
+- "too_broad": the target loses an essential part of the meaning; say what
+- "wrong": the word does not mean the target; give the right target in target if one exists
+
+Fields per item: rule_id, decision, target, reason, confidence.
+"""
+
+PROMPTS["newdefs"] = PROMPTS["definitions"].replace(
+    "TASK:", "TASK (classes added on 2026-11-14; the plant parts are in "
+    "curation/flopo_anatomy_support_classes_20260918.tsv and sit beneath PO, with definitions of the "
+    "form 'A <PO parent> (PO:nnnnnnn) that ...'):", 1)
+
+PROMPTS["unsat"] = COMMON + """
+TASK: annotation classes that the reasoner (ELK, with FLOPO, PO and PATO) finds unsatisfiable:
+no plant can have them. Each item has the label, the bearer, the quality, further values, how
+many statements use it and an example. Find out why from the ontologies (disjointness and
+domain axioms in ont/quality.obo, config/flopo_disjoint_values.tsv,
+config/flopo_quality_bearer_constraints.tsv) and decide:
+
+- "wrong_grounding": the word was mapped to a class that means something else here; target: the
+  right class
+- "wrong_axiom": the statement is sound and an axiom of FLOPO is too strong; target: the axiom
+- "wrong_statement": the transcription or its split is wrong
+- "unclear"
+
+Fields per item: class, decision, target, fix, reason, confidence.
+"""
+
+
+def _combinations(top: int = 6000) -> list[dict]:
+    """(part, quality) pairs that keep statements in review, most used first."""
+
+    labels = _labels()
+    pairs: dict[tuple[str, str], dict] = {}
+    for path in sorted(glob.glob("local-corpora/*/derived/*-annotated.jsonl")):
+        source = Path(path).name.removesuffix("-annotated.jsonl")
+        if source == "wfo":
+            continue
+        with open(path, encoding="utf-8") as handle:
+            for line in handle:
+                if "po_pato_novel" not in line:
+                    continue
+                for a in json.loads(line).get("assertions") or []:
+                    if "po_pato_novel" not in ((a.get("gate") or {}).get("reasons") or []):
+                        continue
+                    key = (a.get("po_id", ""), a.get("pato_id", ""))
+                    item = pairs.setdefault(key, {"po_id": key[0], "pato_id": key[1], "statements": 0, "floras": set(), "examples": []})
+                    item["statements"] += 1
+                    item["floras"].add(source)
+                    if len(item["examples"]) < 4 and a.get("source_text") not in item["examples"]:
+                        item["examples"].append(str(a.get("source_text") or "")[:120])
+    items = sorted(pairs.values(), key=lambda i: -i["statements"])[:top]
+    for item in items:
+        item["floras"] = len(item["floras"])
+        item["part"] = labels.get(item["po_id"], "")
+        item["quality"] = labels.get(item["pato_id"], "")
+    return items
+
+
+def _contradictions() -> list[dict]:
+    items = []
+    for path in sorted(glob.glob("local-corpora/*/derived/*-taxon-contradictions.tsv")):
+        source = Path(path).name.removesuffix("-taxon-contradictions.tsv")
+        with open(path, encoding="utf-8") as handle:
+            for row in csv.DictReader(handle, delimiter="\t"):
+                items.append({"flora": source, **{k: row[k] for k in ("taxon", "absent_label", "absent_text", "present_label", "present_text")}})
+    # one per wording of the absence first: the same misreading repeats over many taxa
+    seen: Counter = Counter()
+    for item in items:
+        seen[(item["absent_label"], item["absent_text"].lower())] += 1
+        item["rank"] = seen[(item["absent_label"], item["absent_text"].lower())]
+    items.sort(key=lambda i: i["rank"])
+    for index, item in enumerate(items):
+        item["id"] = f"X{index:05d}"
+        del item["rank"]
+    return items
+
+
+def _rules() -> list[dict]:
+    with open("flopo2/ingest/flora_review_rules.tsv", encoding="utf-8") as handle:
+        return [{k: row.get(k, "") for k in ("rule_id", "match_field", "match_key", "bearer_constraint", "kind", "po_id",
+                                              "pato_id", "value_term", "target_label", "container_id")}
+                for row in csv.DictReader(handle, delimiter="\t")]
+
+
+def _newdefs() -> list[dict]:
+    items = [i for i in _definitions() if int(i["flopo_id"].split(":")[1]) >= 991211]
+    with open("config/flopo_anatomy_support_id_registry.tsv", encoding="utf-8") as handle:
+        ids = {row["proposal_key"]: row["flopo_id"] for row in csv.DictReader(handle, delimiter="\t")}
+    with open("curation/flopo_anatomy_support_classes_20260918.tsv", encoding="utf-8") as handle:
+        for row in csv.DictReader(handle, delimiter="\t"):
+            if "second-model review" in (row.get("note") or ""):
+                items.append({"flopo_id": ids[row["proposal_key"]].replace("_", ":"), "label": row["label"],
+                              "parent": row["is_a"], "part_of": row["part_of"], "definition": row["definition"],
+                              "exact_synonyms": row["exact_synonyms_en"], "related_synonyms": row["related_synonyms_en"]})
+    return items
+
+
+def _unsat() -> list[dict]:
+    merged: dict[str, dict] = {}
+    for path in sorted(glob.glob("local-corpora/*/derived/*-unsatisfiable.tsv")):
+        with open(path, encoding="utf-8") as handle:
+            for row in csv.DictReader(handle, delimiter="\t"):
+                key = (row["bearer"], row["quality"], row["values"])
+                item = merged.setdefault(key, {**{k: row[k] for k in ("class", "label", "bearer", "quality", "values", "example")}, "statements": 0})
+                item["statements"] += int(row["statements"] or 0)
+    return sorted(merged.values(), key=lambda i: -i["statements"])
+
+
 def _labels() -> dict[str, str]:
     labels: dict[str, str] = {}
     for path in ("config/po_lexicon.tsv", "config/pato_lexicon.tsv"):
@@ -261,6 +416,8 @@ def prepare(queues: list[str]) -> None:
         "values": lambda: _candidates("value_term_candidates.tsv", "candidate_label", "bearers"),
         "bearers": lambda: _candidates("bearer_candidates.tsv", "candidate_bearer", "qualities_seen"),
         "unions": _unions, "patterns": _patterns, "definitions": _definitions,
+        "combinations": _combinations, "contradictions": _contradictions, "rules": _rules,
+        "newdefs": _newdefs, "unsat": _unsat,
     }
     for queue in queues:
         folder = OUT / "batches" / queue
@@ -377,8 +534,16 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--model", help="one model for every queue (default: opus, sonnet for unions)")
     parser.add_argument("--timeout", type=int, default=3600)
     parser.add_argument("--limit", type=int, help="at most this many batches (for a trial)")
+    parser.add_argument("--out", type=Path, help="output folder of this review round (default: the first round)")
+    parser.add_argument("--seed", type=int, default=20261114, help="sample of the patterns queue")
     args = parser.parse_args(argv)
     queues = args.queues.split(",")
+    global OUT, _patterns
+    if args.out:
+        OUT = args.out
+    if args.seed != 20261114:
+        sample = _patterns
+        _patterns = lambda: sample(args.seed)  # noqa: E731
     OUT.mkdir(parents=True, exist_ok=True)
     if args.action == "prepare":
         prepare(queues)
