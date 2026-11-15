@@ -634,6 +634,19 @@ def stage_context(res: "Resources", word: str, text: str, start: int, end: int, 
     left = max(text.rfind(c, 0, start) for c in ".;") + 1
     right = min([i for i in (text.find(c, end) for c in ".;") if i >= 0] or [len(text)])
     found = [m for m in re.finditer(r"(?<![\w-])" + re.escape(word.strip()) + r"(?![\w-])", text[left:right], re.IGNORECASE)]
+    if not found:
+        # The transcription names the reading in its own words ("when young" for "young
+        # branches", "in fruit" for "fruiting"): another reviewed wording of the same reading
+        # is the cue, when the clause has exactly one.
+        same = sorted(
+            (w for w, readings in (res.context_words or {}).items()
+             if any(r["kind"] == reading["kind"] and r["target"] == reading["target"] for r in readings)),
+            key=len, reverse=True,
+        )
+        for other in same:
+            for m in re.finditer(r"(?<![\w-])" + re.escape(other) + r"(?![\w-])", text[left:right], re.IGNORECASE):
+                if not any(m.start() < f.end() and f.start() < m.end() for f in found):
+                    found.append(m)
     if len(found) != 1:
         return None  # absent, or ambiguous between two statements of the clause
     return reading, left + found[0].start(), left + found[0].end()

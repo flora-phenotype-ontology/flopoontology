@@ -345,3 +345,10 @@ def test_a_privative_word_is_an_absence_from_the_organ_described(res):
     # no bract on the peduncle; the involucral bracts of the same plant are another matter
     assert (a["po_id"], a["negated"], a["bearer_container"]) == ("PO_0009055", True, "PO_0009053")
 
+
+def test_a_reading_is_found_under_another_reviewed_wording(res):
+    text = "Young branches pubescent."
+    (a,), _ = annotate(res, text, {"entity_en": "branch", "quality_en": "pubescent", "source_en": "branches pubescent",
+                                   "stage": "when young"})
+    assert a["bearer_context_qualities"] == ["PATO_0000309"]  # young
+
