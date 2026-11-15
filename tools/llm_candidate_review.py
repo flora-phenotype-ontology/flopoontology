@@ -719,7 +719,14 @@ def run(queues: list[str], workers: int, command: str, model: str, timeout: int,
         started = time.time()
         use = model or MODEL.get(queue, "opus")
         status = _review(queue, batch, command, use, timeout)
-        if status == "failed" and not stop:
+        tries = 0
+        while status == "failed" and not stop and tries < 30:
+            # A failure within seconds is the machine (the client crashes when memory cannot be
+            # committed), not the batch: wait and try again. A slow failure gets one more try.
+            quick = time.time() - started < 20 * (tries + 1) + 90 * tries
+            tries += 1 if quick else 29
+            if quick:
+                time.sleep(90)
             status = _review(queue, batch, command, use, timeout)
         if status == "limit":
             stop = True
