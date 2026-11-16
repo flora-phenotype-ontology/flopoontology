@@ -207,7 +207,7 @@ async function overview() {
           a FLOPO phenotype built from a Plant Ontology part and a PATO quality, and its source sentence.
           Most floras are included in full; the <a href="#/coverage">coverage</a> page gives the numbers for each, and the <a href="#/map">map</a> shows where the taxa are recorded.</p>
         <div class="figures">
-          <div class="figure"><b class="num">${n(s.taxa.taxa)}</b><span>taxa, ${n(s.taxa.with_wfo)} with a recorded WFO mapping</span></div>
+          <div class="figure"><b class="num">${n(s.taxa.taxa)}</b><span>taxa, ${s.taxa.with_ipni !== undefined ? `${n(s.taxa.with_ipni)} with an IPNI name` : `${n(s.taxa.with_wfo)} with a recorded WFO mapping`}</span></div>
           <div class="figure"><b class="num">${n(records)}</b><span>trait annotations</span></div>
           <div class="figure"><b class="num">${Math.round((formal / Math.max(rows, 1)) * 100)}%</b><span>of ${n(rows)} transcribed trait statements captured</span></div>
           <div class="figure"><b class="num">${n(occurrences)}</b><span>records of where taxa grow</span></div>
@@ -284,16 +284,24 @@ async function taxa(key) {
 
 async function taxonPage(t) {
   const T = iriLiteral(t);
+  // Taxa are keyed by their accepted IPNI name; an older WFO-keyed address forwards to its taxon.
+  if (!/\/taxon\/(ipni|wcvp)-/.test(t)) {
+    const moved = await sparql(`SELECT ?n WHERE { ?n dcterms:replaces ${T} } LIMIT 1`);
+    if (moved.length) {
+      location.replace(taxonHref(moved[0].n));
+      return;
+    }
+  }
   const [g, info, names, records, merged, places, growth, pending, notes, conflicts] = await Promise.all([
     groups(),
-    sparql(`SELECT (SAMPLE(?l) AS ?label) (SAMPLE(?a) AS ?auth) (SAMPLE(?f) AS ?family) (SAMPLE(?o) AS ?order) (SAMPLE(?w) AS ?wfo)
+    sparql(`SELECT (SAMPLE(?l) AS ?label) (SAMPLE(?a) AS ?auth) (SAMPLE(?f) AS ?family) (SAMPLE(?o) AS ?order) (SAMPLE(?w) AS ?wfo) (SAMPLE(?ip) AS ?ipni)
       (GROUP_CONCAT(DISTINCT ?ar; separator="، ") AS ?arabic) (SAMPLE(?elo) AS ?emin) (SAMPLE(?ehi) AS ?emax) (SAMPLE(?nr) AS ?range) WHERE {
       ${T} rdfs:label ?l . OPTIONAL { ${T} fb:authorship ?a } OPTIONAL { ${T} fb:family ?f } OPTIONAL { ${T} fb:order ?o }
-      OPTIONAL { ${T} fb:wfo ?w } OPTIONAL { ${T} fb:vernacularName ?ar } OPTIONAL { ${T} fb:nativeRange ?nr }
+      OPTIONAL { ${T} fb:wfo ?w } OPTIONAL { ${T} fb:ipni ?ip } OPTIONAL { ${T} fb:vernacularName ?ar } OPTIONAL { ${T} fb:nativeRange ?nr }
       OPTIONAL { ${T} fb:elevationMin ?elo ; fb:elevationMax ?ehi } }`),
-    sparql(`SELECT ?name ?src (GROUP_CONCAT(DISTINCT ?page; separator=", ") AS ?pages) (SAMPLE(?st) AS ?status) WHERE {
+    sparql(`SELECT ?name ?src (GROUP_CONCAT(DISTINCT ?page; separator=", ") AS ?pages) (SAMPLE(?st) AS ?status) (SAMPLE(?sn) AS ?standard) (SAMPLE(?ni) AS ?ipni) WHERE {
       ${T} fb:printedName ?pn . ?pn fb:name ?name ; fb:source/rdfs:label ?src .
-      OPTIONAL { ?pn fb:page ?page } OPTIONAL { ?pn fb:nameStatus ?st } } GROUP BY ?name ?src`),
+      OPTIONAL { ?pn fb:page ?page } OPTIONAL { ?pn fb:nameStatus ?st } OPTIONAL { ?pn fb:standardName ?sn } OPTIONAL { ?pn fb:ipni ?ni } } GROUP BY ?name ?src`),
     sparql(`SELECT ?r (SAMPLE(?lab) AS ?label) (SAMPLE(?og) AS ?organ) (SAMPLE(?tg) AS ?trait) (SAMPLE(?src) AS ?source)
       (SAMPLE(?st) AS ?status) (SAMPLE(?tx) AS ?text) (SAMPLE(?cx) AS ?context) (SAMPLE(?fc) AS ?fclass) (SAMPLE(?fcl) AS ?flabel)
       (SAMPLE(?q) AS ?quality) (SAMPLE(?ql) AS ?qlabel) (SAMPLE(?b) AS ?bearer) (SAMPLE(?bl) AS ?blabel) (SAMPLE(?qual) AS ?qualifier)
@@ -327,7 +335,7 @@ async function taxonPage(t) {
   if (!pane) return;
   const i = info[0] || {};
   const nameRows = names
-    .map((x) => `<li><span class="sci">${esc(x.name)}</span> <span class="chip ${sourceClass(x.src)}">${esc(x.src)}</span>${x.pages ? ` <span class="muted">p. ${esc(x.pages)}</span>` : ""}${x.status && x.status !== "Accepted" && x.status !== "Exact" ? ` <span class="muted">(${esc(x.status.toLowerCase())} in WFO)</span>` : ""}</li>`)
+    .map((x) => `<li><span class="sci">${esc(x.name)}</span> <span class="chip ${sourceClass(x.src)}">${esc(x.src)}</span>${x.pages ? ` <span class="muted">p. ${esc(x.pages)}</span>` : ""}${x.standard && x.standard !== x.name ? ` <span class="muted">IPNI: <a href="https://www.ipni.org/n/${esc(x.ipni)}" target="_blank" rel="noopener"><i>${esc(x.standard)}</i></a></span>` : ""}${x.status && x.status !== "Accepted" && x.status !== "Exact" ? ` <span class="muted">(${esc(x.status.toLowerCase())} in ${x.ipni || x.standard ? "WCVP" : "WFO"})</span>` : ""}</li>`)
     .join("");
 
   // fingerprint
@@ -416,7 +424,8 @@ async function taxonPage(t) {
       <div class="taxon-meta">
         ${i.family ? `<span>${esc(i.family)}${i.order ? `, ${esc(i.order)}` : ""}</span>` : ""}
         ${i.arabic ? `<span class="ar" lang="ar">${esc(i.arabic)}</span>` : ""}
-        ${i.wfo ? `<a href="https://list.worldfloraonline.org/${esc(i.wfo)}" target="_blank" rel="noopener">World Flora Online ${esc(i.wfo)}</a>` : `<span>Not matched to World Flora Online</span>`}
+        ${i.ipni ? `<a href="https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:${esc(i.ipni)}" target="_blank" rel="noopener">POWO</a> <a href="https://www.ipni.org/n/${esc(i.ipni)}" target="_blank" rel="noopener">IPNI ${esc(i.ipni)}</a>` : `<span>Not matched to IPNI</span>`}
+        ${i.wfo ? `<a href="https://list.worldfloraonline.org/${esc(i.wfo)}" target="_blank" rel="noopener">World Flora Online ${esc(i.wfo)}</a>` : ""}
       </div>
     </div>
     <div id="inat-panel"></div>
@@ -771,7 +780,7 @@ async function coverage() {
       <div class="figure"><b class="num">${n(all.rows)}</b><span>trait statements transcribed from ${n(data.length)} floras</span></div>
       <div class="figure"><b class="num">${pct(all.formal, all.rows)}%</b><span>annotated with FLOPO, PO and PATO</span></div>
       <div class="figure"><b class="num">${n(all.accepted)}</b><span>annotations accepted by the checks; ${n(all.review)} more under review</span></div>
-      <div class="figure"><b class="num">${n(s.taxa.taxa)}</b><span>taxa in ${n(s.taxa.families)} families, ${n(s.taxa.with_wfo)} matched to World Flora Online</span></div>
+      <div class="figure"><b class="num">${n(s.taxa.taxa)}</b><span>taxa in ${n(s.taxa.families)} families, ${s.taxa.with_ipni !== undefined ? `${n(s.taxa.with_ipni)} standardized to IPNI (WCVP)` : `${n(s.taxa.with_wfo)} matched to World Flora Online`}</span></div>
     </div>
     <h2>By flora</h2>
     <p class="muted">Select a column to sort, and a flora to see why its remaining statements are not yet annotated. The bar shows accepted annotations <span class="key key-acc"></span> and those under review <span class="key key-rev"></span>, as a share of all statements.</p>

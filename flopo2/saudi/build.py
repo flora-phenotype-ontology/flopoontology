@@ -49,6 +49,7 @@ from flopo2.owl.assertions import (
     formal_assertion_iri,
 )
 from flopo2.saudi.taxa import resolve
+from flopo2.taxon.wcvp import load_ipni_table
 from flopo2.saudi.vocab import ORGAN_GROUPS, TRAIT_GROUPS, Vocabulary, curie, iri
 
 BASE = "http://phenomebrowser.net/flopo/"
@@ -190,6 +191,8 @@ class Builder:
         self.aliases = {n: f["proposed"] for n, f in fixes.items() if f.get("verified")}
         self.not_names = {n for n, f in fixes.items() if f.get("verdict") == "not a name"}
         self.names = resolve(sorted({*names, *self.aliases.values()}), self.out / "taxon-cache.json")
+        # IPNI/WCVP standard names (tools/match_taxa_ipni.py, tools/llm_taxon_names.py); empty if not built
+        self.ipni = load_ipni_table()
 
     def taxon(self, name: str, source: str, *, family: str = "", page: object = "") -> URIRef:
         resolved = self.names.get(self.aliases.get(name, name))
@@ -200,6 +203,31 @@ class Builder:
             self.taxa.setdefault(taxon_iri, {"label": label, "authorship": "", "family": family, "order": "",
                                              "wfo": "", "names": {}, "extra": defaultdict(set)})
         taxon_iri = resolved.taxon_iri if resolved else BASE + "taxon/name/" + quote(name.replace(" ", "_"))
+        std = self.ipni.get(name) or self.ipni.get(self.aliases.get(name, name))
+        if std and (std["accepted_ipni_id"] or std["accepted_wcvp_id"]) and not (resolved is None and name in self.not_names):
+            # the taxon is the WCVP accepted name, keyed by its IPNI ID; the WFO IRI it replaces is kept
+            former = taxon_iri if resolved and resolved.accepted_wfo_id else ""
+            taxon_iri = BASE + "taxon/" + (f"ipni-{std['accepted_ipni_id']}" if std["accepted_ipni_id"] else f"wcvp-{std['accepted_wcvp_id']}")
+            info = self.taxa.setdefault(
+                taxon_iri,
+                {
+                    "label": std["accepted_name"],
+                    "authorship": std["accepted_authors"],
+                    "family": std["family"] or (resolved.family if resolved else family),
+                    "order": resolved.order if resolved else "",
+                    "wfo": resolved.accepted_wfo_id if resolved else "",
+                    "ipni": std["accepted_ipni_id"],
+                    "replaces": set(),
+                    "names": {},
+                    "extra": defaultdict(set),
+                },
+            )
+            if former and former != taxon_iri:
+                info["replaces"].add(former)
+            if not info["wfo"] and resolved and resolved.accepted_wfo_id:
+                info["wfo"] = resolved.accepted_wfo_id
+        else:
+            std = None
         info = self.taxa.setdefault(
             taxon_iri,
             {
@@ -208,6 +236,8 @@ class Builder:
                 "family": (resolved.family if resolved and resolved.family else family),
                 "order": resolved.order if resolved else "",
                 "wfo": resolved.accepted_wfo_id if resolved else "",
+                "ipni": "",
+                "replaces": set(),
                 "names": {},
                 "extra": defaultdict(set),
             },
@@ -217,7 +247,11 @@ class Builder:
         entry = info["names"].setdefault((source, name), {"pages": set(), "status": ""})
         if str(page).strip().isdigit():
             entry["pages"].add(str(int(page)))
-        if resolved:
+        if std:
+            entry["status"] = std["status"]
+            entry["ipni_name"] = std["ipni_id"]
+            entry["standard_name"] = " ".join(x for x in (std["matched_name"], std["matched_authors"]) if x)
+        elif resolved:
             entry["status"] = resolved.status or resolved.match_type
         return URIRef(taxon_iri)
 
@@ -793,6 +827,12 @@ class Builder:
             if info["wfo"]:
                 g.add((t, FB.wfo, Literal(info["wfo"])))
                 g.add((t, SKOS.exactMatch, URIRef("https://list.worldfloraonline.org/" + info["wfo"])))
+            if info.get("ipni"):
+                g.add((t, FB.ipni, Literal(info["ipni"])))
+                g.add((t, SKOS.exactMatch, URIRef("https://www.ipni.org/n/" + info["ipni"])))
+                g.add((t, SKOS.exactMatch, URIRef("https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:" + info["ipni"])))
+            for former in sorted(info.get("replaces", ())):
+                g.add((t, DCTERMS.replaces, URIRef(former)))
             for (source, name), entry in info["names"].items():
                 node = URIRef(taxon_iri.replace("/taxon/", "/taxon-name/", 1) + "/" + source + "/" + _digest(name)[:8])
                 g.add((t, FB.printedName, node))
@@ -800,6 +840,10 @@ class Builder:
                 g.add((node, FB.source, URIRef(BASE + "saudi-flora/source/" + source)))
                 if entry["status"]:
                     g.add((node, FB.nameStatus, Literal(entry["status"])))
+                if entry.get("ipni_name"):
+                    g.add((node, FB.ipni, Literal(entry["ipni_name"])))
+                if entry.get("standard_name"):
+                    g.add((node, FB.standardName, Literal(entry["standard_name"])))
                 for page in sorted(entry["pages"], key=lambda p: int(p) if p.isdigit() else 0):
                     g.add((node, FB.page, Literal(page)))
             extra = info["extra"]
@@ -935,6 +979,7 @@ class Builder:
         self.summary["taxa"] = {
             "taxa": len(self.taxa),
             "with_wfo": sum(bool(i["wfo"]) for i in self.taxa.values()),
+            "with_ipni": sum(bool(i.get("ipni")) for i in self.taxa.values()),
             "families": len({i["family"] for i in self.taxa.values() if i["family"]}),
             "per_source": {
                 key: sum(any(s == key for s, _ in i["names"]) for i in self.taxa.values()) for key in sources
