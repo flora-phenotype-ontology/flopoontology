@@ -49,7 +49,7 @@ from flopo2.owl.assertions import (
     formal_assertion_iri,
 )
 from flopo2.saudi.taxa import resolve
-from flopo2.taxon.wcvp import load_ipni_table
+from flopo2.taxon.wcvp import TABLE_FIELDS, WCVP_NAMES, Wcvp, load_ipni_table
 from flopo2.saudi.vocab import ORGAN_GROUPS, TRAIT_GROUPS, Vocabulary, curie, iri
 
 BASE = "http://phenomebrowser.net/flopo/"
@@ -193,6 +193,14 @@ class Builder:
         self.names = resolve(sorted({*names, *self.aliases.values()}), self.out / "taxon-cache.json")
         # IPNI/WCVP standard names (tools/match_taxa_ipni.py, tools/llm_taxon_names.py); empty if not built
         self.ipni = load_ipni_table()
+        new = [n for n in self.names if n not in self.ipni]
+        if new and WCVP_NAMES.exists():  # names that arrived after the last tools/match_taxa_ipni.py run
+            wcvp = Wcvp()
+            for n in new:
+                r = self.names[n]
+                m = wcvp.match(n, verified=r.matched, family=r.family, wfo_accepted=r.accepted_name)
+                if m.how not in ("none", "ambiguous"):
+                    self.ipni[n] = {k: getattr(m, k) for k in TABLE_FIELDS}
 
     def taxon(self, name: str, source: str, *, family: str = "", page: object = "") -> URIRef:
         resolved = self.names.get(self.aliases.get(name, name))
