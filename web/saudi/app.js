@@ -55,12 +55,17 @@ async function requestJson(url, options = {}) {
   }
 }
 async function sparql(query) {
-  const body = new URLSearchParams({ query: withPrefixes(query) });
-  const json = await requestJson(ENDPOINT, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded", Accept: "application/sparql-results+json" },
-    body,
-  });
+  // GET where the URL stays short: the firewall in front of phenomebrowser.net resets POST bodies
+  // that contain GROUP_CONCAT (an SQL-injection signature), but lets the same query through as GET.
+  const accept = { Accept: "application/sparql-results+json" };
+  const url = sparqlUrl(query);
+  const json = url.length <= 6000
+    ? await requestJson(url, { headers: accept })
+    : await requestJson(ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded", ...accept },
+        body: new URLSearchParams({ query: withPrefixes(query) }),
+      });
   if (json.boolean !== undefined) return [{ result: String(json.boolean) }];
   return json.results.bindings.map((b) => Object.fromEntries(Object.entries(b).map(([k, v]) => [k, v.value])));
 }
