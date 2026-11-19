@@ -67,13 +67,20 @@ def export_graph(source: Path, graph: str, target: Path, tag: str) -> int:
 
 
 def _places(release: Path, data: Path) -> None:
-    """places.json of the Map page: taxa per country, from the place records of this release."""
+    """Generated web files: places.json (Map), taxa.json and country-taxa.json (Taxa, Map), patterns.json."""
 
     from tools.atlas_places import aggregate
+    from tools.atlas_taxa_index import write
 
+    places = aggregate(data / "rdf")
+    country_taxa = places.pop("_taxa")
     (release / "web" / "places.json").write_text(
-        json.dumps(aggregate(data / "rdf"), ensure_ascii=False, separators=(",", ":")), encoding="utf-8"
+        json.dumps(places, ensure_ascii=False, separators=(",", ":")), encoding="utf-8"
     )
+    write(data / "rdf", release / "web", country_taxa)  # taxa.json and country-taxa.json
+    from tools.atlas_patterns import build as pattern_docs
+
+    (release / "web" / "patterns.json").write_text(json.dumps(pattern_docs(), ensure_ascii=False), encoding="utf-8")
 
 
 def build(stamp: str, out: Path = RELEASES, data: Path = DATA, web: Path = WEB) -> Path:

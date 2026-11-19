@@ -140,6 +140,16 @@ const groups = () =>
     return { organs: pick("OrganGroup"), traits: pick("TraitGroup"), label: Object.fromEntries(rows.map((r) => [r.g, r.label])) };
   });
 const summary = () => cached("summary", () => requestJson(SUMMARY));
+// Site-wide counts, answered once per release by tools/atlas_precompute.py; the query is the fallback.
+const precomputed = (name) =>
+  cached("pre-" + name, async () => {
+    try {
+      return await requestJson(new URL(`precomputed/${name}.json`, document.baseURI).href);
+    } catch (e) {
+      const queries = await cached("pre-queries", () => requestJson(new URL("precomputed-queries.json", document.baseURI).href));
+      return sparql(queries[name]);
+    }
+  });
 const sources = () =>
   cached("sources", () => sparql(`SELECT ?s (SAMPLE(?l) AS ?label) (SAMPLE(?t) AS ?title) WHERE { ?s a fb:Source ; rdfs:label ?l ; <http://purl.org/dc/terms/title> ?t } GROUP BY ?s`));
 
@@ -175,10 +185,7 @@ async function overview() {
     groups(),
     summary(),
     sources(),
-    cached("atlas", () =>
-      sparql(`SELECT ?og ?tg (COUNT(DISTINCT ?t) AS ?taxa) (COUNT(?r) AS ?n) WHERE {
-        ?r a fb:TraitRecord ; fb:organGroup ?og ; fb:traitGroup ?tg ; fb:taxon ?t } GROUP BY ?og ?tg`)
-    ),
+    precomputed("atlas"),
   ]);
   const keys = Object.keys(s).filter((k) => s[k] && s[k].phenotype_rows !== undefined);
   const records = keys.reduce((a, k) => a + (s[k].assertions || 0), 0);
@@ -222,64 +229,124 @@ async function overview() {
 }
 
 /* ---------------------------------------------------------------- taxa */
+// The release ships a static index of all taxa (tools/atlas_taxa_index.py): one compressed file,
+// filtered in the browser, instead of four large queries.
 const taxonIndex = () =>
   cached("taxa", async () => {
-    const [base, counts, arabic, srcRows] = await Promise.all([
-      sparql(`SELECT ?t (SAMPLE(?l) AS ?label) (SAMPLE(?f) AS ?family) WHERE { ?t a fb:Taxon ; rdfs:label ?l . OPTIONAL { ?t fb:family ?f } } GROUP BY ?t`),
-      sparql(`SELECT ?t (COUNT(?r) AS ?n) WHERE { ?r a fb:TraitRecord ; fb:taxon ?t } GROUP BY ?t`),
-      sparql(`SELECT ?t (GROUP_CONCAT(?ar; separator=" ") AS ?arabic) WHERE { ?t fb:vernacularName ?ar } GROUP BY ?t`),
-      sparql(`SELECT ?t (GROUP_CONCAT(DISTINCT ?sl; separator="|") AS ?srcs) WHERE { ?t fb:printedName/fb:source/rdfs:label ?sl } GROUP BY ?t`),
-    ]);
-    const count = Object.fromEntries(counts.map((r) => [r.t, r.n]));
-    const ar = Object.fromEntries(arabic.map((r) => [r.t, r.arabic]));
-    const srcs = Object.fromEntries(srcRows.map((r) => [r.t, (r.srcs || "").split("|").filter(Boolean)]));
-    return base.map((r) => ({ ...r, n: count[r.t] || 0, arabic: ar[r.t] || "", sources: srcs[r.t] || [] }));
+    const data = await requestJson(new URL("taxa.json", document.baseURI).href);
+    const rows = data.taxa.map(([key, label, auth, fam, n, srcs, vern]) => ({
+      t: TAXON + key, key, label, auth, family: data.families[fam] || "", n, src: srcs, vern,
+      find: (label + " " + (data.families[fam] || "") + " " + vern).toLowerCase(),
+    }));
+    return { rows, sourceKeys: data.sources };
   });
 
-function taxonList(rows, filter, current, sourceFilter = "") {
-  const f = filter.trim().toLowerCase();
-  const shown = rows.filter((r) => (!sourceFilter || (r.sources && r.sources.includes(sourceFilter))) && (!f || r.label.toLowerCase().includes(f) || (r.family || "").toLowerCase().includes(f) || (r.arabic || "").includes(filter.trim())));
-  const byFamily = new Map();
-  for (const r of shown.sort((a, b) => (a.family || "~").localeCompare(b.family || "~") || a.label.localeCompare(b.label))) {
-    const fam = r.family || "Family not resolved";
-    if (!byFamily.has(fam)) byFamily.set(fam, []);
-    byFamily.get(fam).push(r);
-  }
-  return [...byFamily]
-    .map(([fam, list]) => `<h4>${esc(fam)}</h4>` + list.map((r) => `<a href="${taxonHref(r.t)}" class="${r.t === current ? "current" : ""}"><span class="sci">${esc(r.label)}</span><small class="num">${r.n}</small></a>`).join(""))
-    .join("") || `<p class="muted">No taxon matches “${esc(filter)}”.</p>`;
+const LIST_LIMIT = 200;
+function taxonMatches(index, filter, source) {
+  const words = filter.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  const s = source === "" ? -1 : index.sourceKeys.indexOf(source);
+  return index.rows.filter((r) => (s < 0 || r.src.includes(s)) && words.every((w) => r.find.includes(w)));
+}
+function taxonList(shown, filter, current, limit) {
+  if (!shown.length) return `<p class="muted">No taxon matches “${esc(filter)}”.</p>`;
+  const items = shown.slice(0, limit).map((r) => `<a href="${taxonHref(r.t)}" class="${r.t === current ? "current" : ""}"><span class="sci">${esc(r.label)}</span>${r.family ? ` <span class="muted fam">${esc(r.family)}</span>` : ""}<small class="num" title="trait records">${r.n}</small></a>`).join("");
+  const more = shown.length > limit ? `<button type="button" class="ghost" id="tmore">Show ${n(Math.min(LIST_LIMIT, shown.length - limit))} more of ${n(shown.length - limit)}</button>` : "";
+  return items + more;
 }
 
 async function taxa(key) {
   const current = key ? TAXON + decodeURIComponent(key) : "";
-  if (!cache.has("taxa")) setView(`<p class="loading">Loading the taxon list…</p>`);
-  const [rows, srcList] = await Promise.all([taxonIndex(), sources()]);
-  const filterValue = sessionStorage.getItem("taxonFilter") || "";
-  const sourceValue = sessionStorage.getItem("taxonSourceFilter") || "";
+  // Moving from one taxon to another keeps the list, its filter and its scroll position.
+  if (document.getElementById("tlist") && document.getElementById("tpane")) {
+    document.querySelectorAll("#tlist a.current").forEach((a) => a.classList.remove("current"));
+    document.querySelectorAll(`#tlist a[href="${CSS.escape(taxonHref(current))}"]`).forEach((a) => a.classList.add("current"));
+    if (current) {
+      document.getElementById("tpane").innerHTML = `<p class="loading">Loading…</p>`;
+      await taxonPage(current);
+    }
+    return;
+  }
+  let filterValue = "", sourceValue = "";
+  try {
+    filterValue = sessionStorage.getItem("taxonFilter") || "";
+    sourceValue = sessionStorage.getItem("taxonSourceFilter") || "";
+  } catch (e) { /* storage unavailable */ }
   setView(html`<div class="split">
       <aside class="listpane">
-        <label for="sfilter" class="col-title">Filter by flora source</label>
-        <select id="sfilter" style="width:100%;margin-bottom:.5rem"><option value="">All floras (${n(rows.length)} taxa)</option>${srcList.map((s) => `<option value="${esc(s.label)}" ${s.label === sourceValue ? "selected" : ""}>${esc(s.label)}</option>`).join("")}</select>
-        <label for="tfilter" class="col-title">Find a taxon by scientific name, common name or family</label>
-        <input id="tfilter" type="search" value="${esc(filterValue)}" placeholder="e.g. Abies grandis, Lamiaceae">
-        <div class="taxonlist" id="tlist">${taxonList(rows, filterValue, current, sourceValue)}</div>
+        <label for="tfilter" class="col-title">Find a taxon by scientific name, family or common name</label>
+        <input id="tfilter" type="search" value="${esc(filterValue)}" placeholder="e.g. Abies grandis, Lamiaceae" autocomplete="off">
+        <label for="sfilter" class="col-title">Flora</label>
+        <select id="sfilter" style="width:100%;margin-bottom:.5rem"><option value="">All floras</option></select>
+        <p class="muted" id="tcount" aria-live="polite">Loading the taxon list…</p>
+        <div class="taxonlist" id="tlist"></div>
       </aside>
-      <section id="tpane">${current ? `<p class="loading">Loading…</p>` : `<h1>${n(rows.length)} taxa</h1><p class="muted">Choose a taxon to see its traits, sources and where it grows. The number after each name counts its trait annotations.</p>`}</section>
+      <section id="tpane">${current ? `<p class="loading">Loading…</p>` : ""}</section>
     </div>`);
+  const pagePromise = current ? taxonPage(current) : null; // the taxon does not wait for the list
+  const [index, srcList] = await Promise.all([taxonIndex(), sources()]);
+  const sourceLabel = (k) => (srcList.find((x) => x.s.endsWith("/" + k)) || {}).label || k;
   const input = document.getElementById("tfilter");
   const sselect = document.getElementById("sfilter");
-  const updateList = () => {
+  const list = document.getElementById("tlist");
+  if (!input || !list) return;
+  sselect.innerHTML = `<option value="">All floras (${n(index.rows.length)} taxa)</option>` +
+    index.sourceKeys.map((k) => [k, sourceLabel(k)]).sort((a, b) => a[1].localeCompare(b[1]))
+      .map(([k, l]) => `<option value="${esc(k)}" ${k === sourceValue ? "selected" : ""}>${esc(l)}</option>`).join("");
+  if (!current) {
+    document.getElementById("tpane").innerHTML = `<h1>${n(index.rows.length)} taxa</h1><p class="muted">Type part of a name to find a taxon; several words narrow the list (“Acacia Fabaceae”). The number after each name counts its trait records.</p>`;
+  }
+  let shown = [], limit = LIST_LIMIT, timer = 0;
+  const draw = () => {
+    list.innerHTML = taxonList(shown, input.value, current, limit);
+    document.getElementById("tcount").textContent = shown.length === index.rows.length ? `${n(shown.length)} taxa, alphabetical` : `${n(shown.length)} of ${n(index.rows.length)} taxa match`;
+    const more = document.getElementById("tmore");
+    if (more) more.addEventListener("click", () => { limit += LIST_LIMIT; draw(); });
+  };
+  const update = () => {
     try {
       sessionStorage.setItem("taxonFilter", input.value);
       sessionStorage.setItem("taxonSourceFilter", sselect.value);
     } catch (e) { /* storage unavailable */ }
-    document.getElementById("tlist").innerHTML = taxonList(rows, input.value, current, sselect.value);
+    shown = taxonMatches(index, input.value, sselect.value);
+    limit = LIST_LIMIT;
+    draw();
   };
-  input.addEventListener("input", updateList);
-  sselect.addEventListener("change", updateList);
-  const active = document.querySelector(".taxonlist a.current");
+  input.addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(update, 120); });
+  sselect.addEventListener("change", update);
+  update();
+  const active = list.querySelector("a.current");
   if (active) active.scrollIntoView({ block: "center" });
-  if (current) await taxonPage(current);
+  if (pagePromise) await pagePromise;
+}
+
+// A taxon's trait records, as three small queries joined here. One grouped query with all the
+// optional fields took up to 17 s for taxa with hundreds of records; these take under a second.
+async function taxonRecords(T) {
+  const [core, extra, labels] = await Promise.all([
+    sparql(`SELECT ?r ?label ?organ ?trait ?source ?status ?text ?quality ?bearer ?negated WHERE {
+      ?r fb:taxon ${T} . ?r a fb:TraitRecord ; rdfs:label ?label ; fb:organGroup ?organ ; fb:traitGroup ?trait ;
+         fb:source ?s ; fb:status ?status ; fb:text ?text ; fb:quality ?quality ; fb:bearer ?bearer ; fb:negated ?negated . ?s rdfs:label ?source }`),
+    sparql(`SELECT ?r ?context ?qualifier ?attribute ?fac ?fclass ?unit ?relation ?from ?to ?fromText ?toText WHERE {
+      ?r a fb:TraitRecord ; fb:taxon ${T} . OPTIONAL { ?r fb:context ?context } OPTIONAL { ?r fb:qualifier ?qualifier }
+      OPTIONAL { ?r fb:attribute ?attribute } OPTIONAL { ?r fb:phenotypeClass ?fac } OPTIONAL { ?r fb:flopoClass ?fclass }
+      OPTIONAL { ?r fb:unit ?unit } OPTIONAL { ?r fb:relation ?relation ; fb:fromValue ?from ; fb:toValue ?to .
+        OPTIONAL { ?r fb:fromText ?fromText } OPTIONAL { ?r fb:toText ?toText } } }`),
+    sparql(`SELECT DISTINCT ?x ?l WHERE { ?r a fb:TraitRecord ; fb:taxon ${T} .
+      { ?r fb:quality ?x } UNION { ?r fb:bearer ?x } UNION { ?r fb:fromValue ?x } UNION { ?r fb:toValue ?x }
+      UNION { ?r fb:unit ?x } UNION { ?r fb:flopoClass ?x } ?x rdfs:label ?l }`),
+  ]);
+  const label = new Map(labels.map((x) => [x.x, x.l]));
+  const byR = new Map();
+  for (const row of core) if (!byR.has(row.r)) byR.set(row.r, { ...row });
+  for (const row of extra) {
+    const rec = byR.get(row.r);
+    if (!rec) continue;
+    for (const [k, v] of Object.entries(row)) if (v !== undefined && rec[k] === undefined) rec[k] = v;
+  }
+  return [...byR.values()].map((r) => ({
+    ...r, qlabel: label.get(r.quality), blabel: label.get(r.bearer), fromLabel: r.from && label.get(r.from),
+    toLabel: r.to && label.get(r.to), unitLabel: r.unit && label.get(r.unit), flabel: r.fclass && label.get(r.fclass),
+  }));
 }
 
 async function taxonPage(t) {
@@ -302,19 +369,7 @@ async function taxonPage(t) {
     sparql(`SELECT ?name ?src (GROUP_CONCAT(DISTINCT ?page; separator=", ") AS ?pages) (SAMPLE(?st) AS ?status) (SAMPLE(?sn) AS ?standard) (SAMPLE(?ni) AS ?ipni) WHERE {
       ${T} fb:printedName ?pn . ?pn fb:name ?name ; fb:source/rdfs:label ?src .
       OPTIONAL { ?pn fb:page ?page } OPTIONAL { ?pn fb:nameStatus ?st } OPTIONAL { ?pn fb:standardName ?sn } OPTIONAL { ?pn fb:ipni ?ni } } GROUP BY ?name ?src`),
-    sparql(`SELECT ?r (SAMPLE(?lab) AS ?label) (SAMPLE(?og) AS ?organ) (SAMPLE(?tg) AS ?trait) (SAMPLE(?src) AS ?source)
-      (SAMPLE(?st) AS ?status) (SAMPLE(?tx) AS ?text) (SAMPLE(?cx) AS ?context) (SAMPLE(?fc) AS ?fclass) (SAMPLE(?fcl) AS ?flabel)
-      (SAMPLE(?q) AS ?quality) (SAMPLE(?ql) AS ?qlabel) (SAMPLE(?b) AS ?bearer) (SAMPLE(?bl) AS ?blabel) (SAMPLE(?qual) AS ?qualifier)
-      (SAMPLE(?at) AS ?attribute) (SAMPLE(?rel) AS ?relation) (SAMPLE(?fv) AS ?from) (SAMPLE(?fvl) AS ?fromLabel)
-      (SAMPLE(?tv) AS ?to) (SAMPLE(?tvl) AS ?toLabel) (SAMPLE(?ftx) AS ?fromText) (SAMPLE(?ttx) AS ?toText) (SAMPLE(?u) AS ?unit) (SAMPLE(?ul) AS ?unitLabel) (SAMPLE(?pc) AS ?fac) (SAMPLE(?neg) AS ?negated) WHERE {
-      ?r a fb:TraitRecord ; fb:taxon ${T} ; rdfs:label ?lab ; fb:organGroup ?og ; fb:traitGroup ?tg ;
-         fb:source/rdfs:label ?src ; fb:status ?st ; fb:text ?tx ; fb:quality ?q ; fb:bearer ?b ; fb:negated ?neg .
-      OPTIONAL { ?q rdfs:label ?ql } OPTIONAL { ?b rdfs:label ?bl }
-      OPTIONAL { ?r fb:context ?cx } OPTIONAL { ?r fb:qualifier ?qual } OPTIONAL { ?r fb:attribute ?at }
-      OPTIONAL { ?r fb:relation ?rel ; fb:fromValue ?fv ; fb:toValue ?tv . OPTIONAL { ?fv rdfs:label ?fvl } OPTIONAL { ?tv rdfs:label ?tvl }
-                 OPTIONAL { ?r fb:fromText ?ftx } OPTIONAL { ?r fb:toText ?ttx } }
-      OPTIONAL { ?r fb:unit ?u . OPTIONAL { ?u rdfs:label ?ul } } OPTIONAL { ?r fb:phenotypeClass ?pc }
-      OPTIONAL { ?r fb:flopoClass ?fc . OPTIONAL { ?fc rdfs:label ?fcl } } } GROUP BY ?r`),
+    taxonRecords(T),
     sparql(`SELECT ?m (SAMPLE(?l) AS ?label) (SAMPLE(?b) AS ?bearer) (SAMPLE(?a) AS ?attribute) (SAMPLE(?pc) AS ?fac)
       (SAMPLE(?u) AS ?unit) (SAMPLE(?n) AS ?sources) (GROUP_CONCAT(STR(?mem); separator=" ") AS ?members) WHERE {
       ?m a fb:MergedTrait ; fb:taxon ${T} ; rdfs:label ?l ; fb:bearer ?b ; fb:attribute ?a ; fb:phenotypeClass ?pc ;
@@ -486,7 +541,7 @@ async function traits(organKey, traitKey, valueKey) {
   const og = organKey ? FB + organKey : "";
   const tg = traitKey ? FB + traitKey : "";
   setView(`<h1>Browse traits</h1><p class="muted">Choose a plant part, then a kind of trait, then a value to list the taxa that have it.</p><div class="cols"><div id="c1"></div><div id="c2"></div><div id="c3"></div></div>`);
-  const organCounts = await cached("organCounts", () => sparql(`SELECT ?og (COUNT(DISTINCT ?t) AS ?n) WHERE { ?r a fb:TraitRecord ; fb:organGroup ?og ; fb:taxon ?t } GROUP BY ?og`));
+  const organCounts = await precomputed("organCounts");
   const oc = Object.fromEntries(organCounts.map((r) => [r.og, r.n]));
   document.getElementById("c1").innerHTML = `<p class="col-title">Plant part</p><ul class="pick">${g.organs
     .filter((o) => oc[o.g])
@@ -528,12 +583,7 @@ async function traits(organKey, traitKey, valueKey) {
 }
 
 /* ---------------------------------------------------------------- identify */
-const valueChoices = () =>
-  cached("valueChoices", () =>
-    sparql(`SELECT ?og ?q (SAMPLE(?ql) AS ?label) (COUNT(DISTINCT ?t) AS ?n) WHERE {
-      ?r a fb:TraitRecord ; fb:organGroup ?og ; fb:quality ?q ; fb:taxon ?t ; fb:negated false . ?q rdfs:label ?ql
-      FILTER NOT EXISTS { ?r fb:low ?x } } GROUP BY ?og ?q HAVING (COUNT(DISTINCT ?t) > 1) ORDER BY ?label`)
-  );
+const valueChoices = () => precomputed("valueChoices");
 
 async function identify() {
   const [g, choices] = await Promise.all([groups(), valueChoices()]);
@@ -647,6 +697,7 @@ async function query(params) {
   const first = Object.keys(EXAMPLES)[0];
   let text = EXAMPLES[first];
   if (params.get("describe")) text = `DESCRIBE <${params.get("describe")}>`;
+  if (params.get("q")) text = params.get("q");
   if (params.get("taxon")) text = `PREFIX fb: <${FB}>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT ?annotation ?bearer ?quality ?flopoClass ?source WHERE {\n  ?r fb:taxon <${params.get("taxon")}> ; rdfs:label ?annotation ;\n     fb:bearer ?bearer ; fb:quality ?quality ; fb:source/rdfs:label ?source .\n  OPTIONAL { ?r fb:flopoClass ?flopoClass }\n} ORDER BY ?annotation`;
   setView(`<h1>Query</h1><p class="muted">All annotations are RDF. Write SPARQL 1.1 against the endpoint at <code>${esc(ENDPOINT)}</code> (all graphs are queried together; the FLOPO class hierarchy is loaded too). Common prefixes such as <code>fb:</code>, <code>obo:</code> and <code>rdfs:</code> are predefined.</p>
     <div class="toolbar"><label for="ex" class="muted">Examples</label><select id="ex">${Object.keys(EXAMPLES).map((k) => `<option>${esc(k)}</option>`).join("")}</select></div>
@@ -692,7 +743,7 @@ async function query(params) {
     e.preventDefault();
     window.open(sparqlUrl(area.value, { format: "csv" }));
   });
-  if (params.get("describe") || params.get("taxon")) run();
+  if (params.get("describe") || params.get("taxon") || params.get("q")) run();
 }
 
 /* ---------------------------------------------------------------- coverage */
@@ -809,7 +860,7 @@ async function placesMap() {
   const shade = (taxa) => (taxa ? shades[Math.min(shades.length - 1, 1 + Math.floor(Math.log10(taxa)))] : "transparent");
   const total = Object.keys(countries).length;
   setView(html`<h1>Map</h1>
-    <p class="lede">Where the taxa of the atlas are recorded. The floras name countries, states and provinces in words; ${n(places.matched)} of ${n(places.records)} place records could be assigned to one of ${n(total)} countries. Select a country for its floras and taxa.</p>
+    <p class="lede">Where the taxa of the atlas grow. A taxon counts for a country when a regional flora of that country describes it (every taxon of the Flora of China, of NCVC and Collenette for Saudi Arabia), or when a place record names the country, one of its provinces or a coded region; ${n(places.matched)} of ${n(places.records)} place records could be assigned to one of ${n(total)} countries. Worldwide sources (World Flora Online, Plazi, GrassBase…) count only through their place records. Select a country for its floras and taxa.</p>
     <div class="map-layout">
       <div>
         <div id="world" class="worldmap" role="img" aria-label="World map of taxa recorded per country"></div>
@@ -831,16 +882,31 @@ async function placesMap() {
   const show = async (a3, name) => {
     const c = countries[a3];
     if (!c) { panel.innerHTML = `<h2>${esc(name)}</h2><p class="muted">No taxa recorded for this country in the floras of the atlas.</p>`; return; }
+    const floras = Object.entries(c.floras || {});
     panel.innerHTML = `<h2>${esc(name)}</h2>
-      <dl class="kv"><dt>Taxa recorded</dt><dd class="num">${n(c.taxa)}</dd><dt>Place records</dt><dd class="num">${n(c.records)}</dd></dl>
-      <h3>Floras</h3><ul class="plain">${Object.entries(c.sources).map(([k, v]) => `<li>${esc(label(k))} <span class="num muted">${n(v)}</span></li>`).join("")}</ul>
-      <h3>Named as</h3><p class="muted">${c.localities.slice(0, 24).map(esc).join(", ")}${c.localities.length > 24 ? ", …" : ""}</p>
-      <h3>Taxa</h3><div id="country-taxa"><p class="muted">Loading…</p></div>`;
+      <dl class="kv"><dt>Taxa</dt><dd class="num">${n(c.taxa)}</dd>
+        ${c.taxa_flora !== undefined ? `<dt>in a flora of the country</dt><dd class="num">${n(c.taxa_flora)}</dd><dt>with a place record</dt><dd class="num">${n(c.taxa_places)}</dd>` : ""}
+        <dt>Place records</dt><dd class="num">${n(c.records)}</dd></dl>
+      ${floras.length ? `<h3>Floras of the country</h3><ul class="plain">${floras.map(([k, v]) => `<li>${esc(label(k))} <span class="num muted">${n(v)} taxa</span></li>`).join("")}</ul>` : ""}
+      ${Object.keys(c.sources).length ? `<h3>Place records from</h3><ul class="plain">${Object.entries(c.sources).map(([k, v]) => `<li>${esc(label(k))} <span class="num muted">${n(v)}</span></li>`).join("")}</ul>` : ""}
+      ${c.localities.length ? `<h3>Named as</h3><p class="muted">${c.localities.slice(0, 24).map(esc).join(", ")}${c.localities.length > 24 ? ", …" : ""}</p>` : ""}
+      <h3>Taxa</h3><input id="ctfilter" type="search" placeholder="Filter these taxa" autocomplete="off"><div id="country-taxa"><p class="muted">Loading…</p></div>`;
     try {
-      const values = c.localities.map((l) => JSON.stringify(l)).join(" ");
-      const rows = await sparql(`SELECT ?t ?name (COUNT(?o) AS ?n) WHERE { VALUES ?l { ${values} } ?o a fb:Occurrence ; fb:locality ?l ; fb:taxon ?t . ?t rdfs:label ?name } GROUP BY ?t ?name ORDER BY ?name LIMIT 400`);
+      const [byCountry, index] = await Promise.all([
+        cached("country-taxa", () => requestJson(new URL("country-taxa.json", document.baseURI).href)),
+        taxonIndex(),
+      ]);
+      const rows = (byCountry[a3] || []).map((i) => index.rows[i]).filter(Boolean);
       const box = document.getElementById("country-taxa");
-      if (box) box.innerHTML = `<ul class="plain taxa-list">${rows.map((r) => `<li><a href="${taxonHref(r.t)}"><i>${esc(r.name)}</i></a></li>`).join("")}</ul>${rows.length >= 400 ? `<p class="muted">The first 400 of ${n(c.taxa)}, in alphabetical order.</p>` : ""}`;
+      const filter = document.getElementById("ctfilter");
+      if (!box || !filter) return;
+      const draw = () => {
+        const words = filter.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+        const shown = rows.filter((r) => words.every((w) => r.find.includes(w)));
+        box.innerHTML = `<ul class="plain taxa-list">${shown.slice(0, 400).map((r) => `<li><a href="${taxonHref(r.t)}"><i>${esc(r.label)}</i></a> <span class="muted">${esc(r.family)}</span></li>`).join("")}</ul>${shown.length > 400 ? `<p class="muted">The first 400 of ${n(shown.length)}, in alphabetical order; type to narrow the list.</p>` : ""}`;
+      };
+      filter.addEventListener("input", draw);
+      draw();
     } catch (err) {
       const box = document.getElementById("country-taxa");
       if (box) box.innerHTML = `<p class="error">${esc(err.message)}</p>`;
@@ -921,6 +987,67 @@ async function pendingPhrases(d) {
   }
 }
 
+/* ---------------------------------------------------------------- patterns */
+// The annotation design patterns (docs/odp, as patterns.json from tools/atlas_patterns.py), each
+// with records of the atlas that follow it, found by the property only such records have.
+const patternDocs = () => cached("patterns", () => requestJson(new URL("patterns.json", document.baseURI).href));
+const patternQuery = (p, limit = 50) => `PREFIX fb: <${FB}>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+# Records of pattern ${p.id}, ${p.title}
+SELECT ?record ?annotation ?text ?taxon ?taxonIri ?source ?owlClass WHERE {
+  ?r a fb:TraitRecord .
+  ${p.selector}
+  ?r rdfs:label ?annotation ; fb:text ?text ; fb:taxon ?t ; fb:source/rdfs:label ?source .
+  ?t rdfs:label ?taxon .
+  OPTIONAL { ?r fb:phenotypeClass ?owlClass }
+  BIND(?r AS ?record) BIND(?t AS ?taxonIri)
+} LIMIT ${limit}`;
+
+async function patterns(id) {
+  setView(`<p class="loading">Loading the patterns…</p>`);
+  const docs = await patternDocs();
+  const list = docs.patterns;
+  if (!id) {
+    setView(`<h1>Annotation patterns</h1>
+      <p class="lede">The atlas does not store traits as text or as a table of characters. Every statement of a flora becomes a record that names a plant part from the Plant Ontology and a quality from PATO or FLOPO, and the firm content of each record is also an OWL class, so a reasoner can place the taxon under FLOPO's phenotype classes. Because every flora is annotated with the same patterns, “leaves glabrous” in the Flora of China and “feuilles glabres” in the Flore du Gabon become the same class, and a query for glabrous leaves finds both.</p>
+      <p>Each pattern below covers one way floras phrase a trait: what the source says, the record the annotator writes, its OWL class expression, its RDF in this atlas, and the rules that check it. Each page shows records of the atlas that follow the pattern.</p>
+      <ol class="patternlist">${list.map((p) => `<li><a href="#/patterns/${p.id}"><b>${esc(p.id)}. ${esc(p.title)}</b></a><span class="muted">${p.intent}</span><span class="wording">${p.wording}</span></li>`).join("")}</ol>
+      <div class="doc">${docs.intro}</div>`);
+    return;
+  }
+  const p = list.find((x) => x.id === id);
+  if (!p) { setView(`<h1>Pattern not found</h1><p><a href="#/patterns">All patterns</a></p>`); return; }
+  const i = list.indexOf(p);
+  const nav = `<nav class="pager">${i > 0 ? `<a href="#/patterns/${list[i - 1].id}">← ${esc(list[i - 1].title)}</a>` : "<span></span>"}<a href="#/patterns">All patterns</a>${i < list.length - 1 ? `<a href="#/patterns/${list[i + 1].id}">${esc(list[i + 1].title)} →</a>` : "<span></span>"}</nav>`;
+  setView(`${nav}<h1>${esc(p.id)}. ${esc(p.title)}</h1>
+    <p class="lede">${p.intent}</p>
+    ${p.wording ? `<p><span class="col-title">Source wording</span><br>${p.wording}</p>` : ""}
+    ${p.selector ? `<section class="examples"><h2>In the atlas</h2><div id="pexamples"><p class="loading">Finding records…</p></div></section>` : ""}
+    <div class="doc">${p.html}</div>
+    <p class="muted"><a href="${esc(p.source)}" target="_blank" rel="noopener">This pattern in the FLOPO repository</a></p>${nav}`);
+  if (!p.selector) return;
+  try {
+    const [count, rows] = await Promise.all([
+      sparql(`PREFIX fb: <${FB}>\nSELECT (COUNT(?r) AS ?n) WHERE { ?r a fb:TraitRecord . ${p.selector} }`),
+      sparql(patternQuery(p, 40)),
+    ]);
+    // a spread of sources, then the shortest source texts, which show the pattern most plainly
+    const bySource = new Map();
+    for (const r of rows.sort((a, b) => a.text.length - b.text.length)) if (!bySource.has(r.source)) bySource.set(r.source, r);
+    const shown = [...bySource.values(), ...rows.filter((r) => ![...bySource.values()].includes(r))].slice(0, 6);
+    const box = document.getElementById("pexamples");
+    if (!box) return;
+    box.innerHTML = `<p>${n(count[0]?.n || 0)} records of the atlas follow this pattern. Some of them, taken as the endpoint returns them (not chosen as good examples; they show the pattern as applied, including its errors):</p>
+      <div class="tablewrap"><table class="results"><thead><tr><th>Source text</th><th>Annotation</th><th>Taxon</th><th>Source</th></tr></thead><tbody>${shown
+        .map((r) => `<tr><td>“${esc(r.text)}”</td><td>${esc(r.annotation)}${r.owlClass ? ` <a href="#/query?describe=${encodeURIComponent(r.owlClass)}" title="OWL definition of the annotation class">OWL class</a>` : ""} <a href="#/query?describe=${encodeURIComponent(r.record)}" title="The RDF record">record</a></td><td><a class="sci" href="${taxonHref(r.taxonIri)}">${esc(r.taxon)}</a></td><td><span class="chip ${sourceClass(r.source)}">${esc(r.source)}</span></td></tr>`)
+        .join("")}</tbody></table></div>
+      <p><a href="#/query?q=${encodeURIComponent(patternQuery(p, 500))}">Open this query</a> to list more records of the pattern, or change it.</p>`;
+  } catch (err) {
+    const box = document.getElementById("pexamples");
+    if (box) box.innerHTML = `<p class="error">${esc(err.message)}</p>`;
+  }
+}
+
 /* ---------------------------------------------------------------- router */
 // Pages render one at a time, in order: a slow page that finishes after the reader has moved on
 // would otherwise overwrite the newer page (or fail on its vanished elements and show an error).
@@ -950,6 +1077,7 @@ async function renderRoute() {
     else if (section === "query") await query(new URLSearchParams(qs || ""));
     else if (section === "coverage") await coverage();
     else if (section === "map") await placesMap();
+    else if (section === "patterns") await patterns(parts[1]);
     else setView(`<h1>Page not found</h1><p><a href="#/">Go to the overview</a>.</p>`);
   } catch (err) {
     setView(`<h1>Could not load the atlas</h1><p class="error">${esc(err.message)}</p>

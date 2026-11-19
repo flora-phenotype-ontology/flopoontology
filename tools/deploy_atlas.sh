@@ -135,7 +135,7 @@ else
 if [[ $SKIP_TESTS == 0 ]]; then
   log "C1 tests"
   "$PY" -m pytest -q tests/test_atlas_patterns.py tests/test_saudi_flora.py tests/test_ncvc_annotate.py \
-    tests/test_inaturalist.py tests/test_atlas_deploy.py tests/test_atlas_network.py \
+    tests/test_inaturalist.py tests/test_atlas_deploy.py tests/test_atlas_network.py tests/test_atlas_site_data.py \
     || die "C1 tests failed"
 fi
 log "release $STAMP"
@@ -167,6 +167,10 @@ log "QLever $COLOUR on port ${PORT[$COLOUR]}"
 start_qlever "$COLOUR" "$STAMP"
 fi
 fi  # not --resume
+if [[ ! -d $REL/web/precomputed ]]; then  # site-wide counts of the overview, Traits and Identify pages
+  log "precomputed summary queries"
+  "$PY" -m tools.atlas_precompute "http://127.0.0.1:${PORT[$COLOUR]}/" "$REL/web" || die "precomputed queries failed"
+fi
 write_conf staging "$STAMP" "$COLOUR"
 [[ -f $STATE/live.conf ]] || write_conf live "$STAMP" "$COLOUR"   # first deployment: nothing live yet
 reload_nginx

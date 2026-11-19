@@ -10,6 +10,14 @@ single localities as text. A locality is counted for a country when it is
   with a compass word ("Northwest Yunnan") or as the first part of "Yunnan, China";
 - a list of such names ("California, Oregon").
 
+A place record with a coded region (``fb:region`` .../geo/region/SA-02, ISO 3166-2) counts for
+that region's country, whatever its locality text ("Taif").
+
+A taxon is also counted for the countries a regional flora covers (``FLORA_AREAS``): every taxon
+that NCVC or Collenette describe is part of the flora of Saudi Arabia, every taxon of the Flora of
+China grows in China. Worldwide and continental sources (WFO, Plazi, GrassBase, North American
+Flora...) have no area. ``taxa`` is the union; ``taxa_flora`` and ``taxa_places`` give the parts.
+
 Continents, mountain ranges, islands shared by countries and single localities without a
 country stay uncounted and are listed under ``unmatched``.
 
@@ -25,6 +33,21 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 NAMES = Path("config/atlas_country_names.json")
+# The countries each regional flora covers (ISO 3166-1 alpha-3, as in the map's country outlines).
+FLORA_AREAS = {
+    "ncvc": ["SAU"], "collenette": ["SAU"],
+    "eflora-fna": ["USA", "CAN"], "eflora-foc": ["CHN"], "eflora-fop": ["PAK"], "eflora-fom": ["USA"],
+    "eflora-mfoc": ["CHN"], "eflora-andes": ["ECU", "CHL"],
+    "powo-fz": ["ZMB", "ZWE", "MWI", "MOZ", "BWA"], "powo-ftea": ["KEN", "TZA", "UGA"], "powo-fsom": ["SOM"],
+    "powo-fwta": ["SEN", "GMB", "GNB", "GIN", "SLE", "LBR", "CIV", "MLI", "BFA", "GHA", "TGO", "BEN", "NER",
+                  "NGA", "CMR", "TCD"],
+    "powo-fiq": ["IRQ"], "powo-cayman": ["CYM"], "powo-tong": ["PNG", "IDN"],
+    "flora-guianas": ["GUY", "SUR", "GUF"], "flora-malesiana": ["IDN", "MYS", "PHL", "PNG", "BRN", "TLS", "SGP"],
+    "flora-gabon": ["GAB"], "fdac": ["COD", "RWA", "BDI"], "fdac-genera": ["COD", "RWA", "BDI"],
+    "flora-zimbabwe": ["ZWE"], "illinois-wildflowers": ["USA"], "usda-plants": ["USA"], "feis-plants": ["USA"],
+    "silvics-na": ["USA", "CAN"], "plants-tibet": ["CHN"], "korup-flora": ["CMR"],
+}
+REGION_COUNTRY = {"SA": "SAU"}  # ISO 3166-2 prefixes of the coded regions in the place records
 RDF = Path("local-corpora/saudi-flora/rdf")
 ALIASES = {
     "usa": "USA", "u.s.a.": "USA", "united states": "USA", "u.s.": "USA", "us": "USA", "korea": "KOR",
@@ -111,47 +134,62 @@ def aggregate(rdf: Path = RDF) -> dict:
     localities: dict[str, Counter] = defaultdict(Counter)
     unmatched: Counter = Counter()
     total = matched = 0
-    line_re = re.compile(r'^<([^>]+)> <[^>]*browse#(taxon|locality|source)> (?:<([^>]+)>|"((?:[^"\\]|\\.)*)")')
+    line_re = re.compile(r'^<([^>]+)> <[^>]*browse#(taxon|locality|source|region)> (?:<([^>]+)>|"((?:[^"\\]|\\.)*)")')
     for path in sorted(rdf.glob("*-places.n[tq]")):
-        current, taxon, source, locality = "", "", "", ""
-
-        def flush() -> None:
-            nonlocal total, matched
-            if not locality:
-                return
-            total += 1
-            hits = countries_of(locality, names)
-            if not hits:
-                unmatched[locality] += 1
-                return
-            matched += 1
-            for a3 in hits:
-                taxa[a3].add(taxon)
-                records[a3] += 1
-                by_source[a3][source.rsplit("/", 1)[-1]] += 1
-                localities[a3][locality] += 1
-
+        # the lines of one record need not be adjacent, so collect each record's fields first
+        fields: dict[str, dict[str, str]] = defaultdict(dict)
         with path.open(encoding="utf-8") as handle:
             for line in handle:
                 m = line_re.match(line)
                 if not m:
                     continue
-                if m.group(1) != current:
-                    flush()
-                    current, taxon, source, locality = m.group(1), "", "", ""
-                if m.group(2) == "taxon":
-                    taxon = m.group(3) or ""
-                elif m.group(2) == "source":
-                    source = m.group(3) or ""
-                else:
-                    locality = (m.group(4) or "").encode().decode("unicode_escape", "ignore") if "\\u" in (m.group(4) or "") else (m.group(4) or "")
-            flush()
+                value = m.group(3) if m.group(3) is not None else (m.group(4) or "")
+                if m.group(2) == "locality" and "\\u" in value:
+                    value = value.encode().decode("unicode_escape", "ignore")
+                fields[m.group(1)][m.group(2)] = value
+        for record in fields.values():
+            locality, region = record.get("locality", ""), record.get("region", "")
+            taxon, source = record.get("taxon", ""), record.get("source", "")
+            if not locality and not region:
+                continue
+            total += 1
+            hits = countries_of(locality, names) if locality else set()
+            code = region.rsplit("/", 1)[-1].split("-")[0]
+            if code in REGION_COUNTRY:
+                hits.add(REGION_COUNTRY[code])
+            if not hits:
+                unmatched[locality] += 1
+                continue
+            matched += 1
+            for a3 in hits:
+                if taxon:
+                    taxa[a3].add(taxon)
+                records[a3] += 1
+                by_source[a3][source.rsplit("/", 1)[-1]] += 1
+                localities[a3][locality or region.rsplit("/", 1)[-1]] += 1
+    flora_taxa: dict[str, set] = defaultdict(set)
+    flora_sources: dict[str, Counter] = defaultdict(Counter)
+    name_re = re.compile(r"^<[^>]*/taxon-name/(.+)/([^/]+)/[0-9a-f]+> <[^>]*browse#source> ")
+    base = "http://phenomebrowser.net/flopo/taxon/"
+    # printed names, taxon-name/<taxon key>/<source>/<digest> fb:source <...>: taxa.nt, or NN-taxa.nq in a release
+    for taxa_file in [*rdf.glob("taxa.nt"), *rdf.glob("*-taxa.nq")]:
+        with taxa_file.open(encoding="utf-8") as handle:
+            for line in handle:
+                m = name_re.match(line)
+                if m and m.group(2) in FLORA_AREAS:
+                    for a3 in FLORA_AREAS[m.group(2)]:
+                        if base + m.group(1) not in flora_taxa[a3]:
+                            flora_taxa[a3].add(base + m.group(1))
+                            flora_sources[a3][m.group(2)] += 1
+    country_taxa = {a3: taxa[a3] | flora_taxa[a3] for a3 in set(taxa) | set(flora_taxa)}
     return {
-        "records": total, "matched": matched,
+        "records": total, "matched": matched, "_taxa": country_taxa,
         "countries": {
-            a3: {"taxa": len(taxa[a3]), "records": records[a3], "sources": dict(by_source[a3].most_common()),
+            a3: {"taxa": len(taxa[a3] | flora_taxa[a3]), "taxa_places": len(taxa[a3]), "taxa_flora": len(flora_taxa[a3]),
+                 "floras": dict(flora_sources[a3].most_common()),
+                 "records": records[a3], "sources": dict(by_source[a3].most_common()),
                  "localities": [name for name, _ in localities[a3].most_common(60)]}
-            for a3 in sorted(taxa)
+            for a3 in sorted(set(taxa) | set(flora_taxa))
         },
         "unmatched": [[name, count] for name, count in unmatched.most_common(40)],
     }
@@ -163,6 +201,7 @@ def main() -> None:
     parser.add_argument("-o", "--output", type=Path, default=Path("local-corpora/saudi-flora/places.json"))
     args = parser.parse_args()
     result = aggregate(args.rdf)
+    result.pop("_taxa")
     args.output.write_text(json.dumps(result, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     top = sorted(result["countries"].items(), key=lambda kv: -kv[1]["taxa"])[:12]
     print(f"{result['matched']} of {result['records']} place records in {len(result['countries'])} countries")

@@ -1,0 +1,5 @@
+{
+ "atlas": "PREFIX fb: <http://phenomebrowser.net/flopo/browse#>\nSELECT ?og ?tg (COUNT(DISTINCT ?t) AS ?taxa) (COUNT(?r) AS ?n) WHERE {\n  ?r a fb:TraitRecord ; fb:organGroup ?og ; fb:traitGroup ?tg ; fb:taxon ?t } GROUP BY ?og ?tg",
+ "organCounts": "PREFIX fb: <http://phenomebrowser.net/flopo/browse#>\nSELECT ?og (COUNT(DISTINCT ?t) AS ?n) WHERE { ?r a fb:TraitRecord ; fb:organGroup ?og ; fb:taxon ?t } GROUP BY ?og",
+ "valueChoices": "PREFIX fb: <http://phenomebrowser.net/flopo/browse#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nSELECT ?og ?q (SAMPLE(?ql) AS ?label) (COUNT(DISTINCT ?t) AS ?n) WHERE {\n  ?r a fb:TraitRecord ; fb:organGroup ?og ; fb:quality ?q ; fb:taxon ?t ; fb:negated false . ?q rdfs:label ?ql\n  FILTER NOT EXISTS { ?r fb:low ?x } } GROUP BY ?og ?q HAVING (COUNT(DISTINCT ?t) > 1) ORDER BY ?label"
+}

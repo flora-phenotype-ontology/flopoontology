@@ -114,6 +114,10 @@ p { max-width: 72ch; }
 .taxonlist a:hover { background: var(--juniper-soft); }
 .taxonlist a.current { background: var(--juniper); color: var(--paper); }
 .taxonlist a small { color: inherit; opacity: 0.6; }
+.taxonlist a .sci { flex: 1 1 auto; }
+.taxonlist a .fam { font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 40%; }
+.taxonlist a.current .fam { color: inherit; }
+.taxonlist #tmore { width: 100%; margin-top: 8px; }
 
 .taxon-head h1 { font-style: italic; margin-bottom: 2px; }
 .taxon-head .auth { font-family: var(--serif); color: var(--muted); font-size: 1.05rem; }
@@ -264,3 +268,15 @@ button.link:focus-visible { outline: 2px solid var(--ochre); outline-offset: 2px
   .worldmap { height: 360px; }
   .cov-bar { width: 5rem; }
 }
+
+/* Patterns page */
+.patternlist { padding-left: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin: 1.2rem 0 2rem; }
+.patternlist li { border: 1px solid var(--line, #d8dcd6); border-radius: 4px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+.patternlist .wording { font-size: 0.85rem; font-style: italic; color: var(--muted); }
+.doc { max-width: 52rem; }
+.doc pre.code { overflow-x: auto; padding: 10px 12px; background: var(--juniper-soft); border-radius: 4px; font-size: 0.85rem; line-height: 1.45; white-space: pre-wrap; }
+.doc h3 { margin-top: 1.6rem; }
+.doc code { font-size: 0.9em; }
+.doc blockquote { border-left: 3px solid var(--juniper); margin: 1rem 0; padding: 0 1rem; }
+.examples { margin: 1.2rem 0 1.6rem; }
+.pager { display: flex; justify-content: space-between; gap: 1rem; margin: 0.6rem 0 1rem; font-size: 0.9rem; flex-wrap: wrap; }

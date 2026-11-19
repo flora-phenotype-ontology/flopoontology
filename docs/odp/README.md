@@ -7,6 +7,7 @@ rules that are checked, and what is known about the pattern in the literature.
 
 | # | Pattern | Source wording | Since |
 |---|---|---|---|
+| 00 | [Part and quality](00-part-and-quality.md) | leaves glabrous, petals white | the basic pattern |
 | 01 | [Approximate value](01-approximate-value.md) | ± erect, suborbicular | 2026-11-13 ("±") |
 | 02 | [Bounded measurement](02-bounded-measurement.md) | to 8 m, less than 1 mm | 2026-11-13 (strict bounds) |
 | 03 | [Count of parts](03-count-of-parts.md) | 5-nerved, 3-5-foliolate | 2026-11-13 (compound words) |
