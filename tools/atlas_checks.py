@@ -235,6 +235,9 @@ def crawl(base: str, out: Path, report: Report, taxa: int = 10) -> None:
                 return
             if page.query_selector("#view .error") or "Something went wrong" in page.inner_text("#view"):
                 problems.append(f"{route}: {page.inner_text('#view')[:200]}")
+            # A person reads a page before opening the next. Without a pause, pages that load in a
+            # second (a taxon page sends 11 queries) outrun the endpoint's limit of 10 queries a second.
+            page.wait_for_timeout(1500)
 
         for route in routes:
             visit(route)

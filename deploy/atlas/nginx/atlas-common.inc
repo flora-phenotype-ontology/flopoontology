@@ -19,7 +19,7 @@ location = / {
     add_header Cache-Control "no-cache";
 }
 
-location ~ "^/(index\.html|app\.js|styles\.css|summary\.json|release\.json|inaturalist\.json|places\.json)$" {
+location ~ "^/(index\.html|app\.js|styles\.css|summary\.json|release\.json|inaturalist\.json|places\.json|taxa\.json|country-taxa\.json|patterns\.json|precomputed-queries\.json|precomputed/[a-zA-Z]+\.json)$" {
     try_files $uri =404;
     add_header X-Atlas-Release $atlas_release always;
     add_header Cache-Control "no-cache";
