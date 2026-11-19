@@ -45,6 +45,7 @@ from flopo2.owl.assertions import (
     _Nodes,
     _phenotype_expression,
     _some,
+    build_annotation_class_module,
     build_assertion_ontology,
     formal_assertion_iri,
 )
@@ -201,6 +202,19 @@ class Builder:
                 m = wcvp.match(n, verified=r.matched, family=r.family, wfo_accepted=r.accepted_name)
                 if m.how not in ("none", "ambiguous"):
                     self.ipni[n] = {k: getattr(m, k) for k in TABLE_FIELDS}
+        # A name WCVP cannot match ("Aa paleacea" as WFO prints it, a moss name variant) joins the
+        # IPNI-keyed taxon of its WFO taxon when exactly one IPNI taxon has that WFO taxon, instead
+        # of becoming a second, WFO-keyed taxon of the same plant.
+        targets: dict[str, set] = defaultdict(set)
+        for n, std in self.ipni.items():
+            r = self.names.get(n)
+            if r and r.accepted_wfo_id and (std["accepted_ipni_id"] or std["accepted_wcvp_id"]):
+                targets[r.accepted_wfo_id].add(n)
+        self.wfo_to_ipni = {}
+        for wfo, members in targets.items():
+            keys = {(self.ipni[n]["accepted_ipni_id"], self.ipni[n]["accepted_wcvp_id"]) for n in members}
+            if len(keys) == 1:
+                self.wfo_to_ipni[wfo] = self.ipni[next(iter(members))]
 
     def taxon(self, name: str, source: str, *, family: str = "", page: object = "") -> URIRef:
         resolved = self.names.get(self.aliases.get(name, name))
@@ -212,6 +226,10 @@ class Builder:
                                              "wfo": "", "names": {}, "extra": defaultdict(set)})
         taxon_iri = resolved.taxon_iri if resolved else BASE + "taxon/name/" + quote(name.replace(" ", "_"))
         std = self.ipni.get(name) or self.ipni.get(self.aliases.get(name, name))
+        via_wfo = False
+        if not std and resolved and resolved.accepted_wfo_id:
+            std = getattr(self, "wfo_to_ipni", {}).get(resolved.accepted_wfo_id)
+            via_wfo = std is not None  # the taxon's IPNI name, not this printed name's
         if std and (std["accepted_ipni_id"] or std["accepted_wcvp_id"]) and not (resolved is None and name in self.not_names):
             # the taxon is the WCVP accepted name, keyed by its IPNI ID; the WFO IRI it replaces is kept
             former = taxon_iri if resolved and resolved.accepted_wfo_id else ""
@@ -255,7 +273,9 @@ class Builder:
         entry = info["names"].setdefault((source, name), {"pages": set(), "status": ""})
         if str(page).strip().isdigit():
             entry["pages"].add(str(int(page)))
-        if std:
+        if std and via_wfo:
+            entry["status"] = resolved.status or resolved.match_type
+        elif std:
             entry["status"] = std["status"]
             entry["ipni_name"] = std["ipni_id"]
             entry["standard_name"] = " ".join(x for x in (std["matched_name"], std["matched_authors"]) if x)
@@ -950,14 +970,15 @@ class Builder:
                 fresh.replace(tagged)
             assertions = rdf / f"{key}-assertions.ttl"
             if rebuild_assertions or not assertions.exists() or assertions.stat().st_mtime < tagged.stat().st_mtime:
-                # Embed each annotation class's OWL definition: negation as ObjectComplementOf,
-                # numeric values as xsd:decimal ranges with UO units.
+                # Annotation classes are linked by IRI only; their definitions are in the shared
+                # annotation-classes graph below, once each (embedded per flora, a class used by
+                # 36 floras was defined 36 times).
                 # N-Triples (valid Turtle, so the .ttl name stays): rdflib's Turtle writer is
                 # superlinear and took 21 min for 283 treatments against 5 s for N-Triples; it never
                 # finished eFlora of China (34k).
                 build_assertion_ontology(
                     tagged, assertions, version="saudi-flora", output_format="nt",
-                    embed_annotation_classes=True,
+                    embed_annotation_classes=False,
                 )
             files[f"{key}/assertions"] = assertions
 
@@ -973,6 +994,15 @@ class Builder:
             for name, sink in ((f"{key}/index", index), (f"{key}/places", places)):
                 files[name] = sink.close()
             self.summary[key] = dict(counts)
+        # One definition per annotation class: negation as ObjectComplementOf, numeric values as
+        # xsd:decimal ranges with UO units (flopo2.owl.assertions.build_annotation_class_module).
+        tagged_all = [rdf / f"{key}-corpus-tagged.jsonl" for key in sources if (rdf / f"{key}-corpus-tagged.jsonl").exists()]
+        classes = rdf / "annotation-classes.nt"
+        if rebuild_assertions or not classes.exists() or any(
+            t.stat().st_mtime > classes.stat().st_mtime for t in tagged_all
+        ):
+            build_annotation_class_module(tagged_all, classes)
+        files["annotation-classes"] = classes
         merged = self.merged_graph()
         self.summary["merged_ranges"] = len(set(merged.subjects(RDF.type, FB.MergedTrait)))
         conflicts, conflict_counts = self.conflicts_graph()

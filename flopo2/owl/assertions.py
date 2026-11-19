@@ -1319,6 +1319,60 @@ def build_assertion_ontology(
     }
 
 
+def build_annotation_class_module(
+    gated_jsonl: list[Path],
+    out_nt: Path,
+    *,
+    pato_lex: Path = Path("config/pato_lexicon.tsv"),
+) -> dict:
+    """Define every annotation class used by the given corpora once, as N-Triples.
+
+    The source modules link their assertions to annotation classes by IRI. Embedding the class
+    definitions in each module (``embed_annotation_classes``) repeats a class in every flora that
+    uses it; the trait atlas loads all floras together, so it gets one definition per class from
+    this module instead. The classes chosen and their expressions are those that
+    ``build_assertion_ontology`` embeds.
+    """
+
+    out_nt.parent.mkdir(parents=True, exist_ok=True)
+    partial = out_nt.with_name(out_nt.name + ".partial")
+    graph = Graph()
+    nodes = _Nodes()
+    _declare_vocabulary(graph)
+    attribute_ids = _load_attributes(pato_lex)
+    defined: set[str] = set()
+    written = 0
+    with partial.open("wb") as sink:
+        for path in gated_jsonl:
+            with Path(path).open(encoding="utf-8") as handle:
+                for line in handle:
+                    if not line.strip():
+                        continue
+                    for assertion in json.loads(line).get("assertions", []) or []:
+                        if assertion.get("qualitative_value_relation") or not operands_fac_representable(assertion) or (
+                            assertion.get("specimen_condition") or assertion.get("count_position")
+                        ):
+                            continue  # no annotation class (as in build_assertion_ontology)
+                        description = URIRef(ensure_annotation_class_iri(assertion))
+                        if str(description) in defined:
+                            continue
+                        defined.add(str(description))
+                        expression, _, _, _ = _phenotype_expression(graph, nodes, assertion, attribute_ids)
+                        graph.add((description, RDF.type, OWL.Class))
+                        graph.add((description, OWL.equivalentClass, expression))
+                    if len(graph) >= STREAM_CHUNK_TRIPLES:
+                        written += len(graph)
+                        sink.write(graph.serialize(format="nt", encoding="utf-8"))
+                        graph = Graph()
+        written += len(graph)
+        sink.write(graph.serialize(format="nt", encoding="utf-8"))
+    from flopo2.owl.io import dedupe_ntriples
+
+    dedupe_ntriples(partial)  # declarations of _declare_vocabulary recur in no chunk, but be safe
+    partial.replace(out_nt)
+    return {"annotation_classes": len(defined), "out": str(out_nt)}
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Build a source-scoped flora assertion OWL module.")
     parser.add_argument("input", type=Path, help="Phase 7 gated JSONL")
