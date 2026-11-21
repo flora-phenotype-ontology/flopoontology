@@ -197,7 +197,10 @@ def crawl(base: str, out: Path, report: Report, taxa: int = 10) -> None:
     taxon_routes = ["#/taxon/" + urllib.parse.quote(r["t"].removeprefix(DATA_NS + "taxon/"), safe="") for r in pick[:taxa]]
     fac = rows(select(endpoint, "SELECT ?c WHERE { ?c <http://www.w3.org/2002/07/owl#equivalentClass> ?x "
                                 f"FILTER(STRSTARTS(STR(?c), '{DATA_NS}annotation-class/')) }} LIMIT 1")[0])
-    routes = ["#/", "#/taxa", *taxon_routes, "#/traits", "#/identify", "#/coverage", "#/map", "#/query"]
+    routes = ["#/", "#/taxa", *taxon_routes, "#/traits", "#/identify", "#/coverage", "#/map", "#/query",
+              "#/about", "#/downloads", "#/compare"]
+    if len(taxon_routes) > 1:  # two taxa side by side
+        routes.append("#/compare/" + taxon_routes[0].removeprefix("#/taxon/") + "/" + taxon_routes[1].removeprefix("#/taxon/"))
     if fac:
         routes.append("#/query?describe=" + urllib.parse.quote(fac[0]["c"], safe=""))
 
@@ -533,6 +536,67 @@ def smoke(base: str, release: Path | None, report: Report, expect_release: bool 
     report.check("C13a", "the page loads (and is this release)", ok, f"HTTP {status}, release {stamp or '?'}")
     missing = [name for name in ("app.js", "styles.css", "summary.json", "release.json") if http(base + name)[0] != 200]
     report.check("C13b", "static files are served", not missing, " ".join(missing) or "all 200")
+    listing = release / "web" / "downloads.json" if release else None
+    if listing and listing.exists():  # releases from before the downloads have none
+        files = json.loads(listing.read_text())["files"]
+        wrong = []
+        status, _, served, _ = http(base + "downloads.json")
+        if status != 200 or json.loads(served)["files"] != files:
+            wrong.append("downloads.json")
+        picks = [f for f in files if f["path"] in ("tsv/terms.tsv.gz", "tsv/traits-all.tsv.gz")] + files[:1]
+        for f in [{"path": "README.txt"}, {"path": "SHA256SUMS.txt"}, *picks]:
+            status, headers, _, _ = http(base + "downloads/" + f["path"], method="HEAD")
+            if status != 200 or ("bytes" in f and int(headers.get("Content-Length", -1)) != f["bytes"]):
+                wrong.append(f"{f['path']} (HTTP {status})")
+        status, _, body, _ = http(base + "downloads/tsv/terms.tsv.gz")
+        terms = next((f for f in files if f["path"] == "tsv/terms.tsv.gz"), None)
+        if terms and (status != 200 or hashlib.sha256(body).hexdigest() != terms["sha256"]):
+            wrong.append("tsv/terms.tsv.gz does not match its checksum")
+        report.check("C13d", "download files are served with their listed sizes", not wrong,
+                     "; ".join(wrong) or f"{len(files)} files listed")
+    described = release / "web" / "void.ttl" if release else None
+    if described and described.exists():  # licence, version and files, for programs
+        from rdflib import Graph, URIRef
+
+        wrong = []
+        status, headers, body, _ = http(base + "void.ttl")
+        if status != 200 or "turtle" not in headers.get("Content-Type", ""):
+            wrong.append(f"void.ttl (HTTP {status}, {headers.get('Content-Type', '')})")
+        else:
+            graph = Graph().parse(data=body, format="turtle")
+            dataset = URIRef("http://phenomebrowser.net/flopo/dataset")
+            version = graph.value(dataset, URIRef("http://www.w3.org/ns/dcat#hasCurrentVersion"))
+            licence = graph.value(version, URIRef("http://purl.org/dc/terms/license")) if version else None
+            if str(licence) != "https://creativecommons.org/licenses/by/4.0/":
+                wrong.append(f"void.ttl names no current version with the licence ({version}, {licence})")
+            listed = json.loads((release / "web" / "versions.json").read_text())
+            if version is None or str(version) != listed["iri"]:
+                wrong.append("void.ttl and versions.json disagree on the version")
+        for name in ("dataset.jsonld", "versions.json", "downloads/LICENSE.txt", "downloads/CITATION.cff",
+                     "downloads/tsv/csv-metadata.json"):
+            if http(base + name)[0] != 200:
+                wrong.append(name)
+        status, headers, _, _ = http(base + "dataset", headers={"Accept": "text/turtle"})
+        if status != 200 or "turtle" not in headers.get("Content-Type", ""):
+            wrong.append(f"/dataset does not return the description as Turtle (HTTP {status})")
+        if "application/ld+json" not in http(base)[2].decode("utf-8", "replace"):
+            wrong.append("the page does not embed the schema.org description")
+        report.check("C13f", "the dataset description (licence, version, files) is served", not wrong,
+                     "; ".join(wrong) or "void.ttl, dataset.jsonld, versions.json")
+    table = release / "web" / "attributes.json" if release else None
+    if table and table.exists():  # the Compare page needs the attribute of each quality
+        status, _, served, _ = http(base + "attributes.json")
+        same = status == 200 and json.loads(served) == json.loads(table.read_text())
+        report.check("C13e", "the attribute table of the Compare page is served", same, f"HTTP {status}")
+    if release and "feedback/" in (release / "web" / "app.js").read_text(encoding="utf-8"):
+        # The votes service: it answers, refuses nonsense, and reaches the endpoint to check a
+        # record. Nothing is written: the record asked about does not exist.
+        status, _, body, _ = http(base + f"feedback/state?taxon={DATA_NS}taxon/none")
+        ok = status == 200 and "counts" in json.loads(body or b"{}")
+        report.check("C19a", "the review service answers", ok, f"HTTP {status}")
+        vote = lambda payload: http(base + "feedback/vote", json.dumps(payload).encode(), {"Content-Type": "application/json"})[0]  # noqa: E731
+        codes = (vote({"record": "x", "vote": "up"}), vote({"record": DATA_NS + "flora-assertion/none", "vote": "up"}))
+        report.check("C19b", "a malformed vote and a vote on an unknown record are refused", codes == (400, 404), f"HTTP {codes}")
     if meta and meta.get("inaturalist_sha256"):
         status, _, catalogue, _ = http(base + "inaturalist.json")
         ok = status == 200 and hashlib.sha256(catalogue).hexdigest() == meta["inaturalist_sha256"]

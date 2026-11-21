@@ -8,6 +8,8 @@ Writes ``local-corpora/saudi-flora/releases/<stamp>/`` with
   N-Quads in its named graph. Blank-node labels are prefixed per input file, so labels that two
   files happen to share stay distinct in the index;
 - ``web/``: the browser (``web/saudi/``) and ``summary.json``;
+- ``downloads/``: the bulk downloads, written afterwards by ``tools.atlas_downloads`` (a
+  website-only release links the files of its base release);
 - ``release.json``: git commit, triple count and SHA-256 per graph, which the checks compare
   against the loaded endpoint.
 
@@ -67,7 +69,8 @@ def export_graph(source: Path, graph: str, target: Path, tag: str) -> int:
 
 
 def _places(release: Path, data: Path) -> None:
-    """Generated web files: places.json (Map), taxa.json and country-taxa.json (Taxa, Map), patterns.json."""
+    """Generated web files: places.json (Map), taxa.json and country-taxa.json (Taxa, Map), patterns.json,
+    attributes.json (Compare)."""
 
     from tools.atlas_places import aggregate
     from tools.atlas_taxa_index import write
@@ -81,6 +84,12 @@ def _places(release: Path, data: Path) -> None:
     from tools.atlas_patterns import build as pattern_docs
 
     (release / "web" / "patterns.json").write_text(json.dumps(pattern_docs(), ensure_ascii=False), encoding="utf-8")
+    from tools.atlas_attributes import build as attribute_table
+
+    # the attribute of each quality value: what the Compare page may set side by side
+    (release / "web" / "attributes.json").write_text(
+        json.dumps(attribute_table(), ensure_ascii=False, separators=(",", ":")), encoding="utf-8"
+    )
 
 
 def build(stamp: str, out: Path = RELEASES, data: Path = DATA, web: Path = WEB) -> Path:
@@ -138,6 +147,17 @@ def build_web(stamp: str, base: Path, out: Path = RELEASES, data: Path = DATA, w
             shutil.copy2(source, target)
     if (base / "index").exists():
         (release / "index").symlink_to((base / "index").resolve(), target_is_directory=True)
+    if (base / "downloads" / "downloads.json").exists():  # the same RDF: the same download files
+        for source in (base / "downloads").rglob("*"):
+            target = release / "downloads" / source.relative_to(base / "downloads")
+            if source.is_dir():
+                target.mkdir(parents=True, exist_ok=True)
+                continue
+            target.parent.mkdir(parents=True, exist_ok=True)
+            try:
+                os.link(source, target)
+            except OSError:
+                shutil.copy2(source, target)
     shutil.copytree(web, release / "web")
     shutil.copy2(base / "web" / "summary.json", release / "web" / "summary.json")
     _places(release, base if (base / "rdf").is_dir() else data)

@@ -19,10 +19,26 @@ location = / {
     add_header Cache-Control "no-cache";
 }
 
-location ~ "^/(index\.html|app\.js|styles\.css|summary\.json|release\.json|inaturalist\.json|places\.json|taxa\.json|country-taxa\.json|patterns\.json|precomputed-queries\.json|precomputed/[a-zA-Z]+\.json)$" {
+location ~ "^/(index\.html|app\.js|styles\.css|summary\.json|release\.json|inaturalist\.json|places\.json|taxa\.json|country-taxa\.json|patterns\.json|attributes\.json|downloads\.json|precomputed-queries\.json|precomputed/[a-zA-Z]+\.json)$" {
     try_files $uri =404;
     add_header X-Atlas-Release $atlas_release always;
     add_header Cache-Control "no-cache";
+}
+
+# The description of the dataset (tools/atlas_metadata.py): VoID/DCAT, schema.org, versions.
+location ~ "^/(void\.ttl|dataset\.jsonld|versions\.json)$" {
+    try_files $uri =404;
+    types { text/turtle ttl; application/ld+json jsonld; application/json json; }
+    add_header X-Atlas-Release $atlas_release always;
+    add_header Access-Control-Allow-Origin "*" always;
+    add_header Cache-Control "no-cache";
+}
+
+# The dataset and its versions: the description to a program that asks for RDF, the Downloads
+# page to a browser. Every version is described in the one file.
+location ~ "^/(dataset|release/[0-9]+-[0-9]+)$" {
+    if ($atlas_rdf_type) { rewrite ^ /void.ttl last; }
+    return 303 $http_x_forwarded_prefix/#/downloads;
 }
 
 # country outlines of the Map page (an exact match, before the data IRIs below)
@@ -31,6 +47,36 @@ location = /data/countries.geojson {
     default_type application/geo+json;
     add_header X-Atlas-Release $atlas_release always;
     add_header Cache-Control "public, max-age=86400";
+}
+
+# Bulk downloads of the release (tools/atlas_downloads.py): gzipped N-Quads and TSV tables.
+# "^~" keeps the data-IRI patterns below from matching these paths.
+location ^~ /downloads/ {
+    root /srv/atlas/$atlas_release;
+    types { text/plain txt cff; application/json json; application/gzip gz; text/turtle ttl; application/ld+json jsonld; }
+    default_type application/octet-stream;
+    gzip off;
+    add_header X-Atlas-Release $atlas_release always;
+    add_header Access-Control-Allow-Origin "*" always;
+    add_header Cache-Control "no-cache";
+}
+
+# Votes on annotations: the feedback service (tools/deploy_atlas.sh starts it on 127.0.0.1:7010).
+# It checks a voted record against this server's own QLever. No CORS: only this site may vote.
+location ^~ /feedback/ {
+    limit_req zone=atlas_feedback burst=30 nodelay;
+    limit_req_status 429;
+    client_max_body_size 8k;
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Forwarded-Prefix $http_x_forwarded_prefix;
+    proxy_set_header X-Forwarded-For "";
+    proxy_set_header X-Atlas-Client $atlas_voter;
+    proxy_set_header X-Atlas-Sparql http://$atlas_qlever/;
+    proxy_set_header X-Atlas-Release $atlas_release;
+    proxy_read_timeout 30s;
+    add_header X-Atlas-Release $atlas_release always;
+    add_header Cache-Control "no-store" always;
+    proxy_pass http://127.0.0.1:7010;
 }
 
 location = /sparql {

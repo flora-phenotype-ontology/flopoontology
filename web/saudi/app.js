@@ -438,9 +438,10 @@ async function taxonPage(t) {
     const status = (r.status === "accepted" ? "" : `<span class="chip review" title="${STATUS_TIP}">${esc(r.status)}</span>`) + clash;
     return `<tr class="rec${sub ? " sub" : ""}" data-detail="${id}" tabindex="0"><td class="q">${sub ? "<span class=\"muted\">↳</span> " : ""}${esc(r.label)}${r.qualifier ? ` <span class="muted">(${esc(r.qualifier)})</span>` : ""}</td>
       <td>${valueCell(r)}</td>
-      <td><span class="chip ${sourceClass(r.source)}">${esc(r.source)}</span> ${status}</td></tr>
+      <td><span class="chip ${sourceClass(r.source)}">${esc(r.source)}</span> ${status} <span class="tally" data-tally="${esc(r.r)}"></span></td></tr>
       <tr class="detail" id="${id}" hidden><td colspan="3">${highlight(r.context, r.text)}<br>
-        <span class="muted">Annotation <a href="#/query?describe=${encodeURIComponent(r.r)}">${esc(local(r.r))}</a>: bearer ${termLink(r.bearer, r.blabel || curie(r.bearer))}${r.relation ? "" : `, quality ${termLink(r.quality, r.qlabel || curie(r.quality))}`}${r.unit ? `, unit ${termLink(r.unit, curie(r.unit))}` : ""}${r.fclass ? `, FLOPO class ${termLink(r.fclass, curie(r.fclass))}` : ""}${owlLink(r.fac)}</span></td></tr>`;
+        <span class="muted">Annotation <a href="#/query?describe=${encodeURIComponent(r.r)}">${esc(local(r.r))}</a>: bearer ${termLink(r.bearer, r.blabel || curie(r.bearer))}${r.relation ? "" : `, quality ${termLink(r.quality, r.qlabel || curie(r.quality))}`}${r.unit ? `, unit ${termLink(r.unit, curie(r.unit))}` : ""}${r.fclass ? `, FLOPO class ${termLink(r.fclass, curie(r.fclass))}` : ""}${owlLink(r.fac)}</span>
+        <div class="review" data-record="${esc(r.r)}"></div></td></tr>`;
   };
   const byIri = new Map(records.map((r) => [r.r, r]));
   const inMerged = new Set();
@@ -489,7 +490,7 @@ async function taxonPage(t) {
         <h2>Traits</h2>
         ${conflicts.length ? `<div class="conflicts"><h3>${n(conflicts.length)} contradictory statement${conflicts.length > 1 ? "s" : ""}</h3>
           <p class="muted">These statements cannot both be true of one plant. A taxon covers many plants, so the sources may describe different plants or one may be wrong.</p><ul>${conflictItems}</ul></div>` : ""}
-        ${records.length ? `<p class="muted">${n(records.length)} annotations. Select one to see the sentence it was read from.</p><table class="traits">${traitRows}</table>` : `<p class="muted">No trait annotations yet.</p>`}
+        ${records.length ? `<p class="muted">${n(records.length)} annotations. Select one to see the sentence it was read from, and to say whether the annotation is right.</p><p class="reviewbar" id="reviewbar" hidden></p><table class="traits">${traitRows}</table>` : `<p class="muted">No trait annotations yet.</p>`}
         ${pending.length ? `<details class="pending"><summary>${n(pending.length)} statements not yet annotated</summary><ul>${pending.map((p) => `<li>${highlight(p.context, p.text)} <span class="muted">— ${esc(p.reason.replace(/_/g, " "))}</span></li>`).join("")}</ul></details>` : ""}
       </div>
       <div>
@@ -503,7 +504,7 @@ async function taxonPage(t) {
         ${notesHtml || i.range ? `<h3>Notes</h3><dl class="kv">${i.range ? `<dt>Native range</dt><dd>${esc(i.range)}</dd>` : ""}${notesHtml}</dl>` : ""}
         ${growthHtml ? `<h3>Ecology and cultivation <span class="chip">NCVC 2024</span></h3><dl class="kv">${growthHtml}</dl>` : ""}
         <h3>Names in the sources</h3><ul>${nameRows}</ul>
-        <p><a href="#/query?taxon=${encodeURIComponent(t)}">Query this taxon in SPARQL</a></p>
+        <p><a href="#/compare/${encodeURIComponent(taxonKey(t))}">Compare with another taxon</a> · <a href="#/query?taxon=${encodeURIComponent(t)}">Query this taxon in SPARQL</a></p>
       </div>
     </div>`;
   const photoPane = pane.querySelector("#inat-panel");
@@ -519,6 +520,7 @@ async function taxonPage(t) {
     photoPane.querySelector("button").addEventListener("click", loadPhotos);
   });
   loadPhotos();
+  setupReview(pane, t, records, i.label || taxonKey(t));
   pane.querySelectorAll("tr.rec").forEach((tr) => {
     const toggle = () => {
       const d = document.getElementById(tr.dataset.detail);
@@ -1048,6 +1050,406 @@ async function patterns(id) {
   }
 }
 
+/* ---------------------------------------------------------------- review */
+// Readers say whether an annotation is right. Votes go to the feedback service beside the endpoint
+// ("feedback/"); votes of signed-in reviewers and anonymous votes are counted apart. A server
+// without that service (development) shows only the link that reports a problem.
+const ISSUES = "https://github.com/flora-phenotype-ontology/flopoontology/issues/new";
+const feedbackUrl = (name, params) => new URL("feedback/" + name, document.baseURI).href + (params ? "?" + new URLSearchParams(params) : "");
+function reportHref(r, taxonLabel) {
+  const body = [
+    `Record: ${r.r}`, `Taxon: ${taxonLabel}`, `Source: ${r.source}`, `Annotation: ${r.label}`,
+    `Source text: “${r.text || ""}”`, r.context ? `Sentence: “${r.context.slice(0, 600)}”` : "",
+    `Page: ${location.href}`, "", "What is wrong, and what should it be?", "",
+  ].filter((line) => line !== "").join("\n") + "\n\n";
+  return ISSUES + "?" + new URLSearchParams({ title: `Annotation: ${taxonLabel}, “${r.label}”`.slice(0, 200), body });
+}
+async function setupReview(pane, taxonIri, records, taxonLabel) {
+  // The table is rebuilt with every taxon; listeners on it go with it (the pane itself stays).
+  const table = pane.querySelector("table.traits");
+  if (!table) return;
+  const byIri = new Map(records.map((r) => [r.r, r]));
+  const boxes = () => table.querySelectorAll(".review[data-record]");
+  const report = (r) => `<a href="${esc(reportHref(r, taxonLabel))}" target="_blank" rel="noopener" title="Opens an issue on GitHub with this record filled in">Report a problem</a>`;
+  boxes().forEach((box) => { box.innerHTML = report(byIri.get(box.dataset.record)); });
+  let state;
+  try {
+    const response = await fetch(feedbackUrl("state", { taxon: taxonIri }));
+    if (!response.ok) return;
+    state = await response.json();
+  } catch (err) {
+    return;
+  }
+  if (!table.isConnected || !state.counts) return;
+  const kind = state.signed_in ? "named" : "anonymous";
+  const zero = () => ({ named: [0, 0], anonymous: [0, 0] });
+  const pair = ([up, down]) => `👍 ${n(up)} 👎 ${n(down)}`;
+  const draw = (box, asking = false) => {
+    const id = box.dataset.record;
+    const c = state.counts[id] || zero();
+    const mine = (state.mine[id] || {})[kind];
+    const any = (k) => c[k][0] + c[k][1] > 0;
+    const tally = [...table.querySelectorAll(".tally")].find((x) => x.dataset.tally === id);
+    if (tally) tally.innerHTML = ["named", "anonymous"].filter(any).map((k) => `<span class="chip votes ${k}" title="${k === "named" ? "Votes of signed-in reviewers" : "Anonymous votes"}">${k === "named" ? "named" : "anon."} ${pair(c[k])}</span>`).join(" ");
+    const button = (vote, text) => `<button type="button" class="ghost vote" data-vote="${vote}" aria-pressed="${mine?.vote === vote}">${text}</button>`;
+    box.innerHTML = `<span class="ask">Is this annotation right?</span> ${button("up", "👍 Right")} ${button("down", "👎 Wrong")}
+      <span class="muted">Signed-in reviewers: ${pair(c.named)} · anonymous: ${pair(c.anonymous)}</span> ${report(byIri.get(id))}
+      ${asking && mine?.vote === "down" ? `<form class="why"><label>What is wrong? <select name="reason"><option value="">(choose, optional)</option>${Object.entries(state.reasons).map(([key, text]) => `<option value="${esc(key)}"${mine.reason === key ? " selected" : ""}>${esc(text)}</option>`).join("")}</select></label>
+        <label>Comment <input name="comment" maxlength="500" placeholder="optional: what should it be?"></label> <button type="submit">Send</button> <span class="muted">Recorded as ${kind === "named" ? esc(state.signed_in.name) : "an anonymous vote"}.</span></form>` : ""}
+      <span class="note muted" role="status"></span>`;
+  };
+  const send = async (box, vote, extra = {}) => {
+    const note = box.querySelector(".note");
+    try {
+      const response = await fetch(feedbackUrl("vote"), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ record: box.dataset.record, vote, ...extra }) });
+      const out = await response.json();
+      if (!response.ok) throw new Error(out.error || `HTTP ${response.status}`);
+      state.counts[box.dataset.record] = out.counts;
+      state.mine[box.dataset.record] = out.mine;
+      draw(box, vote === "down" && !extra.sent);
+      if (extra.sent) box.querySelector(".note").textContent = "Thank you, noted.";
+    } catch (err) {
+      if (note) note.textContent = `Your vote could not be saved (${err.message}).`;
+    }
+  };
+  boxes().forEach((box) => draw(box));
+  table.addEventListener("click", (e) => {
+    const button = e.target.closest("button.vote");
+    if (!button) return;
+    const box = button.closest(".review");
+    send(box, button.getAttribute("aria-pressed") === "true" ? "none" : button.dataset.vote);
+  });
+  table.addEventListener("submit", (e) => {
+    const form = e.target.closest("form.why");
+    if (!form) return;
+    e.preventDefault();
+    send(form.closest(".review"), "down", { reason: form.reason.value, comment: form.comment.value, sent: true });
+  });
+  const bar = document.getElementById("reviewbar");
+  if (!bar) return;
+  const back = encodeURIComponent(location.hash || "#/");
+  const signIn = state.providers.map((p) => `<a href="${esc(feedbackUrl("login/" + p.key))}?return=${back}">${esc(p.label)}</a>`).join(" or ");
+  bar.innerHTML = state.signed_in
+    ? `Signed in as <b>${esc(state.signed_in.name)}</b>: your votes are recorded under your name. <button type="button" class="ghost" id="signout">Sign out</button>`
+    : `Your votes are anonymous.${signIn ? ` Sign in with ${signIn} to have them counted under your name.` : ""} Named and anonymous votes are counted separately; a vote does not change the data, it tells the curators where to look.`;
+  bar.hidden = false;
+  document.getElementById("signout")?.addEventListener("click", async () => {
+    await fetch(feedbackUrl("logout"), { method: "POST" });
+    route();
+  });
+}
+
+/* ---------------------------------------------------------------- compare two taxa */
+// A flora describes one taxon at a time (a direct statement). Two such statements can be compared
+// when they are about the same plant part and their qualities are values of the same attribute;
+// the attribute of a value is its most specific superclass in PATO's attribute subset
+// (Gkoutos, Schofield and Hoehndorf 2018, reference 2 of the About page).
+const attributeTable = () => cached("attributes", () => requestJson(new URL("attributes.json", document.baseURI).href));
+const METRES = { UO_0000008: 1, UO_0000015: 0.01, UO_0000016: 0.001, UO_0000017: 1e-6 };
+const CONDITIONS = "fb:frequency fb:stage fb:bearerState fb:whole fb:container fb:specimenCondition fb:towards fb:scope fb:partQuality fb:collectionSize fb:countPosition fb:ratioNumerator";
+async function comparableTraits(t, table) {
+  const T = iriLiteral(t);
+  const [rows, conditional, labels] = await Promise.all([
+    sparql(`SELECT ?r ?bearer ?quality ?attribute ?unit ?low ?high ?negated WHERE {
+      ?r a fb:TraitRecord ; fb:taxon ${T} ; fb:status "accepted" ; fb:bearer ?bearer ; fb:quality ?quality ; fb:negated ?negated .
+      OPTIONAL { ?r fb:attribute ?attribute } OPTIONAL { ?r fb:unit ?unit } OPTIONAL { ?r fb:low ?low } OPTIONAL { ?r fb:high ?high } }`),
+    sparql(`SELECT DISTINCT ?r WHERE { VALUES ?p { ${CONDITIONS} } ?r fb:taxon ${T} ; ?p ?x }`),
+    sparql(`SELECT DISTINCT ?x ?l WHERE { ?r a fb:TraitRecord ; fb:taxon ${T} . { ?r fb:quality ?x } UNION { ?r fb:bearer ?x } ?x rdfs:label ?l }`),
+  ]);
+  const skip = new Set(conditional.map((x) => x.r));
+  const label = new Map(labels.map((x) => [x.x, x.l]));
+  const traits = new Map();
+  let left = 0;
+  const negated = new Set();
+  for (const row of rows) {
+    if (skip.has(row.r)) continue;
+    // "not velutinous" says little about what the part is like: it is not set against a value
+    if (row.negated === "true") { negated.add(row.r); continue; }
+    const numeric = Boolean(row.unit);
+    const attribute = numeric ? local(row.quality) : row.attribute ? local(row.attribute) : table.of[local(row.quality)];
+    if (!attribute) { left += 1; continue; }
+    const key = `${row.bearer} ${attribute} ${numeric ? "n" : "c"}`;
+    const trait = traits.get(key) || traits.set(key, {
+      bearer: row.bearer, blabel: label.get(row.bearer) || curie(row.bearer), attribute, numeric,
+      alabel: table.label[attribute] || label.get(row.quality) || attribute.replace("_", ":"),
+      values: new Map(), lo: Infinity, hi: -Infinity, units: new Set(), records: new Set(),
+    }).get(key);
+    trait.records.add(row.r);
+    if (numeric) {
+      const unit = local(row.unit), factor = METRES[unit];
+      trait.units.add(factor ? "length" : unit);
+      trait.unit = trait.unit || unit;
+      const scale = factor || 1;
+      // "to 8 m" has no lower number and "more than 5" no upper one
+      trait.lo = Math.min(trait.lo, row.low === undefined ? 0 : row.low * scale);
+      trait.hi = Math.max(trait.hi, row.high === undefined ? Infinity : row.high * scale);
+    } else {
+      trait.values.set(row.quality, label.get(row.quality) || curie(row.quality));
+    }
+  }
+  return { traits, skipped: skip.size, negated: negated.size, left };
+}
+function compareTraits(a, b) {
+  if (a.numeric) {
+    if (a.units.size > 1 || b.units.size > 1 || [...a.units][0] !== [...b.units][0]) return "units";
+    if (b.lo > a.hi) return "larger";
+    if (b.hi < a.lo) return "smaller";
+    return a.lo === b.lo && a.hi === b.hi ? "same" : "overlap";
+  }
+  const shared = [...a.values.keys()].filter((v) => b.values.has(v)).length;
+  if (!shared) return "different";
+  return shared === a.values.size && shared === b.values.size ? "same" : "overlap";
+}
+function traitValue(x) {
+  if (!x.numeric) return [...x.values.values()].sort().map(esc).join(", ");
+  const scale = METRES[x.unit] || 1;
+  const show = (v) => Number((v / scale).toPrecision(6)).toLocaleString("en");
+  const symbol = { UO_0000008: "m", UO_0000015: "cm", UO_0000016: "mm", UO_0000017: "µm", UO_0000189: "", UO_0000190: "" }[x.unit] ?? "";
+  const range = x.hi === Infinity ? `more than ${show(x.lo)}` : x.lo === x.hi ? show(x.lo) : x.lo === 0 ? `up to ${show(x.hi)}` : `${show(x.lo)}–${show(x.hi)}`;
+  return esc(`${range} ${symbol}`.trim());
+}
+function taxonPicker(id, prompt) {
+  return `<label for="${id}" class="col-title" style="display:block">${prompt}</label>
+    <input id="${id}" type="search" placeholder="e.g. Quercus stellata" autocomplete="off" style="max-width:28rem;width:100%">
+    <div class="taxonlist" id="${id}-list" style="max-width:28rem"></div>`;
+}
+async function setupPicker(id, href, except = "") {
+  const input = document.getElementById(id), list = document.getElementById(id + "-list");
+  if (!input) return;
+  const index = await taxonIndex();
+  let timer = 0;
+  const draw = () => {
+    const words = input.value.trim();
+    if (words.length < 2) { list.innerHTML = ""; return; }
+    const shown = taxonMatches(index, words, "").filter((r) => r.t !== except && r.n > 0);
+    list.innerHTML = shown.length
+      ? shown.slice(0, 30).map((r) => `<a href="${href(r)}"><span class="sci">${esc(r.label)}</span>${r.family ? ` <span class="muted fam">${esc(r.family)}</span>` : ""}<small class="num" title="trait records">${r.n}</small></a>`).join("")
+        + (shown.length > 30 ? `<p class="muted">${n(shown.length - 30)} more; type more of the name.</p>` : "")
+      : `<p class="muted">No taxon matches “${esc(words)}”.</p>`;
+  };
+  input.addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(draw, 120); });
+}
+const COMPARE_INTRO = `<p class="muted">A flora describes one taxon at a time. Two statements can be compared when they are about the same plant part and their qualities are values of the same attribute (white and pink are both colours; white and ovate are not comparable). See <a href="#/about">About</a>, reference 2.</p>`;
+async function compare(keyA, keyB) {
+  const a = keyA ? TAXON + decodeURIComponent(keyA) : "", b = keyB ? TAXON + decodeURIComponent(keyB) : "";
+  const index = await taxonIndex();
+  const name = (t) => (index.rows.find((r) => r.t === t) || {}).label || taxonKey(t);
+  if (!a || !b) {
+    setView(`<h1>Compare two taxa</h1>${COMPARE_INTRO}
+      ${a ? `<p>First taxon: <a href="${taxonHref(a)}" class="sci">${esc(name(a))}</a> <a href="#/compare" class="muted">change</a></p>` : ""}
+      ${taxonPicker("cpick", a ? "Find the second taxon" : "Find the first taxon")}`);
+    await setupPicker("cpick", (r) => `#/compare/${a ? encodeURIComponent(taxonKey(a)) + "/" : ""}${encodeURIComponent(r.key)}`, a);
+    return;
+  }
+  setView(`<h1>Compare two taxa</h1><p class="loading">Loading…</p>`);
+  const table = await attributeTable();
+  const [A, B] = await Promise.all([comparableTraits(a, table), comparableTraits(b, table)]);
+  const nameA = name(a), nameB = name(b);
+  const rows = { different: [], larger: [], smaller: [], overlap: [], same: [], units: [] };
+  const onlyA = [], onlyB = [];
+  for (const [key, x] of A.traits) {
+    const y = B.traits.get(key);
+    if (y) rows[compareTraits(x, y)].push([x, y]); else onlyA.push(x);
+  }
+  for (const [key, y] of B.traits) if (!A.traits.has(key)) onlyB.push(y);
+  const traitName = (x) => `${esc(x.blabel)} ${esc(x.alabel)}`;
+  const byName = (p, q) => traitName(p[0] || p).localeCompare(traitName(q[0] || q));
+  const verdict = {
+    different: (x) => `${traitName(x)} differs`,
+    larger: (x) => `${traitName(x)} greater in <i>${esc(nameB)}</i>`,
+    smaller: (x) => `${traitName(x)} smaller in <i>${esc(nameB)}</i>`,
+    overlap: () => `overlapping`, same: () => `the same`, units: () => `different units, not compared`,
+  };
+  const section = (kinds, title, note) => {
+    const list = kinds.flatMap((k) => rows[k].map((pair) => [k, pair])).sort((p, q) => byName(p[1], q[1]));
+    if (!list.length) return "";
+    return `<h2>${title} <span class="muted">(${n(list.length)})</span></h2>${note ? `<p class="muted">${note}</p>` : ""}
+      <div class="tablewrap"><table class="results compare"><thead><tr><th>Part and attribute</th><th><i>${esc(nameA)}</i></th><th><i>${esc(nameB)}</i></th><th>Comparison</th></tr></thead><tbody>
+      ${list.map(([k, [x, y]]) => `<tr><th scope="row">${termLink(x.bearer, x.blabel)} ${termLink("http://purl.obolibrary.org/obo/" + x.attribute, x.alabel)}</th><td>${traitValue(x)}</td><td>${traitValue(y)}</td><td>${verdict[k](x)}</td></tr>`).join("")}
+      </tbody></table></div>`;
+  };
+  const only = (list, who) => list.length ? `<details class="pending"><summary>${n(list.length)} described only for <i>${esc(who)}</i></summary><ul>${list.sort(byName).map((x) => `<li>${traitName(x)}: ${traitValue(x)}</li>`).join("")}</ul></details>` : "";
+  const compared = Object.values(rows).reduce((sum, list) => sum + list.length, 0);
+  const notes = [
+    [A.skipped + B.skipped, "with a condition (“usually”, “when young”, “of male flowers”, relative to another part)"],
+    [A.negated + B.negated, "that say what a part is not"],
+    [A.left + B.left, "whose quality has no attribute in PATO"],
+  ].filter(([count]) => count).map(([count, what]) => `${n(count)} annotations ${what}`);
+  setView(`<h1>Compare two taxa</h1>
+    <p class="lede"><a href="${taxonHref(a)}" class="sci">${esc(nameA)}</a> <span class="muted">and</span> <a href="${taxonHref(b)}" class="sci">${esc(nameB)}</a></p>
+    ${COMPARE_INTRO}
+    <p>${compared ? `${n(compared)} traits are described for both taxa: ${n(rows.different.length + rows.larger.length + rows.smaller.length)} differ, ${n(rows.overlap.length)} overlap, ${n(rows.same.length)} are the same.` : `No trait is described for both taxa in a comparable way.`}
+      <a href="#/compare/${encodeURIComponent(taxonKey(b))}/${encodeURIComponent(taxonKey(a))}">Swap</a> · <a href="#/compare/${encodeURIComponent(taxonKey(a))}">Choose another second taxon</a></p>
+    ${section(["different", "larger", "smaller"], "Differences", `Relative to <i>${esc(nameA)}</i>. A taxon covers many plants and each flora describes its own area, so a difference here is a difference between descriptions; check the sentences on the taxon pages.`)}
+    ${section(["overlap"], "Overlapping", "The values or ranges share a part.")}
+    ${section(["same"], "The same", "")}
+    ${section(["units"], "Not compared", "")}
+    <h2>Not comparable</h2>
+    ${only(onlyA, nameA)}${only(onlyB, nameB)}
+    <p class="muted">Only accepted annotations are compared.${notes.length ? ` Left out: ${notes.join("; ")}.` : ""}</p>`);
+}
+
+/* ---------------------------------------------------------------- about */
+const doi = (id) => `<a href="https://doi.org/${id}" target="_blank" rel="noopener">doi:${id}</a>`;
+const ext = (url, text) => `<a href="${url}" target="_blank" rel="noopener">${text}</a>`;
+// [what, used for]; the links are the specifications or home pages.
+const STANDARDS = [
+  ["Data", [
+    [ext("https://www.w3.org/TR/rdf11-concepts/", "RDF 1.1"), "Every annotation is RDF. The downloads are N-Quads, one named graph per source and kind of data."],
+    [ext("https://www.w3.org/TR/sparql11-query/", "SPARQL 1.1"), "The public endpoint, which this website itself queries."],
+    [ext("https://www.w3.org/TR/owl2-overview/", "OWL 2"), "The firm content of each annotation is an OWL class expression: a part, a quality, numbers as data ranges, “or” as a union, absence as a complement. Taxa are subclasses of these classes. Everything is classified with the ELK reasoner (OWL 2 EL)."],
+    [ext("https://www.w3.org/TR/prov-o/", "PROV-O"), "Provenance: how each annotation was made, the source statement it derives from and the extraction step that produced it."],
+    [ext("https://www.evidenceontology.org/", "Evidence and Conclusion Ontology (ECO)"), "Evidence: the kind of support each annotation has. Every record points to its source sentence as an author statement used in an automatic assertion (ECO:0007319)."],
+    [ext("https://www.w3.org/TR/void/", "VoID") + ", " + ext("https://www.w3.org/TR/vocab-dcat-3/", "DCAT 3") + ", " + ext("https://schema.org/Dataset", "schema.org") + ", " + ext("https://www.w3.org/TR/tabular-data-primer/", "CSV on the Web"), "The description of the dataset itself: licence, version, files, checksums, sources and the columns of the tables (see <a href=\"#/downloads\">Downloads</a>)."],
+    [ext("https://github.com/MaastrichtU-IDS/semanticscience", "SIO") + ", " + ext("https://www.dublincore.org/specifications/dublin-core/dcmi-terms/", "Dublin Core terms") + ", " + ext("https://www.w3.org/TR/skos-reference/", "SKOS"), "Source statements and their text (SIO), titles and identifiers of sources (Dublin Core), links from taxa to IPNI, Plants of the World Online and World Flora Online (skos:exactMatch)."],
+    [ext("https://www.ogc.org/standards/geosparql/", "GeoSPARQL"), "Coordinates of named places, as WKT points."],
+    [ext("https://shex.io/shex-semantics/", "ShEx") + " and " + ext("https://linkml.io/", "LinkML"), "The annotation record is defined as a LinkML schema; each annotation pattern has a ShEx shape that its RDF is checked against."],
+    ["Linked data", "Every record, annotation class and taxon has an IRI under <code>http://phenomebrowser.net/flopo/</code> that returns RDF to programs (Turtle or N-Triples, by the Accept header) and a page to people. Ontology classes keep their OBO PURLs."],
+  ]],
+  ["Ontologies", [
+    [ext("https://github.com/flora-phenotype-ontology/flopoontology", "FLOPO") + ", the Flora Phenotype Ontology", "Phenotype classes of plants, each defined from a plant part and a quality; also the quality words of floras that PATO lacks."],
+    [ext("https://obofoundry.org/ontology/po.html", "Plant Ontology (PO)"), "Plant parts and developmental stages."],
+    [ext("https://obofoundry.org/ontology/pato.html", "PATO"), "Qualities: shape, colour, texture, size and the like."],
+    [ext("https://obofoundry.org/ontology/uo.html", "Units Ontology (UO)"), "Units of measurements and counts. Feet and inches of older floras are converted to SI units."],
+    [ext("https://obofoundry.org/ontology/ro.html", "Relation Ontology (RO)") + ", " + ext("https://obofoundry.org/ontology/bfo.html", "BFO") + ", " + ext("https://obofoundry.org/ontology/bspo.html", "BSPO") + ", " + ext("https://obofoundry.org/ontology/iao.html", "IAO"), "The relations of the class expressions (has part, part of, has characteristic, towards), regions such as margin and apex, and the “pending final vetting” mark on provisional terms."],
+    ["Entity–Quality (EQ) model", "The way of writing a phenotype as an entity and a quality that the phenotype ontologies share (references 2–5)."],
+    ["ISCC-NBS colour names", "Colour words of the floras are read on the ISCC-NBS colour names, so that “reddish orange” is one value."],
+  ]],
+  ["Names and places", [
+    [ext("https://www.ipni.org/", "IPNI") + " and Kew’s " + ext("https://powo.science.kew.org/about-wcvp", "World Checklist of Vascular Plants"), "Taxa are keyed by the IPNI identifier of the accepted name in the checklist; the names the floras print are kept and linked to it."],
+    [ext("https://www.worldfloraonline.org/", "World Flora Online"), "Identifiers for mosses, algae and lichens, which the checklist does not cover, and as a second identifier for the others."],
+    ["ISO 3166-2", "Codes of the regions of Saudi Arabia in the two Saudi guides."],
+  ]],
+];
+// [citation, DOI, what the atlas takes from it]
+const REFERENCES = [
+  ["Hoehndorf R, Alshahrani M, Gkoutos GV, Gosline G, Groom Q, Hamann T, Kattge J, de Oliveira SM, Schmidt M, Sierra S, Smets E, Vos RA, Weiland C. The flora phenotype ontology (FLOPO): tool for integrating morphological traits and phenotypes of vascular plants. <i>Journal of Biomedical Semantics</i> 2016;7:65.", "10.1186/s13326-016-0107-8", "FLOPO itself, and the first version of this work: phenotypes mined from digitized floras."],
+  ["Gkoutos GV, Schofield PN, Hoehndorf R. The anatomy of phenotype ontologies: principles, properties and applications. <i>Briefings in Bioinformatics</i> 2018;19(5):1008–1021.", "10.1093/bib/bbx035", "The principles the atlas is built on: direct and comparative phenotype statements, attributes and their values, the entity-first class pattern, inheritance over parts, relational qualities, absence. See “Principles” above."],
+  ["Mungall CJ, Gkoutos GV, Smith CL, Haendel MA, Lewis SE, Ashburner M. Integrating phenotype ontologies across multiple species. <i>Genome Biology</i> 2010;11:R2.", "10.1186/gb-2010-11-1-r2", "The entity–quality model in OWL: the form of every annotation class, relational qualities, counts."],
+  ["Gkoutos GV, Green ECJ, Mallon AM, Hancock JM, Davidson D. Using ontologies to describe mouse phenotypes. <i>Genome Biology</i> 2005;6:R8.", "10.1186/gb-2004-6-1-r8", "PATO and the decomposition of a phenotype into entity and quality."],
+  ["Dahdul WM, Balhoff JP, Engeman J, et al. Evolutionary characters, phenotypes and ontologies: curating data from the systematic biology literature. <i>PLoS ONE</i> 2010;5(5):e10708.", "10.1371/journal.pone.0010708", "Entity–quality annotation of characters from the systematic literature; composing terms where no single class exists."],
+  ["Balhoff JP, Mikó I, Yoder MJ, Mullins PL, Deans AR. A semantic model for species description applied to the ensign wasps (Hymenoptera: Evaniidae) of New Caledonia. <i>Systematic Biology</i> 2013;62(5):639–659.", "10.1093/sysbio/syt028", "Species descriptions written as OWL class expressions, with the taxon as a class. The atlas follows this model, and its limits for relative measurements and counts are discussed on the pattern pages."],
+  ["Endara L, Thessen AE, Cole HA, Walls R, Gkoutos G, Cao Y, Chong SS, Cui H. Modifier ontologies for frequency, certainty, degree, and coverage phenotype modifier. <i>Biodiversity Data Journal</i> 2018;6:e29232.", "10.3897/BDJ.6.e29232", "The kinds of modifier (usually, rarely, about, broadly) that the records keep beside the OWL class."],
+  ["Osumi-Sutherland D, Courtot M, Balhoff JP, Mungall C. Dead simple OWL design patterns. <i>Journal of Biomedical Semantics</i> 2017;8:18.", "10.1186/s13326-017-0126-0", "Documenting each way of writing a class as a named pattern (the Patterns pages)."],
+  ["Loebe F, Stumpf F, Hoehndorf R, Herre H. Towards improving phenotype representation in OWL. <i>Journal of Biomedical Semantics</i> 2012;3(Suppl 2):S5.", "10.1186/2041-1480-3-S2-S5", "Ways of writing phenotypes in OWL, including the absence of parts."],
+  ["Cui H. CharaParser for fine-grained semantic annotation of organism morphological descriptions. <i>Journal of the American Society for Information Science and Technology</i> 2012;63(4):738–754.", "10.1002/asi.22618", "Earlier automatic annotation of morphological descriptions, to which the patterns are compared."],
+  ["Deans AR, Lewis SE, Huala E, et al. Finding our way through phenotypes. <i>PLoS Biology</i> 2015;13(1):e1002033.", "10.1371/journal.pbio.1002033", "The case for computable phenotype descriptions across biodiversity and genetics."],
+  ["Cooper L, Walls RL, Elser J, et al. The Plant Ontology as a tool for comparative plant anatomy and genomic analyses. <i>Plant and Cell Physiology</i> 2013;54(2):e1.", "10.1093/pcp/pcs163", "The Plant Ontology."],
+  ["Dumontier M, Baker CJO, Baran J, et al. The Semanticscience Integrated Ontology (SIO) for biomedical research and knowledge discovery. <i>Journal of Biomedical Semantics</i> 2014;5:14.", "10.1186/2041-1480-5-14", "SIO, used for source statements and the annotation model."],
+  ["Kazakov Y, Krötzsch M, Simančík F. The incredible ELK: from polynomial procedures to efficient reasoning with EL ontologies. <i>Journal of Automated Reasoning</i> 2014;53:1–61.", "10.1007/s10817-013-9296-3", "The reasoner that classifies FLOPO and the annotation classes."],
+  ["Govaerts R, Nic Lughadha E, Black N, Turner R, Paton A. The World Checklist of Vascular Plants, a continuously updated resource for exploring global plant diversity. <i>Scientific Data</i> 2021;8:215.", "10.1038/s41597-021-00997-6", "The checklist the taxon names are standardized to."],
+];
+async function about() {
+  setView(`<h1>About the atlas</h1>
+    <p class="lede">The FLOPO Trait Atlas turns the descriptions in floras into data: every statement about a plant (“leaves glabrous”, “petals white or pink”, “fruit 3–5 cm”) becomes an annotation with ontology classes, linked to the taxon and to the sentence it comes from.</p>
+    <div class="doc">
+    <h2>How the annotations are made</h2>
+    <p>The text of each flora is split into single trait statements by a language model. Each statement is then mapped to a plant part (Plant Ontology) and a quality (PATO, or FLOPO where PATO has no term) with rule tables, and written as a record following one of the <a href="#/patterns">annotation patterns</a>. Automatic checks decide whether a record is accepted, kept for review or blocked: rules on the record, ShEx shapes on its RDF, and a reasoner run that finds contradictory classes. Statements that could not be mapped are kept as pending, with the reason; the <a href="#/coverage">coverage</a> page counts them per flora.</p>
+    <p>Taxon names are matched to Kew’s World Checklist of Vascular Plants and keyed by IPNI identifier. A language model repairs names the checklist did not match, and a repair counts only if the checklist then matches it.</p>
+    <p>The annotations are made automatically and contain errors. Each record keeps the words of the source so that it can be checked, and terms not yet reviewed by a curator are marked as provisional.</p>
+    <h2>Standards and vocabularies</h2>
+    ${STANDARDS.map(([title, rows]) => `<h3>${title}</h3><div class="tablewrap"><table class="results about"><tbody>${rows.map(([what, use]) => `<tr><th scope="row">${what}</th><td>${use}</td></tr>`).join("")}</tbody></table></div>`).join("")}
+    <h2>Principles</h2>
+    <p>The atlas follows the principles for phenotype ontologies set out by Gkoutos, Schofield and Hoehndorf (reference 2). In the terms of that review:</p>
+    <div class="tablewrap"><table class="results about"><tbody>
+    <tr><th scope="row">Direct statements</th><td>A flora describes each taxon by itself, without a reference plant. Every annotation is such a direct statement about one taxon. Comparative statements (“leaf colour differs”, “petals longer”) are not stored; they are derived from two direct statements, as the review describes, on the <a href="#/compare">Compare</a> page.</td></tr>
+    <tr><th scope="row">Comparable statements</th><td>Two statements are comparable when they are about the same plant part and their qualities are values of the same attribute. The attribute of a value is its most specific superclass in PATO’s attribute subset. The same rule decides whether “white or pink” is one statement with two values, which measurements of several floras are merged into one range, and what the Compare page sets side by side.</td></tr>
+    <tr><th scope="row">Entity first</th><td>An annotation class is written with the plant part first and the quality as its modifier: <code>'has part' some (leaf and 'has characteristic' some glabrous)</code>. All statements about one part are therefore grouped together.</td></tr>
+    <tr><th scope="row">Inheritance over parts</th><td>FLOPO’s grouping classes are written with <code>'part of' some</code> the part, as in <code>'has part' some ('part of' some leaf and 'has characteristic' some quality)</code>, so a phenotype of the leaf margin is also a leaf phenotype. The structure of FLOPO follows the Plant Ontology in this way and is computed by a reasoner.</td></tr>
+    <tr><th scope="row">Relational qualities</th><td>A quality that involves a second part (“adnate to the petals”, “shorter than the tube”) is a quality of the first part directed <code>towards</code> the second.</td></tr>
+    <tr><th scope="row">Absence</th><td>“Petals absent” is the complement of having petals, not a quality of a petal that does not exist. The atlas writes the review’s form, <code>not ('has part' some ('part of' some petal))</code>: no petal and no part of a petal. A taxon said to lack leaves and to have ovate leaf blades is therefore flagged as contradictory (<a href="#/patterns/15">pattern 15</a>).</td></tr>
+    <tr><th scope="row">Reasoning in OWL 2 EL</th><td>Classes are classified with ELK. Negation, unions and number ranges are outside OWL 2 EL, so the reasoner passes over them; they are kept in the classes and checked by separate rules.</td></tr>
+    <tr><th scope="row">Evidence and provenance</th><td>PATO does not record what supports a statement or how it was obtained. The atlas keeps the two apart. <b>Evidence</b> is what supports the annotation: the sentence of the flora, linked with <code>has evidence</code> (RO:0002558) and typed with the Evidence and Conclusion Ontology as ${ext("http://purl.obolibrary.org/obo/ECO_0007319", "ECO:0007319")}, an author statement used in an automatic assertion. <b>Provenance</b> is how the annotation was made: the extraction step and the program that ran it, in PROV-O.</td></tr>
+    </tbody></table></div>
+    <h2>Work the atlas builds on</h2>
+    <p>The representation follows the entity–quality model of the phenotype ontologies, the principles above, and the OWL model of species descriptions of Balhoff and colleagues. The <a href="#/patterns">pattern pages</a> say, for each pattern, where it follows this literature and where it departs from it.</p>
+    <ol class="refs">${REFERENCES.map(([cite, id, use]) => `<li>${cite} ${doi(id)}<br><span class="muted">${use}</span></li>`).join("")}</ol>
+    <h2>How to cite</h2>
+    <p>Until the atlas has its own publication, please cite the FLOPO paper (reference 1) and the data version you used; the <a href="#/downloads">downloads</a> page gives the version, its permanent address and the line to cite.</p>
+    <h2>Licence</h2>
+    <p>The annotations are licensed ${ext("https://creativecommons.org/licenses/by/4.0/", "CC BY 4.0")}: use them for any purpose, with credit (the <a href="#/downloads">downloads</a> page has the line to cite). The Flora Phenotype Ontology is released under CC0. The sentences quoted from the floras are there so that annotations can be checked; rights in them remain with the floras they come from and are not covered by the licence.</p>
+    <h2>FAIR data</h2>
+    <div class="tablewrap"><table class="results about"><tbody>
+    <tr><th scope="row">Findable</th><td>Every record, annotation class, taxon and data version has its own IRI. The dataset is described in <a href="void.ttl">void.ttl</a> (VoID, DCAT) and, for dataset search engines, in schema.org terms in this page.</td></tr>
+    <tr><th scope="row">Accessible</th><td>Everything is open over HTTP without registration: by IRI, through the SPARQL endpoint, and as files. Earlier versions stay listed, with their date and what changed, after their files are gone.</td></tr>
+    <tr><th scope="row">Interoperable</th><td>RDF and OWL with community ontologies (PO, PATO, FLOPO, UO, RO, ECO, PROV-O) and shared identifiers for taxa (IPNI, World Flora Online); tables with a machine-readable column description.</td></tr>
+    <tr><th scope="row">Reusable</th><td>A stated licence (CC BY 4.0), versions with dates and a note of what changed, checksums, the source sentence and the evidence and provenance of every record, and documented annotation patterns.</td></tr>
+    </tbody></table></div>
+    <h2>Code and contact</h2>
+    <p>The ontology, the annotation pipeline and this website are developed at ${ext("https://github.com/flora-phenotype-ontology/flopoontology", "github.com/flora-phenotype-ontology/flopoontology")}; questions and corrections are welcome as issues there.</p>
+    </div>`);
+}
+
+/* ---------------------------------------------------------------- downloads */
+const size = (bytes) => (bytes >= 1e9 ? (bytes / 1e9).toFixed(1) + " GB" : bytes >= 1e6 ? Math.round(bytes / 1e6) + " MB" : Math.max(1, Math.round(bytes / 1e3)) + " kB");
+async function downloads() {
+  setView(`<p class="loading">Loading the list of files…</p>`);
+  let d;
+  try {
+    d = await cached("downloads", () => requestJson(new URL("downloads.json", document.baseURI).href));
+  } catch (err) {
+    setView(`<h1>Downloads</h1><p>The download files are not available on this server. All data can be read from the <a href="#/query">SPARQL endpoint</a>.</p>`);
+    return;
+  }
+  // versions.json: the data version, its licence and citation, and earlier versions (tools.atlas_metadata)
+  const v = await cached("versions", () => requestJson(new URL("versions.json", document.baseURI).href)).catch(() => null);
+  const versionBox = v ? `<h2>Version, licence and citation</h2>
+    <dl class="kv">
+      <dt>Version</dt><dd><code>${esc(v.version)}</code>, with the permanent address <a href="${esc(v.iri)}"><code>${esc(v.iri)}</code></a>. A version is one build of the data; changes to the website alone do not make a new one.</dd>
+      <dt>Licence</dt><dd><a href="${esc(v.license)}" target="_blank" rel="license noopener">${esc(v.license_name)}</a> for the annotations. The Flora Phenotype Ontology is CC0. The sentences quoted from the floras are there so that annotations can be checked; rights in them remain with their sources. <a href="downloads/LICENSE.txt">LICENSE.txt</a></dd>
+      <dt>Cite as</dt><dd>${esc(v.citation)} <span class="muted">(<a href="downloads/CITATION.cff">CITATION.cff</a>; please also cite the FLOPO paper, see <a href="#/about">About</a>)</span></dd>
+      <dt>Metadata</dt><dd><a href="void.ttl">void.ttl</a> describes the dataset for programs (VoID and DCAT: licence, version, every graph and file with size and checksum, the sources); <a href="dataset.jsonld">dataset.jsonld</a> is the same in schema.org terms; <a href="downloads/tsv/csv-metadata.json">csv-metadata.json</a> gives the columns of the tables (CSV on the Web).</dd>
+    </dl>
+    <details class="columns"><summary><b>Earlier versions</b> <span class="muted">${n(v.history.length)} listed</span></summary>
+    <div class="tablewrap"><table class="results"><thead><tr><th>Version</th><th>Date</th><th>Triples</th><th>What changed</th></tr></thead><tbody>${v.history.map((h) => `<tr><td><code>${esc(h.version)}</code></td><td>${esc(h.date)}</td><td class="num">${h.triples ? n(h.triples) : ""}</td><td>${esc(h.changes || "")}</td></tr>`).join("")}</tbody></table></div>
+    <p class="muted">Only the current version is kept for download here.</p></details>` : "";
+  const file = (f, text) => (f ? `<a href="downloads/${esc(f.path)}" download>${text || esc(f.path.split("/").pop())}</a> <span class="muted num">${size(f.bytes)}</span>` : `<span class="empty">·</span>`);
+  const rdf = d.files.filter((f) => f.format === "nquads");
+  const tsv = d.files.filter((f) => f.format === "tsv");
+  const total = (list) => list.reduce((a, f) => a + f.bytes, 0);
+  const all = tsv.find((f) => f.path === "tsv/traits-all.tsv.gz");
+  const keys = [...new Set(rdf.filter((f) => f.source).map((f) => f.source))];
+  const records = (key) => tsv.find((f) => f.table === "traits" && f.source === key)?.rows || 0;
+  keys.sort((a, b) => records(b) - records(a));
+  const sourceRows = keys.map((key) => {
+    const g = (kind) => rdf.find((f) => f.source === key && f.kind === kind);
+    const meta = d.sources[key] || {};
+    return `<tr><th scope="row">${esc(meta.label || key)}<br><span class="muted">${esc(meta.title || "")}</span></th>
+      <td class="num">${n(records(key))}</td>
+      <td>${file(tsv.find((f) => f.table === "traits" && f.source === key), "TSV")}</td>
+      <td>${file(g("assertions"), "RDF")}</td><td>${file(g("index"), "RDF")}</td><td>${file(g("places"), "RDF")}</td></tr>`;
+  }).join("");
+  const tables = Object.entries(d.tables).map(([key, t]) => {
+    const f = key === "traits" ? all : tsv.find((x) => x.table === key);
+    return `<tr><th scope="row">${esc(t.title)}</th><td>${esc(t.description)}${key === "traits" ? " This file has all floras; the table below has one file per flora." : ""}</td><td class="num">${f ? n(f.rows) : ""}</td><td>${file(f)}</td></tr>`;
+  }).join("");
+  const shared = rdf.filter((f) => !f.source).map((f) => `<tr><th scope="row">${esc(f.kind)}</th><td>${esc(d.shared_graphs[f.kind] || "")}</td><td class="num">${n(f.triples)}</td><td>${file(f)}</td></tr>`).join("");
+  const columns = Object.entries(d.tables).map(([key, t]) => `<details class="columns"><summary><b>${esc(t.title)}</b> <span class="muted">${key === "traits" ? "traits-*.tsv.gz" : esc(key) + ".tsv.gz"}, ${t.columns.length} columns</span></summary>
+    <div class="tablewrap"><table class="results"><thead><tr><th>Column</th><th>Meaning</th></tr></thead><tbody>${t.columns.map((c) => `<tr><td><code>${esc(c.name)}</code></td><td>${esc(c.description)}</td></tr>`).join("")}</tbody></table></div></details>`).join("");
+  setView(`<h1>Downloads</h1>
+    <p class="lede">All data of the atlas can be downloaded: as RDF, which is complete, and as tab-separated tables with one row per trait record.</p>
+    <p>Version <code>${esc(v ? v.version : d.release)}</code>: ${n(tsv.filter((f) => f.table === "traits" && f.source).reduce((a, f) => a + f.rows, 0))} trait records from ${n(keys.length)} sources. All RDF files together are ${size(total(rdf))} compressed, all tables ${size(total(tsv))}.
+      <a href="downloads/README.txt">README.txt</a> describes every file and column; <a href="downloads/SHA256SUMS.txt">SHA256SUMS.txt</a> has the checksums.</p>
+    <p class="muted">The annotations are made automatically and contain errors; the <code>status</code> column and the <a href="#/about">About</a> page say how they are checked.</p>
+    ${versionBox}
+    <h2>Tables (TSV)</h2>
+    <p>Tab-separated, UTF-8, gzip-compressed, with a header line. Ontology classes are given as identifier and name. Several values in one cell are separated by “|”.</p>
+    <div class="tablewrap"><table class="results"><thead><tr><th>Table</th><th>Content</th><th>Rows</th><th>File</th></tr></thead><tbody>${tables}</tbody></table></div>
+    <h3>Columns</h3>${columns}
+    <h2>By source</h2>
+    <p>Each flora has a table of its trait records and up to three RDF graphs: the <b>annotations</b> in full (${esc(d.graph_kinds.assertions.replace(/^Annotations in full: /, "").replace(/\.$/, ""))}), the <b>flat records</b> (the form the tables and this website use, plus the statements not yet annotated), and <b>places</b>.</p>
+    <div class="tablewrap"><table class="results"><thead><tr><th>Source</th><th>Trait records</th><th>Table</th><th>Annotations</th><th>Flat records</th><th>Places</th></tr></thead><tbody>${sourceRows}</tbody></table></div>
+    <h2>Shared RDF graphs</h2>
+    <p>RDF files are N-Quads, gzip-compressed, one named graph per file. Loading all of them into a SPARQL store gives the same data as the public endpoint. The OWL definitions of the annotation classes are in <code>annotation-classes</code>.</p>
+    <div class="tablewrap"><table class="results"><thead><tr><th>Graph</th><th>Content</th><th>Triples</th><th>File</th></tr></thead><tbody>${shared}</tbody></table></div>
+    <h2>Other ways to get the data</h2>
+    <ul>
+      <li><b>SPARQL:</b> <code>${esc(ENDPOINT)}</code>. Add <code>format=csv</code>, <code>tsv</code> or <code>json</code> to a query URL to choose the result format; the <a href="#/query">Query</a> page has examples.</li>
+      <li><b>By IRI:</b> every record, annotation class and taxon IRI returns its RDF: <code>curl -H 'Accept: text/turtle' http://phenomebrowser.net/flopo/taxon/ipni-…</code></li>
+      <li><b>The ontology:</b> FLOPO in OWL at ${ext("http://purl.obolibrary.org/obo/flopo.owl", "purl.obolibrary.org/obo/flopo.owl")}; releases and source at ${ext("https://github.com/flora-phenotype-ontology/flopoontology", "GitHub")}.</li>
+    </ul>`);
+}
+
 /* ---------------------------------------------------------------- router */
 // Pages render one at a time, in order: a slow page that finishes after the reader has moved on
 // would otherwise overwrite the newer page (or fail on its vanished elements and show an error).
@@ -1065,7 +1467,7 @@ async function renderRoute() {
   const parts = (path || "/").split("/").filter(Boolean);
   const section = parts[0] || "overview";
   document.querySelectorAll(".mainnav a").forEach((a) => {
-    const on = a.dataset.nav === (section === "taxon" ? "taxa" : section);
+    const on = a.dataset.nav === (section === "taxon" || section === "compare" ? "taxa" : section);
     if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
   });
   try {
@@ -1078,6 +1480,9 @@ async function renderRoute() {
     else if (section === "coverage") await coverage();
     else if (section === "map") await placesMap();
     else if (section === "patterns") await patterns(parts[1]);
+    else if (section === "compare") await compare(parts[1], parts[2]);
+    else if (section === "about") await about();
+    else if (section === "downloads") await downloads();
     else setView(`<h1>Page not found</h1><p><a href="#/">Go to the overview</a>.</p>`);
   } catch (err) {
     setView(`<h1>Could not load the atlas</h1><p class="error">${esc(err.message)}</p>

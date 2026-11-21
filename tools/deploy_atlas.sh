@@ -8,6 +8,8 @@
 #   tools/deploy_atlas.sh --rollback                     make the previous release live again
 #   tools/deploy_atlas.sh --monitor                      check the live site (for cron)
 #   tools/deploy_atlas.sh --status                       show what is live
+#   tools/deploy_atlas.sh --feedback                     (re)start the service that receives votes,
+#                                                        after a change of its code or feedback.env
 #
 # Set PUBLIC_URL (default http://phenomebrowser.net/flopo/) to also check the public address after
 # the switch; PUBLIC_URL= skips that check. The script stops at the first failed check; a failure
@@ -25,6 +27,9 @@ NGINX=flopo-atlas-nginx
 LIVE_URL=http://127.0.0.1:8778/
 STAGING_URL=http://127.0.0.1:8779/
 PUBLIC_URL=${PUBLIC_URL-http://phenomebrowser.net/flopo/}
+PYTHON_IMAGE=python@sha256:07d4824036af339fa1b6ef769cc99d9c10a141769538b52b3b597c84f7a7b535  # 3.11-slim
+FEEDBACK=flopo-atlas-feedback
+FEEDBACK_DIR=$REPO/local-corpora/saudi-flora/feedback   # votes (feedback.sqlite) and feedback.env; not part of a release
 declare -A PORT=([blue]=7001 [green]=7002)
 
 log() { echo "== $(date +%T) $*" >&2; }
@@ -63,6 +68,32 @@ reload_nginx() {
   sleep 1
 }
 
+# The service that receives votes on annotations (flopo2/saudi/feedback.py). One instance serves the
+# live and the staging server; it is restarted when its code or its settings changed.
+start_feedback() {
+  mkdir -p "$FEEDBACK_DIR/service"
+  if [[ ! -f $FEEDBACK_DIR/feedback.env ]]; then
+    (umask 077; printf 'FEEDBACK_SECRET=%s\nFEEDBACK_PUBLIC_BASE=%s\n' "$(openssl rand -hex 32)" "${PUBLIC_URL:-}" > "$FEEDBACK_DIR/feedback.env")
+  fi
+  local want have
+  want=$(cat "$REPO/flopo2/saudi/feedback.py" "$FEEDBACK_DIR/feedback.env" | sha256sum | cut -c1-16)
+  have=$(docker inspect -f '{{index .Config.Labels "atlas.feedback"}}' "$FEEDBACK" 2>/dev/null || true)
+  if [[ $want != "$have" || -z $(docker ps -q --filter "name=^$FEEDBACK$") ]]; then
+    cp "$REPO/flopo2/saudi/feedback.py" "$FEEDBACK_DIR/service/feedback.py"
+    docker rm -f "$FEEDBACK" >/dev/null 2>&1 || true
+    docker run -d --name "$FEEDBACK" --restart unless-stopped --network host -u "$(id -u):$(id -g)" \
+      --label "atlas.feedback=$want" --env-file "$FEEDBACK_DIR/feedback.env" -e PYTHONUNBUFFERED=1 \
+      -v "$FEEDBACK_DIR/service:/app:ro" -v "$FEEDBACK_DIR:/data" "$PYTHON_IMAGE" \
+      python /app/feedback.py serve --db /data/feedback.sqlite --host 127.0.0.1 --port 7010 >/dev/null
+  fi
+  for _ in $(seq 30); do
+    curl -sf http://127.0.0.1:7010/feedback/health >/dev/null && return 0
+    sleep 1
+  done
+  docker logs --tail 20 "$FEEDBACK" >&2
+  die "the feedback service did not come up"
+}
+
 start_qlever() {  # colour stamp
   local name=flopo-atlas-qlever-$1 port=${PORT[$1]}
   docker rm -f "$name" >/dev/null 2>&1 || true
@@ -97,6 +128,7 @@ case "${1:-}" in
     docker ps --filter name=flopo-atlas --format '{{.Names}}\t{{.Status}}\t{{.Ports}}'
     exit 0 ;;
   --rollback) rollback; exit $? ;;
+  --feedback) start_feedback; reload_nginx; docker ps --filter "name=^$FEEDBACK$" --format '{{.Names}}\t{{.Status}}'; exit 0 ;;
   --monitor)
     [[ -n $LIVE_STAMP ]] || die "nothing is live"
     status=0
@@ -171,6 +203,14 @@ if [[ ! -d $REL/web/precomputed ]]; then  # site-wide counts of the overview, Tr
   log "precomputed summary queries"
   "$PY" -m tools.atlas_precompute "http://127.0.0.1:${PORT[$COLOUR]}/" "$REL/web" || die "precomputed queries failed"
 fi
+if [[ ! -f $REL/downloads/downloads.json ]]; then  # gzipped N-Quads and TSV tables of this release's RDF
+  log "download files"
+  "$PY" -m tools.atlas_downloads "$REL" || die "download files could not be written"
+fi
+cp "$REL/downloads/downloads.json" "$REL/web/downloads.json"  # the list the Downloads page shows
+# Licence, version, files and sources for programs: void.ttl, dataset.jsonld, the table schema
+"$PY" -m tools.atlas_metadata "$REL" || die "the dataset description could not be written"
+start_feedback
 write_conf staging "$STAMP" "$COLOUR"
 [[ -f $STATE/live.conf ]] || write_conf live "$STAMP" "$COLOUR"   # first deployment: nothing live yet
 reload_nginx

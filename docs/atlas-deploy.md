@@ -44,6 +44,18 @@ A release is `local-corpora/saudi-flora/releases/<stamp>/` (git-ignored):
   blank-node labels prefixed per file;
 - `index/`: the QLever index;
 - `web/`: the browser, `summary.json`, `release.json`;
+- `downloads/`: the bulk downloads served at `/downloads/` and listed on the Downloads page
+  (`tools.atlas_downloads`): every graph as gzipped N-Quads, TSV tables (trait records per source
+  and together, places, flowering and growth, taxa, printed names, terms), `README.txt` with every
+  column, `SHA256SUMS.txt` and `downloads.json`. The column lists in `tools/atlas_downloads.py`
+  are the one description of the tables: the files, the README and the web page are written from
+  them. A website-only release hard-links the files of its base release;
+- the description of the data (`tools.atlas_metadata`, written after the downloads): `void.ttl`
+  (VoID and DCAT 3: licence, creator, version and previous version, endpoint, one subset per
+  graph, one distribution per file with size and checksum, sources) and `dataset.jsonld`
+  (schema.org, also embedded in `index.html`), both in `web/` and `downloads/`;
+  `downloads/tsv/csv-metadata.json` (the columns as CSV on the Web), `downloads/CITATION.cff`,
+  `downloads/LICENSE.txt`, and `web/versions.json` for the Downloads page;
 - `release.json`: commit, triple count and SHA-256 per graph;
 - `queries.jsonl`: every query the browser sent during the crawl;
 - `checks.json`: the result of every check, per stage.
@@ -76,13 +88,16 @@ switch, a failure restores the previous release. Warnings are recorded and do no
 | | C5 | provisional value terms carry IAO:0000114 'pending final vetting'; every FLOPO:0991xxx used is in the spec |
 | | C6 | accepted statements and taxa are not more than 1% below the live release |
 | staging | C13–C17 | below, against the staging server |
-| | C18 | headless Chromium opens the overview, 10 taxa, every trait group, identify, coverage and every example query, without console errors, failed requests or error messages |
+| | C18 | headless Chromium opens the overview, 10 taxa, every trait group, identify, coverage, about, downloads, a comparison of two taxa and every example query, without console errors, failed requests or error messages |
 | | C7 | QLever's triple count per graph equals `release.json` |
 | | C8 | OWL class expressions are complete: the counts of intersectionOf, unionOf, complementOf, restrictions and list cells equal Oxigraph's |
 | | C9 | every query from C18 runs on QLever and gives the same number of rows as Oxigraph on the same files; values are compared too, except for a LIMIT without ORDER BY (any rows are right) and language tags (QLever's `SAMPLE()` drops them). `SAMPLE()` may pick another label: a warning below 5% of cells |
 | | C10 | every browser query answers within 2 s (warning), 5 s (failure) |
 | | C11 | `DESCRIBE` of 40 annotation classes, records and taxa equals the development server's description (literals by value: QLever writes integers as `xsd:int`) |
 | live, public | C13 | page and static files load, and the page is the expected release (`X-Atlas-Release`) |
+| | C13d | `downloads.json` is the release's, the README, checksums and three files are served with their listed sizes, and the terms table matches its checksum |
+| | C13f | `void.ttl` is served as Turtle, names the current version with the CC BY 4.0 licence and agrees with `versions.json`; `/dataset` returns it to a program; the licence, citation and table-schema files are served; the page embeds the schema.org description |
+| | C13e | `attributes.json` (the attribute of each quality value, `tools.atlas_attributes`; the Compare page) is served as built |
 | | C14 | the endpoint answers with the release's quad count (the union default graph counts a triple stated in two graphs once) |
 | | C15 | `?format=csv`, Turtle for CONSTRUCT, CORS, a malformed query is a 400 |
 | | C16 | an annotation-class IRI returns Turtle with its OWL definition; with `Accept: text/html` it redirects to the browser; a taxon IRI opens the taxon page |
@@ -119,6 +134,34 @@ on `frontend` and `frontend1` (borg-infrastructure: `/etc/nginx/sites-available/
 root via `sudo rootsh`). It was tested against a local nginx with the same block: C13–C18 pass
 under `/flopo/`. After it is applied, run `tools/deploy_atlas.sh --monitor` without `PUBLIC_URL=`.
 
+## Review by readers
+
+On a taxon page each annotation can be marked right or wrong, and "Report a problem" opens a
+GitHub issue with the record filled in. Votes go to a small service, `flopo2/saudi/feedback.py`
+(standard library only; container `flopo-atlas-feedback` on 127.0.0.1:7010, behind `/feedback/`
+of the live and the staging server). A vote never changes the atlas data.
+
+- **Two kinds of vote, kept apart** in the table, the counts and the export: `anonymous` (the
+  voter is a keyed hash of the address; the address is not stored; one vote per record per
+  address, 200 a day) and `named` (signed in with GitHub or ORCID; stored as `github:<login>` or
+  `orcid:<iD>` with the displayed name).
+- **Data:** `local-corpora/saudi-flora/feedback/feedback.sqlite`, outside the releases, so it
+  survives deployments and rollbacks. It is not in git and has no backup yet.
+  `python -m flopo2.saudi.feedback export --db local-corpora/saudi-flora/feedback/feedback.sqlite`
+  writes all votes as TSV (record, taxon, source, vote, reason, comment, release).
+- **Settings:** `local-corpora/saudi-flora/feedback/feedback.env` (created by the deploy script
+  with a random `FEEDBACK_SECRET`). Sign-in is offered for a provider once its client is set:
+  `GITHUB_CLIENT_ID`/`GITHUB_CLIENT_SECRET` (OAuth app with callback
+  `http://phenomebrowser.net/flopo/feedback/callback/github`), `ORCID_CLIENT_ID`/
+  `ORCID_CLIENT_SECRET` (callback `…/feedback/callback/orcid`; ORCID accepts only https callbacks,
+  so this waits for https on phenomebrowser.net). Then `tools/deploy_atlas.sh --feedback`.
+- **The voter's address** is taken from `Incap-Client-IP`, which the firewall in front of
+  phenomebrowser.net sets, for requests that come from the two frontends; `X-Forwarded-For` can
+  be sent by the reader and is not used (`deploy/atlas/nginx/atlas.conf`).
+- **Checks:** C19a (the service answers) and C19b (a malformed vote and a vote on an unknown
+  record are refused, which also shows that the service reaches the endpoint) run with the other
+  smoke checks and in the monitor. They write nothing.
+
 ## Provisional terms
 
 FLOPO:0991026–0991045 are not yet reviewed. They carry IAO:0000114 'pending final vetting'
@@ -130,3 +173,33 @@ are set by the `status` column of `config/flopo_flora_value_terms.tsv`. C5 check
 `tools/deploy_atlas.sh` pins `adfreiburg/qlever` and `nginx:1.27-alpine` by digest. To upgrade,
 pull the new image, put its digest in the script and deploy; C7–C11 show whether the new QLever
 answers like the old one.
+
+## Licence, versions and metadata
+
+The annotations are CC BY 4.0 (`LICENSE-data.txt`); FLOPO stays CC0, and the quoted sentences of
+the floras are not relicensed. The statement is in every release (`downloads/LICENSE.txt`,
+`void.ttl`, the README, the About and Downloads pages).
+
+A **data version** is one build of the RDF, named by its build time (`20261119-1826`); a release
+that changes only the website keeps the version of the release it is built on. Addresses:
+
+| Address | Answers |
+|---|---|
+| `http://phenomebrowser.net/flopo/dataset` | the dataset, whatever its version |
+| `http://phenomebrowser.net/flopo/release/<version>` | one version |
+| `http://phenomebrowser.net/flopo/void.ttl` | the description both addresses lead to |
+
+Both addresses return `void.ttl` to a program that asks for RDF and forward a browser to the
+Downloads page. Only the files of the current version are served; earlier versions stay in the
+description with their date and note.
+
+`deploy/atlas/data-releases.tsv` lists the versions (`version`, `date`, `triples`, `changes`).
+**Before a data release, add its line with a note of what changed**; a version that is not listed
+is added to the description without a note. Not done: a DOI (deposit a version at Zenodo),
+registration in FAIRsharing or re3data, and `/.well-known/void` at the root of the host, which
+this site does not control.
+
+Evidence and provenance are separate in the data: `obo:RO_0002558` (has evidence) links a record
+to its source sentence, which is typed `obo:ECO_0007319` (author statement used in automatic
+assertion); `fb:evidence` gives the class on the flat record. PROV-O (`prov:wasDerivedFrom`,
+`prov:wasGeneratedBy`) says how the record was made.
