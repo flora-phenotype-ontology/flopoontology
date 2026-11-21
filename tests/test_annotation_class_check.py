@@ -105,3 +105,48 @@ def test_absent_and_described_in_one_taxon_is_a_contradiction(tmp_path):
     assert len(report) == 2 and report[1].startswith("A b\t")
     records = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()]
     assert [a["gate"]["status"] for r in records for a in r["assertions"]] == ["review", "review", "accepted", "accepted"]
+
+
+def _part(po: str, label: str, pato: str, text: str) -> dict:
+    from flopo2.owl.annotation_class import ensure_annotation_class_iri
+
+    assertion = {"po_id": po, "pato_id": pato, "value_terms": [], "value_operator": "atomic",
+                 "negated": False, "source_text": text, "gate": {"status": "accepted", "reasons": []},
+                 "composition": {"entity_label": label, "quality_label": text}}
+    ensure_annotation_class_iri(assertion)
+    return assertion
+
+
+def test_absence_of_a_part_is_written_with_part_of():
+    """not (has part some (part of some leaf)): Gkoutos, Schofield and Hoehndorf 2018."""
+    from rdflib import OWL, Graph, URIRef
+
+    from flopo2.owl import assertions
+
+    graph = Graph()
+    assertions._phenotype_expression(graph, assertions._Nodes(), _absent("leaves absent"), set())
+    (negated,) = graph.objects(None, OWL.complementOf)
+    assert graph.value(negated, OWL.onProperty) == assertions.HAS_PART
+    inner = graph.value(negated, OWL.someValuesFrom)
+    assert graph.value(inner, OWL.onProperty) == assertions.PART_OF
+    assert graph.value(inner, OWL.someValuesFrom) == URIRef(acc.OBO + "PO_0025034")
+    assert URIRef(acc.OBO + "PATO_0000467") not in set(graph.all_nodes())
+    # a part that lacks a quality keeps the form "no part with that quality"
+    lacking = {**_assertion("PATO_0000453", "not glabrous"), "negated": True, "negation_scope": "absence"}
+    assert not assertions.is_absence_of_part(lacking)
+
+
+@pytest.mark.skipif(shutil.which("java") is None, reason="needs Java for ROBOT/ELK")
+def test_absent_whole_contradicts_a_described_part(tmp_path):
+    """Leaves absent, leaf lamina ovate: the lamina (PO:0020039) is part of a leaf."""
+    lamina = _part("PO_0020039", "leaf lamina", "PATO_0001891", "leaf blades ovoid")
+    stem = _part("PO_0009047", "stem", "PATO_0000453", "stems glabrous")
+    absent = _absent("leaves absent")
+    path = tmp_path / "x-annotated.jsonl"
+    path.write_text(json.dumps({"taxon": "A b", "assertions": [lamina, absent]}) + "\n"
+                    + json.dumps({"taxon": "C d", "assertions": [stem, dict(absent)]}) + "\n", encoding="utf-8")
+    result = acc.check("x", path, tmp_path)
+    assert (result["unsatisfiable"], result["taxa_checked"], result["taxon_contradictions"],
+            result["taxon_statements_marked"]) == (0, 2, 1, 2)
+    records = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()]
+    assert [a["gate"]["status"] for r in records for a in r["assertions"]] == ["review", "review", "accepted", "accepted"]

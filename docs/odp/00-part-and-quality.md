@@ -8,11 +8,11 @@ Every other pattern adds to this one: a frequency, a range, a second part, a who
 ## Annotation
 
 ```json
-{"po_id": "PO_0025034", "pato_id": "PATO_0000452", "value_low": null, "value_high": null}
+{"po_id": "PO_0025034", "pato_id": "PATO_0000453", "value_low": null, "value_high": null}
 ```
 
 The bearer is a Plant Ontology part (leaf, PO:0025034); the quality is a PATO quality or a FLOPO
-flora value (glabrous, PATO:0000452). A measurement adds the numbers and a UO unit: "leaves 3-8 cm
+flora value (glabrous, PATO:0000453). A measurement adds the numbers and a UO unit: "leaves 3-8 cm
 long" is leaf, length (PATO:0000122), 3 to 8, centimetre (UO:0000015).
 
 ## OWL
@@ -34,7 +34,7 @@ each flora used.
 
 ```turtle
 <record> a fb:TraitRecord ; fb:taxon <taxon> ; fb:bearer obo:PO_0025034 ;
-    fb:quality obo:PATO_0000452 ; fb:text "leaves glabrous" ; fb:source <flora> ;
+    fb:quality obo:PATO_0000453 ; fb:text "leaves glabrous" ; fb:source <flora> ;
     fb:phenotypeClass <annotation-class/FAC_...> .
 ```
 

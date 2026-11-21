@@ -38,7 +38,7 @@ lexicons, and the gates run on the result.
 | linear-lanceolate; ovate to elongate-linear | compound shapes: "X-Y" is between X and Y, a continuum; "elongate" in a compound repeats the other word and is dropped (`chain_from_phrase`) |
 | ovate to subglobose; red tending to orange | continuum: a qualitative value relation between the two values (reified; no OWL class, because an intermediate value is neither endpoint) |
 | white becoming pink | temporal transition: qualitative value relation |
-| petals absent; no scent | `ObjectComplementOf` (absence of the part, or lack of the quality) |
+| petals absent; no scent | `ObjectComplementOf`: `not (has part some (part of some X))` for a missing part X, `has part some (X and not (has characteristic some Q))` for a part that lacks the quality Q |
 
 A disjunction is a union only when every value grounds under one PATO attribute and no value
 has its own degree cue ("pale yellow or white" stays a relation).
@@ -104,7 +104,15 @@ has its own degree cue ("pale yellow or white" stays a relation).
 8. **Compound habits** (`merge_compound_habits`): "herbaceous shrub", "shrubby herb", "woody herb"
    are one habit (subshrub), not two exclusive ones.
 9. **Absence** is one representation: "absent", "no X" and "without X" are the complement of
-   presence.
+   presence, written `not (has part some (part of some X))` (docs/odp/15-absence-of-a-part.md):
+   a plant without X has no part of X either.
+   **Arrangement and relations within a whorl** are qualities of the structure that carries
+   the parts (docs/odp/16-quality-of-a-whole-towards-its-parts.md): "leaves alternate" is a
+   quality of the shoot axis towards its leaves, "sepals connate" of the calyx towards its
+   sepals. The record keeps the part the flora names; the annotator adds the slot `carrier` from
+   the tables of `flopo2/owl/carrier.py`. A corpus annotated before 2026-11-21 gets it from
+   `python -m flopo2.verify.apply_carrier` (counts only without `--write-suffix`). A part or
+   value that should take the pattern is added to those tables, not to the annotator.
 10. **Colours** are read on the ISCC-NBS backbone; compounds of two hues are the intermediate
    category.
 11. **Measurements** must be anchored on their printed numbers.

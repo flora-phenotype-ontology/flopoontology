@@ -13,12 +13,18 @@ it) and classifies the result with ELK through ROBOT. A class ELK finds unsatisf
 
 The same run checks each **taxon**: can one plant have all the accepted statements of the taxon
 at once? "Petals absent" and "petals white" cannot. ELK passes over negation, so the question is
-put in a form it reads. For an absence class N = not (has part some X) the run adds a class for
-the presence, P(N) = has part some X, and a marker class M(N) declared disjoint with P(N); the
-taxon class is the conjunction of the taxon's positive classes and the markers of its absences.
-It is unsatisfiable exactly when the positive statements entail a presence the taxon denies;
-the run also states that a plant part that is described is present (plant anatomical entity
-SubClassOf has quality some present), so that "leaves absent" contradicts "leaves glabrous". A
+put in a form it reads. For an absence class N = not P the run adds a class for the presence P(N)
+and a marker class M(N) declared disjoint with P(N); the taxon class is the conjunction of the
+taxon's positive classes and the markers of its absences. It is unsatisfiable exactly when the
+positive statements entail a presence the taxon denies.
+
+The absence of a part X is N = not (has part some (part of some X)) (Gkoutos, Schofield and
+Hoehndorf 2018, doi:10.1093/bib/bbx035), so P(N) = has part some (part of some X): "leaves
+absent" contradicts "leaf blade ovate" as well, because a leaf blade is part of a leaf. OWL EL
+cannot say that part of is reflexive; the run states it for each absent part (X SubClassOf part
+of some X), so that "leaves absent" also contradicts "leaves glabrous". For the other negated
+classes (a part without a quality) the run states that a plant part that is described is present
+(plant anatomical entity SubClassOf has quality some present). A
 second run on the pairs (one positive class and one marker) of those taxa names the two
 statements. They are
 
@@ -190,10 +196,24 @@ def write_taxon_classes(taxa: dict, absences: dict, out: Path) -> dict[str, str]
     graph.add((URIRef(OBO + "PO_0025131"), RDF.type, OWL.Class))
     graph.add((URIRef(OBO + "PO_0025131"), RDFS.subClassOf, exists))
     usable: set[str] = set()
+    reflexive: set[str] = set()
     for iri in sorted({iri for taxon in checked.values() for iri in taxon["absent"]}):
         try:
-            presence = assertions._phenotype_expression(
-                graph, nodes, {**absences[iri], "negated": False, "negation_scope": ""}, attributes)[0]
+            absence = absences[iri]
+            if assertions.is_absence_of_part(absence):
+                presence = assertions.presence_of_part(graph, nodes, absence)
+                key = json.dumps([absence.get(k) for k in ("po_id", "bearer_container", "bearer_whole")], sort_keys=True)
+                if key not in reflexive:  # X SubClassOf part of some X, for this X
+                    reflexive.add(key)
+                    po = assertions._curie_iri(absence.get("po_id"))
+                    part = assertions._intersection(graph, nodes, assertions._bearer_classes(graph, nodes, absence, po))
+                    whole = assertions._intersection(graph, nodes, assertions._bearer_classes(graph, nodes, absence, po))
+                    if not isinstance(part, URIRef):
+                        graph.add((part, RDF.type, OWL.Class))
+                    graph.add((part, RDFS.subClassOf, assertions._some(graph, nodes, assertions.PART_OF, whole)))
+            else:
+                presence = assertions._phenotype_expression(
+                    graph, nodes, {**absence, "negated": False, "negation_scope": ""}, attributes)[0]
         except (KeyError, ValueError):
             continue
         present, marker = URIRef(CHECK + "present/" + iri.rsplit("/", 1)[-1]), URIRef(_marker(iri))

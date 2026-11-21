@@ -82,6 +82,13 @@ python tools/classify_flopo_release.py && python -m flopo2.owl.light
 python tools/obo_dashboard_gate.py                   # FP04 passes once the release is published
 ```
 
+The value-space module (`tools/build_flopo_value_space_extension.py`, embedded by
+`tools/update_flopo_value_space_release.py`) holds the temporary attribute classes and relations
+by which value words are defined as ranges (FLOPO:0995000-0995999, proposed to PATO in
+pato-ontology/pato#629). Its numeric axioms are in `ontology/flopo-value-ranges.ofn`, an OWL 2 DL
+bridge that `flopo.owl` does not import; `tests/test_flopo_value_ranges.py` checks it with HermiT.
+See `docs/odp/17-value-defined-by-a-measure.md`.
+
 Since the 2026-10 release, `flopo.owl` asserts the reasoner's direct superclasses. Most classes
 are defined only by equivalent-class axioms over PO and PATO, so a browser that shows the asserted
 hierarchy (BioPortal) or cannot load the imports (AberOWL) otherwise sees one flat list. The
@@ -103,6 +110,45 @@ the three matching assets, run the full gate without this option, then update
 `master` through its ordinary gate and freeze the release. The hook rejects this
 staging option for updates to `master`. The staging result is
 not a claim that the public release has passed the complete Dashboard.
+
+### 2026-11-21
+
+28,403 FLOPO classes (1,306 deprecated identifiers retained); every earlier identifier
+preserved; ELK finds no unsatisfiable classes.
+
+- Arrangements and relations within a whorl are qualities of the structure that carries the
+  parts. The 50 named classes of this kind ("leaf alternate placement" FLOPO:0001032, "leaflet
+  opposite", "sepal connate", ...) are redefined as `has part some (carrier and has
+  characteristic some (Q and towards some part))`: the shoot axis for leaves and branches, the
+  leaf rachis for leaflets and pinnae, the inflorescence axis for flowers, bracts and spikelets,
+  and the calyx, corolla, perianth, androecium, gynoecium or involucre for their members.
+  Identifiers and labels are unchanged; each class has a text definition that names the
+  carrier and sits under the carrier's phenotype class ("shoot axis phenotype"), no longer
+  under "leaf phenotype". Module `ontology/flopo-carrier-migration.ttl`
+  (`tools/update_flopo_carrier_release.py`); pattern
+  [16](docs/odp/16-quality-of-a-whole-towards-its-parts.md). Source: Ellis et al. 2009, *Manual
+  of Leaf Architecture*, character 2 (leaf arrangement is "the placement of adjacent leaves on
+  the nodes of the axis").
+- Seven temporary terms FLOPO:0995001-0995013 for defining value words as ranges: the
+  attributes length to width ratio, relative position of the widest point, apex angle and base
+  angle, and the relations *has number of parts per node*, *has number of rows* and *has
+  neighbouring value*, each with a definition and source. 20 pairs of neighbouring values
+  (linear - lanceolate, opposite - whorled, ...) are stated, derived from the ranges. All are
+  provisional and were proposed to PATO (pato-ontology/pato#629). Module
+  `ontology/flopo-value-space-extension.ttl`; pattern
+  [17](docs/odp/17-value-defined-by-a-measure.md).
+- New file `ontology/flopo-value-ranges.ofn`, an OWL 2 DL bridge that `flopo.owl` does not
+  import: alternate, opposite and whorled as 1, 2, and 3 or more parts per node; linear,
+  lanceolate, oblanceolate, ovate, obovate, elliptic, orbicular and oblate as ranges of length
+  to width and of the position of the widest point; acute and obtuse as ranges of the apex or
+  base angle. The numbers are those of the *Manual of Leaf Architecture*; the reading of the
+  1962 Systematics Association chart (doi:10.2307/1216718) is recorded beside each. Checked with
+  HermiT (`tests/test_flopo_value_ranges.py`).
+- The annotations of the floras use the same form: a record of "leaves alternate" keeps the
+  leaf as the part the flora names and carries the shoot axis as `carrier`
+  (`flopo2/owl/carrier.py`); 33,540 records of 40 sources were converted
+  (`flopo2.verify.apply_carrier`). The absence of a part is written `not (has part some (part
+  of some X))` (pattern [15](docs/odp/15-absence-of-a-part.md), since 2026-11-20).
 
 ### 2026-11-15
 

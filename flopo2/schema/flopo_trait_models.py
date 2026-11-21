@@ -513,6 +513,7 @@ class TraitAssertion(ConfiguredBaseModel):
     bearer_collection: Optional[bool] = Field(default=None, description="""The bearer is a collection of anatomical_entity parts (object aggregate and has_member some E): \"flowers in groups of 4-6\" is the amount 4-6 of such a collection of flowers. Part of the FAC signature when present.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
     bearer_collection_size: Optional[int] = Field(default=None, description="""The bearer is a collection with exactly this many members of the anatomical_entity class (2 for \"pairs of leaflets\"): object aggregate and has_member exactly n E. Part of the FAC signature when present.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
     towards: Optional[RelationalTarget] = Field(default=None, description="""The second term of a relational quality: \"style shorter than the corolla tube\" is the quality decreased length of the style towards (RO:0002503) the corolla tube. Compiled as has_quality some (Q and towards some E2); part of the FAC signature when present.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
+    carrier: Optional[Carrier] = Field(default=None, description="""The structure that has the quality with respect to the stated part (shoot axis for \"leaves alternate\", calyx for \"sepals connate\"); derived from the part and the value.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
     bearer_whole: Optional[QualifiedWhole] = Field(default=None, description="""The bearer is part of a structure that itself has stated qualities: \"calyx of male flowers\" is calyx and part_of some (flower and has_quality some male). Part of the FAC signature. Not used together with bearer_container.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
     specimen_condition: Optional[SpecimenCondition] = Field(default=None, description="""The statement holds of the specimen in a stated condition of preservation or treatment (\"black when dry\", \"when fresh\", \"on wetting\"), not of the living plant as such. An assertion with a specimen condition carries no phenotype_class_iri, is not compiled into a taxon axiom and is not compared for conflicts.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
     count_word: Optional[IndefiniteCount] = Field(default=None, description="""A count stated without a number (\"seeds numerous\", \"few-flowered\"): the counted part is present (quality present) and the word for how many is kept with its cue. The phenotype class is that of the presence; the word is not part of it.""", json_schema_extra = { "linkml_meta": {'domain_of': ['TraitAssertion']} })
@@ -726,6 +727,16 @@ class RelationalTarget(ConfiguredBaseModel):
     comparison_text: Optional[str] = Field(default=None, description="""The comparison words of the source (\"slightly shorter than\"), for display.""", json_schema_extra = { "linkml_meta": {'domain_of': ['RelationalTarget']} })
     ratio_low: Optional[float] = Field(default=None, description="""Lower bound of the stated ratio of the bearer's dimension to that of the target (\"2-3 times as long as the calyx\": 2; \"as long as\", \"equalling\": 1; \"half as long as\": 0.5).""", json_schema_extra = { "linkml_meta": {'domain_of': ['RelationalTarget']} })
     ratio_high: Optional[float] = Field(default=None, description="""Upper bound of the stated ratio (3 in \"2-3 times as long as\").""", json_schema_extra = { "linkml_meta": {'domain_of': ['RelationalTarget']} })
+
+
+class Carrier(ConfiguredBaseModel):
+    """
+    The whole that has a quality with respect to its parts: the axis on which the parts are arranged, or the whorl whose members are related to one another.
+    """
+    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'http://phenomebrowser.net/flopo/flopo-trait'})
+
+    carrier_term: str = Field(default=..., description="""PO or FLOPO-local class of the axis or whorl.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Carrier']} })
+    kind: str = Field(default=..., description="""arrangement or set.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Carrier']} })
 
 
 class QualifiedWhole(ConfiguredBaseModel):
@@ -964,6 +975,7 @@ ValueOperand.model_rebuild()
 QualitativeValueRelation.model_rebuild()
 SeasonContext.model_rebuild()
 RelationalTarget.model_rebuild()
+Carrier.model_rebuild()
 QualifiedWhole.model_rebuild()
 IndefiniteCount.model_rebuild()
 CountPosition.model_rebuild()

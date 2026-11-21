@@ -645,18 +645,103 @@ def _bearer_classes(graph: Graph, nodes: _Nodes, assertion: dict, po: URIRef) ->
     return classes
 
 
+PRESENT = "PATO_0000467"
+# Evidence (what supports the annotation) is kept apart from provenance (how it was made, PROV-O).
+# The evidence of an annotation is the sentence of the flora: a statement by its author, used
+# here without review by a person. ECO:0007319, "author statement used in automatic assertion".
+HAS_EVIDENCE = URIRef(OBO + "RO_0002558")
+ECO_AUTHOR_STATEMENT_AUTOMATIC = URIRef(OBO + "ECO_0007319")
+
+
+def is_absence_of_part(assertion: dict) -> bool:
+    """"Petals absent", "no stipules": the part itself is said to be missing.
+
+    Not meant: a part that lacks a quality ("not glabrous"), a missing part of the part
+    ("without simple hairs"), a collection ("pairs"), or a comparison with another part."""
+
+    return (
+        bool(assertion.get("negated"))
+        and (assertion.get("negation_scope") or "absence") == "absence"
+        and str(assertion.get("pato_id") or "").replace(":", "_") == PRESENT
+        and not (assertion.get("value_terms") or assertion.get("value_term_ids"))
+        and assertion.get("value_low") is None
+        and assertion.get("value_high") is None
+        and not assertion.get("towards")
+        and not assertion.get("bearer_context_qualities")
+        and not assertion.get("part_restrictions")
+        and not assertion.get("bearer_collection")
+        and not assertion.get("bearer_collection_size")
+    )
+
+
+def presence_of_part(graph: Graph, nodes: _Nodes, assertion: dict) -> BNode:
+    """``has part some (part of some E)``: the plant has E or a part of E.
+
+    Its complement is the absence of E in the form of Gkoutos, Schofield and Hoehndorf 2018
+    (doi:10.1093/bib/bbx035, "PATO-based axiom patterns"): ``not (has part some (part of some
+    E))``. With part of read as reflexive and transitive, a plant without E is also a plant
+    without any part of E, so "leaves absent" is a subclass of "leaf blade absent"."""
+
+    po = _curie_iri(assertion.get("po_id"))
+    if po is None:
+        raise ValueError(f"invalid PO or FLOPO-local bearer identifier: {assertion.get('po_id')!r}")
+    graph.add((po, RDF.type, OWL.Class))
+    graph.add((PART_OF, RDF.type, OWL.ObjectProperty))
+    bearer = _intersection(graph, nodes, _bearer_classes(graph, nodes, assertion, po))
+    return _some(graph, nodes, HAS_PART, _some(graph, nodes, PART_OF, bearer))
+
+
+def _carrier_expression(graph: Graph, nodes: _Nodes, assertion: dict, po: URIRef) -> BNode:
+    """A quality of a whole with respect to its parts: "leaves alternate" is ``has part some
+    (shoot axis and has characteristic some (alternate placement and towards some leaf))``;
+    "sepals connate" the same with the calyx (docs/odp/16-quality-of-a-whole-towards-its-parts.md).
+    The part the flora names is the target; its stated states ("young leaves") stay with it."""
+
+    from flopo2.owl import carrier as carrier_rules
+
+    slot = assertion["carrier"]
+    term = _curie_iri(slot.get("carrier_term"))
+    value = carrier_rules.value_of(assertion)
+    if term is None or not str(term).startswith((OBO + "PO_", OBO + "FLOPO_")):
+        raise ValueError(f"the carrier must be a PO or FLOPO class: {slot!r}")
+    if value is None or carrier_rules.carrier_for({**assertion, "carrier": None}) != {
+        "carrier_term": str(slot.get("carrier_term", "")).replace(":", "_"), "kind": slot.get("kind")
+    }:
+        raise ValueError(f"the carrier does not follow from the part and the value: {slot!r}")
+    quality = _curie_iri(value)
+    for iri in (term, quality):
+        graph.add((iri, RDF.type, OWL.Class))
+    graph.add((TOWARDS, RDF.type, OWL.ObjectProperty))
+    part = _intersection(
+        graph, nodes, [po, *_bearer_context_quality_restrictions(graph, nodes, assertion)]
+    )
+    relational = _intersection(graph, nodes, [quality, _some(graph, nodes, TOWARDS, part)])
+    whole = _intersection(graph, nodes, [term, _some(graph, nodes, HAS_QUALITY, relational)])
+    return _some(graph, nodes, HAS_PART, whole)
+
+
 def _phenotype_expression(
     graph: Graph,
     nodes: _Nodes,
     assertion: dict,
     attribute_ids: set[str],
 ) -> tuple[URIRef | BNode, bool, bool, bool]:
+    if is_absence_of_part(assertion):
+        eq = _complement(graph, nodes, presence_of_part(graph, nodes, assertion))
+        seasons, seasonal = _season_restrictions(graph, nodes, assertion)
+        stages = _developmental_stage_restrictions(graph, nodes, assertion)
+        return _intersection(graph, nodes, [SIO_PHENOTYPE, eq, *seasons, *stages]), False, seasonal, False
     po = _curie_iri(assertion.get("po_id"))
     if po is None:
         raise ValueError(
             f"invalid PO or FLOPO-local bearer identifier: {assertion.get('po_id')!r}"
         )
     graph.add((po, RDF.type, OWL.Class))
+    if assertion.get("carrier"):
+        eq = _carrier_expression(graph, nodes, assertion, po)
+        seasons, seasonal = _season_restrictions(graph, nodes, assertion)
+        stages = _developmental_stage_restrictions(graph, nodes, assertion)
+        return _intersection(graph, nodes, [SIO_PHENOTYPE, eq, *seasons, *stages]), False, seasonal, False
     bearer_classes = _bearer_classes(graph, nodes, assertion, po)
     quality, numeric, disjunctive = _quality_restrictions(graph, nodes, assertion, attribute_ids)
     bearer_context = _bearer_context_quality_restrictions(graph, nodes, assertion)
@@ -1014,16 +1099,20 @@ def _declare_vocabulary(graph: Graph) -> None:
         SIO_DOCUMENT,
         SIO_DATA_TRANSFORMATION,
         SIO_PHENOTYPE,
+        ECO_AUTHOR_STATEMENT_AUTOMATIC,
         PROV.Entity,
         PROV.Activity,
     ):
         graph.add((cls, RDF.type, OWL.Class))
+    graph.add((ECO_AUTHOR_STATEMENT_AUTOMATIC, RDFS.label, Literal("author statement used in automatic assertion", lang="en")))
+    graph.add((HAS_EVIDENCE, RDFS.label, Literal("has evidence", lang="en")))
     for prop in (
         HAS_PART,
         HAS_QUALITY,
         PART_OF,
         HAS_MEMBER,
         HAS_PHENOTYPE,
+        HAS_EVIDENCE,
         HAPPENS_DURING,
         FLOPOANN.present_during,
         FLOPOANN.present_during_developmental_stage,
@@ -1206,6 +1295,8 @@ def build_assertion_ontology(
                 graph.add((formal, PROV.wasDerivedFrom, statement_iri))
                 graph.add((formal, SIO_DERIVED_FROM, statement_iri))
                 graph.add((formal, FLOPOANN.has_source_statement, statement_iri))
+                graph.add((formal, HAS_EVIDENCE, statement_iri))
+                graph.add((statement_iri, RDF.type, ECO_AUTHOR_STATEMENT_AUTOMATIC))
                 if description is not None:
                     graph.add((formal, FLOPOANN.phenotype_class, description))
                 elif qualitative_relation:

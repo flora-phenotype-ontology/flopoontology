@@ -37,6 +37,9 @@ SELECTORS = {
     "12": "?r fb:wholeQuality ?wholeQuality .",
     "13": "?r fb:countWord ?word .",
     "14": "?r fb:countPosition ?position .",
+    "15": "?r fb:negated true ; fb:quality <http://purl.obolibrary.org/obo/PATO_0000467> . FILTER NOT EXISTS { ?r fb:partQuality ?x }",
+    "16": "?r fb:carrier ?carrier .",
+    "17": "",  # a pattern for defining value classes: no record carries it
 }
 
 

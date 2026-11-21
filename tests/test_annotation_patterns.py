@@ -352,3 +352,41 @@ def test_a_reading_is_found_under_another_reviewed_wording(res):
                                    "stage": "when young"})
     assert a["bearer_context_qualities"] == ["PATO_0000309"]  # young
 
+
+def test_arrangement_is_a_quality_of_the_axis_and_fusion_of_the_whorl(res):
+    text = "Leaves alternate. Sepals connate. Petals white."
+    (leaves, sepals, petals), _ = annotate(
+        res, text,
+        {"entity_en": "leaf", "quality_en": "alternate", "source_en": "Leaves alternate"},
+        {"entity_en": "sepal", "quality_en": "connate", "source_en": "Sepals connate"},
+        {"entity_en": "petal", "quality_en": "white", "source_en": "Petals white"},
+    )
+    assert leaves["po_id"] in ("PO_0025034", "PO_0009025")  # the record keeps the part the flora names
+    assert leaves["carrier"] == {"carrier_term": "PO_0025029", "kind": "arrangement"}
+    assert (sepals["po_id"], sepals["carrier"]) == ("PO_0009031", {"carrier_term": "PO_0009060", "kind": "set"})
+    assert not petals.get("carrier")
+    assert issues(leaves, text) == [] and issues(sepals, text) == []
+    assert "carrier_does_not_follow_from_part_and_value" in issues(
+        {**leaves, "carrier": {"carrier_term": "PO_0009060", "kind": "set"}}, text)
+    assert "carrier_is_the_part" in issues(
+        {**leaves, "carrier": {"carrier_term": leaves["po_id"], "kind": "arrangement"}}, text)
+    assert "carrier_with_number_negation_or_relation" in issues({**leaves, "negated": True}, text)
+    from rdflib import Graph, URIRef
+
+    from flopo2.owl import assertions
+    from flopo2.owl.annotation_class import annotation_class_iri
+
+    obo = "http://purl.obolibrary.org/obo/"
+    graph = Graph()
+    assertions._phenotype_expression(graph, assertions._Nodes(), leaves, set())
+    # has part some (shoot axis and has characteristic some (alternate and towards some leaf))
+    towards = next(graph.subjects(URIRef("http://www.w3.org/2002/07/owl#onProperty"), URIRef(obo + "RO_0002503")))
+    target = graph.value(towards, URIRef("http://www.w3.org/2002/07/owl#someValuesFrom"))
+    assert str(target) == obo + leaves["po_id"]
+    whole = next(graph.subjects(URIRef("http://www.w3.org/2002/07/owl#onProperty"), URIRef(obo + "BFO_0000051")))
+    members = set(graph.items(graph.value(graph.value(whole, URIRef("http://www.w3.org/2002/07/owl#someValuesFrom")),
+                                          URIRef("http://www.w3.org/2002/07/owl#intersectionOf"))))
+    assert URIRef(obo + "PO_0025029") in members and URIRef(obo + leaves["po_id"]) not in members
+    assert annotation_class_iri(leaves) != annotation_class_iri({k: v for k, v in leaves.items() if k != "carrier"})
+    assert leaves["phenotype_class_iri"] == annotation_class_iri(leaves)
+

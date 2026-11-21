@@ -213,9 +213,11 @@ def test_leaflet_lamina_union_is_not_leaf_lamina(gate_context):
     record = _record(text, "glabre", organ="feuilles", source="fdac", language="fr")
     delta, _outcomes, _audit = rec.recover_record(record, gate_context)
     borne = [row["po_id"] for row in (delta or {}).get("add_assertions", [])]
-    # Re-borne on the leaflet lamina; the novel pair is surfaced for curation (gate review).
+    # Re-borne on the leaflet lamina. The pair (leaflet lamina, glabrous) was novel when this
+    # test was written and went to review; the curator review of 2026-09-18 allowed it
+    # (config/valid_combinations.tsv), so the gate accepts it.
     assert borne == ["FLOPO_0986002"]
-    assert delta["add_assertions"][0]["gate"]["status"] == "review"
+    assert delta["add_assertions"][0]["gate"]["status"] == "accepted"
     control = "limbe glabre ou pubescent, de 4 cm de long."
     delta, _outcomes, _audit = rec.recover_record(
         _record(control, "glabre", organ="feuilles", source="fdac", language="fr"), gate_context

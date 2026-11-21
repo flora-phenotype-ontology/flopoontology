@@ -46,6 +46,7 @@ from typing import Any
 from flopo2.annotation.provenance import FREQUENCY_ALIASES, stable_statement_id
 from flopo2.ingest import ncvc_guide
 from flopo2.ingest.colour_words import COLOUR_ATTRIBUTE, colour_value
+from flopo2.owl import carrier as carrier_rules
 from flopo2.owl.annotation_class import ensure_annotation_class_iri
 from flopo2.verify import gates
 from flopo2.verify.data_model import load_union_pairs, nearest_shared_attribute, validate_jsonl
@@ -3099,6 +3100,11 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
             ) != "unspecified" and not assertion.get("modality_text"):
                 assertion["frequency_qualifier"] = "unspecified"
             if not assertion.get("qualitative_value_relation") and not assertion.get("specimen_condition") and not assertion.get("count_position"):
+                # "leaves alternate", "sepals connate": the axis or the whorl has the quality
+                # (docs/odp/16-quality-of-a-whole-towards-its-parts.md)
+                whole = carrier_rules.carrier_for(assertion)
+                if whole is not None:
+                    assertion["carrier"] = whole
                 ensure_annotation_class_iri(assertion)
             disposition.assertion = assertion
             if not hold_code:

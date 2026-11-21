@@ -421,6 +421,10 @@ def annotation_class_signature(assertion: dict[str, Any]) -> dict[str, Any]:
     # Additive: the second entity of a relational quality ("shorter than the corolla tube").
     if assertion.get("towards"):
         signature["towards"] = canonical_iri(assertion["towards"]["target_term"])
+    # Additive: the structure that has the quality with respect to the stated part ("leaves
+    # alternate": the shoot axis; "sepals connate": the calyx).
+    if assertion.get("carrier"):
+        signature["carrier"] = canonical_iri(assertion["carrier"]["carrier_term"])
     if assertion.get("bearer_collection") and not assertion.get("bearer_collection_size"):
         signature["bearer_collection"] = True
     if assertion.get("bearer_collection_size"):

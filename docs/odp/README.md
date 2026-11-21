@@ -22,6 +22,9 @@ rules that are checked, and what is known about the pattern in the literature.
 | 12 | [Part of a qualified whole](12-part-of-qualified-whole.md) | calyx of male flowers | 2026-11-13 |
 | 13 | [Indefinite count](13-indefinite-count.md) | seeds numerous, few-flowered | 2026-11-14 |
 | 14 | [Count at a position](14-count-at-a-position.md) | veins 4-6 on each side of the midrib | 2026-11-14 |
+| 15 | [Absence of a part](15-absence-of-a-part.md) | petals absent, no stipules, leafless | 2026-10; form of [8] 2026-11-20 |
+| 16 | [Quality of a whole towards its parts](16-quality-of-a-whole-towards-its-parts.md) | leaves alternate, sepals connate | 2026-11-21 |
+| 17 | [Value defined by a measure](17-value-defined-by-a-measure.md) (defines value classes; no record carries it) | lanceolate, acute, opposite | 2026-11-21 |
 
 Earlier patterns (continuum and transition between two values, stage of development, surface or
 region of the bearer) are described in `docs/annotation-context-patterns.md`.
@@ -91,6 +94,16 @@ with a conforming and a broken record).
 7. Cui H. CharaParser for fine-grained semantic annotation of organism morphological
    descriptions. *Journal of the American Society for Information Science and Technology*
    2012;63(4):738-754.
+8. Gkoutos GV, Schofield PN, Hoehndorf R. The anatomy of phenotype ontologies: principles,
+   properties and applications. *Briefings in Bioinformatics* 2018;19(5):1008-1021.
+   doi:10.1093/bib/bbx035
+
+9. Ellis B, Daly DC, Hickey LJ, Johnson KR, Mitchell JD, Wilf P, Wing SL. *Manual of Leaf
+   Architecture*. Cornell University Press, Ithaca, 2009. Characters are cited by their number
+   in the manual (2 leaf arrangement, 9 laminar L:W ratio, 10 laminar shape, 16 apex angle,
+   18 base angle).
+10. Systematics Association Committee for Descriptive Biological Terminology. II. Terminology of
+    simple symmetrical plane shapes (Chart 1). *Taxon* 1962;11(5):145-156. doi:10.2307/1216718
 
 The search of 2026-11-13 was small (seven sources). "Not found" in a pattern file means not found
 in these sources, not that no such pattern exists.

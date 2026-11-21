@@ -269,6 +269,15 @@ classes:
           as has_quality some (Q and towards some E2); part of the FAC signature when present.
         inlined: true
         range: RelationalTarget
+      carrier:
+        description: >-
+          The structure that has the quality with respect to the stated part: "leaves alternate"
+          is a quality of the shoot axis towards (RO:0002503) its leaves, "sepals connate" a
+          quality of the calyx towards its sepals. Derived from the part and the value
+          (flopo2.owl.carrier), not read from the source. Compiled as has_part some (carrier
+          and has_quality some (Q and towards some E)); part of the FAC signature when present.
+        inlined: true
+        range: Carrier
       bearer_whole:
         description: >-
           The bearer is part of a structure that itself has stated qualities: "calyx of male
@@ -741,6 +750,20 @@ classes:
       ratio_high:
         description: Upper bound of the stated ratio (3 in "2-3 times as long as").
         range: float
+
+  Carrier:
+    description: >-
+      The whole that has a quality with respect to its parts: the axis on which the parts are
+      arranged, or the whorl whose members are related to one another.
+    attributes:
+      carrier_term:
+        required: true
+        description: PO or FLOPO-local class of the axis or whorl.
+      kind:
+        required: true
+        description: >-
+          arrangement (the parts on the axis that bears them) or set (the like members of a
+          whorl among themselves).
 
   QualifiedWhole:
     description: >-

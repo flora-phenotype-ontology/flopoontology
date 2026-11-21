@@ -152,6 +152,24 @@ def _is_named(node) -> bool:
     return isinstance(node, URIRef) and "#expr_" not in str(node) and "/.well-known/genid/" not in str(node)
 
 
+TOWARDS = URIRef(OBO + "RO_0002503")
+
+
+def _towards_of(g: Graph, node) -> tuple[URIRef, URIRef] | None:
+    """(value, part) of ``value and towards some part``, both named; else None."""
+
+    members = _intersection_members(g, node)
+    named = [m for m in members if _is_named(m)]
+    targets = []
+    for member in members:
+        restriction = _restriction(g, member)
+        if restriction and restriction[0] == TOWARDS and _is_named(restriction[1]):
+            targets.append(restriction[1])
+    if len(members) == 2 and len(named) == 1 and len(targets) == 1:
+        return named[0], targets[0]
+    return None
+
+
 def _signature_of(g: Graph, cls: URIRef) -> str:
     """Compute the canonical EQ signature of a FLOPO class from its equivalentClass axiom."""
     for eq in g.objects(cls, OWL.equivalentClass):
@@ -206,6 +224,19 @@ def _signature_of(g: Graph, cls: URIRef) -> str:
 
         if partof_entity is not None and qualities == [QUALITY_ROOT]:
             return f"PHENO|{_curie(partof_entity)}"
+        # A quality of a whole towards its parts (docs/odp/16-...): ``has_part some (shoot axis
+        # and has_quality some (alternate and towards some leaf))`` is the class of "leaf
+        # alternate". It keeps the signature of the part the flora names and of the value, so
+        # the identifier of the class and its lookup from an annotation do not change.
+        if named_entity is not None and len(qualities) == 1 and not _is_named(qualities[0]):
+            stated = _towards_of(g, qualities[0])
+            if stated is not None:
+                from flopo2.owl import carrier
+
+                value, part = stated
+                slot = carrier.expected(_curie(part), _curie(value))
+                if slot is not None and slot["carrier_term"] == _curie(named_entity):
+                    return f"EQ|{_curie(part)}|{_curie(value)}"
         if (
             named_entity is not None
             and len(qualities) == 1

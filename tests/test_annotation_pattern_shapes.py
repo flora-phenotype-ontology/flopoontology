@@ -73,6 +73,12 @@ CASES = {
     "IndefiniteCount": ('fb:bearer obo:PO_0009010 ; fb:quality obo:PATO_0000467 ; fb:countWord "many" ; fb:countText "numerous" .',
                         'fb:bearer obo:PO_0009010 ; fb:quality obo:PATO_0000467 ; fb:countWord "many" ; fb:countText "numerous" ; '
                         'fb:low 20.0 .'),
+    "AbsenceOfAPart": ('fb:bearer obo:PO_0009032 ; fb:quality obo:PATO_0000467 ; fb:negated true .',
+                       'fb:bearer obo:PO_0009032 ; fb:quality obo:PATO_0000467 ; fb:negated true ; fb:low 2.0 .'),
+    "QualityOfWholeTowardsParts": ('fb:bearer obo:PO_0025034 ; fb:quality obo:PATO_0001932 ; fb:carrier obo:PO_0025029 ; '
+                                   'fb:carrierKind "arrangement" .',
+                                   'fb:bearer obo:PO_0025034 ; fb:quality obo:PATO_0001932 ; fb:carrier obo:PO_0025029 ; '
+                                   'fb:carrierKind "arrangement" ; fb:towards obo:PO_0009047 .'),
     "CountAtAPosition": ('fb:bearer obo:PO_0020140 ; fb:quality obo:PATO_0000070 ; fb:low 4.0 ; fb:high 6.0 ; fb:unit obo:UO_0000189 ; '
                          'fb:container obo:PO_0020039 ; fb:countPosition "each_side" ; '
                          'fb:countPositionText "on each side of the midrib" ; fb:countLandmark obo:PO_0020139 .',
@@ -83,7 +89,8 @@ CASES = {
 
 
 def conforms(shape: str, triples: str) -> bool:
-    graph = Graph().parse(data=PREFIXES + BASE + triples, format="turtle")
+    base = BASE.replace("fb:negated false ; ", "") if "fb:negated" in triples else BASE  # a case may set it
+    graph = Graph().parse(data=PREFIXES + base + triples, format="turtle")
     result = pyshex.ShExEvaluator(rdf=graph, schema=SHAPES.read_text(encoding="utf-8"),
                                   focus=URIRef("http://example.org/r"), start=URIRef(SHAPE_BASE + shape)).evaluate()[0]
     return bool(result.result)
@@ -116,6 +123,7 @@ BROKEN = {
     "count_word_states_no_number": 'fb:countWord "many" ; fb:low 20.0 .',
     "count_position_without_phenotype_class": 'fb:countPosition "each_side" ; fb:phenotypeClass ex:class .',
     "count_landmark_is_not_the_bearer": "fb:bearer obo:PO_0020139 ; fb:countLandmark obo:PO_0020139 .",
+    "carrier_is_not_the_bearer": "fb:bearer obo:PO_0025029 ; fb:carrier obo:PO_0025029 .",
 }
 
 

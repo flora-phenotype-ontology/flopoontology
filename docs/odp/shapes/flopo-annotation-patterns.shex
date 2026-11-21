@@ -143,6 +143,16 @@ BASE <http://phenomebrowser.net/flopo/shapes/>
   fb:high . {0}
 }
 
+# --- 15. absence of a part: "petals absent", "no stipules", "leafless" -------------------------
+<AbsenceOfAPart> @<TraitRecord> AND {
+  fb:quality [obo:PATO_0000467] ;              # present, denied: not (has part some (part of some X))
+  fb:negated [true] ;
+  fb:low . {0} ;
+  fb:high . {0} ;
+  fb:partQuality . {0} ;
+  fb:towards . {0}
+}
+
 # --- 14. count at a position: "lateral veins 4-6 on each side of the midrib" ------------------
 <CountAtAPosition> @<TraitRecord> AND {
   fb:quality [obo:PATO_0000070] ;              # amount
@@ -152,3 +162,13 @@ BASE <http://phenomebrowser.net/flopo/shapes/>
   fb:countLandmark IRI /^http:\/\/purl\.obolibrary\.org\/obo\/(PO|FLOPO)_[0-9]+$/ ? ;
   fb:phenotypeClass . {0}                      # the number is not that of the whole organ
 } AND ( { fb:low xsd:decimal } OR { fb:high xsd:decimal } )
+
+# --- 16. quality of a whole towards its parts: "leaves alternate", "sepals connate" -----------
+<QualityOfWholeTowardsParts> @<TraitRecord> AND {
+  fb:carrier IRI /^http:\/\/purl\.obolibrary\.org\/obo\/(PO|FLOPO)_[0-9]+$/ ;   # the axis or the whorl
+  fb:carrierKind ["arrangement" "set"] ;
+  fb:negated [false] ;
+  fb:towards . {0} ;                           # the stated part is the target; no second relation
+  fb:low . {0} ;
+  fb:high . {0}
+}

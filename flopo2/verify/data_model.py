@@ -322,6 +322,23 @@ def pattern_issues(
     elif norm(parsed.quality) == QUALITY_ROOT and operator == "one_of":
         out.append(("union_under_quality_root_without_scope", parsed.quality))
 
+    # --- quality of a whole towards its parts (docs/odp/16-quality-of-a-whole-towards-its-parts.md)
+    if parsed.carrier is not None:
+        from flopo2.owl import carrier as carrier_rules
+
+        slot = {"carrier_term": norm(parsed.carrier.carrier_term), "kind": parsed.carrier.kind}
+        if slot["kind"] not in carrier_rules.KINDS:
+            out.append(("unknown_carrier_kind", str(parsed.carrier.kind)))
+        if slot["carrier_term"] == norm(parsed.anatomical_entity):
+            out.append(("carrier_is_the_part", parsed.carrier.carrier_term))
+        if parsed.negated or parsed.value_low is not None or parsed.value_high is not None or parsed.towards is not None:
+            out.append(("carrier_with_number_negation_or_relation", parsed.carrier.carrier_term))
+        values = [norm(v) for v in parsed.value_terms or []]
+        value = values[0] if len(values) == 1 else (norm(parsed.quality) if not values else "")
+        if carrier_rules.expected(parsed.anatomical_entity, value) != slot:
+            out.append(("carrier_does_not_follow_from_part_and_value",
+                        f"{parsed.anatomical_entity} {value} -> {parsed.carrier.carrier_term}"))
+
     # --- part of a qualified whole (docs/odp/part-of-qualified-whole.md)
     whole = parsed.bearer_whole
     if whole is not None:
@@ -466,6 +483,7 @@ def _pydantic_assertion(assertion: dict[str, Any]) -> TraitAssertion:
         "bearer_scope": assertion.get("bearer_scope") or None,
         "towards": assertion.get("towards") or None,
         "bearer_whole": assertion.get("bearer_whole") or None,
+        "carrier": assertion.get("carrier") or None,
         "specimen_condition": assertion.get("specimen_condition") or None,
         "count_word": assertion.get("count_word") or None,
         "source_unit": _optional(assertion.get("source_unit")),

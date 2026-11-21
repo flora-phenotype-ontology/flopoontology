@@ -29,6 +29,12 @@ RULES = Path("docs/odp/shapes/rules.rq")
 SHAPE_BASE = "http://phenomebrowser.net/flopo/shapes/"
 
 
+def _absence_of_part(a: dict) -> bool:
+    from flopo2.owl.assertions import is_absence_of_part
+
+    return is_absence_of_part(a)
+
+
 def _numeric(a: dict) -> bool:
     return a.get("value_low") is not None or a.get("value_high") is not None
 
@@ -58,6 +64,8 @@ PATTERNS = {
     "12 part of a qualified whole": ("PartOfQualifiedWhole", lambda a: bool(a.get("bearer_whole"))),
     "13 indefinite count": ("IndefiniteCount", lambda a: bool(a.get("count_word"))),
     "14 count at a position": ("CountAtAPosition", lambda a: bool(a.get("count_position"))),
+    "15 absence of a part": ("AbsenceOfAPart", lambda a: _absence_of_part(a)),
+    "16 quality of a whole towards its parts": ("QualityOfWholeTowardsParts", lambda a: bool(a.get("carrier"))),
 }
 
 

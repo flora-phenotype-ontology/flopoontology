@@ -48,6 +48,7 @@ from flopo2.owl.assertions import (
     build_annotation_class_module,
     build_assertion_ontology,
     formal_assertion_iri,
+    is_absence_of_part,
 )
 from flopo2.saudi.taxa import resolve
 from flopo2.taxon.wcvp import TABLE_FIELDS, WCVP_NAMES, Wcvp, load_ipni_table
@@ -108,6 +109,8 @@ GROWTH_LABELS = {
 MONTHS = "January February March April May June July August September October November December".split()
 
 
+# ECO:0007319, author statement used in automatic assertion (see flopo2.owl.assertions)
+EVIDENCE = URIRef("http://purl.obolibrary.org/obo/ECO_0007319")
 UNIT_LABELS = {"UO_0000008": "m", "UO_0000015": "cm", "UO_0000016": "mm", "UO_0000017": "µm", "UO_0000189": "count", "UO_0000190": "ratio"}
 UNIT_FACTOR = {"UO_0000008": 1.0, "UO_0000015": 0.01, "UO_0000016": 0.001, "UO_0000017": 1e-6, "UO_0000189": 1.0, "UO_0000190": 1.0}
 UO_NAMES = {"UO_0000008": "meter", "UO_0000015": "centimeter", "UO_0000016": "millimeter", "UO_0000017": "micrometer", "UO_0000189": "count unit", "UO_0000190": "ratio"}
@@ -328,6 +331,7 @@ class Builder:
         g.add((formal, FB.source, source))
         g.add((formal, FB.bearer, URIRef(iri(bearer))))
         g.add((formal, FB.quality, URIRef(iri(quality))))
+        g.add((formal, FB.evidence, EVIDENCE))  # the kind of evidence (ECO); the sentence is fb:text
         if (values or relation) and a.get("pato_id"):
             g.add((formal, FB.attribute, URIRef(iri(a["pato_id"]))))
         if relation:
@@ -383,6 +387,11 @@ class Builder:
                 number = _number(target.get(field))  # "2-3 times as long as the calyx"
                 if number is not None:
                     g.add((formal, prop, number))
+        carrier = a.get("carrier") or {}
+        if carrier:  # "leaves alternate": the shoot axis has the arrangement of its leaves
+            g.add((formal, FB.carrier, URIRef(iri(carrier["carrier_term"]))))
+            g.add((formal, FB.carrierKind, Literal(carrier["kind"])))
+            self.used_terms.add(curie(carrier["carrier_term"]))
         # Patterns of docs/odp/: the shapes in docs/odp/shapes/ describe these triples.
         whole = a.get("bearer_whole") or {}
         if whole:  # "calyx of male flowers"
@@ -475,6 +484,7 @@ class Builder:
             self.facts[str(taxon)].append({
                 "record": formal, "source": source, "bearer": curie(bearer), "quality": curie(quality),
                 "negated": bool(a.get("negated")), "absence": a.get("negation_scope") == "absence",
+                "part_absence": is_absence_of_part(a),  # the part itself is missing: so are its parts
                 # a quality stated of a stage or state ("glabrous when young") is not a conflict
                 # with another stated without it; like a frequency, it is not compared
                 "frequency": a.get("frequency_qualifier") not in (None, "", "unspecified", "always")
@@ -706,6 +716,14 @@ class Builder:
         def ancestors(q: str) -> set[str]:
             return set(self.vocab._ancestors(self.vocab.pato, q, part_of=False)) | {q}
 
+        wholes: dict[str, set[str]] = {}
+
+        def whole_of(part: str) -> set[str]:
+            """The Plant Ontology classes the part is a kind of or a part of."""
+            if part not in wholes:
+                wholes[part] = set(self.vocab._ancestors(self.vocab.po, part, part_of=True)) - {part}
+            return wholes[part]
+
         has_quality = URIRef(iri("RO_0000053"))
         for a_id, b_id, bearer, group, note in pairs:
             if bearer == "*":
@@ -766,9 +784,16 @@ class Builder:
             for neg in (f for f in qualitative if f["negated"]):
                 if neg["absence"]:
                     for other in facts:
-                        if other["bearer"] == neg["bearer"] and not other["negated"]:
+                        if other["negated"]:
+                            continue
+                        if other["bearer"] == neg["bearer"]:
                             add("absent part described", neg, other,
                                 f"the part {self.vocab.label(neg['bearer'])} is stated absent, yet described")
+                        elif neg.get("part_absence") and neg["bearer"] in whole_of(other["bearer"]):
+                            # not (has part some (part of some X)): no part of X either
+                            add("absent part described", neg, other,
+                                f"the part {self.vocab.label(neg['bearer'])} is stated absent, yet its part "
+                                f"{self.vocab.label(other['bearer'])} is described")
                     continue
                 for other in positive:
                     if other["bearer"] == neg["bearer"] and neg["quality"] in ancestors(other["quality"]):
@@ -909,6 +934,8 @@ class Builder:
                 g.add((node, FB.organGroup, FB["organ-" + self.vocab.organ_group(term)]))
             if term.startswith(("PATO:", "FLOPO:098")):
                 g.add((node, FB.traitGroup, FB["trait-" + self.vocab.trait_group(term)]))
+        g.add((EVIDENCE, RDFS.label, Literal("author statement used in automatic assertion")))
+        g.add((EVIDENCE, FB.curie, Literal("ECO:0007319")))
         for order, (key, label, _roots) in enumerate([*ORGAN_GROUPS, ("other", "Other parts", [])]):
             g.add((FB["organ-" + key], RDF.type, FB.OrganGroup))
             g.add((FB["organ-" + key], RDFS.label, Literal(label)))
