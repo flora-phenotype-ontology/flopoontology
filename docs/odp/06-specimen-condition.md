@@ -18,6 +18,9 @@ read as `dried` even when the transcriber gave no qualifier.
 
 ## OWL
 
+The expression below is the defining property of the class; the class itself is its phene,
+`'flora phenotype' and 'phenotype of' some (...)` (pattern 00).
+
 **None.** The annotation has no `phenotype_class_iri`, is not compiled into a taxon axiom and is
 not compared for conflicts with other sources: "black when dry" must not classify the taxon
 under "leaf black", nor contradict "leaves green".

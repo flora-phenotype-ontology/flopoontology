@@ -265,7 +265,9 @@ def _signature_of(g: Graph, cls: URIRef) -> str:
 
 def build_registry(owl_path: Path) -> list[RegistryEntry]:
     """Parse a FLOPO OWL file and build the signature→IRI registry entries."""
-    g = parse_ontology(owl_path)
+    from flopo2.owl.phene import defining_view
+
+    g = defining_view(parse_ontology(owl_path))  # signatures are read from the defining property
     entries: list[RegistryEntry] = []
     for cls in g.subjects(RDF.type, OWL.Class):
         if not isinstance(cls, URIRef):

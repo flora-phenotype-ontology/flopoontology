@@ -73,14 +73,28 @@ run the final passes in this order:
 python -m tools.update_flopo_obo_qc_release          # restores definitions owned by the QC block
 python -m tools.update_flopo_top_level_parents       # keeps only the two approved root children
 python tools/prune_orphan_blank_nodes.py             # drops expression nodes left by replacements
+python -m tools.update_flopo_phene_form              # every phenotype class as a phene (see below)
 python -m flopo2.ids.registry ontology/flopo.owl -o config/flopo_id_registry.tsv
 python -m tools.update_flopo_bearer_parents         # EQ class under its bearer's 'E phenotype'
 python tools/classify_flopo_release.py
 python -m tools.update_flopo_inferred_parents       # assert the classified hierarchy (browsers)
 python -m flopo2.owl.trait_phenotype                # annotate PATO attributes versus values
 python tools/classify_flopo_release.py && python -m flopo2.owl.light
+python -m tools.update_flopo_phene_form --check      # no phenotype class left as a class of plants
+python -m tools.check_flopo_phene_bearers            # ELK: no phenotype that no plant can have
 python tools/obo_dashboard_gate.py                   # FP04 passes once the release is published
 ```
+
+A phenotype class is a *phene*, a quality of the plant (`flopo2/owl/phene.py`):
+`P EquivalentTo: 'flora phenotype' and 'phenotype of' some Y`, where Y is the defining property
+(`'has part' some (leaf and 'has characteristic' some glabrous)`). The generated modules and
+their builders write the defining property alone; `tools.update_flopo_phene_form` wraps what
+they add and is idempotent. Code that analyses a release (identifier registry, text definitions,
+trait or value) reads it through `flopo2.owl.phene.defining_view`. `'phenotype of'` (RO:0002201)
+is functional and the inverse of `'has phenotype'` (RO:0002200); ELK does not read that, so
+`tools.check_flopo_phene_bearers` states its consequence once per class (`'has phenotype' some P
+SubClassOf Y`) and requires that ELK finds no plant-with-phenotype unsatisfiable. See
+`docs/phene-consistency.md`.
 
 The value-space module (`tools/build_flopo_value_space_extension.py`, embedded by
 `tools/update_flopo_value_space_release.py`) holds the temporary attribute classes and relations
@@ -110,6 +124,33 @@ the three matching assets, run the full gate without this option, then update
 `master` through its ordinary gate and freeze the release. The hook rejects this
 staging option for updates to `master`. The staging result is
 not a claim that the public release has passed the complete Dashboard.
+
+### 2026-11-22
+
+28,403 FLOPO classes (1,306 deprecated identifiers retained); every earlier identifier
+preserved; ELK finds no unsatisfiable classes. The classified hierarchy is the same as in
+2026-11-21 (35,462 subclass links between named classes, none added or lost).
+
+- **Phenotype classes are phenes.** Every phenotype class is now a quality of the plant, defined
+  by a property of the plant: `'flora phenotype' and 'phenotype of' some ('has part' some (leaf
+  and 'has characteristic' some glabrous))`. Until this release the class was the property itself
+  (`'has part' some ...`), a class of plants. This is the form of Hoehndorf, Oellrich and
+  Rebholz-Schuhmann 2010 (`Phene and phene-of some Y`, doi:10.1093/bioinformatics/btq578) and the
+  quality reading of Gkoutos, Schofield and Hoehndorf 2018 (doi:10.1093/bib/bbx035), which asks
+  that a resource choose one of the two readings. 25,964 definitions and 27 necessary conditions
+  were rewritten (`tools/update_flopo_phene_form.py`); the expression inside is unchanged, and so
+  are identifiers, labels, text definitions, the identifier registry and the trait or value
+  annotation of each class. Axioms about plants (anatomy classes, the general axioms that rule
+  out a process quality on a plant part) are untouched.
+- `'phenotype of'` (RO:0002201) is declared functional and `'has phenotype'` (RO:0002200) its
+  inverse, as in the Relations Ontology: a phene has one bearer. A plant that has two phenes has
+  both defining properties. **Users who query FLOPO classes as classes of plants** (`Taxon
+  SubClassOf FLOPO class`) should link with `'has phenotype' some`.
+- New release check `tools/check_flopo_phene_bearers.py`: with one axiom per class in OWL 2 EL
+  (`'has phenotype' some P SubClassOf Y`) ELK confirms that every phenotype can be had by a
+  plant together with the classes above it (0 of 25,982 fail). The annotations of the floras
+  are checked the same way per taxon, and with HermiT on the axioms as published
+  (`tools/PheneTaxonConsistency.java`); `docs/phene-consistency.md`.
 
 ### 2026-11-21
 
@@ -488,6 +529,9 @@ so its identification results do not establish discrimination among closely rela
   into one range (graph `merged`, `fb:MergedTrait` with its member records). The merged range has
   an OWL class, and each source value entails the axiom `taxon SubClassOf has_phenotype some`
   that class.
+- An annotation class is a phene, like a FLOPO class: `'flora phenotype' and 'phenotype of' some
+  <defining property>` (`docs/odp/00-part-and-quality.md`); the taxon axioms use RO's `'has
+  phenotype'` (RO:0002200), the inverse of the functional `'phenotype of'`.
 
 Taxa are merged across sources by their accepted World Flora Online record. OCR misspellings of
 names are fixed only when WFO verifies the correction.

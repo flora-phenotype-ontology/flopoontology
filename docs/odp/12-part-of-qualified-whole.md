@@ -19,6 +19,9 @@ class other than the bearer, and the phrase stands once in the clause.
 
 ## OWL
 
+The expression below is the defining property of the class; the class itself is its phene,
+`'flora phenotype' and 'phenotype of' some (...)` (pattern 00).
+
 `has part some ((calyx and part of some (flower and has characteristic some male)) and has
 characteristic some hairy)`. The whole and its qualities are part of the class signature.
 

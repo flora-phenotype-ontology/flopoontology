@@ -43,6 +43,9 @@ notched"; "'rust' is the colour of the hairs").
 
 ## OWL
 
+The expression below is the defining property of the class; the class itself is its phene,
+`'flora phenotype' and 'phenotype of' some (...)` (pattern 00).
+
 `has part some (stem and has characteristic some (simple or branched))` for both patterns. A
 union says nothing about either value alone, so ELK, which ignores unions, does not classify the
 taxon under "stem simple"; a reasoner for full OWL DL keeps the union as it is (see

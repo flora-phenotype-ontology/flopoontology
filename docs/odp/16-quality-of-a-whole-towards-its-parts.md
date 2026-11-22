@@ -76,6 +76,9 @@ region, a container or a qualified whole.
 
 ## OWL
 
+The expression below is the defining property of the class; the class itself is its phene,
+`'flora phenotype' and 'phenotype of' some (...)` (pattern 00).
+
 `'has part' some ('shoot axis' and 'has characteristic' some ('alternate placement' and towards
 some leaf))`
 

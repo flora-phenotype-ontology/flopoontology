@@ -228,7 +228,10 @@ def update(
     text = re.sub(
         r"\n?" + re.escape(begin) + ".*?" + re.escape(end) + r"\n?", "\n", text, flags=re.S
     )
-    graph = Graph().parse(data=text, format="xml")
+    from flopo2.owl.phene import defining_view
+
+    # the qualities are read from the defining property of each phene class
+    graph = defining_view(Graph().parse(data=text, format="xml"))
     subsets, parents = pato_subsets(root / "ont/quality.obo")
     for s, o in graph.subject_objects(OIO.inSubset):
         subsets[str(s)].add(str(o).rsplit("#", 1)[-1])

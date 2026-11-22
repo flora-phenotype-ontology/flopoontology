@@ -31,6 +31,9 @@ and stands once in the clause. "not longer than" is not read.
 
 ## OWL
 
+The expression below is the defining property of the class; the class itself is its phene,
+`'flora phenotype' and 'phenotype of' some (...)` (pattern 00).
+
 `has part some (stamen and has characteristic some ('fused with' and towards some petal))`. The
 target is part of the class signature.
 

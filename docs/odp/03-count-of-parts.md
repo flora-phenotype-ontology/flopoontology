@@ -20,6 +20,9 @@ is the bearer and no container is needed.
 
 ## OWL
 
+The expression below is the defining property of the class; the class itself is its phene,
+`'flora phenotype' and 'phenotype of' some (...)` (pattern 00).
+
 `has part some ((leaflet and part of some leaf) and has characteristic some (amount and has
 measurement value some xsd:decimal[>= 3, <= 5] and has value unit some 'count unit'))`. Pairs
 ("3-jugate") count collections of two: `object aggregate and has member exactly 2 leaflet`.

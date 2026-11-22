@@ -19,6 +19,9 @@ no extremes.
 
 ## OWL
 
+The expression below is the defining property of the class; the class itself is its phene,
+`'flora phenotype' and 'phenotype of' some (...)` (pattern 00).
+
 Only the usual range enters the class expression (`xsd:decimal[>= 3, <= 8]`). The extremes are
 not in the class signature: "3-8(-11)" and "3-8" annotate the same class.
 

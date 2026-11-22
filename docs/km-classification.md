@@ -113,6 +113,10 @@ the same few thousand axioms for every taxon. So a single taxon is not a small p
 not finish one (PO and PATO alone take it 0.45 s; a taxon's fifteen classes on top do not end),
 and HermiT would need days for the 36 floras.
 
+Measured again on 2026-11-22 with the classes as phenes (`docs/phene-consistency.md`): on the
+two Saudi floras HermiT answers every taxon in about half a second (modules of about 1,000
+axioms); on the moss flora the modules are still 4,000 to 9,000 axioms and most taxa time out.
+
 **What is used instead** is a taxon check inside the ELK run of the flora
 (`flopo2/verify/annotation_class_check.py`, 43 s for the moss flora): absences are rewritten to
 a disjointness that ELK reads, and each taxon with an absence gets one class. On the moss flora

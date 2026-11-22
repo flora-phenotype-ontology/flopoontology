@@ -33,6 +33,7 @@ from flopo2.owl.obo_fix import (
     missing_definitions,
     obsolete_label,
 )
+from flopo2.owl.phene import defining_view
 from tools.update_flopo_release import _update_release_metadata
 
 
@@ -138,7 +139,8 @@ def update_release(
     release_date: str | None = None,
 ) -> dict[str, int]:
     text = _without_generated_block(release_path.read_text(encoding="utf-8"))
-    graph = Graph().parse(data=text, format="xml")
+    # definitions are worded from the defining property of a phene class (flopo2/owl/phene.py)
+    graph = defining_view(Graph().parse(data=text, format="xml"))
     deprecated = deprecated_flopo_entities(graph)
     text, labels_prefixed = prefix_obsolete_labels_text(text, deprecated)
     definitions = missing_definitions(

@@ -16,6 +16,9 @@ whole word for "sub-" and for colour words such as "greenish".
 
 ## OWL
 
+The expression below is the defining property of the class; the class itself is its phene,
+`'flora phenotype' and 'phenotype of' some (...)` (pattern 00).
+
 `has part some (stem and has characteristic some erect)`: the class of the named value. The
 annotation is **not** used for a strict taxon axiom (`_strict` in `flopo2/owl/assertions.py`
 requires `value_qualifier: exact`): "± erect" does not say that every stem is erect.

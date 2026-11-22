@@ -11,31 +11,41 @@ it) and classifies the result with ELK through ROBOT. A class ELK finds unsatisf
 * no longer ``accepted``: its assertions get gate status ``review`` with the reason
   ``unsatisfiable_annotation_class``.
 
+A phenotype class is a phene, a quality of the plant: ``'flora phenotype' and 'phenotype of'
+some Y``, where Y is the defining property (``has part some (leaf and has characteristic some
+glabrous)``; flopo2/owl/phene.py). 'phenotype of' is functional and the inverse of 'has
+phenotype', so a plant that has the phene of Y is a Y, and a plant with two phenes has both
+defining properties. That step is outside OWL EL. The run states it once per class, in a form ELK
+reads (the bearer axiom):
+
+    'has phenotype' some C  SubClassOf  Y
+
 The same run checks each **taxon**: can one plant have all the accepted statements of the taxon
-at once? "Petals absent" and "petals white" cannot. ELK passes over negation, so the question is
-put in a form it reads. For an absence class N = not P the run adds a class for the presence P(N)
-and a marker class M(N) declared disjoint with P(N); the taxon class is the conjunction of the
-taxon's positive classes and the markers of its absences. It is unsatisfiable exactly when the
-positive statements entail a presence the taxon denies.
+at once? "Petals absent" and "petals white" cannot. The taxon is a class T with ``T SubClassOf
+'has phenotype' some C`` for each of its classes, as in the published data. ELK passes over
+negation, so for an absence class N, whose defining property is ``not P``, the bearer axiom is
+``'has phenotype' some N SubClassOf M(N)`` with a marker class M(N) declared disjoint with the
+presence P. T is unsatisfiable exactly when the positive statements entail a presence the taxon
+denies.
 
 The absence of a part X is N = not (has part some (part of some X)) (Gkoutos, Schofield and
-Hoehndorf 2018, doi:10.1093/bib/bbx035), so P(N) = has part some (part of some X): "leaves
-absent" contradicts "leaf blade ovate" as well, because a leaf blade is part of a leaf. OWL EL
-cannot say that part of is reflexive; the run states it for each absent part (X SubClassOf part
-of some X), so that "leaves absent" also contradicts "leaves glabrous". For the other negated
-classes (a part without a quality) the run states that a plant part that is described is present
-(plant anatomical entity SubClassOf has quality some present). A
-second run on the pairs (one positive class and one marker) of those taxa names the two
-statements. They are
+Hoehndorf 2018, doi:10.1093/bib/bbx035), so P = has part some (part of some X): "leaves absent"
+contradicts "leaf blade ovate" as well, because a leaf blade is part of a leaf. OWL EL cannot say
+that part of is reflexive; the run states it for each absent part (X SubClassOf part of some X),
+so that "leaves absent" also contradicts "leaves glabrous". For the other negated classes (a part
+without a quality) the run states that a plant part that is described is present (plant
+anatomical entity SubClassOf has quality some present). A
+second run on the pairs (a plant with one positive class and one absence) of those taxa names
+the two statements. They are
 
 * listed in ``<source>-taxon-contradictions.tsv``, and
 * set to ``review`` with the reason ``contradiction_within_taxon``, in that taxon only.
 
 Only accepted statements without a frequency ("rarely absent") take part. A complete OWL
-reasoner on one taxon at a time is the direct way to ask this and was tried
-(``tools/TaxonConsistency.java``, docs/km-classification.md): HermiT needs about 15 s per taxon
-and KM does not finish, because the part of PO and PATO that one taxon depends on still has
-5,000 to 11,000 axioms.
+reasoner on one taxon at a time asks the same question of the axioms as published, with the
+functional property and without the bearer axioms: ``tools/PheneTaxonConsistency.java`` (HermiT
+on a locality module per taxon, about a second each; docs/phene-consistency.md). The tests
+compare the two on the same cases.
 
 ELK reads the EL part of the definitions; unions, complements and number ranges are passed over,
 so the check is sound but not complete (docs/km-classification.md). It is skipped, with a note,
@@ -112,18 +122,22 @@ def _is_absence(assertion: dict) -> bool:
 
 
 def write_class_definitions(
-    annotated: Path, out: Path, chunk: int = 20000, taxa: dict | None = None, absences: dict | None = None
+    annotated: Path, out: Path, chunk: int = 20000, taxa: dict | None = None, absences: dict | None = None,
+    bearers: bool = True,
 ) -> dict[str, dict]:
     """Write ``EquivalentClasses(class, definition)`` of every annotation class of the corpus as
     N-Triples (valid Turtle); return ``{class IRI: {label, example, statements}}``.
+
+    With ``bearers`` the bearer axiom of every class that is not an absence is written as well
+    (module docstring); without, the file holds the definitions as they are published.
 
     With ``taxa`` and ``absences`` (empty dicts) also collect, for the taxon check,
     ``taxa[taxon] = {"present": {class: text}, "absent": {class: text}}`` and one assertion per
     absence class."""
 
-    from rdflib import OWL, RDF, Graph, URIRef
+    from rdflib import OWL, RDF, RDFS, Graph, URIRef
 
-    from flopo2.owl import assertions
+    from flopo2.owl import assertions, phene
     from flopo2.verify import gates
 
     attributes = gates.load_pato_attribute_terms(Path("config/pato_lexicon.tsv"))
@@ -163,11 +177,28 @@ def write_class_definitions(
                     continue  # not compilable: reported by the data-model validation
                 graph.add((URIRef(iri), RDF.type, OWL.Class))
                 graph.add((URIRef(iri), OWL.equivalentClass, expression))
+                if bearers and not _is_absence(assertion):  # an absence gets its marker in the taxon check
+                    graph.add((_bearer_of(graph, iri), RDFS.subClassOf, phene.phene_body(graph, expression)))
                 if len(graph) > chunk * 20:
                     sink.write(graph.serialize(format="nt", encoding="utf-8"))
                     graph = Graph()
         sink.write(graph.serialize(format="nt", encoding="utf-8"))
     return classes
+
+
+def _bearer_of(graph, cls: str):
+    """``'has phenotype' some cls``: the plants that have the phene (a fresh node per axiom)."""
+
+    from rdflib import OWL, RDF, BNode, URIRef
+
+    from flopo2.owl import phene
+
+    node = BNode()
+    graph.add((node, RDF.type, OWL.Restriction))
+    graph.add((node, OWL.onProperty, phene.HAS_PHENOTYPE))
+    graph.add((node, OWL.someValuesFrom, URIRef(cls)))
+    graph.add((phene.HAS_PHENOTYPE, RDF.type, OWL.ObjectProperty))
+    return node
 
 
 def _marker(absence_class: str) -> str:
@@ -212,7 +243,7 @@ def write_taxon_classes(taxa: dict, absences: dict, out: Path) -> dict[str, str]
                         graph.add((part, RDF.type, OWL.Class))
                     graph.add((part, RDFS.subClassOf, assertions._some(graph, nodes, assertions.PART_OF, whole)))
             else:
-                presence = assertions._phenotype_expression(
+                presence = assertions.defining_property(
                     graph, nodes, {**absence, "negated": False, "negation_scope": ""}, attributes)[0]
         except (KeyError, ValueError):
             continue
@@ -221,18 +252,18 @@ def write_taxon_classes(taxa: dict, absences: dict, out: Path) -> dict[str, str]
             graph.add((name, RDF.type, OWL.Class))
         graph.add((present, OWL.equivalentClass, presence))
         graph.add((marker, OWL.disjointWith, present))
+        graph.add((_bearer_of(graph, iri), RDFS.subClassOf, marker))  # the bearer axiom of an absence
         usable.add(iri)
     taxon_classes: dict[str, str] = {}
     for index, (name, taxon) in enumerate(checked.items()):
-        markers = [URIRef(_marker(iri)) for iri in sorted(taxon["absent"]) if iri in usable]
-        if not markers:
+        absent = [i for i in sorted(taxon["absent"]) if i in usable]
+        if not absent:
             continue
         iri = URIRef(f"{CHECK}taxon/{index}")
-        members = [URIRef(i) for i in sorted(taxon["present"])] + markers
-        for member in members:
-            graph.add((member, RDF.type, OWL.Class))
         graph.add((iri, RDF.type, OWL.Class))
-        graph.add((iri, OWL.equivalentClass, assertions._intersection(graph, nodes, members)))
+        for member in [*sorted(taxon["present"]), *absent]:  # as published: T has the phene
+            graph.add((URIRef(member), RDF.type, OWL.Class))
+            graph.add((iri, RDFS.subClassOf, _bearer_of(graph, member)))
         taxon_classes[str(iri)] = name
     out.write_bytes(graph.serialize(format="nt", encoding="utf-8"))
     return taxon_classes
@@ -242,8 +273,7 @@ def write_pair_classes(taxa: dict, suspects: set[str], unsatisfiable: set[str], 
     """One class per (positive class, absence) of the suspect taxa; ``{pair IRI: (positive,
     absence)}``. A positive class that is unsatisfiable by itself contradicts nothing else."""
 
-    from rdflib import OWL, RDF, BNode, Graph, URIRef
-    from rdflib.collection import Collection
+    from rdflib import OWL, RDF, RDFS, Graph, URIRef
 
     graph = Graph()
     graph.add((URIRef(CHECK + "pairs"), RDF.type, OWL.Ontology))
@@ -255,12 +285,9 @@ def write_pair_classes(taxa: dict, suspects: set[str], unsatisfiable: set[str], 
                 if iri in pairs:
                     continue
                 pairs[iri] = (present, absent)
-                expression, members = BNode(), BNode()
-                Collection(graph, members, [URIRef(present), URIRef(_marker(absent))])
-                graph.add((expression, RDF.type, OWL.Class))
-                graph.add((expression, OWL.intersectionOf, members))
-                graph.add((URIRef(iri), RDF.type, OWL.Class))
-                graph.add((URIRef(iri), OWL.equivalentClass, expression))
+                graph.add((URIRef(iri), RDF.type, OWL.Class))  # a plant with both phenes
+                for member in (present, absent):
+                    graph.add((URIRef(iri), RDFS.subClassOf, _bearer_of(graph, member)))
     out.write_bytes(graph.serialize(format="nt", encoding="utf-8"))
     return pairs
 
@@ -406,14 +433,100 @@ def _report_contradictions(rows: list[dict], classes: dict, annotated: Path, rep
             "taxon_report": str(report)}
 
 
+def complete_taxon_check(
+    annotated: Path, work: Path, threads: int = 4, timeout: int = 120, heap: str = "12g",
+    every_taxon: bool = True,
+) -> tuple[dict[str, dict] | None, str]:
+    """The taxon question put to HermiT, a reasoner for all of OWL 2 DL, on the definitions as
+    published (no bearer axioms, no markers): ``({taxon: {status, conflict, axioms, ms}}, note)``.
+
+    One taxon at a time, on the locality module of its classes (``tools/PheneTaxonConsistency
+    .java``). ``status`` is consistent, inconsistent, timeout or error; ``conflict`` the classes of
+    a smallest contradicting set. With ``every_taxon`` false only taxa with an absence and a
+    positive statement are asked, the taxa the ELK check asks."""
+
+    import shutil
+
+    from tools import classify_flopo_release as release
+
+    root = Path(release.__file__).resolve().parents[1]
+    program, jar = root / "tools" / "PheneTaxonConsistency.java", root / "tools" / "robot.jar"
+    if shutil.which("java") is None or not jar.is_file():
+        return None, "skipped: Java or tools/robot.jar is missing"
+    taxa: dict[str, dict] = {}
+    write_class_definitions(annotated, work / "published.ttl", taxa=taxa, absences={}, bearers=False)
+    names = sorted(name for name, taxon in taxa.items()
+                   if every_taxon or (taxon["absent"] and taxon["present"]))
+    with (work / "taxa.tsv").open("w", encoding="utf-8") as handle:
+        for index, name in enumerate(names):
+            classes = sorted(set(taxa[name]["present"]) | set(taxa[name]["absent"]))
+            handle.write(f"{index}\t{' '.join(classes)}\n")
+    done = subprocess.run(
+        ["java", f"-Xmx{heap}", "-cp", str(jar), str(program), str(classification_closure()),
+         str(work / "published.ttl"), str(work / "taxa.tsv"), str(work / "consistency.tsv"),
+         str(threads), str(timeout)],
+        capture_output=True, text=True, check=False,
+    )
+    result_path = work / "consistency.tsv"
+    if done.returncode or not result_path.exists():
+        return None, "failed: " + " ".join((done.stderr or done.stdout).split())[-300:]
+    result: dict[str, dict] = {}
+    for line in result_path.read_text(encoding="utf-8").splitlines():
+        index, status, detail, axioms, ms = line.split("\t")
+        result[names[int(index)]] = {
+            "status": status, "conflict": detail.split() if status == "inconsistent" else [],
+            "detail": detail if status == "error" else "", "axioms": int(axioms), "ms": int(ms),
+        }
+    return result, ""
+
+
+def complete_report(source: str, annotated: Path | None = None, derived: Path | None = None,
+                    every_taxon: bool = True) -> dict:
+    """Run the complete check of one flora and write ``<source>-taxon-consistency.tsv`` (the
+    taxa that are not consistent). Nothing is marked: the ELK check does that."""
+
+    derived = derived or Path("local-corpora") / source / "derived"
+    annotated = annotated or derived / f"{source}-annotated.jsonl"
+    CACHE.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(dir=CACHE, prefix=f"complete-{source}-") as tmp:
+        found, note = complete_taxon_check(annotated, Path(tmp), every_taxon=every_taxon)
+    summary = {"source": source, "taxa": 0, "inconsistent": None, "timeout": 0, "error": 0, "note": note}
+    if found is None:
+        return summary
+    report = derived / f"{source}-taxon-consistency.tsv"
+    with report.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.writer(handle, delimiter="\t", lineterminator="\n")
+        writer.writerow(["taxon", "status", "conflicting_classes", "module_axioms", "milliseconds"])
+        for name, row in sorted(found.items()):
+            if row["status"] != "consistent":
+                writer.writerow([name, row["status"], " ".join(row["conflict"]) or row["detail"], row["axioms"], row["ms"]])
+    times = sorted(row["ms"] for row in found.values())
+    summary.update({
+        "taxa": len(found), "inconsistent": sum(r["status"] == "inconsistent" for r in found.values()),
+        "timeout": sum(r["status"] == "timeout" for r in found.values()),
+        "error": sum(r["status"] == "error" for r in found.values()),
+        "median_ms": times[len(times) // 2] if times else 0, "max_ms": times[-1] if times else 0,
+        "report": str(report),
+    })
+    return summary
+
+
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("sources", nargs="+")
     parser.add_argument("--annotated", type=Path, help="another annotated file (one source only)")
     parser.add_argument("--derived", type=Path, help="where the report goes (one source only)")
+    parser.add_argument("--complete", action="store_true",
+                        help="ask HermiT, one taxon at a time, on the published axioms; report only")
+    parser.add_argument("--with-absence-only", action="store_true",
+                        help="with --complete: only the taxa the ELK check asks")
     args = parser.parse_args(argv)
     for source in args.sources:
-        print(json.dumps(check(source, args.annotated, args.derived)), flush=True)
+        if args.complete:
+            print(json.dumps(complete_report(source, args.annotated, args.derived,
+                                             every_taxon=not args.with_absence_only)), flush=True)
+        else:
+            print(json.dumps(check(source, args.annotated, args.derived)), flush=True)
 
 
 if __name__ == "__main__":

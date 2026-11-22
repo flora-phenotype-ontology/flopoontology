@@ -18,6 +18,9 @@ above 1.
 
 ## OWL
 
+The expression below is the defining property of the class; the class itself is its phene,
+`'flora phenotype' and 'phenotype of' some (...)` (pattern 00).
+
 `has part some (leaf and has characteristic some (ratio and has magnitude some
 xsd:decimal[>= 2, <= 3] and has value unit some ratio))`. Which dimensions are compared is not in the
 class expression: the two annotations "2-3 times as long as wide" and "2-3 times as wide as

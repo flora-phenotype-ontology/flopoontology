@@ -26,6 +26,9 @@ PATO has no "same length as". The quality follows from the ratio:
 
 ## OWL
 
+The expression below is the defining property of the class; the class itself is its phene,
+`'flora phenotype' and 'phenotype of' some (...)` (pattern 00).
+
 As pattern 09: `has characteristic some ('increased length' and towards some anther)`. The ratio
 is not in OWL.
 

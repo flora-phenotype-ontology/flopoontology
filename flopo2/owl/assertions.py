@@ -33,6 +33,7 @@ from flopo2.owl.annotation_class import (
     canonical_part_restrictions,
     ensure_annotation_class_iri,
 )
+from flopo2.owl import phene
 from flopo2.owl.io import serialize_ontology
 
 
@@ -58,7 +59,12 @@ PART_OF = URIRef(OBO + "BFO_0000050")
 HAS_MEMBER = URIRef(OBO + "RO_0002351")
 OBJECT_AGGREGATE = URIRef(OBO + "BFO_0000027")
 HAPPENS_DURING = URIRef(OBO + "RO_0002092")
-HAS_PHENOTYPE = SIO.SIO_001279
+# A phenotype class is a phene: 'flora phenotype' and 'phenotype of' some <defining property>
+# (flopo2/owl/phene.py). 'has phenotype' (RO:0002200) is the inverse of the functional
+# 'phenotype of' (RO:0002201); until 2026-11-22 the taxon axioms used SIO:001279.
+HAS_PHENOTYPE = phene.HAS_PHENOTYPE
+PHENOTYPE_OF = phene.PHENOTYPE_OF
+PHENOTYPE = phene.PHENOTYPE
 SIO_STATEMENT = SIO.SIO_001183
 SIO_DOCUMENT = SIO.SIO_000148
 SIO_DATA_TRANSFORMATION = SIO.SIO_000594
@@ -720,17 +726,19 @@ def _carrier_expression(graph: Graph, nodes: _Nodes, assertion: dict, po: URIRef
     return _some(graph, nodes, HAS_PART, whole)
 
 
-def _phenotype_expression(
+def defining_property(
     graph: Graph,
     nodes: _Nodes,
     assertion: dict,
     attribute_ids: set[str],
-) -> tuple[URIRef | BNode, bool, bool, bool]:
+) -> tuple[URIRef | BNode, bool, bool]:
+    """The property of the plant that defines the phenotype class of an assertion, for example
+    ``has part some (leaf and has characteristic some glabrous)``, with whether it has a
+    number range and whether it is a disjunction. The class itself is the phene of this
+    property (``_phenotype_expression``)."""
+
     if is_absence_of_part(assertion):
-        eq = _complement(graph, nodes, presence_of_part(graph, nodes, assertion))
-        seasons, seasonal = _season_restrictions(graph, nodes, assertion)
-        stages = _developmental_stage_restrictions(graph, nodes, assertion)
-        return _intersection(graph, nodes, [SIO_PHENOTYPE, eq, *seasons, *stages]), False, seasonal, False
+        return _complement(graph, nodes, presence_of_part(graph, nodes, assertion)), False, False
     po = _curie_iri(assertion.get("po_id"))
     if po is None:
         raise ValueError(
@@ -738,10 +746,7 @@ def _phenotype_expression(
         )
     graph.add((po, RDF.type, OWL.Class))
     if assertion.get("carrier"):
-        eq = _carrier_expression(graph, nodes, assertion, po)
-        seasons, seasonal = _season_restrictions(graph, nodes, assertion)
-        stages = _developmental_stage_restrictions(graph, nodes, assertion)
-        return _intersection(graph, nodes, [SIO_PHENOTYPE, eq, *seasons, *stages]), False, seasonal, False
+        return _carrier_expression(graph, nodes, assertion, po), False, False
     bearer_classes = _bearer_classes(graph, nodes, assertion, po)
     quality, numeric, disjunctive = _quality_restrictions(graph, nodes, assertion, attribute_ids)
     bearer_context = _bearer_context_quality_restrictions(graph, nodes, assertion)
@@ -771,10 +776,26 @@ def _phenotype_expression(
             if negation_scope:
                 raise ValueError("negation_scope is present while negated is false")
             eq = positive_eq
+    return eq, numeric, disjunctive
+
+
+def _phenotype_expression(
+    graph: Graph,
+    nodes: _Nodes,
+    assertion: dict,
+    attribute_ids: set[str],
+) -> tuple[URIRef | BNode, bool, bool, bool]:
+    """The phenotype class of an assertion as a phene (Hoehndorf et al. 2010,
+    doi:10.1093/bioinformatics/btq578): ``'flora phenotype' and 'phenotype of' some <defining
+    property>``, with the seasons and stages in which the phenotype is present beside it."""
+
+    eq, numeric, disjunctive = defining_property(graph, nodes, assertion, attribute_ids)
     seasons, seasonal = _season_restrictions(graph, nodes, assertion)
     stages = _developmental_stage_restrictions(graph, nodes, assertion)
+    graph.add((PHENOTYPE_OF, RDF.type, OWL.ObjectProperty))
+    bearer = _some(graph, nodes, PHENOTYPE_OF, eq)
     return (
-        _intersection(graph, nodes, [SIO_PHENOTYPE, eq, *seasons, *stages]),
+        _intersection(graph, nodes, [PHENOTYPE, bearer, *seasons, *stages]),
         numeric,
         seasonal,
         disjunctive,
@@ -1099,6 +1120,7 @@ def _declare_vocabulary(graph: Graph) -> None:
         SIO_DOCUMENT,
         SIO_DATA_TRANSFORMATION,
         SIO_PHENOTYPE,
+        PHENOTYPE,
         ECO_AUTHOR_STATEMENT_AUTOMATIC,
         PROV.Entity,
         PROV.Activity,
@@ -1106,12 +1128,16 @@ def _declare_vocabulary(graph: Graph) -> None:
         graph.add((cls, RDF.type, OWL.Class))
     graph.add((ECO_AUTHOR_STATEMENT_AUTOMATIC, RDFS.label, Literal("author statement used in automatic assertion", lang="en")))
     graph.add((HAS_EVIDENCE, RDFS.label, Literal("has evidence", lang="en")))
+    # A phene has one bearer: 'phenotype of' is functional and the inverse of 'has phenotype'.
+    phene.declare_relations(graph)
+    graph.add((PHENOTYPE, RDFS.label, Literal("flora phenotype", lang="en")))
     for prop in (
         HAS_PART,
         HAS_QUALITY,
         PART_OF,
         HAS_MEMBER,
         HAS_PHENOTYPE,
+        PHENOTYPE_OF,
         HAS_EVIDENCE,
         HAPPENS_DURING,
         FLOPOANN.present_during,

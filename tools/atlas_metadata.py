@@ -104,6 +104,9 @@ def history_with(version: str, triples: int, path: Path = HISTORY) -> list[dict]
     rows = load_history(path)
     if not any(row["version"] == version for row in rows):
         rows.append({"version": version, "date": version_date(version), "triples": str(triples), "changes": ""})
+    for row in rows:  # the note of a version may be written before its triples are counted
+        if row["version"] == version and not row.get("triples"):
+            row["triples"] = str(triples)
     rows.sort(key=lambda row: row["version"])
     return [row for row in rows if row["version"] <= version]
 

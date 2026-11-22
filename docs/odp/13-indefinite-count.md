@@ -19,6 +19,9 @@ seed, ...). The words are listed in `flopo2.ingest.ncvc_annotate.INDEFINITE_AMOU
 
 ## OWL
 
+The expression below is the defining property of the class; the class itself is its phene,
+`'flora phenotype' and 'phenotype of' some (...)` (pattern 00).
+
 `has part some (flower and part of some inflorescence)`: the presence only. "Few" and "many"
 have no fixed number, and what counts as many differs from organ to organ and from flora to
 flora; the word is not part of the class.

@@ -26,6 +26,10 @@ lexicons, and the gates run on the result.
 
 ## Representation patterns
 
+The expressions in this table are *defining properties*, properties of the plant. The class of
+an annotation is the phene of its defining property, `'flora phenotype' and 'phenotype of' some
+(...)`, and the taxon is linked to it with `'has phenotype' some` (docs/odp/00-part-and-quality.md).
+
 | Source says | Representation |
 |---|---|
 | leaves ovate | `leaf and has_quality some ovate` |

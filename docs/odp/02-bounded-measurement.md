@@ -17,6 +17,9 @@ unresolved (`upper_bound_cue_not_supported`).
 
 ## OWL
 
+The expression below is the defining property of the class; the class itself is its phene,
+`'flora phenotype' and 'phenotype of' some (...)` (pattern 00).
+
 `has part some (sepal and has characteristic some (length and has magnitude some
 xsd:decimal[< 1.0] and has value unit some millimeter))`: `xsd:maxExclusive` for a strict bound,
 `xsd:maxInclusive` otherwise.

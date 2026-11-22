@@ -21,6 +21,9 @@ A place is not a container: the fruits are in the axil, not part of it.
 
 ## OWL
 
+The expression below is the defining property of the class; the class itself is its phene,
+`'flora phenotype' and 'phenotype of' some (...)` (pattern 00).
+
 None. "4-6 on each side" does not say how many veins the lamina has (8-12 only if both sides
 always agree), and a class with the range 4-6 would be false for it. The record carries no
 phenotype class and is not compared for conflicts, like a statement about a dried specimen

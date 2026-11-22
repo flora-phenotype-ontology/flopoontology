@@ -18,6 +18,9 @@ each with the bearers it may be said of.
 
 ## OWL
 
+The expression below is the defining property of the class; the class itself is its phene,
+`'flora phenotype' and 'phenotype of' some (...)` (pattern 00).
+
 `has part some (leaf and has characteristic some basal and has characteristic some glabrous)`.
 The context quality is part of the class signature.
 

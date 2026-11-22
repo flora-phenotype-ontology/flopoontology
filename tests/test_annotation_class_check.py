@@ -150,3 +150,59 @@ def test_absent_whole_contradicts_a_described_part(tmp_path):
             result["taxon_statements_marked"]) == (0, 2, 1, 2)
     records = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()]
     assert [a["gate"]["status"] for r in records for a in r["assertions"]] == ["review", "review", "accepted", "accepted"]
+
+
+def test_classes_are_phenes_and_the_bearer_axiom_is_only_in_the_check(tmp_path):
+    """C = 'flora phenotype' and 'phenotype of' some Y; for ELK, 'has phenotype' some C SubClassOf Y."""
+    from rdflib import OWL, RDFS, Graph, URIRef
+
+    from flopo2.owl import phene
+
+    glabrous, absent = _assertion("PATO_0000453", "leaves glabrous"), _absent("leaves absent")
+    path = tmp_path / "x-annotated.jsonl"
+    path.write_text(json.dumps({"taxon": "A b", "assertions": [glabrous, absent]}) + "\n", encoding="utf-8")
+    acc.write_class_definitions(path, tmp_path / "published.ttl", bearers=False)
+    published = Graph().parse(tmp_path / "published.ttl", format="nt")
+    for assertion in (glabrous, absent):
+        (expression,) = published.objects(URIRef(assertion["phenotype_class_iri"]), OWL.equivalentClass)
+        assert phene.phene_body(published, expression) is not None
+    assert (None, OWL.onProperty, phene.HAS_PHENOTYPE) not in published
+    acc.write_class_definitions(path, tmp_path / "check.ttl")
+    checked = Graph().parse(tmp_path / "check.ttl", format="nt")
+    bearers = [(s, o) for s, o in checked.subject_objects(RDFS.subClassOf)
+               if (s, OWL.onProperty, phene.HAS_PHENOTYPE) in checked]
+    assert len(bearers) == 1  # the positive class; an absence gets its marker in the taxon check
+    bearer, body = bearers[0]
+    assert checked.value(bearer, OWL.someValuesFrom) == URIRef(glabrous["phenotype_class_iri"])
+    (expression,) = checked.objects(URIRef(glabrous["phenotype_class_iri"]), OWL.equivalentClass)
+    assert body == phene.phene_body(checked, expression)
+
+
+@pytest.mark.skipif(shutil.which("java") is None, reason="needs Java for HermiT and ROBOT/ELK")
+def test_hermit_on_the_published_axioms_agrees_with_the_elk_check(tmp_path):
+    """The same taxa asked twice: of HermiT with the functional 'phenotype of' and the definitions
+    as published, and of ELK with the bearer axioms and markers. Both find the taxon with leaves
+    absent and a leaf blade described, and the one with leaves absent and glabrous; neither the
+    taxon whose stems are glabrous nor the one that only lacks leaves."""
+
+    lamina = _part("PO_0020039", "leaf lamina", "PATO_0001891", "leaf blades ovoid")
+    stem = _part("PO_0009047", "stem", "PATO_0000453", "stems glabrous")
+    glabrous, absent = _assertion("PATO_0000453", "leaves glabrous"), _absent("leaves absent")
+    path = tmp_path / "x-annotated.jsonl"
+    taxa = {"A b": [lamina, absent], "C d": [stem, dict(absent)], "E f": [glabrous, dict(absent)],
+            "G h": [dict(absent)], "I j": [dict(glabrous), dict(stem), dict(lamina)]}
+    path.write_text("".join(json.dumps({"taxon": name, "assertions": items}) + "\n" for name, items in taxa.items()),
+                    encoding="utf-8")
+    work = tmp_path / "hermit"
+    work.mkdir()
+    found, note = acc.complete_taxon_check(path, work)
+    assert found is not None, note
+    assert {name: row["status"] for name, row in found.items()} == {
+        "A b": "inconsistent", "C d": "consistent", "E f": "inconsistent", "G h": "consistent", "I j": "consistent"}
+    assert set(found["A b"]["conflict"]) == {lamina["phenotype_class_iri"], absent["phenotype_class_iri"]}
+    assert set(found["E f"]["conflict"]) == {glabrous["phenotype_class_iri"], absent["phenotype_class_iri"]}
+
+    result = acc.check("x", path, tmp_path)
+    assert (result["unsatisfiable"], result["taxon_contradictions"]) == (0, 2)
+    rows = (tmp_path / "x-taxon-contradictions.tsv").read_text(encoding="utf-8").splitlines()[1:]
+    assert {row.split("\t")[0] for row in rows} == {name for name, row in found.items() if row["status"] == "inconsistent"}

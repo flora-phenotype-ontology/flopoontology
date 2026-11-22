@@ -19,6 +19,9 @@ assertion stays `unspecified`. Works with pattern 07a and 07b.
 
 ## OWL
 
+The expression below is the defining property of the class; the class itself is its phene,
+`'flora phenotype' and 'phenotype of' some (...)` (pattern 00).
+
 The union of pattern 07: `has characteristic some (curved or straight)`. The annotation is
 "qualified" (`operands_make_qualified`), so it gives no strict taxon axiom.
 

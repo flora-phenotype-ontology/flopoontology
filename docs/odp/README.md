@@ -29,6 +29,18 @@ rules that are checked, and what is known about the pattern in the literature.
 Earlier patterns (continuum and transition between two values, stage of development, surface or
 region of the bearer) are described in `docs/annotation-context-patterns.md`.
 
+## The form of a phenotype class
+
+Every class, in FLOPO and in the annotations, is a *phene* (pattern 00):
+
+    'flora phenotype' and 'phenotype of' some <defining property>
+
+The `## OWL` section of each pattern gives the defining property, a property of the plant such as
+`'has part' some (leaf and 'has characteristic' some glabrous)`. `'phenotype of'` is functional
+and the inverse of `'has phenotype'`, by which a taxon is linked to its classes (Hoehndorf et al.
+[11]; the quality reading of Gkoutos et al. [8]). Since 2026-11-22; before, the defining property
+was the class.
+
 ## What goes into OWL and what stays in RDF
 
 An annotation is always an RDF record. Its firm content is also an OWL class expression, from
@@ -54,7 +66,11 @@ the index, where they are queried.
 
 A fourth check works on the OWL side: `flopo2.verify.annotation_class_check` classifies the
 annotation classes of each flora with ELK, together with FLOPO, PO and PATO, and sets
-statements whose class is contradictory to review (`<source>-unsatisfiable.tsv`).
+statements whose class is contradictory to review (`<source>-unsatisfiable.tsv`), and statements
+that contradict each other within a taxon (`<source>-taxon-contradictions.tsv`). The second
+question rests on the functional `'phenotype of'`, which ELK does not read; the check states its
+consequence per class (the bearer axiom), and `tools/PheneTaxonConsistency.java` asks the same
+question of the published axioms with HermiT (`docs/phene-consistency.md`).
 
 The data-model rules run on every record in the pipeline gate (`validate_jsonl`). The RDF side is
 checked on a sample of records per pattern:
@@ -69,7 +85,8 @@ with a conforming and a broken record).
 
 * Prefixes: `obo:` `http://purl.obolibrary.org/obo/`, `fb:` `http://phenomebrowser.net/flopo/browse#`.
 * OWL is written in Manchester syntax with labels; `has part` is BFO:0000051, `part of`
-  BFO:0000050, `has characteristic` RO:0000053, `towards` RO:0002503; `has magnitude` and
+  BFO:0000050, `has characteristic` RO:0000053, `towards` RO:0002503, `phenotype of`
+  RO:0002201, `has phenotype` RO:0002200, `flora phenotype` FLOPO:0000000; `has magnitude` and
   `has value unit` are the FLOPO annotation properties for a numeric value and its UO unit.
 * "Cue" means the exact words of the source that justify a slot, stored with their offsets.
 
@@ -104,6 +121,8 @@ with a conforming and a broken record).
    18 base angle).
 10. Systematics Association Committee for Descriptive Biological Terminology. II. Terminology of
     simple symmetrical plane shapes (Chart 1). *Taxon* 1962;11(5):145-156. doi:10.2307/1216718
+11. Hoehndorf R, Oellrich A, Rebholz-Schuhmann D. Interoperability between phenotype and anatomy
+    ontologies. *Bioinformatics* 2010;26(24):3112-3118. doi:10.1093/bioinformatics/btq578
 
 The search of 2026-11-13 was small (seven sources). "Not found" in a pattern file means not found
 in these sources, not that no such pattern exists.

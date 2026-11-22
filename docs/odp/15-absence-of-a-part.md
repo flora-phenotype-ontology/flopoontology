@@ -18,10 +18,13 @@ the negation stated: the part is absent. "Absent", "no X", "without X" and the p
 
 ## OWL
 
+The expression below is the defining property of the class; the class itself is its phene,
+`'flora phenotype' and 'phenotype of' some (...)` (pattern 00).
+
 `not ('has part' some ('part of' some petal))`.
 
 This is the form of Gkoutos, Schofield and Hoehndorf [8]. Absence is not a quality of a petal
-that does not exist; it is the class of plants that have no petal. With *part of* read as
+that does not exist; it is the phene of plants that have no petal ("lacks-part phene" in [11]). With *part of* read as
 reflexive and transitive, a plant that has no part of a petal has no petal, and a plant without
 leaves is also a plant without leaf blades: "leaves absent" is a subclass of "leaf blade absent".
 Until 2026-11-20 the atlas wrote `not ('has part' some (petal and 'has characteristic' some
@@ -31,13 +34,20 @@ A qualified whole or a container stays with the part: "petals of male flowers ab
 `not ('has part' some ('part of' some (petal and 'part of' some (flower and 'has characteristic'
 some male))))`.
 
-Negation is outside OWL 2 EL, and ELK passes over it. The class is kept as written, and the
-question it should answer is put to ELK in another form (`flopo2.verify.annotation_class_check`):
-for each taxon with an absence, a marker class disjoint with the presence, `'has part' some
-('part of' some petal)`, joins the taxon's other statements. OWL EL cannot say that *part of* is
-reflexive, so the check states it for each absent part (`petal SubClassOf 'part of' some petal`).
-"Petals absent" then contradicts "petals white" and also "petal claw short", and both statements
-of that taxon are set to review (`contradiction_within_taxon`).
+"Petals absent" and "petals white" in one taxon contradict each other: the taxon has both
+phenes, `'phenotype of'` is functional, so one plant would have a white petal and no part of a
+petal. A reasoner for all of OWL 2 DL finds this directly, one taxon at a time
+(`tools/PheneTaxonConsistency.java`, HermiT; `docs/phene-consistency.md`).
+
+Negation and functional properties are outside OWL 2 EL, and ELK passes over them. The class is
+kept as written, and the question is put to ELK in another form
+(`flopo2.verify.annotation_class_check`): every class C with defining property Y gets the bearer
+axiom `'has phenotype' some C SubClassOf Y`; an absence class gets `'has phenotype' some C
+SubClassOf M` with a marker class M that is disjoint with the presence, `'has part' some ('part
+of' some petal)`. OWL EL cannot say that *part of* is reflexive, so the check states it for each
+absent part (`petal SubClassOf 'part of' some petal`). "Petals absent" then contradicts "petals
+white" and also "petal claw short", and both statements of that taxon are set to review
+(`contradiction_within_taxon`).
 
 ## RDF
 
@@ -52,7 +62,7 @@ of that taxon are set to review (`contradiction_within_taxon`).
 |---|---|---|
 | `negation_scope` required | data model | a negated record says whether the part or the quality is denied |
 | shape `AbsenceOfAPart` | ShEx | quality present, negated, no number |
-| `contradiction_within_taxon` | ELK | the absent part, or a part of it, is not described in the same taxon |
+| `contradiction_within_taxon` | ELK (bearer axioms); HermiT per taxon | the absent part, or a part of it, is not described in the same taxon |
 
 ## Related work
 
