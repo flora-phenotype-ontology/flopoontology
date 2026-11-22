@@ -48,7 +48,9 @@ on a locality module per taxon, about a second each; docs/phene-consistency.md).
 compare the two on the same cases.
 
 ELK reads the EL part of the definitions; unions, complements and number ranges are passed over,
-so the check is sound but not complete (docs/km-classification.md). It is skipped, with a note,
+so the check is sound but not complete (docs/km-classification.md). A class with a number range
+("awn 3-5 mm long") would be lost whole; it gets a second bearer axiom without the number
+(``'has phenotype' some C SubClassOf has part some awn``), so that it contradicts "awns absent". It is skipped, with a note,
 when Java or ROBOT is missing.
 
     python -m flopo2.verify.annotation_class_check eflora-mfoc
@@ -172,13 +174,17 @@ def write_class_definitions(
                     "statements": 1,
                 }
                 try:
-                    expression = assertions._phenotype_expression(graph, nodes, assertion, attributes)[0]
+                    expression, numeric = assertions._phenotype_expression(graph, nodes, assertion, attributes)[:2]
                 except ValueError:
                     continue  # not compilable: reported by the data-model validation
                 graph.add((URIRef(iri), RDF.type, OWL.Class))
                 graph.add((URIRef(iri), OWL.equivalentClass, expression))
                 if bearers and not _is_absence(assertion):  # an absence gets its marker in the taxon check
                     graph.add((_bearer_of(graph, iri), RDFS.subClassOf, phene.phene_body(graph, expression)))
+                    if numeric:  # ELK passes over a number range: state the part without it
+                        part = _without_numbers(graph, phene.phene_body(graph, expression))
+                        if part is not None:
+                            graph.add((_bearer_of(graph, iri), RDFS.subClassOf, part))
                 if len(graph) > chunk * 20:
                     sink.write(graph.serialize(format="nt", encoding="utf-8"))
                     graph = Graph()
@@ -198,6 +204,53 @@ def _bearer_of(graph, cls: str):
     graph.add((node, OWL.onProperty, phene.HAS_PHENOTYPE))
     graph.add((node, OWL.someValuesFrom, URIRef(cls)))
     graph.add((phene.HAS_PHENOTYPE, RDF.type, OWL.ObjectProperty))
+    return node
+
+
+def _has_number(graph, node, seen: set | None = None) -> bool:
+    """Does the expression hold a restriction on a number (a datatype with facets)?"""
+
+    from rdflib import OWL, BNode
+
+    seen = set() if seen is None else seen
+    if not isinstance(node, BNode) or node in seen:
+        return False
+    seen.add(node)
+    if graph.value(node, OWL.withRestrictions) is not None or graph.value(node, OWL.onDataRange) is not None:
+        return True
+    return any(_has_number(graph, target, seen) for target in graph.objects(node, None))
+
+
+def _without_numbers(graph, body):
+    """``has part some (E and ... )`` without the conjuncts that hold a number: "awn 3-5 mm long"
+    gives "has part some awn". None when the defining property is not of that form. A conjunct
+    less is a weaker statement, so the axiom is entailed by the bearer axiom of the class."""
+
+    from rdflib import OWL, RDF, BNode
+    from rdflib.collection import Collection
+
+    from flopo2.owl import phene
+
+    if not isinstance(body, BNode) or (body, OWL.onProperty, phene.HAS_PART) not in graph:
+        return None
+    filler = graph.value(body, OWL.someValuesFrom)
+    members = graph.value(filler, OWL.intersectionOf) if isinstance(filler, BNode) else None
+    if members is None:
+        return None
+    kept = [item for item in Collection(graph, members) if not _has_number(graph, item)]
+    if not kept:
+        return None
+    if len(kept) == 1:
+        target = kept[0]
+    else:
+        target, head = BNode(), BNode()
+        graph.add((target, RDF.type, OWL.Class))
+        graph.add((target, OWL.intersectionOf, head))
+        Collection(graph, head, kept)
+    node = BNode()
+    graph.add((node, RDF.type, OWL.Restriction))
+    graph.add((node, OWL.onProperty, phene.HAS_PART))
+    graph.add((node, OWL.someValuesFrom, target))
     return node
 
 

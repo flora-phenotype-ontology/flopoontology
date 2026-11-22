@@ -206,3 +206,31 @@ def test_hermit_on_the_published_axioms_agrees_with_the_elk_check(tmp_path):
     assert (result["unsatisfiable"], result["taxon_contradictions"]) == (0, 2)
     rows = (tmp_path / "x-taxon-contradictions.tsv").read_text(encoding="utf-8").splitlines()[1:]
     assert {row.split("\t")[0] for row in rows} == {name for name, row in found.items() if row["status"] == "inconsistent"}
+
+
+@pytest.mark.skipif(shutil.which("java") is None, reason="needs Java for ROBOT/ELK")
+def test_absent_contradicts_a_measured_part(tmp_path):
+    """ELK passes over the whole definition of a class with a number range, so "leaves 6 mm long"
+    said nothing about leaves; the bearer axiom without the number makes it contradict "leaves
+    absent". A measured stem beside absent leaves is no contradiction."""
+
+    from flopo2.owl.annotation_class import ensure_annotation_class_iri
+
+    def measured(po: str, label: str) -> dict:
+        assertion = {"po_id": po, "pato_id": "PATO_0000122", "value_terms": [], "value_operator": "atomic",
+                     "negated": False, "value_low": 6.0, "value_high": 6.0, "value_low_inclusive": True,
+                     "value_high_inclusive": True, "unit": "mm", "source_text": f"{label} 6 mm long",
+                     "gate": {"status": "accepted", "reasons": []},
+                     "composition": {"entity_label": label, "quality_label": "length"}}
+        ensure_annotation_class_iri(assertion)
+        return assertion
+
+    leaf, stem = measured("PO_0025034", "leaf"), measured("PO_0009047", "stem")
+    path = tmp_path / "x-annotated.jsonl"
+    taxa = {"A b": [leaf, _absent("leaves absent")], "C d": [stem, _absent("leaves absent")]}
+    path.write_text("".join(json.dumps({"taxon": name, "assertions": items}) + "\n" for name, items in taxa.items()),
+                    encoding="utf-8")
+    result = acc.check("x", path, tmp_path)
+    assert (result["unsatisfiable"], result["taxon_contradictions"]) == (0, 1)
+    rows = (tmp_path / "x-taxon-contradictions.tsv").read_text(encoding="utf-8").splitlines()[1:]
+    assert [row.split("\t")[0] for row in rows] == ["A b"]
