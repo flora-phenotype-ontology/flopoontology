@@ -20,6 +20,13 @@ The resulting ontology is available under a CC-0 license in the `ontology` folde
   subclass axioms. Its sole named root is `FLOPO:0000000` (`flora phenotype`); imported
   support vocabularies and obsolete terms remain available from the full release.
 
+- `ontology/flopo-bearer-axioms.ofn` is for reasoning with ELK over data that links taxa to
+  FLOPO classes with `'has phenotype'`. A FLOPO class is a quality of the plant; this file
+  states, once per class, what follows for the plant (`'has phenotype' some P SubClassOf <defining
+  property of P>`), which a reasoner for OWL 2 EL does not conclude by itself. It is entailed by
+  `flopo.owl`, imports it, and is an asset of every release from 2026-11-22 on. Worked examples
+  and limits: [docs/phene-consistency.md](docs/phene-consistency.md).
+
 The light artifact reuses the canonical FLOPO IRIs unchanged; it is a view of the full
 ontology, not a second identifier space. Rebuild the classified and light artifacts with:
 
@@ -81,7 +88,8 @@ python -m tools.update_flopo_inferred_parents       # assert the classified hier
 python -m flopo2.owl.trait_phenotype                # annotate PATO attributes versus values
 python tools/classify_flopo_release.py && python -m flopo2.owl.light
 python -m tools.update_flopo_phene_form --check      # no phenotype class left as a class of plants
-python -m tools.check_flopo_phene_bearers            # ELK: no phenotype that no plant can have
+python -m tools.build_flopo_phene_bearers            # ontology/flopo-bearer-axioms.ofn of this version
+python -m tools.check_flopo_phene_bearers            # the file is current; ELK: no phenotype that no plant can have
 python tools/obo_dashboard_gate.py                   # FP04 passes once the release is published
 ```
 
@@ -92,8 +100,10 @@ their builders write the defining property alone; `tools.update_flopo_phene_form
 they add and is idempotent. Code that analyses a release (identifier registry, text definitions,
 trait or value) reads it through `flopo2.owl.phene.defining_view`. `'phenotype of'` (RO:0002201)
 is functional and the inverse of `'has phenotype'` (RO:0002200); ELK does not read that, so
-`tools.check_flopo_phene_bearers` states its consequence once per class (`'has phenotype' some P
-SubClassOf Y`) and requires that ELK finds no plant-with-phenotype unsatisfiable. See
+`ontology/flopo-bearer-axioms.ofn` states its consequence once per class (`'has phenotype' some P
+SubClassOf Y`); `tools.check_flopo_phene_bearers` requires that the file is current and that ELK
+finds no plant-with-phenotype unsatisfiable. Publish the file as a fourth asset of the GitHub
+release (`flopo.owl`, `flopo-inferred.owl`, `flopo-light.owl`, `flopo-bearer-axioms.ofn`). See
 `docs/phene-consistency.md`.
 
 The value-space module (`tools/build_flopo_value_space_extension.py`, embedded by
@@ -146,9 +156,10 @@ preserved; ELK finds no unsatisfiable classes. The classified hierarchy is the s
   inverse, as in the Relations Ontology: a phene has one bearer. A plant that has two phenes has
   both defining properties. **Users who query FLOPO classes as classes of plants** (`Taxon
   SubClassOf FLOPO class`) should link with `'has phenotype' some`.
-- New release check `tools/check_flopo_phene_bearers.py`: with one axiom per class in OWL 2 EL
-  (`'has phenotype' some P SubClassOf Y`) ELK confirms that every phenotype can be had by a
-  plant together with the classes above it (0 of 25,982 fail). The annotations of the floras
+- New file `ontology/flopo-bearer-axioms.ofn`, a release asset: one axiom per class in OWL 2 EL
+  (`'has phenotype' some P SubClassOf Y`), for users of ELK. New release check
+  `tools/check_flopo_phene_bearers.py`: with the file ELK confirms that every phenotype can be had
+  by a plant together with the classes above it (0 of 25,982 fail). The annotations of the floras
   are checked the same way per taxon, and with HermiT on the axioms as published
   (`tools/PheneTaxonConsistency.java`); `docs/phene-consistency.md`.
 

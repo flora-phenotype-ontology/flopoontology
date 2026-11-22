@@ -59,10 +59,11 @@ Both axioms together entail, for every class C with defining property Y,
 (a plant that has the phene of Y is a Y). This is in OWL 2 EL. Stated once per class it gives ELK
 the step from the phenes of a plant to the plant.
 
-* **FLOPO release** (`tools/check_flopo_phene_bearers.py`, a release step): the bearer axiom and
-  a probe `probe(P) SubClassOf 'has phenotype' some P` for each of the 25,982 phenotype classes.
+* **FLOPO release** (`tools/check_flopo_phene_bearers.py`, a release step): the published file
+  of bearer axioms (next section) and a probe `probe(P) SubClassOf 'has phenotype' some P` for
+  each of the 25,982 phenotype classes.
   An unsatisfiable probe is a phenotype no plant can have, alone or together with the classes
-  asserted above it. The release requires none (2 min 30 s).
+  asserted above it. The release requires none (3 min 30 s).
 * **Annotations of a flora** (`flopo2.verify.annotation_class_check`, run for every flora): the
   bearer axiom of every annotation class, and a class per taxon with `T SubClassOf 'has
   phenotype' some C` for each of its statements, as in the published data. Negation is rewritten:
@@ -71,9 +72,58 @@ the step from the phenes of a plant to the plant.
   unsatisfiable taxon class is a contradiction within the taxon; its statements are set to
   review.
 
-The bearer axioms are part of the check, not of the published data: they are entailed by the
-published axioms, and a user of ELK can generate them (`python -m tools.check_flopo_phene_bearers
---out bearers.ttl`, `flopo2.owl.phene.bearer_axioms`).
+The bearer axioms of FLOPO are published with every release as a file of their own, see the next
+section. Those of the annotation classes of a flora are written by the check for its own run
+(`flopo2.owl.phene.bearer_axioms` gives them for any graph of phene classes).
+
+## The bearer axioms as a release file
+
+`ontology/flopo-bearer-axioms.ofn` holds the bearer axiom of every FLOPO phenotype class, 25,989
+axioms in the release of 2026-11-22, and nothing else. It is for anyone who reasons with ELK, or
+another OWL 2 EL reasoner, over data that links taxa or specimens to FLOPO classes.
+
+| | |
+|---|---|
+| In the repository | `ontology/flopo-bearer-axioms.ofn` (OWL functional syntax, 11 MB) |
+| With each release | asset `flopo-bearer-axioms.ofn` of the GitHub release, from 2026-11-22 on |
+| Address of a version | `http://purl.obolibrary.org/obo/flopo/releases/<date>/flopo-bearer-axioms.ofn` |
+| Ontology IRI | `http://purl.obolibrary.org/obo/flopo/flopo-bearer-axioms.owl` |
+| Imports | `flopo.owl` of the same version |
+| Licence | CC0, as FLOPO |
+| Built by | `python -m tools.build_flopo_phene_bearers` (after the final passes of a release) |
+| Checked by | `python -m tools.check_flopo_phene_bearers`: the file is what the release gives, and with it ELK finds no phenotype that no plant can have |
+
+**What it does.** Without the file ELK knows that 'petal linear' is a kind of 'petal phenotype',
+but nothing about the plant. With it, a taxon that has the phenotype 'petal linear' is a plant
+with a linear petal, and so a plant with petals:
+
+```turtle
+ex:TaxonA rdfs:subClassOf [ a owl:Restriction ; owl:onProperty obo:RO_0002200 ;   # has phenotype
+                            owl:someValuesFrom obo:FLOPO_0000014 ] .              # petal linear
+ex:PlantWithPetals owl:equivalentClass [ a owl:Restriction ; owl:onProperty obo:BFO_0000051 ;
+                            owl:someValuesFrom obo:PO_0009032 ] .                 # has part some petal
+```
+
+```bash
+robot merge --input flopo.owl --input flopo-bearer-axioms.ofn \
+            --input docs/examples/flopo-bearer-axioms-taxon.ttl \
+      reason --reasoner ELK --output classified.ofn
+grep TaxonA classified.ofn      # SubClassOf(ex:TaxonA ex:PlantWithPetals)
+```
+
+Without `flopo-bearer-axioms.ofn` the same command does not give that line. The second example,
+`docs/examples/flopo-bearer-axioms-contradiction.ttl`, is a taxon said to have linear petals and
+to be a plant without petals; ELK reports it unsatisfiable only with the file.
+(`flopo.owl` imports PO and PATO; with ROBOT offline use the catalog in `ontology/`.) Both
+examples are tests (`tests/test_flopo_phene_form.py`).
+
+**What it does not do.** OWL 2 EL has no negation, so "petals absent" has to be given to ELK as a
+class declared disjoint with "has part some petal", as in the second example and in the flora
+check. The file does not state that `part of` is reflexive. The axioms are in OWL 2 EL wherever
+the defining property is; a few FLOPO classes use a number restriction, which ELK passes over.
+
+**Do not use it instead of the definitions.** The file is a consequence of `flopo.owl`, not a
+replacement; a reasoner for all of OWL 2 DL (HermiT) needs only `flopo.owl`.
 
 ### HermiT, on the axioms as published
 

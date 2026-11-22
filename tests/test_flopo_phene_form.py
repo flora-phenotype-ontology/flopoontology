@@ -281,3 +281,83 @@ def test_elk_finds_a_phenotype_no_plant_can_have_only_with_the_bearer_axioms(tmp
     probes = check.with_bearers(graph)
     found = {probes[iri] for iri in _elk_unsatisfiable(graph, tmp_path) if iri in probes}
     assert found == {OBO + "FLOPO_0000001"}
+
+
+# --- the bearer axioms as a release file -------------------------------------------------------
+
+BRIDGE = Path("ontology/flopo-bearer-axioms.ofn")
+EXAMPLES = Path("docs/examples")
+
+
+def test_the_bearer_axiom_file_belongs_to_the_release(release):
+    """One axiom 'has phenotype' some P SubClassOf Y for every phenotype class, the version of
+    flopo.owl, and an import of that version."""
+
+    text = BRIDGE.read_text(encoding="utf-8")
+    version = str(release.value(URIRef(OBO + "flopo.owl"), OWL.versionInfo))
+    assert f'Annotation(owl:versionInfo "{version}")' in text
+    assert f"Import(<{OBO}flopo/releases/{version}/flopo.owl>)" in text
+    assert f"<{OBO}flopo/releases/{version}/flopo-bearer-axioms.ofn>" in text
+    assert "owlapi/error" not in text
+    import re
+
+    stated = set(re.findall(rf"^SubClassOf\(ObjectSomeValuesFrom\(<{OBO}RO_0002200> <([^>]+)>\) ", text, re.MULTILINE))
+    assert stated == {str(cls) for cls in phene.phene_classes(release)}
+    # nothing but bearer axioms: the file must not change what FLOPO says
+    logical = [line for line in text.splitlines() if line and not line.startswith(
+        ("Prefix(", "Ontology(", "Import(", "Annotation(", "Declaration(", "AnnotationAssertion(", "<", ")", "#"))]
+    assert all(line.startswith(f"SubClassOf(ObjectSomeValuesFrom(<{OBO}RO_0002200> ") for line in logical)
+
+
+@pytest.fixture(scope="module")
+def release_without_imports(release, tmp_path_factory) -> Path:
+    work = tmp_path_factory.mktemp("bearers")
+    local = Graph()
+    for triple in release:
+        if triple[1] != OWL.imports:
+            local.add(triple)
+    path = work / "flopo-local.owl"
+    local.serialize(path.as_posix(), format="xml")
+    import re
+
+    bridge = work / "bridge.ofn"
+    bridge.write_text(re.sub(r"^Import\(<[^>]+>\)\n", "", BRIDGE.read_text(encoding="utf-8"), flags=re.MULTILINE),
+                      encoding="utf-8")
+    return work
+
+
+def _elk(work: Path, *inputs: Path) -> tuple[str, str]:
+    from tools import classify_flopo_release as release_tools
+
+    robot = release_tools._robot_command(Path(release_tools.__file__).resolve().parents[1])
+    out = work / "classified.ofn"
+    out.unlink(missing_ok=True)
+    done = subprocess.run(
+        [*robot, "merge", *(part for path in inputs for part in ("--input", str(path))),
+         "reason", "--reasoner", "ELK", "--output", str(out)], capture_output=True, text=True, check=False)
+    return done.stdout + done.stderr, out.read_text(encoding="utf-8") if out.exists() else ""
+
+
+@pytest.mark.skipif(shutil.which("java") is None, reason="needs Java for ROBOT/ELK")
+def test_with_the_file_elk_places_a_taxon_under_the_property_of_its_phenotype(release_without_imports):
+    """docs/examples: taxon A has the phenotype 'petal linear'; with the bearer axioms ELK
+    concludes that it is a plant with petals, without them it does not."""
+
+    work = release_without_imports
+    example = EXAMPLES / "flopo-bearer-axioms-taxon.ttl"
+    wanted = ("SubClassOf(<http://example.org/flopo-bearer-example#TaxonA> "
+              "<http://example.org/flopo-bearer-example#PlantWithPetals>)")
+    _, without = _elk(work, work / "flopo-local.owl", example)
+    assert without and wanted not in without
+    _, with_bridge = _elk(work, work / "flopo-local.owl", work / "bridge.ofn", example)
+    assert wanted in with_bridge
+
+
+@pytest.mark.skipif(shutil.which("java") is None, reason="needs Java for ROBOT/ELK")
+def test_with_the_file_elk_finds_a_taxon_whose_phenotype_contradicts_what_it_is(release_without_imports):
+    """docs/examples: taxon B has linear petals and is a plant without petals."""
+
+    work = release_without_imports
+    output, _ = _elk(work, work / "flopo-local.owl", work / "bridge.ofn",
+                     EXAMPLES / "flopo-bearer-axioms-contradiction.ttl")
+    assert "unsatisfiable: http://example.org/flopo-bearer-example#TaxonB" in output
