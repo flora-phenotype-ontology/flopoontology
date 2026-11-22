@@ -45,12 +45,13 @@ import uk.ac.manchester.cs.owlapi.modularity.SyntacticLocalityModuleExtractor;
  * cannot both hold, given that a petal is part of itself (part of is reflexive).
  *
  * This needs a reasoner for all of OWL 2 DL. For each taxon the part of the ontologies that its
- * classes depend on is cut out (a syntactic locality module, type BOT), and HermiT tests whether
- * one plant can have all the phenes. For an inconsistent taxon the classes are reduced to a
+ * classes depend on is cut out (a syntactic locality module, type BOT, of the ontologies together
+ * with the definitions of the taxon's own classes), and HermiT tests whether one plant can have
+ * all the phenes. For an inconsistent taxon the classes are reduced to a
  * smallest set that still contradicts itself.
  *
  *   java -Xmx12g -cp tools/robot.jar tools/PheneTaxonConsistency.java \
- *       closure.owl definitions.ttl taxa.tsv result.tsv [threads] [timeout seconds] [drop|keep]
+ *       closure.owl definitions.ttl taxa.tsv result.tsv [threads] [timeout seconds] [drop|keep] [classify]
  *
  * closure.owl: FLOPO, PO, PATO and the plant GO import, merged (the release classification input).
  * definitions.ttl: the annotation classes of a flora, in the phene form.
@@ -60,6 +61,7 @@ import uk.ac.manchester.cs.owlapi.modularity.SyntacticLocalityModuleExtractor;
  *
  * drop (default) leaves out FLOPO's own named phenotype classes that the flora does not use: they
  * are names for expressions and cannot change whether a taxon is consistent. keep uses everything.
+ * classify also computes the class hierarchy of each consistent taxon's module and reports the time.
  */
 public class PheneTaxonConsistency {
 
@@ -69,25 +71,47 @@ public class PheneTaxonConsistency {
     static final OWLObjectProperty PHENOTYPE_OF = DF.getOWLObjectProperty(IRI.create(OBO + "RO_0002201"));
     static final OWLObjectProperty PART_OF = DF.getOWLObjectProperty(IRI.create(OBO + "BFO_0000050"));
     static final String ROOT = OBO + "FLOPO_0000000";
+    static final java.util.Map<OWLClass, Set<OWLAxiom>> DEFINITIONS = new java.util.HashMap<>();
+    static boolean CLASSIFY = false;
 
     public static void main(String[] args) throws Exception {
         int threads = args.length > 4 ? Integer.parseInt(args[4]) : 4;
         long timeout = (args.length > 5 ? Long.parseLong(args[5]) : 120) * 1000;
         boolean drop = args.length <= 6 || !args[6].equals("keep");
+        CLASSIFY = args.length > 7 && args[7].equals("classify");
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         manager.setOntologyLoaderConfiguration(new OWLOntologyLoaderConfiguration()
                 .setMissingImportHandlingStrategy(MissingImportHandlingStrategy.SILENT));
         Set<OWLAxiom> axioms = new HashSet<>();
         Set<OWLEntity> used = new HashSet<>();
-        for (int i = 0; i < 2; i++) {
-            OWLOntology loaded = manager.loadOntologyFromOntologyDocument(new File(args[i]));
-            axioms.addAll(loaded.getLogicalAxioms());
-            axioms.addAll(loaded.getAxioms(AxiomType.DECLARATION));
-            if (i == 1) {
-                used.addAll(loaded.getClassesInSignature());
+        // The definitions of the flora's annotation classes are kept apart, by class: a taxon is
+        // checked with the definitions of its own classes only. The definition of a class the
+        // taxon does not have cannot change the answer, but it is not "local" for the module
+        // extractor as soon as all its terms are in the module, and never when it is a negation
+        // ("costa absent") or an alternative ("ovate or lanceolate"): cut from all definitions
+        // together, the module of one class of the Moss Flora of China held 1,600 definitions of
+        // other classes (docs/phene-consistency.md).
+        OWLOntology base = manager.loadOntologyFromOntologyDocument(new File(args[0]));
+        axioms.addAll(base.getLogicalAxioms());
+        axioms.addAll(base.getAxioms(AxiomType.DECLARATION));
+        manager.removeOntology(base);
+        OWLOntology floraFile = manager.loadOntologyFromOntologyDocument(new File(args[1]));
+        used.addAll(floraFile.getClassesInSignature());
+        used.addAll(floraFile.getObjectPropertiesInSignature());
+        used.addAll(floraFile.getDataPropertiesInSignature());
+        for (OWLAxiom axiom : floraFile.getLogicalAxioms()) {
+            boolean ofClass = false;
+            if (axiom.isOfType(AxiomType.EQUIVALENT_CLASSES)) {
+                for (OWLClass c : ((OWLEquivalentClassesAxiom) axiom).getNamedClasses()) {
+                    DEFINITIONS.computeIfAbsent(c, k -> new HashSet<>()).add(axiom);
+                    ofClass = true;
+                }
             }
-            manager.removeOntology(loaded);
+            if (!ofClass) {
+                axioms.add(axiom);  // anything else in the file is general knowledge
+            }
         }
+        manager.removeOntology(floraFile);
         if (drop) {
             Set<OWLEntity> named = new HashSet<>();
             for (OWLAxiom axiom : axioms) {
@@ -175,6 +199,13 @@ public class PheneTaxonConsistency {
         for (String iri : cells[1].trim().split(" ")) {
             classes.add(DF.getOWLClass(IRI.create(iri)));
         }
+        Set<OWLAxiom> definitions = new HashSet<>();
+        for (OWLClass c : classes) {
+            for (OWLAxiom axiom : DEFINITIONS.getOrDefault(c, java.util.Collections.<OWLAxiom>emptySet())) {
+                definitions.add(axiom);
+                signature.addAll(axiom.getSignature());  // every term of the taxon's own definitions
+            }
+        }
         signature.addAll(classes);
         signature.add(HAS_PHENOTYPE);
         signature.add(PHENOTYPE_OF);
@@ -184,7 +215,10 @@ public class PheneTaxonConsistency {
         OWLOntology module = null;
         Reasoner reasoner = null;
         try {
-            Set<OWLAxiom> cut = extractor.extract(signature);
+            // The module of the ontologies for the terms of the taxon's definitions, and the
+            // definitions: together the locality module of (ontologies + these definitions).
+            Set<OWLAxiom> cut = new HashSet<>(extractor.extract(signature));
+            cut.addAll(definitions);
             size = cut.size();
             module = own.createOntology(cut);
             Configuration configuration = new Configuration();
@@ -192,6 +226,11 @@ public class PheneTaxonConsistency {
             reasoner = new Reasoner(configuration, module);
             if (reasoner.isSatisfiable(plant(classes))) {
                 status = "consistent";
+                if (CLASSIFY) {  // a measurement: the class hierarchy of the taxon's module
+                    long before = System.currentTimeMillis();
+                    reasoner.precomputeInferences(org.semanticweb.owlapi.reasoner.InferenceType.CLASS_HIERARCHY);
+                    detail = "classified in " + (System.currentTimeMillis() - before) + " ms";
+                }
             } else {
                 status = "inconsistent";
                 detail = String.join(" ", conflict(reasoner, classes));

@@ -128,10 +128,10 @@ replacement; a reasoner for all of OWL 2 DL (HermiT) needs only `flopo.owl`.
 ### HermiT, on the axioms as published
 
 `tools/PheneTaxonConsistency.java` asks the question directly, with a reasoner for all of OWL 2
-DL and no rewriting: for one taxon at a time it cuts out the part of FLOPO, PO, PATO and the
-flora's definitions that the taxon's classes depend on (a syntactic locality module, type BOT)
-and asks HermiT whether one plant can have a phene of every class. For an inconsistent taxon it
-reduces the classes to a smallest contradicting set.
+DL and no rewriting: for one taxon at a time it cuts out the part of FLOPO, PO and PATO that the
+definitions of the taxon's own classes depend on (a syntactic locality module, type BOT), adds
+those definitions, and asks HermiT whether one plant can have a phene of every class. For an
+inconsistent taxon it reduces the classes to a smallest contradicting set.
 
     python -m flopo2.verify.annotation_class_check SOURCE --complete
 
@@ -141,39 +141,104 @@ Only one taxon is checked at a time, never the taxa together: taxa do not constr
 
 ## What was measured (2026-11-22, 4 threads)
 
-| Flora | Taxa | Module, axioms (median; max) | Per taxon (median; max) | Whole flora | Result |
-|---|---|---|---|---|---|
-| NCVC Saudi guide, FLOPO's unused named classes left out | 299 | 1,078; 2,036 | 0.63 s; 4.9 s | 1 min 28 s | all answered |
-| the same, everything kept | 299 | 4,502; 7,666 | 2.3 s; 9.7 s | 3 min 52 s | all answered |
-| Collenette, Saudi wildflowers | 1,228 | not recorded | 0.39 s; 3.6 s | 2 min 43 s | all answered |
-| Moss Flora of China (first 42 taxa) | 42 of 1,652 | 7,700; 8,800 | over 100 s | stopped | 23 of 42 timed out at 120 s |
+| Flora | Taxa | Module, axioms (median; max) | Per taxon (median; max) | Whole flora |
+|---|---|---|---|---|
+| Moss Flora of China | 1,652 | 299; 636 | 0.03 s; 0.5 s | 28 s |
+| NCVC Saudi guide | 299 | 268; 395 | 0.03 s; 0.4 s | 12 s |
 
-* On the two seed-plant floras HermiT answers every taxon, in about half a second each.
+Every taxon is answered. Variants, on the first 200 taxa (60 for the last row) of each flora:
+
+| Variant | Moss Flora of China | NCVC |
+|---|---|---|
+| FLOPO's named phenotype classes that the flora does not use are kept | modules 1,164 (max 6,101); 0.47 s (max 3.8 s) | modules 1,249 (max 2,781); 0.46 s (max 1.4 s) |
+| the taxon's module is also **classified** (whole class hierarchy) | 0.07 s (max 1.8 s) | 0.05 s (max 0.4 s) |
+| classified with FLOPO's named classes kept | 3.2 s (90% under 16 s, max 106 s) | 2.2 s (90% under 5 s, max 14 s) |
+
 * Positive control: the ten pairs of statements that the ELK check had reported for the NCVC
-  guide ("leafless" beside "leaves strap-shaped") are all found inconsistent by HermiT, each in
-  under 0.3 s, and none without the reflexivity of `part of`.
+  guide ("leafless" beside "leaves strap-shaped") are all found inconsistent, and none without
+  the reflexivity of `part of`.
 * `tests/test_annotation_class_check.py::test_hermit_on_the_published_axioms_agrees_with_the_elk_check`
   puts five small taxa to both reasoners and requires the same answer.
-* Leaving out FLOPO's named phenotype classes that the flora does not use is safe (a name for an
-  expression cannot make a taxon inconsistent) and makes the modules four times smaller; with
-  everything kept the check is still feasible on these floras.
-* The moss flora is different: its taxa have about as many statements (median 16, against 13),
-  but the modules are 4,000 to 9,000 axioms, and more than half of the taxa do not finish in two
-  minutes. The reason was not established. This is the flora on which the same approach was
-  found too slow on 2026-11-13 (`docs/km-classification.md`).
-* The phene form is not what makes HermiT fast: the earlier checker
-  (`tools/TaxonConsistency.java`, taxon as a conjunction of classes of plants) needs the same
-  time on the NCVC guide (0.5 s per taxon, modules of the same size).
-* **Classifying** a taxon's module with HermiT, as opposed to testing the taxon, is not reliable:
-  on five taxa with everything kept, 11 s, 2 min 34 s and 23 min, and two that did not finish;
-  with the unused names left out, 23 s for one module of 952 axioms and no result in 2 minutes
-  for one of 1,385.
+* Leaving out FLOPO's named phenotype classes that the flora does not use is safe: a name for an
+  expression cannot make a taxon inconsistent.
+* The phene form is not what makes HermiT fast or slow: the earlier checker
+  (`tools/TaxonConsistency.java`, taxon as a conjunction of classes of plants) behaves the same.
+
+### Every flora, every taxon (2026-11-22)
+
+`--complete` was run on all 40 floras of the atlas: 108,510 taxa in 77 minutes on 4 threads
+(the largest, Flora of China with 33,463 taxa, in 22 minutes). No taxon timed out and none gave
+an error; the slowest single taxon took 2.7 s.
+
+HermiT found **109 inconsistent taxa** (1 in 1,000) in 13 floras, none of which the ELK check
+had reported. The 35 of them that were read (six floras) are all of one kind: a part is said
+to be absent, and the same taxon has a measurement of that part.
+
+| Absent | Beside | Taxa (of 35) |
+|---|---|---|
+| a part | a length of that part or of a part of it | 23 |
+| a part | a count of it or of a part of it (never 0) | 9 |
+| a part | a width of it | 3 |
+
+Example (Lamarckia aurea, Kew grass descriptions): "lemma awns absent" and a lemma awn with a
+length in millimetres. ELK misses these because a class with a number range is outside OWL 2 EL
+and ELK passes over its whole definition, so for ELK the taxon has no awn. This is the limit
+named under "What is used", now with a size: about 1 taxon in 1,000. Whether each is an error
+of the annotation or two forms described in one paragraph (fertile and sterile florets, say)
+was not judged; they need a reader, as the other marked statements do.
+
+The reports are `<source>-taxon-consistency.tsv`, one line per inconsistent taxon with the
+smallest set of classes that contradict each other.
+
+### Why the Moss Flora of China did not finish at first
+
+The first version of the check, and the trial of 2026-11-13 (`docs/km-classification.md`), cut
+each taxon's module out of the ontologies **together with the definitions of all annotation
+classes of the flora**. On the Moss Flora of China the modules then had 4,000 to 9,000 axioms and
+23 of the first 42 taxa did not finish in two minutes; on the two Saudi floras the same program
+took half a second per taxon. The number of statements per taxon is about the same (median 16
+against 13), and no single term is to blame: the module of every Plant Ontology, PATO or FLOPO
+term that the moss flora uses has at most 108 axioms.
+
+The cause is how a locality module treats a definition `C EquivalentTo: D` of a class C that the
+taxon does not have. Such an axiom is left out only if D is certain to be empty when the terms
+outside the module are taken to be empty. That fails in three cases:
+
+1. **All terms of D are already in the module.** A flora describes the same organs with the same
+   qualities in every taxon, so most other classes qualify as soon as the module holds "leaf",
+   "costa", "shape" and their superclasses.
+2. **D is a negation.** "Costa absent" is `not ('has part' some ('part of' some costa))`. A
+   negation is never certain to be empty, so every absence class of the flora enters every
+   module, and brings the absent part and everything above it.
+3. **D is an alternative.** "Ovate or lanceolate" is not empty as soon as one of the two is in
+   the module, and brings the other.
+
+The second and third feed the first. The moss flora has 230 classes with a negation and 599 with
+an alternative among 8,875; the module of one typical class ("peristome tooth: recurved") held
+2,212 axioms, of which 1,600 were definitions of other annotation classes (161 of them
+negations, 373 alternatives). The NCVC guide has 6 negations and 88 alternatives among 1,623
+classes; the module of a typical class held 158 axioms and 38 other definitions.
+
+None of these definitions can change whether the taxon is consistent: they define names the
+taxon does not use. The check now keeps the flora's definitions apart and gives each taxon the
+module of the ontologies for the terms of **its own** definitions, plus those definitions. This
+is the same locality module, of a smaller ontology (ontologies and the taxon's definitions). The
+moss modules fell from about 7,700 axioms to about 300 and the time per taxon from over 100 s to
+0.03 s; the Saudi floras became 7 times faster as well (NCVC: 88 s before, 12 s now).
+
+The lesson for anyone modularising annotation data: extract the module from the ontologies and
+the entity's own axioms, not from the whole dataset; negated and disjunctive class definitions
+are non-local and pull a dataset together.
 
 ## What is used
 
-* ELK with the bearer axioms is the check that runs on every flora and in the FLOPO release: it
-  takes minutes for a whole flora and covers "absent against described" and unsatisfiable
-  classes. It does not read unions, number ranges or negated qualities.
-* HermiT per taxon is the independent check on the published axioms. It is practical for a flora
-  whose taxa give small modules and is run on request (`--complete`); it is not part of the
-  build, because it does not finish on every flora.
+* ELK with the bearer axioms is the check that marks statements, on every flora and in the FLOPO
+  release. It covers "absent against described" and unsatisfiable classes; it does not read
+  unions, number ranges or negated qualities.
+* HermiT per taxon is the independent check on the published axioms. It reads everything, and
+  with the module cut correctly it takes seconds to minutes for a whole flora (77 minutes for
+  all 108,510 taxa). It reports (`--complete`) and marks nothing yet.
+* Open: the 109 taxa that only HermiT finds are not marked for review in the atlas. Two ways to
+  close this: let the HermiT report mark statements, or give ELK the bearer axiom of a numeric
+  class without its number (`'has part' some (E and 'has characteristic' some Q)`), which is in
+  OWL 2 EL and enough for "absent against measured".
