@@ -182,8 +182,8 @@ to be absent, and the same taxon has a measurement of that part.
 
 Example (Lamarckia aurea, Kew grass descriptions): "lemma awns absent" and a lemma awn with a
 length in millimetres. ELK misses these because a class with a number range is outside OWL 2 EL
-and ELK passes over its whole definition, so for ELK the taxon has no awn. This is the limit
-named under "What is used", now with a size: about 1 taxon in 1,000. Whether each is an error
+and ELK passes over its whole definition, so for ELK the taxon has no awn. The ELK check was changed the same day to state
+the part without the number (see "What is used"); it now finds these taxa as well. Whether each is an error
 of the annotation or two forms described in one paragraph (fertile and sterile florets, say)
 was not judged; they need a reader, as the other marked statements do.
 
@@ -234,11 +234,11 @@ are non-local and pull a dataset together.
 
 * ELK with the bearer axioms is the check that marks statements, on every flora and in the FLOPO
   release. It covers "absent against described" and unsatisfiable classes; it does not read
-  unions, number ranges or negated qualities.
+  unions, the numbers themselves (two ranges that exclude each other) or negated qualities.
 * HermiT per taxon is the independent check on the published axioms. It reads everything, and
   with the module cut correctly it takes seconds to minutes for a whole flora (77 minutes for
   all 108,510 taxa). It reports (`--complete`) and marks nothing yet.
-* Open: the 109 taxa that only HermiT finds are not marked for review in the atlas. Two ways to
-  close this: let the HermiT report mark statements, or give ELK the bearer axiom of a numeric
-  class without its number (`'has part' some (E and 'has characteristic' some Q)`), which is in
-  OWL 2 EL and enough for "absent against measured".
+* Since 2026-11-22 the ELK check also reads a class with a number range: it gets a second
+  bearer axiom without the number (`'has phenotype' some C SubClassOf 'has part' some E`), which
+  is in OWL 2 EL. With it ELK finds, and marks for review, the taxa that only HermiT had found
+  (all 109, in all 40 floras; the two reports name the same taxa).
