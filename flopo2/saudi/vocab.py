@@ -17,6 +17,9 @@ OBO = "http://purl.obolibrary.org/obo/"
 ORGAN_GROUPS: list[tuple[str, str, list[str]]] = [
     ("seed", "Seed", ["PO:0009010"]),
     ("fruit", "Fruit", ["PO:0009001", "PO:0006342"]),
+    # Before flower and inflorescence: PO has the lemma under the floret (flower) and the awn and
+    # glume under the spikelet (inflorescence), which split one grass spikelet over two groups.
+    ("spikelet", "Grass spikelet (glumes, lemmas, awns)", ["PO:0009051"]),
     ("flower", "Flower", ["PO:0009046"]),
     ("inflorescence", "Inflorescence", ["PO:0009049"]),
     ("leaf", "Leaf", ["PO:0025034", "PO:0009025", "PO:0006001"]),
@@ -46,6 +49,7 @@ class OboTerm:
     is_a: list[str] = field(default_factory=list)
     part_of: list[str] = field(default_factory=list)
     synonyms: list[str] = field(default_factory=list)
+    other_names: list[str] = field(default_factory=list)  # synonyms of every scope, for search
 
 
 def parse_obo(path: Path) -> dict[str, OboTerm]:
@@ -70,9 +74,35 @@ def parse_obo(path: Path) -> dict[str, OboTerm]:
             current.is_a.append(line[6:].split()[0])
         elif line.startswith("relationship: part_of "):
             current.part_of.append(line.split()[2])
-        elif line.startswith("synonym: ") and "EXACT" in line:
-            current.synonyms.append(line.split('"')[1])
+        elif line.startswith("synonym: "):
+            current.other_names.append(line.split('"')[1])
+            if "EXACT" in line:
+                current.synonyms.append(line.split('"')[1])
     return terms
+
+
+def flopo_synonyms(release: Path = Path("ontology/flopo.owl")) -> dict[str, list[str]]:
+    """``{FLOPO:n: synonyms}`` read line by line from the release (RDF/XML, one element per line)."""
+
+    import html
+    import re
+
+    about = re.compile(r'rdf:about="http://purl\.obolibrary\.org/obo/(FLOPO_\d+)"')
+    synonym = re.compile(r"<oboInOwl:has\w*Synonym[^>]*>([^<]+)</oboInOwl:has\w*Synonym>")
+    found: dict[str, list[str]] = {}
+    current = ""
+    if not release.exists():
+        return found
+    with release.open(encoding="utf-8") as handle:
+        for line in handle:
+            if line.startswith("  <") and not line.startswith("    "):  # a top-level element
+                match = about.search(line)
+                current = match.group(1).replace("_", ":", 1) if match else ("" if line.startswith("  <rdf:Description") or line.startswith("  <owl:") else current)
+            if current and "Synonym" in line:
+                match = synonym.search(line)
+                if match:
+                    found.setdefault(current, []).append(html.unescape(match.group(1)).strip())
+    return found
 
 
 def curie(identifier: str) -> str:
@@ -101,6 +131,7 @@ class Vocabulary:
                 self.flopo[curie(row["flopo_iri"])] = (row["label"], row["signature"])
         self._organ: dict[str, str] = {}
         self._trait: dict[str, str] = {}
+        self._flopo_names: dict[str, list[str]] | None = None
 
     def label(self, identifier: str) -> str:
         c = curie(identifier)
@@ -112,6 +143,20 @@ class Vocabulary:
 
             return load_bspo_labels().get(c.replace(":", "_"), c)
         return self.flopo.get(c, ("", ""))[0] or c
+
+    def other_names(self, identifier: str) -> list[str]:
+        """Synonyms of every scope (PO, PATO from the OBO files; FLOPO from the release), so that
+        a reader finds 'frutescent habit' under "shrub"."""
+
+        c = curie(identifier)
+        for table in (self.po, self.pato):
+            if c in table:
+                return sorted(set(table[c].other_names) - {table[c].name})
+        if c.startswith("FLOPO:"):
+            if self._flopo_names is None:
+                self._flopo_names = flopo_synonyms()
+            return sorted(set(self._flopo_names.get(c, [])) - {self.label(c)})
+        return []
 
     def _ancestors(self, table: dict[str, OboTerm], start: str, part_of: bool) -> list[str]:
         seen, queue, order = {start}, [start], [start]

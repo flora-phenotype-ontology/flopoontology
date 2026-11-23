@@ -542,7 +542,11 @@ async function traits(organKey, traitKey, valueKey) {
   const g = await groups();
   const og = organKey ? FB + organKey : "";
   const tg = traitKey ? FB + traitKey : "";
-  setView(`<h1>Browse traits</h1><p class="muted">Choose a plant part, then a kind of trait, then a value to list the taxa that have it.</p><div class="cols"><div id="c1"></div><div id="c2"></div><div id="c3"></div></div>`);
+  setView(`<h1>Browse traits</h1><p class="muted">Search for a trait by any of its names, or choose a plant part, then a kind of trait, then a value to list the taxa that have it.</p>
+    <div class="field"><label for="tsearch">Search traits by name or synonym</label><input id="tsearch" type="search" placeholder="e.g. shrub, awn, hairless, umbel" autocomplete="off" style="max-width:28rem;width:100%"></div>
+    <div id="tsearch-results"></div>
+    <div class="cols"><div id="c1"></div><div id="c2"></div><div id="c3"></div></div>`);
+  traitSearch(document.getElementById("tsearch"), document.getElementById("tsearch-results"));
   const organCounts = await precomputed("organCounts");
   const oc = Object.fromEntries(organCounts.map((r) => [r.og, r.n]));
   document.getElementById("c1").innerHTML = `<p class="col-title">Plant part</p><ul class="pick">${g.organs
@@ -582,6 +586,41 @@ async function traits(organKey, traitKey, valueKey) {
        .join("")}</tbody></table>`
   );
   c3.querySelector("h2").scrollIntoView({ block: "nearest" });
+}
+
+/* Search by concept: a word is looked up in the labels and the synonyms (of every scope) of the
+   ontology terms, so "shrub" finds 'frutescent habit' (synonym: shrub habit). The result lists
+   the part-and-quality values that use a matching term, with the number of taxa. */
+function traitSearch(input, box) {
+  let timer = 0;
+  input.addEventListener("input", () => {
+    clearTimeout(timer);
+    timer = setTimeout(async () => {
+      const q = input.value.trim().toLowerCase();
+      if (q.length < 3) { box.innerHTML = ""; return; }
+      box.innerHTML = `<p class="muted">Searching…</p>`;
+      const [values, names] = await Promise.all([precomputed("traitValues"), precomputed("termNames")]);
+      if (input.value.trim().toLowerCase() !== q) return;
+      const label = {}, hit = {};
+      for (const t of names) {
+        label[t.id] = t.label;
+        const all = [t.label, ...(t.names ? t.names.split("|") : [])];
+        const exact = all.find((x) => x.toLowerCase() === q) || all.find((x) => x.toLowerCase().split(/[^a-z0-9]+/).includes(q));
+        const found = exact || all.find((x) => x.toLowerCase().includes(q));
+        if (found) hit[t.id] = { name: found, rank: exact ? 0 : 1 };
+      }
+      const rows = values
+        .filter((r) => hit[r.v] || hit[r.p])
+        .map((r) => ({ ...r, h: hit[r.v] || hit[r.p], n: +r.n }))
+        .sort((a, b) => a.h.rank - b.h.rank || b.n - a.n)
+        .slice(0, 60);
+      box.innerHTML = rows.length
+        ? `<table class="results"><thead><tr><th>Trait</th><th>Found as</th><th class="num">Taxa</th></tr></thead><tbody>${rows
+            .map((r) => `<tr><td><a href="#/traits/${r.o}/${r.g}/${encodeURIComponent(r.p + "~" + r.v)}">${esc(label[r.p] || r.p)} ${esc(label[r.v] || r.v)}</a></td><td class="muted">${esc(r.h.name)}</td><td class="num">${n(r.n)}</td></tr>`)
+            .join("")}</tbody></table>`
+        : `<p class="muted">No trait has a name or synonym with “${esc(q)}”.</p>`;
+    }, 250);
+  });
 }
 
 /* ---------------------------------------------------------------- identify */

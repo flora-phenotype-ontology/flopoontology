@@ -47,6 +47,17 @@ quality of the bearer keeps it inside the EQ class expression.
 
 ## Limits
 
-upper, lower, inner, outer and lateral members have no value class yet (five FLOPO position
-values are proposed for the next release); their rows stay unresolved. Where the member is a
-part of another organ in that state ("calyx of male flowers") use pattern 12.
+upper, lower, inner, outer, lateral and median members have value classes since 2026-11-14
+(FLOPO:0991376 to FLOPO:0991381); "lateral" and "terminal" may be said of every kind of
+inflorescence (umbel, panicle, cyme, head) since 2026-11-23. "Axillary" has no value class. Where
+the position has no class, is not listed for the bearer, or two positions are joined ("the
+terminal and uppermost umbels"), the record is set to review (`bearer_position_not_modelled`): it
+must not say of all umbels what the flora says of some.
+
+Records made before the words were in the table said the statement of the part in general
+("basal leaves spatulate" as "leaf spatulate"; "the lateral umbels usually sterile" as "umbel
+sterile"). `python -m flopo2.verify.apply_bearer_position` reads the word before the bearer in
+the source text and repairs them.
+
+Where the member is a part of another organ in that state ("calyx of male flowers") use
+pattern 12.

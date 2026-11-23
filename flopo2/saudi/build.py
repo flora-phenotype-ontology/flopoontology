@@ -181,6 +181,7 @@ class Builder:
         self.aliases: dict[str, str] = {}
         self.not_names: set[str] = set()
         self.summary: dict[str, dict] = {}
+        self.copies: dict | None = None  # descriptions held twice, loaded on first use
         # (taxon, bearer, attribute) -> numeric records of every source, for merged ranges
         self.numeric: dict[tuple[str, str, str], list[dict]] = {}
         # taxon -> qualitative records, for contradiction detection (conflicts_graph)
@@ -287,12 +288,28 @@ class Builder:
         return URIRef(taxon_iri)
 
     # ------------------------------------------------------------------ index
+    def is_copy(self, key: str, record: dict) -> bool:
+        """A description that another source of the atlas holds as well (an aggregator republishing
+        a flora); the atlas keeps one of the two (tools/atlas_duplicates.py)."""
+
+        if self.copies is None:
+            from tools import atlas_duplicates
+
+            self.copies = atlas_duplicates.load()
+            self._text_key = atlas_duplicates.text_key
+        if not self.copies:
+            return False
+        return (key, record.get("source_id", ""), self._text_key(record.get("text", ""))) in self.copies
+
     def index_corpus(self, key: str, corpus: Path, graph: Graph) -> Counter:
         counts: Counter = Counter()
         source = URIRef(BASE + "saudi-flora/source/" + key)
         for line in corpus.open(encoding="utf-8"):
             record = json.loads(line)
             if record.get("language") == "ar":
+                continue
+            if self.is_copy(key, record):
+                counts["copies_left_out"] += 1
                 continue
             page = re.search(r"page-(\d+)", record.get("source_id", ""))
             taxon = self.taxon(record["taxon"], key, family=record.get("taxon_family", ""), page=page.group(1) if page else "")
@@ -929,6 +946,8 @@ class Builder:
                 g.add((node, FB.curie, Literal(term)))
                 continue
             g.add((node, RDFS.label, Literal(self.vocab.label(term))))
+            for name in self.vocab.other_names(term):  # for the search by label or synonym
+                g.add((node, SKOS.altLabel, Literal(name)))
             g.add((node, FB.curie, Literal(term)))
             if term.startswith("PO:") or self.vocab.organ_group(term) != "other" and term.startswith("FLOPO:"):
                 g.add((node, FB.organGroup, FB["organ-" + self.vocab.organ_group(term)]))
@@ -988,6 +1007,8 @@ class Builder:
             with cfg["corpus"].open(encoding="utf-8") as src, fresh.open("w", encoding="utf-8") as dst:
                 for line in src:
                     record = json.loads(line)
+                    if self.is_copy(key, record):
+                        continue
                     record["taxon_iri"] = str(self.taxon(record["taxon"], key))
                     dst.write(json.dumps(record, ensure_ascii=False) + "\n")
             # Rewrite only on change: the assertion module (minutes to build) follows its mtime.

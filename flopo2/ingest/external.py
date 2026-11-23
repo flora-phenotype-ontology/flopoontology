@@ -180,8 +180,10 @@ FLORA_SOURCES: dict[str, dict[str, str]] = {
         "family_group": "florml",
     },
     "kew-african": {
-        "title": "Kew African Flora Species",
-        "short": "Kew African Flora",
+        # The file is named "Kew African Flora Species", but every one of its 15,104 records is
+        # from the Flora of Tropical East Africa (flora_name FTEA; Access export of 2014-03-18).
+        "title": "Flora of Tropical East Africa (Royal Botanic Gardens, Kew; database export of 2014)",
+        "short": "FTEA (Kew 2014)",
         "language": "en",
         "family_group": "florml",
     },
