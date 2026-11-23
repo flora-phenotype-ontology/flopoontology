@@ -60,7 +60,11 @@ glume (PO:0006002), upper glume (PO:0006004), terminal bud (PO:0004713), lateral
 The label of a named class is built from the labels of the ontologies ('lateral vascular bundle').
 The words botanists use are its synonyms ("lateral vein", "lateral nerve"; "radical leaf" for
 'basal leaf'; "outer phyllary" for 'outer involucral bract'), in the column `synonyms` of the
-table, exact or related.
+table: 116 for 40 of the 43 classes, each exact, narrow (the name in one plant group: "standard" and
+"banner" for the upper petal of a legume, "ray floret" for an outer flower of a daisy head), broad
+or related. 70 were written with the classes; for the rest the model Qwen 3.8 (27b) proposed 381
+candidates on 2026-11-23, of which 38 were kept after review and 8 added by analogy. Most
+candidates named another structure ("cauline leaf" for 'basal leaf') and were dropped.
 
 Because the names are equivalences, a reasoner treats an annotation written with the expression
 and one written with the name as the same class. The 280 rarer combinations ("lowest bract",
