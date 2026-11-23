@@ -58,3 +58,16 @@ def positioned_parts(path: Path = POSITIONED_PARTS) -> dict[tuple[str, str], tup
         return {}
     with path.open(encoding="utf-8", newline="") as handle:
         return {(r["part"], r["position"]): (r["flopo_id"], r["label"]) for r in csv.DictReader(handle, delimiter="\t")}
+
+
+@lru_cache(maxsize=1)
+def synonyms(path: Path = POSITIONED_PARTS) -> dict[str, list[str]]:
+    """``{FLOPO id: synonyms}`` of the named positioned parts ("lateral vein" for 'lateral vascular bundle')."""
+
+    if not path.exists():
+        return {}
+    with path.open(encoding="utf-8", newline="") as handle:
+        return {
+            r["flopo_id"]: [entry.partition(":")[2] for entry in (r.get("synonyms") or "").split("|") if entry]
+            for r in csv.DictReader(handle, delimiter="\t")
+        }

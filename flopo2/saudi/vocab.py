@@ -155,7 +155,10 @@ class Vocabulary:
         if c.startswith("FLOPO:"):
             if self._flopo_names is None:
                 self._flopo_names = flopo_synonyms()
-            return sorted(set(self._flopo_names.get(c, [])) - {self.label(c)})
+            from flopo2.owl import position
+
+            listed = position.synonyms().get(c.replace(":", "_"), [])  # also before the release that carries them
+            return sorted((set(self._flopo_names.get(c, [])) | set(listed)) - {self.label(c)})
         return []
 
     def _ancestors(self, table: dict[str, OboTerm], start: str, part_of: bool) -> list[str]:

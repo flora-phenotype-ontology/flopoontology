@@ -57,6 +57,11 @@ release states the equivalence for the Plant Ontology class: cauline leaf (PO:00
 glume (PO:0006002), upper glume (PO:0006004), terminal bud (PO:0004713), lateral root
 (PO:0020121).
 
+The label of a named class is built from the labels of the ontologies ('lateral vascular bundle').
+The words botanists use are its synonyms ("lateral vein", "lateral nerve"; "radical leaf" for
+'basal leaf'; "outer phyllary" for 'outer involucral bract'), in the column `synonyms` of the
+table, exact or related.
+
 Because the names are equivalences, a reasoner treats an annotation written with the expression
 and one written with the name as the same class. The 280 rarer combinations ("lowest bract",
 "median pinna") stay expressions in the annotation class and need no name. Naming all of them
@@ -72,7 +77,14 @@ that has basal leaves).
 <record> fb:bearer obo:PO_0025034 ; fb:quality obo:PATO_0001937 ; fb:bearerState obo:FLOPO_0991002 .
 ```
 
-The index does not distinguish position from state; the class of the value does.
+The index does not distinguish position from state; the class of the value does. Where the
+positioned part has a name, the record also carries it:
+
+```turtle
+<record> fb:positionedPart obo:FLOPO_0996000 .     # basal leaf
+```
+
+The website's trait search finds such records by the label and the synonyms of the named class.
 
 ## Rules
 

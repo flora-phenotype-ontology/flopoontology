@@ -52,6 +52,7 @@ from flopo2.owl.assertions import (
 )
 from flopo2.saudi.taxa import resolve
 from flopo2.taxon.wcvp import TABLE_FIELDS, WCVP_NAMES, Wcvp, load_ipni_table
+from flopo2.owl import position
 from flopo2.saudi.vocab import ORGAN_GROUPS, TRAIT_GROUPS, Vocabulary, curie, iri
 
 BASE = "http://phenomebrowser.net/flopo/"
@@ -385,6 +386,12 @@ class Builder:
             g.add((formal, FB.stageText, Literal(stage.get("stage_text", ""))))
         for state in a.get("bearer_context_qualities") or []:
             g.add((formal, FB.bearerState, URIRef(iri(state))))
+            # 'basal leaf', 'lateral vein': the class FLOPO or PO has for this part in this position
+            # (pattern 18), so that the part is found under its own name and synonyms
+            named = position.positioned_parts().get((curie(bearer).replace(":", "_"), curie(state).replace(":", "_")))
+            if named:
+                g.add((formal, FB.positionedPart, URIRef(iri(named[0]))))
+                self.used_terms.add(curie(named[0]))
         scope = a.get("bearer_scope") or {}
         if scope:
             g.add((formal, FB.statedBearer, URIRef(iri(scope["outer_bearer"]))))

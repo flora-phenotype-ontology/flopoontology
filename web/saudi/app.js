@@ -591,6 +591,15 @@ async function traits(organKey, traitKey, valueKey) {
 /* Search by concept: a word is looked up in the labels and the synonyms (of every scope) of the
    ontology terms, so "shrub" finds 'frutescent habit' (synonym: shrub habit). The result lists
    the part-and-quality values that use a matching term, with the number of taxa. */
+const positionedQuery = (part, quality) => `PREFIX fb: <${FB}>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+# Taxa with this quality on a part in a named position (pattern 18)
+SELECT ?taxon ?annotation ?text ?source WHERE {
+  ?r a fb:TraitRecord ; fb:positionedPart obo:${part} ; fb:quality obo:${quality} ; fb:negated false ;
+     rdfs:label ?annotation ; fb:text ?text ; fb:taxon ?t ; fb:source/rdfs:label ?source .
+  ?t rdfs:label ?taxon } ORDER BY ?taxon LIMIT 500`;
+
 function traitSearch(input, box) {
   let timer = 0;
   input.addEventListener("input", () => {
@@ -599,7 +608,7 @@ function traitSearch(input, box) {
       const q = input.value.trim().toLowerCase();
       if (q.length < 3) { box.innerHTML = ""; return; }
       box.innerHTML = `<p class="muted">Searching…</p>`;
-      const [values, names] = await Promise.all([precomputed("traitValues"), precomputed("termNames")]);
+      const [values, names, positioned] = await Promise.all([precomputed("traitValues"), precomputed("termNames"), precomputed("positionedValues")]);
       if (input.value.trim().toLowerCase() !== q) return;
       const label = {}, hit = {};
       for (const t of names) {
@@ -609,14 +618,17 @@ function traitSearch(input, box) {
         const found = exact || all.find((x) => x.toLowerCase().includes(q));
         if (found) hit[t.id] = { name: found, rank: exact ? 0 : 1 };
       }
+      // a part in a position that has a name ('basal leaf', 'lateral vein'): found by that name only
+      const named = positioned.filter((r) => hit[r.p]).map((r) => ({ ...r, h: hit[r.p], n: +r.n, named: true }));
       const rows = values
         .filter((r) => hit[r.v] || hit[r.p])
         .map((r) => ({ ...r, h: hit[r.v] || hit[r.p], n: +r.n }))
+        .concat(named)
         .sort((a, b) => a.h.rank - b.h.rank || b.n - a.n)
         .slice(0, 60);
       box.innerHTML = rows.length
         ? `<table class="results"><thead><tr><th>Trait</th><th>Found as</th><th class="num">Taxa</th></tr></thead><tbody>${rows
-            .map((r) => `<tr><td><a href="#/traits/${r.o}/${r.g}/${encodeURIComponent(r.p + "~" + r.v)}">${esc(label[r.p] || r.p)} ${esc(label[r.v] || r.v)}</a></td><td class="muted">${esc(r.h.name)}</td><td class="num">${n(r.n)}</td></tr>`)
+            .map((r) => `<tr><td><a href="${r.named ? "#/query?q=" + encodeURIComponent(positionedQuery(r.p, r.v)) : `#/traits/${r.o}/${r.g}/${encodeURIComponent(r.p + "~" + r.v)}`}">${esc(label[r.p] || r.p)} ${esc(label[r.v] || r.v)}</a></td><td class="muted">${esc(r.h.name)}</td><td class="num">${n(r.n)}</td></tr>`)
             .join("")}</tbody></table>`
         : `<p class="muted">No trait has a name or synonym with “${esc(q)}”.</p>`;
     }, 250);

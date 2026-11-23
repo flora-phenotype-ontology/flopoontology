@@ -11,7 +11,8 @@ many taxa use (``--min-taxa``, counted in the flora annotations), with identifie
 FLOPO_0996000-FLOPO_0996999. A row with a Plant Ontology identifier names no new class: the
 Plant Ontology has the part ('cauline leaf'), and the release states that it is the same as the
 expression. Identifiers are never reused: ``--counts`` adds rows for new frequent pairs and keeps
-the rows that are there.
+the rows that are there. The column ``synonyms`` gives the words botanists use where the label, built
+from the ontology labels, is not theirs (``exact:lateral vein|related:side vein``).
 
     python -m tools.update_flopo_position_release [--counts pairs.json --min-taxa 100]
 
@@ -89,11 +90,11 @@ def update_table(counts: Path, min_taxa: int, table: Path = position.POSITIONED_
                 raise ValueError("the identifier block of the positioned parts is full")
             identifier, next_id = f"FLOPO_{next_id:07d}", next_id + 1
         rows.append({"flopo_id": identifier, "part": part, "position": value, "label": label,
-                     "part_label": vocab.label(part), "taxa": str(taxa), "records": str(records)})
+                     "part_label": vocab.label(part), "taxa": str(taxa), "records": str(records), "synonyms": ""})
         labels.add(label.lower())
         added += 1
     with table.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=["flopo_id", "part", "position", "label", "part_label", "taxa", "records"],
+        writer = csv.DictWriter(handle, fieldnames=["flopo_id", "part", "position", "label", "part_label", "taxa", "records", "synonyms"],
                                 delimiter="\t", lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
@@ -147,6 +148,14 @@ def module(release_date: str, table: Path = position.POSITIONED_PARTS) -> tuple[
                 f"use it in {int(row['taxa']):,} taxa (pattern 18, docs/odp/18-position-of-the-bearer.md). Defined by "
                 f"'has position' (FLOPO:0995004). Provisional: pending final curator vetting.", lang="en")))
             graph.add((cls, DCTERMS.date, Literal("2026-11-23", datatype=XSD.date)))
+            # The label is built from the ontology labels ("lateral vascular bundle"); the words
+            # botanists use ("lateral vein") are synonyms: "exact:lateral vein|related:side vein".
+            for entry in filter(None, (row.get("synonyms") or "").split("|")):
+                scope, _, name = entry.partition(":")
+                prop = {"exact": "hasExactSynonym", "related": "hasRelatedSynonym", "broad": "hasBroadSynonym",
+                        "narrow": "hasNarrowSynonym"}[scope]
+                graph.add((cls, URIRef("http://www.geneontology.org/formats/oboInOwl#" + prop),
+                           Literal(name, datatype=XSD.string)))
     return graph, named, bridged
 
 

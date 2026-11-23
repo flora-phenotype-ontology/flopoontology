@@ -78,6 +78,7 @@ TRAIT_COLUMNS = [
     ("alternative_frequencies", FB + "alternative", "alternatives", "For alternatives with their own frequency ('dioecious or rarely monoecious'): value=frequency pairs, for example 'PATO:0001340=rarely'."),
     ("stage", FB + "stage", "term", "Developmental stage at which the trait holds ('in fruit', 'at anthesis'): a Plant Ontology stage."),
     ("bearer_state", FB + "bearerState", "term", "Quality that restricts which parts are meant: 'young' in 'young stems', 'basal' in 'basal leaves'."),
+    ("positioned_part", FB + "positionedPart", "term", "The class that FLOPO or the Plant Ontology has for the part in its position: 'basal leaf' for a leaf with the state 'basal'."),
     ("stated_bearer", FB + "statedBearer", "term", "The organ the source names, when the trait is located in a region of it ('leaf' in 'leaves hairy beneath')."),
     ("scope", FB + "scope", "term", "That region of the stated organ (for example the abaxial surface)."),
     ("container", FB + "container", "term", "For counts per part: the part that contains the counted part ('fruit' in 'seeds 2 per fruit')."),
