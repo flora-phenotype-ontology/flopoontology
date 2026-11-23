@@ -61,12 +61,20 @@ def corpora() -> dict[str, Path]:
     return {name: cfg["corpus"] for name, cfg in build.SOURCES.items() if cfg["corpus"].exists()}
 
 
-def _statements(record: dict, accepted: bool) -> dict[str, dict]:
-    return {
-        a["phenotype_class_iri"]: a
-        for a in record.get("assertions") or []
-        if a.get("phenotype_class_iri") and (not accepted or (a.get("gate") or {}).get("status") == "accepted")
-    }
+def _slim(record: dict) -> list[tuple]:
+    """What the comparison needs of a record (whole records of 60,000 descriptions do not fit in memory)."""
+
+    kept = []
+    for a in record.get("assertions") or []:
+        if a.get("phenotype_class_iri"):
+            comp = a.get("composition") or {}
+            kept.append((a["phenotype_class_iri"], (a.get("gate") or {}).get("status") == "accepted",
+                         comp.get("entity_label", ""), comp.get("quality_label", ""), a.get("po_id", ""), a.get("pato_id", "")))
+    return kept
+
+
+def _statements(record: list[tuple], accepted: bool) -> dict[str, tuple]:
+    return {row[0]: row for row in record if not accepted or row[1]}
 
 
 def find(share: float = 0.9, minimum: int = 3) -> tuple[list[dict], dict, list[dict]]:
@@ -113,12 +121,12 @@ def find(share: float = 0.9, minimum: int = 3) -> tuple[list[dict], dict, list[d
             seen.add(copies[record])
             copies[record] = copies[copies[record]]
     wanted = set(copies) | set(copies.values())
-    records: dict[tuple[str, int], dict] = {}
+    records: dict[tuple[str, int], list] = {}
     for source, path in files.items():
         with path.open(encoding="utf-8") as handle:
             for number, line in enumerate(handle):
                 if (source, number) in wanted:
-                    records[(source, number)] = json.loads(line)
+                    records[(source, number)] = _slim(json.loads(line))
     rows, agreement, disagreements = [], defaultdict(Counter), Counter()
     for copy, primary in sorted(copies.items()):
         a, b = records[copy], records[primary]
@@ -138,9 +146,7 @@ def find(share: float = 0.9, minimum: int = 3) -> tuple[list[dict], dict, list[d
                 for side, only in (("copy", A.keys() - B.keys()), ("primary", B.keys() - A.keys())):
                     for cls in only:
                         s = (A if side == "copy" else B)[cls]
-                        comp = s.get("composition") or {}
-                        disagreements[(comp.get("entity_label", ""), comp.get("quality_label", ""),
-                                       s.get("po_id", ""), s.get("pato_id", ""))] += 1
+                        disagreements[s[2:6]] += 1
     worst = [
         {"entity": k[0], "quality": k[1], "po_id": k[2], "pato_id": k[3], "only_in_one_extraction": n}
         for k, n in disagreements.most_common(2000)
