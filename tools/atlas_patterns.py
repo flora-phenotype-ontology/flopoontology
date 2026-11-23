@@ -26,7 +26,7 @@ SELECTORS = {
     "01": '?r fb:qualifier "approximately" .',
     "02": "{ ?r fb:highExclusive true } UNION { ?r fb:lowExclusive true }",
     "03": '?r fb:container ?container ; fb:unitSymbol "count" .',
-    "04": "?r fb:bearerState ?state .",
+    "04": "?r fb:bearerState ?state . FILTER(?state NOT IN (obo:FLOPO_0991002, obo:FLOPO_0991117, obo:FLOPO_0991376, obo:FLOPO_0991377, obo:FLOPO_0991378, obo:FLOPO_0991379, obo:FLOPO_0991380, obo:FLOPO_0991381, obo:PATO_0002476))",
     "05": "{ ?r fb:minExtreme ?extreme } UNION { ?r fb:maxExtreme ?extreme }",
     "06": "?r fb:specimenCondition ?condition .",
     "07": '?r fb:valueOperator "one_of" .',
@@ -40,6 +40,7 @@ SELECTORS = {
     "15": "?r fb:negated true ; fb:quality <http://purl.obolibrary.org/obo/PATO_0000467> . FILTER NOT EXISTS { ?r fb:partQuality ?x }",
     "16": "?r fb:carrier ?carrier .",
     "17": "",  # a pattern for defining value classes: no record carries it
+    "18": "?r fb:bearerState ?state . FILTER(?state IN (obo:FLOPO_0991002, obo:FLOPO_0991117, obo:FLOPO_0991376, obo:FLOPO_0991377, obo:FLOPO_0991378, obo:FLOPO_0991379, obo:FLOPO_0991380, obo:FLOPO_0991381, obo:PATO_0002476))",
 }
 
 
@@ -166,7 +167,12 @@ def build(odp: Path = ODP) -> dict:
     readme = re.sub(r"\n\|[^\n]*\n(\|[^\n]*\n)+", "\n", readme, count=1)  # the table of patterns: the page lists them itself
     readme = readme.split("\n## ", 1)[1] if "\n## " in readme else readme  # the opening speaks of files; the page has its own
     readme = "## " + readme
-    return {"intro": to_html(readme), "patterns": patterns}
+    # The general model opens the page, before the list of patterns; the rest follows the list.
+    model, rest = "", readme
+    if readme.startswith("## The model"):
+        cut = readme.index("\n## ", 3)
+        model, rest = readme[:cut], readme[cut + 1:]
+    return {"model": to_html(model), "intro": to_html(rest), "patterns": patterns}
 
 
 def main() -> None:

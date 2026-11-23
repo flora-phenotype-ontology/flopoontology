@@ -1,19 +1,17 @@
-# 04. State or series position of the bearer
+# 04. State of the bearer
 
-**Intent.** The statement holds of those bearers that are in a stated state, or of one member of
-a series.
-**Wording.** "leaves pubescent when young", "male flowers", "sterile fronds"; since 2026-11-13
-"basal leaves", "cauline leaves", "terminal leaflet".
+**Intent.** The statement holds of those bearers that are in a stated state.
+**Wording.** "leaves pubescent when young", "male flowers", "sterile fronds". The position of a
+bearer ("basal leaves", "terminal leaflet") is recorded in the same slot and is pattern 18.
 
 ## Annotation
 
 ```json
-{"po_id": "PO_0025034", "pato_id": "PATO_0000453", "bearer_context_qualities": ["FLOPO_0991002"]}
+{"po_id": "PO_0009047", "pato_id": "PATO_0000455", "bearer_context_qualities": ["PATO_0000309"]}
 ```
 
-The context quality inheres in the **same bearer**. It is a PATO quality (young, mature, old,
-male, female, fertile, sterile, terminal) or a reviewed FLOPO value (basal FLOPO:0991002, cauline
-FLOPO:0991117). The readings are in `config/flora_context_words.tsv` (kind `bearer_quality`),
+The context quality inheres in the **same bearer**. It is a PATO quality (young PATO:0000309, mature, old,
+male, female, fertile, sterile). The readings are in `config/flora_context_words.tsv` (kind `bearer_quality`),
 each with the bearers it may be said of.
 
 ## OWL
@@ -21,13 +19,14 @@ each with the bearers it may be said of.
 The expression below is the defining property of the class; the class itself is its phene,
 `'flora phenotype' and 'phenotype of' some (...)` (pattern 00).
 
-`has part some (leaf and has characteristic some basal and has characteristic some glabrous)`.
-The context quality is part of the class signature.
+`has part some (stem and has characteristic some young and has characteristic some pubescent)`.
+The context quality is part of the class signature. A value that is a position is written with
+`has position` instead ([pattern 18](18-position-of-the-bearer.md)).
 
 ## RDF
 
 ```turtle
-<record> fb:bearer obo:PO_0025034 ; fb:quality obo:PATO_0000453 ; fb:bearerState obo:FLOPO_0991002 .
+<record> fb:bearer obo:PO_0009047 ; fb:quality obo:PATO_0000455 ; fb:bearerState obo:PATO_0000309 .
 ```
 
 ## Rules
@@ -47,17 +46,6 @@ quality of the bearer keeps it inside the EQ class expression.
 
 ## Limits
 
-upper, lower, inner, outer, lateral and median members have value classes since 2026-11-14
-(FLOPO:0991376 to FLOPO:0991381); "lateral" and "terminal" may be said of every kind of
-inflorescence (umbel, panicle, cyme, head) since 2026-11-23. "Axillary" has no value class. Where
-the position has no class, is not listed for the bearer, or two positions are joined ("the
-terminal and uppermost umbels"), the record is set to review (`bearer_position_not_modelled`): it
-must not say of all umbels what the flora says of some.
-
-Records made before the words were in the table said the statement of the part in general
-("basal leaves spatulate" as "leaf spatulate"; "the lateral umbels usually sterile" as "umbel
-sterile"). `python -m flopo2.verify.apply_bearer_position` reads the word before the bearer in
-the source text and repairs them.
-
-Where the member is a part of another organ in that state ("calyx of male flowers") use
-pattern 12.
+Where the state has no class or is not listed for the bearer, the record is set to review
+(`bearer_position_not_modelled`, shared with pattern 18). Where the member is a part of another
+organ in that state ("calyx of male flowers") use pattern 12.

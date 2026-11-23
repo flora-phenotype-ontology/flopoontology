@@ -33,7 +33,7 @@ from flopo2.owl.annotation_class import (
     canonical_part_restrictions,
     ensure_annotation_class_iri,
 )
-from flopo2.owl import phene
+from flopo2.owl import phene, position
 from flopo2.owl.io import serialize_ontology
 
 
@@ -441,7 +441,12 @@ def _bearer_context_quality_restrictions(
         seen.add(normalized)
         iri = URIRef(OBO + normalized)
         graph.add((iri, RDF.type, OWL.Class))
-        restrictions.append(_some(graph, nodes, HAS_QUALITY, iri))
+        if position.is_position(normalized):
+            # "basal leaves": which of the parts is meant, with a relation of its own (pattern 18)
+            position.declare(graph)
+            restrictions.append(_some(graph, nodes, position.HAS_POSITION, iri))
+        else:
+            restrictions.append(_some(graph, nodes, HAS_QUALITY, iri))
     return restrictions
 
 

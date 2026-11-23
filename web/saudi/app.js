@@ -1052,6 +1052,8 @@ async function patterns(id) {
     setView(`<h1>Annotation patterns</h1>
       <p class="lede">The atlas does not store traits as text or as a table of characters. Every statement of a flora becomes a record that names a plant part from the Plant Ontology and a quality from PATO or FLOPO, and the firm content of each record is also an OWL class, which a reasoner places under FLOPO's phenotype classes. Because every flora is annotated with the same patterns, “leaves glabrous” in the Flora of China and “feuilles glabres” in the Flore du Gabon become the same class, and a query for glabrous leaves finds both.</p>
       <p>Each pattern below covers one way floras phrase a trait: what the source says, the record the annotator writes, its OWL class expression, its RDF in this atlas, and the rules that check it. Each page shows records of the atlas that follow the pattern.</p>
+      <div class="doc">${docs.model || ""}</div>
+      <h2>The patterns</h2>
       <ol class="patternlist">${list.map((p) => `<li><a href="#/patterns/${p.id}"><b>${esc(p.id)}. ${esc(p.title)}</b></a><span class="muted">${p.intent}</span><span class="wording">${p.wording}</span></li>`).join("")}</ol>
       <div class="doc">${docs.intro}</div>`);
     return;

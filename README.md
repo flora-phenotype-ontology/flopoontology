@@ -135,6 +135,20 @@ the three matching assets, run the full gate without this option, then update
 staging option for updates to `master`. The staging result is
 not a claim that the public release has passed the complete Dashboard.
 
+### 2026-11-23
+
+- New relation `has position` (FLOPO:0995004), a sub-relation of `has characteristic`: a plant
+  part to its position among the parts of its kind (basal, cauline, upper, lower, inner, outer,
+  lateral, median, terminal). The flora annotations write "basal leaves spatulate" as `has part
+  some (leaf and 'has position' some basal and 'has characteristic' some spatulate)`
+  (`docs/odp/18-position-of-the-bearer.md`).
+- 43 named positioned parts, FLOPO:0996000 to FLOPO:0996042, each `EquivalentTo part and 'has
+  position' some value` ('basal leaf', 'lateral sepal', 'terminal leaflet'): the combinations
+  used by 100 or more taxa (`config/flopo_positioned_parts.tsv`,
+  `tools/update_flopo_position_release.py`). For cauline leaf, lower glume, upper glume, terminal
+  bud and lateral root the Plant Ontology has the class; FLOPO states the equivalence only.
+- No identifier, label or definition of an earlier release changes.
+
 ### 2026-11-22
 
 28,403 FLOPO classes (1,306 deprecated identifiers retained); every earlier identifier
