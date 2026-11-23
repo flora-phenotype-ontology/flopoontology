@@ -13,9 +13,9 @@ happens to a part in a taxon of these families:
 - ``review``: the part, or anything below it (is_a, part_of), is an organ of the seed plants
   (flower, fruit, seed, root); the record goes to review with ``bearer_outside_plant_group``.
 
-Records of other families and records without a family are left alone, except in a source that
-describes bryophytes only (the Moss Flora of China), where every record is one of a bryophyte:
-some of its names were matched to a vascular plant of the same name and carry that family.
+Whether a description is one of a bryophyte is decided by ``is_bryophyte``: by the family, or,
+where the family is missing or is that of a vascular plant of the same name (Girgensohnia is a
+moss and an amaranth), by words that only a moss description has. Other records are left alone.
 The pass is idempotent.
 
     python -m flopo2.verify.apply_bryophyte_terms FILES                    # count only
@@ -28,19 +28,45 @@ import argparse
 import collections
 import csv
 import json
+import re
 from pathlib import Path
 
 FAMILIES = Path("config/bryophyte_families.tsv")
 TERMS = Path("config/po_bryophyte_terms.tsv")
 REGISTRY = Path("config/flopo_id_registry.tsv")
 REASON = "bearer_outside_plant_group"
-BRYOPHYTE_SOURCES = {"eflora-mfoc"}  # sources that describe bryophytes only
+# Words of a moss or liverwort description. One of the first group is enough; of the second,
+# two are needed: a pitcher plant has a peristome, a eucalypt a calyptra, a grass setae.
+_ONLY = re.compile(r"\b(exostome|endostome|alar cells?|perichaetial|perigonial|autoicous|synoicous|paroicous|"
+                   r"pseudoparaphyllia|paraphyllia|underleaves|amphigastria)\b", re.IGNORECASE)
+_ALSO = re.compile(r"\b(setae?|peristome|calyptra|gemmae|dioicous)\b", re.IGNORECASE)
 OBO = "http://purl.obolibrary.org/obo/"
 
 
 def families(path: Path = FAMILIES) -> set[str]:
     with path.open(encoding="utf-8", newline="") as handle:
         return {row["family"].lower() for row in csv.DictReader(handle, delimiter="\t")}
+
+
+_FAMILIES: set[str] | None = None
+
+
+def is_bryophyte(family: str, text: str) -> bool:
+    """Whether a description is one of a moss, liverwort or hornwort."""
+
+    global _FAMILIES
+    if _FAMILIES is None:
+        _FAMILIES = families()
+    if family and family.strip().lower() in _FAMILIES:
+        return True
+    text = text or ""
+    only = {w.lower().rstrip("s") for w in _ONLY.findall(text)}
+    also = {w.lower().rstrip("e") for w in _ALSO.findall(text)}  # seta, setae
+    if family and family.strip():
+        # the family of a vascular plant: only a clear moss description overrides it (a fern has
+        # a costa and "dioicous" gametophytes, a langsat seed a peristome-like word or two)
+        return len(only | also) >= 4
+    return bool(only) or len(also) >= 2
 
 
 class Terms:
@@ -73,10 +99,10 @@ class Terms:
             self._outside[key] = bool(self.review & set(self.vocab._ancestors(self.vocab.po, start, part_of=True)))
         return self._outside[key]
 
-    def apply(self, assertion: dict, family: str, bryophyte: bool = False) -> str:
-        """'' (nothing), 'replaced' or 'review'. ``bryophyte``: the source has bryophytes only."""
+    def apply(self, assertion: dict, family: str, text: str = "") -> str:
+        """'' (nothing), 'replaced' or 'review'. ``text``: the description the record is from."""
 
-        if not bryophyte and (not family or family.strip().lower() not in self.families):
+        if not is_bryophyte(family, text):
             return ""
         bearer = str(assertion.get("po_id") or "").replace(":", "_")
         if bearer in self.replace:
@@ -132,7 +158,7 @@ def run(paths: list[Path], suffix: str | None) -> dict:
             for line in handle:
                 record = json.loads(line)
                 family = record.get("taxon_family", "")
-                only = record.get("source") in BRYOPHYTE_SOURCES
+                only = record.get("text", "")
                 for assertion in record.get("assertions", []):
                     label = (assertion.get("composition") or {}).get("entity_label", "")
                     result = terms.apply(assertion, family, only)

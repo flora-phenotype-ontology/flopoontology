@@ -105,8 +105,24 @@ def test_a_moss_gets_the_moss_parts_of_the_plant_ontology():
     a = _assertion("Capsule yellow-brown", "Capsule", "PO_0030091", "PATO_0000014")
     assert terms.apply(a, "Malvaceae") == "" and a["po_id"] == "PO_0030091"
     assert terms.apply(a, "") == ""
-    # but not in a source that has mosses only, whatever family the name was matched to
-    assert terms.apply(a, "Cyperaceae", True) == "replaced"
+    # a moss whose name is also that of a flowering plant carries that family: the text decides
+    moss = "Plants small. Seta 5 mm; capsule erect; peristome single, exostome teeth short; calyptra cucullate."
+    assert terms.apply(a, "Amaranthaceae", moss) == "replaced"
+    # a moss of an old genus without a family
+    b = _assertion("Capsule yellow-brown", "Capsule", "PO_0030091", "PATO_0000014")
+    assert terms.apply(b, "", "Autoicous. Capsule yellow-brown.") == "replaced"
+
+
+def test_a_description_is_one_of_a_bryophyte_by_family_or_by_moss_words():
+    is_bryophyte = bryophyte.is_bryophyte
+    assert is_bryophyte("Pottiaceae", "") and is_bryophyte("Jungermanniaceae", "")
+    assert not is_bryophyte("", "Leaves ovate; capsule 5 mm; seeds many.")
+    assert is_bryophyte("", "Seta red; peristome double.") and is_bryophyte("", "alar cells inflated")
+    # one such word is not enough: a pitcher has a peristome, a eucalypt a calyptra, a grass setae
+    assert not is_bryophyte("", "Pitcher with a broad peristome.")
+    assert not is_bryophyte("Poaceae", "Spikelets with setae; calyptra absent.")
+    assert not is_bryophyte("Polypodiaceae", "Gametophytes dioicous, with gemmae.")
+    assert "malvaceae" not in bryophyte.families()
 
 
 def test_a_flower_part_in_a_moss_goes_to_review_and_moss_parts_stay():
