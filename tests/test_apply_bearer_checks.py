@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from flopo2.verify import apply_bearer_position as position
+from flopo2.verify import apply_bryophyte_terms as bryophyte
 from flopo2.verify import apply_plant_group as group
 
 
@@ -80,3 +81,41 @@ def test_grass_spikelet_parts_are_one_browse_group():
     assert {vocab.organ_group(t) for t in ("PO:0025349", "PO:0006032", "PO:0009037", "PO:0009039")} == {"spikelet"}
     assert vocab.organ_group("PO:0009046") == "flower"
     assert "shrub habit" in vocab.other_names("FLOPO:0987002")
+
+
+def test_a_moss_gets_the_moss_parts_of_the_plant_ontology():
+    terms = bryophyte.Terms()
+    # the capsule of a moss is a spore capsule, not a fruit type: another class, the FLOPO class goes
+    a = _assertion("Capsule yellow-brown", "Capsule", "PO_0030091", "PATO_0000014")
+    a["gate"].update(flopo_signature="EQ|PO_0030091|PATO_0000014", flopo_iri="http://purl.obolibrary.org/obo/FLOPO_0994024", flopo_status="existing")
+    before = a["phenotype_class_iri"]
+    assert terms.apply(a, "Pottiaceae") == "replaced"
+    assert a["po_id"] == "PO_0025094" and a["composition"]["entity_label"] == "sporangium"
+    assert a["phenotype_class_iri"] != before and a["gate"]["flopo_signature"] == "EQ|PO_0025094|PATO_0000014"
+    assert a["gate"]["flopo_iri"] != "http://purl.obolibrary.org/obo/FLOPO_0994024"
+    assert terms.apply(a, "Pottiaceae") == ""  # idempotent
+
+    # a moss leaf is a non-vascular leaf, which is a leaf: the FLOPO class of the leaf still holds
+    a = _assertion("leaves glabrous", "leaves", "PO_0025034", "PATO_0000453")
+    a["gate"].update(flopo_signature="EQ|PO_0025034|PATO_0000453", flopo_iri="http://example.org/leaf-glabrous", flopo_status="existing")
+    assert terms.apply(a, "Sphagnaceae") == "replaced" and a["po_id"] == "PO_0025075"
+    assert a["gate"]["flopo_iri"] in ("http://example.org/leaf-glabrous", terms.flopo.get("EQ|PO_0025075|PATO_0000453"))
+
+    # the same words in a flowering plant are left alone
+    a = _assertion("Capsule yellow-brown", "Capsule", "PO_0030091", "PATO_0000014")
+    assert terms.apply(a, "Malvaceae") == "" and a["po_id"] == "PO_0030091"
+    assert terms.apply(a, "") == ""
+    # but not in a source that has mosses only, whatever family the name was matched to
+    assert terms.apply(a, "Cyperaceae", True) == "replaced"
+
+
+def test_a_flower_part_in_a_moss_goes_to_review_and_moss_parts_stay():
+    terms = bryophyte.Terms()
+    a = _assertion("petals white", "petals", "PO_0009032", "PATO_0000323")
+    assert terms.apply(a, "Bryaceae") == "review"
+    assert a["gate"]["status"] == "review" and a["gate"]["reasons"] == ["bearer_outside_plant_group"]
+    assert terms.apply(a, "Bryaceae") == ""
+    for part in ("PO_0030032", "PO_0030043", "PO_0030072", "PO_0030078", "PO_0020128"):  # seta, peristome tooth, costa, rhizoid, leaf margin
+        a = _assertion("seta red", "seta", part, "PATO_0000322")
+        assert terms.apply(a, "Bryaceae") == "" and a["gate"]["status"] == "accepted"
+    assert "malvaceae" not in terms.families and "pottiaceae" in terms.families
