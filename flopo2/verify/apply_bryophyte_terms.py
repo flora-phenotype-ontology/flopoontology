@@ -39,6 +39,10 @@ REASON = "bearer_outside_plant_group"
 # two are needed: a pitcher plant has a peristome, a eucalypt a calyptra, a grass setae.
 _ONLY = re.compile(r"\b(exostome|endostome|alar cells?|perichaetial|perigonial|autoicous|synoicous|paroicous|"
                    r"pseudoparaphyllia|paraphyllia|underleaves|amphigastria)\b", re.IGNORECASE)
+# Not "flower", "fruit", "inflorescence", "pedicel" or "calyx": older moss and liverwort floras
+# use them for the moss (pedicel for the seta, calyx for the perianth of a liverwort).
+_SEED = re.compile(r"\b(petals?|sepals?|stamens?|anthers?|ovules?|seeds?|corolla|tepals?|"
+                   r"spikelets?|glumes?|lemmas?|culms?)\b", re.IGNORECASE)
 _ALSO = re.compile(r"\b(setae?|peristome|calyptra|gemmae|dioicous)\b", re.IGNORECASE)
 OBO = "http://purl.obolibrary.org/obo/"
 
@@ -46,6 +50,23 @@ OBO = "http://purl.obolibrary.org/obo/"
 def families(path: Path = FAMILIES) -> set[str]:
     with path.open(encoding="utf-8", newline="") as handle:
         return {row["family"].lower() for row in csv.DictReader(handle, delimiter="\t")}
+
+
+def orders(path: Path = FAMILIES) -> set[str]:
+    with path.open(encoding="utf-8", newline="") as handle:
+        return {row["order"] for row in csv.DictReader(handle, delimiter="\t")}
+
+
+# Sources that were cut out of a larger export as "the mosses" by words in the text. They hold
+# descriptions of other plants as well; those are not part of the source.
+BRYOPHYTE_SOURCES = {"eflora-mfoc"}
+
+
+def misfiled(source: str, record: dict) -> bool:
+    """A description in a moss source that is not one of a bryophyte (a sedge whose text has
+    "costa"). The export it comes from holds it under its own flora as well."""
+
+    return source in BRYOPHYTE_SOURCES and not is_bryophyte(record.get("taxon_family", ""), record.get("text", ""))
 
 
 _FAMILIES: set[str] | None = None
@@ -57,16 +78,29 @@ def is_bryophyte(family: str, text: str) -> bool:
     global _FAMILIES
     if _FAMILIES is None:
         _FAMILIES = families()
-    if family and family.strip().lower() in _FAMILIES:
-        return True
     text = text or ""
     only = {w.lower().rstrip("s") for w in _ONLY.findall(text)}
     also = {w.lower().rstrip("e") for w in _ALSO.findall(text)}  # seta, setae
+    if family and family.strip().lower() in _FAMILIES:
+        # The family comes from the genus, and a genus name can be shared too (Microstegium is a
+        # grass; a list of genera had it under a moss family): a text of flowers and no moss word
+        # is that of the seed plant.
+        seed = {w.lower()[:5] for w in _SEED.findall(text)}
+        return not (seed and not only and not also)
     if family and family.strip():
         # the family of a vascular plant: only a clear moss description overrides it (a fern has
         # a costa and "dioicous" gametophytes, a langsat seed a peristome-like word or two)
         return len(only | also) >= 4
     return bool(only) or len(also) >= 2
+
+
+def group(family: str, text: str) -> bool | None:
+    """True: a bryophyte; False: a plant of a family that is not one; None: cannot be told
+    (no family, and no moss words in a short description)."""
+
+    if is_bryophyte(family, text):
+        return True
+    return False if family and family.strip() else None
 
 
 class Terms:

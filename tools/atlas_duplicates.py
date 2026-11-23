@@ -78,6 +78,8 @@ def _statements(record: list[tuple], accepted: bool) -> dict[str, tuple]:
 
 
 def find(share: float = 0.9, minimum: int = 3) -> tuple[list[dict], dict, list[dict]]:
+    from flopo2.verify.apply_bryophyte_terms import misfiled
+
     files = corpora()
     index: dict[int, list[tuple[str, int]]] = defaultdict(list)  # sentence -> (source, record no.)
     meta: dict[tuple[str, int], tuple] = {}
@@ -86,7 +88,7 @@ def find(share: float = 0.9, minimum: int = 3) -> tuple[list[dict], dict, list[d
         with path.open(encoding="utf-8") as handle:
             for number, line in enumerate(handle):
                 record = json.loads(line)
-                if record.get("language") == "ar":
+                if record.get("language") == "ar" or misfiled(source, record):
                     continue
                 size[source] += 1
                 found = sentences(record.get("text", ""))

@@ -37,8 +37,40 @@ capsule is the sporangium PO:0025094 (exact synonyms "moss capsule", "spore caps
 | capsule fruit | sporangium PO:0025094 |
 | flower, fruit, seed, inflorescence, root, vascular leaf, pollen, ovule, and their parts | review, reason `bearer_outside_plant_group` |
 
-The Moss Flora of China is treated as bryophytes throughout: some of its names were matched to a
-vascular plant of the same name and carry that plant's family.
+## Which description is one of a moss
+
+Not the source. The source "Moss Flora of China" is not a flora that eFloras marks as such: the
+eFloras export has only a name and a text per row, and the rows were sorted into floras by words
+in the text. Every row with "Leaves ... capsule / spores / costa" that was not from the Flora of
+China, of North America or of Pakistan went to the moss flora. So it held about 100 descriptions
+of sedges, ferns, poppies and aroids (a sedge utricle has a "costa", a fern has "spores").
+
+`is_bryophyte(family, text)` decides instead:
+
+- the family is one of the bryophyte families, or
+- there is no family and the text has a word that only a moss description has (exostome,
+  endostome, alar cells, perichaetial, autoicous, ...) or two of seta, peristome, calyptra,
+  gemmae, dioicous (one is not enough: a pitcher plant has a peristome, a eucalypt a calyptra), or
+- the family is that of a vascular plant but the text has four or more of these words.
+
+A family of bryophytes does not count where the text has a word of the seed plants (spikelet,
+glume, petal, anther, seed, ...) and no moss word: the family is taken from the genus, and the
+grass *Microstegium* stood under the moss family Funariaceae in a list of genera.
+
+The last case of the list is a name that two plants share. Names are matched without their author, and
+*Girgensohnia* is a moss (Bruch & Schimper) and an amaranth (Bunge): the moss description of
+*Girgensohnia ruthenica* was attached to the amaranth.
+
+What follows from it:
+
+- a description in the moss flora that is not one of a bryophyte is left out of that source
+  (`misfiled`); the same text is in "eFloras Other", where it is now kept instead of being counted
+  as a copy. The ingest (`flopo2/ingest/external.py`) applies the same rule to new runs;
+- the name matching is told the group (`Builder.taxon(..., bryophyte=...)`). A moss is never
+  matched to the checklist of vascular plants, and a match of the other group from World Flora
+  Online is not used. The taxon is then known by its printed name, apart from the other plant;
+- the same the other way round: a flowering plant whose name the service gives to a moss (one
+  Malvaceae taxon stood under Hypnales).
 
 Where the new part is a kind of the old one (a non-vascular leaf is a leaf), the FLOPO class of
 the record stays, since it still holds. For the capsule the FLOPO class is dropped until FLOPO has
@@ -53,6 +85,6 @@ operculum and the spores (of mosses and of ferns).
   a leaf, and a non-vascular leaf is a leaf.
 - "perianth" in a liverwort is a real structure but not the perianth of a flower; these records
   go to review with the other flower parts.
-- Moss names matched to a vascular plant of the same name (94 taxa of the moss flora) are a fault
-  of the name matching and are not fixed here.
+- A moss whose name is shared with a flowering plant is known by its printed name only; it has
+  no identifier from World Flora Online until names are matched with their authors.
 - The family list has the families the atlas has seen; a new flora may bring others.

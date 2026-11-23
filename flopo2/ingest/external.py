@@ -426,6 +426,11 @@ def iter_eflora_segments(
             seen_texts.add(text)
             genus = sp_slug.split("_")[0].lower()
             family = fam_map.get(sp_slug.lower()) or fam_map.get(genus, "")
+            if source_key == "eflora-mfoc":
+                from flopo2.verify.apply_bryophyte_terms import is_bryophyte
+
+                if not is_bryophyte(family, text):  # a sedge or a fern whose text has "costa" or "spores"
+                    continue
             taxon = _parse_binomial(sp_slug, family=family)
             lang = "es" if re.search(r"\b(Arbustos|Árboles|Hierbas|Hojas|Flores)\b", text) else "en"
             yield TextSegment(

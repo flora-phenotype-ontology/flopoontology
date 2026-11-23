@@ -22,6 +22,9 @@ ORGAN_GROUPS: list[tuple[str, str, list[str]]] = [
     ("spikelet", "Grass spikelet (glumes, lemmas, awns)", ["PO:0009051"]),
     ("flower", "Flower", ["PO:0009046"]),
     ("inflorescence", "Inflorescence", ["PO:0009049"]),
+    # Mosses and ferns: the spore capsule with its seta, calyptra, peristome and operculum, and the
+    # spores. Before leaf: PO has the sporangium of a fern as part of its leaf.
+    ("spore", "Spore capsule and spores (mosses, ferns)", ["PO:0025094", "PO:0030032", "PO:0030037", "PO:0025017"]),
     ("leaf", "Leaf", ["PO:0025034", "PO:0009025", "PO:0006001"]),
     ("root", "Root", ["PO:0009005", "PO:0025025"]),
     ("stem", "Stem, branches and spines", ["PO:0025029", "PO:0009047", "PO:0004518"]),

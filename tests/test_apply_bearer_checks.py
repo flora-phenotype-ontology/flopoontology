@@ -123,6 +123,10 @@ def test_a_description_is_one_of_a_bryophyte_by_family_or_by_moss_words():
     assert not is_bryophyte("Poaceae", "Spikelets with setae; calyptra absent.")
     assert not is_bryophyte("Polypodiaceae", "Gametophytes dioicous, with gemmae.")
     assert "malvaceae" not in bryophyte.families()
+    # the family is taken from the genus, and a grass genus stood under a moss family
+    grass = "Culms 30 cm. Spikelets paired; lower glume 4 mm; lemma awned; anthers 3."
+    assert not is_bryophyte("Funariaceae", grass) and bryophyte.group("Funariaceae", grass) is False
+    assert is_bryophyte("Funariaceae", "Plants small. Leaves ovate, costa percurrent. Seta 5 mm.")
 
 
 def test_a_flower_part_in_a_moss_goes_to_review_and_moss_parts_stay():
@@ -135,3 +139,46 @@ def test_a_flower_part_in_a_moss_goes_to_review_and_moss_parts_stay():
         a = _assertion("seta red", "seta", part, "PATO_0000322")
         assert terms.apply(a, "Bryaceae") == "" and a["gate"]["status"] == "accepted"
     assert "malvaceae" not in terms.families and "pottiaceae" in terms.families
+
+
+def test_spore_capsule_parts_are_one_browse_group():
+    from flopo2.saudi.vocab import Vocabulary
+
+    vocab = Vocabulary()
+    assert {vocab.organ_group(t) for t in ("PO:0025094", "PO:0030032", "PO:0030043", "PO:0030044", "PO:0025017")} == {"spore"}
+    assert vocab.organ_group("PO:0025075") == "leaf" and vocab.organ_group("PO:0030022") == "stem"
+
+
+def test_a_moss_is_not_matched_to_the_flowering_plant_of_the_same_name(tmp_path):
+    from flopo2.saudi.build import BASE, Builder
+    from flopo2.saudi.taxa import ResolvedName
+
+    builder = Builder(tmp_path)
+    amaranth = ResolvedName("Girgensohnia ruthenica", match_type="Exact", accepted_name="Girgensohnia oppositiflora",
+                            accepted_wfo_id="wfo-0000000001", family="Amaranthaceae", order="Caryophyllales")
+    moss = ResolvedName("Hypnum cupressiforme", match_type="Exact", accepted_name="Hypnum cupressiforme",
+                        accepted_wfo_id="wfo-0000000002", family="Hypnaceae", order="Hypnales")
+    builder.names = {"Girgensohnia ruthenica": amaranth, "Hypnum cupressiforme": moss}
+    builder.ipni = {"Girgensohnia ruthenica": {
+        "accepted_ipni_id": "165000-1", "accepted_wcvp_id": "1", "accepted_name": "Girgensohnia oppositiflora",
+        "accepted_authors": "(Pall.) Fenzl", "family": "Amaranthaceae", "status": "Synonym", "ipni_id": "165001-1",
+        "matched_name": "Girgensohnia ruthenica", "matched_authors": "Bunge"}}
+    builder.wfo_to_ipni = {}
+
+    plant = str(builder.taxon("Girgensohnia ruthenica", "eflora-fop", family="Amaranthaceae", bryophyte=False))
+    assert plant == BASE + "taxon/ipni-165000-1"
+    as_moss = str(builder.taxon("Girgensohnia ruthenica", "eflora-mfoc", family="Amaranthaceae", bryophyte=True))
+    assert as_moss != plant and as_moss.endswith("taxon/name/Girgensohnia_ruthenica_-_bryophyte")
+    assert builder.taxa[as_moss]["family"] == "" and builder.taxa[as_moss]["order"] == "" and not builder.taxa[as_moss]["ipni"]
+    # a moss that the name service knows as a moss keeps its taxon; unknown group changes nothing
+    assert str(builder.taxon("Hypnum cupressiforme", "eflora-mfoc", family="Hypnaceae", bryophyte=True)).endswith("wfo-0000000002")
+    assert str(builder.taxon("Hypnum cupressiforme", "nybg-naf", bryophyte=None)).endswith("wfo-0000000002")
+    # a flowering plant whose name the service gives to a moss is known by its printed name
+    assert str(builder.taxon("Hypnum cupressiforme", "x", family="Malvaceae", bryophyte=False)).endswith("taxon/name/Hypnum_cupressiforme")
+
+
+def test_descriptions_of_other_plants_are_not_part_of_the_moss_flora():
+    sedge = {"taxon_family": "Cyperaceae", "text": "Rhizome short. Culms 30 cm. Utricles with a distinct costa."}
+    assert bryophyte.misfiled("eflora-mfoc", sedge) and not bryophyte.misfiled("eflora-other", sedge)
+    assert not bryophyte.misfiled("eflora-mfoc", {"taxon_family": "Pottiaceae", "text": "Leaves ovate."})
+    assert bryophyte.group("", "Leaves ovate.") is None and bryophyte.group("Cyperaceae", "x") is False

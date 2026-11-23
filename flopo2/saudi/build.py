@@ -183,6 +183,11 @@ class Builder:
         self.not_names: set[str] = set()
         self.summary: dict[str, dict] = {}
         self.copies: dict | None = None  # descriptions held twice, loaded on first use
+        from flopo2.verify import apply_bryophyte_terms as _bryophyte
+
+        self.bryophyte_orders = _bryophyte.orders()
+        self.bryophyte_families = _bryophyte.families()
+        self._plant_group, self._misfiled = _bryophyte.group, _bryophyte.misfiled
         # (taxon, bearer, attribute) -> numeric records of every source, for merged ranges
         self.numeric: dict[tuple[str, str, str], list[dict]] = {}
         # taxon -> qualitative records, for contradiction detection (conflicts_graph)
@@ -221,8 +226,21 @@ class Builder:
             if len(keys) == 1:
                 self.wfo_to_ipni[wfo] = self.ipni[next(iter(members))]
 
-    def taxon(self, name: str, source: str, *, family: str = "", page: object = "") -> URIRef:
+    def taxon(self, name: str, source: str, *, family: str = "", page: object = "",
+              bryophyte: bool | None = None) -> URIRef:
+        """``bryophyte``: whether the description is one of a moss, liverwort or hornwort, where
+        the caller knows. A name can be that of a moss and of a flowering plant (Girgensohnia);
+        names are matched without their author, so the match may be the other plant. A match
+        from the other group is not used: the taxon is then known by its printed name only."""
+
         resolved = self.names.get(self.aliases.get(name, name))
+        other_group = False
+        if bryophyte is not None and resolved and resolved.order:
+            if (resolved.order in self.bryophyte_orders) != bryophyte:
+                resolved, other_group = None, True
+        if bryophyte:
+            if family and family.strip().lower() not in self.bryophyte_families:
+                family = ""  # the family of the flowering plant of the same name
         if resolved and not resolved.accepted_wfo_id and name in self.not_names:
             resolved = None
             label = f"Unidentified entry: “{name}”"
@@ -230,7 +248,11 @@ class Builder:
             self.taxa.setdefault(taxon_iri, {"label": label, "authorship": "", "family": family, "order": "",
                                              "wfo": "", "names": {}, "extra": defaultdict(set)})
         taxon_iri = resolved.taxon_iri if resolved else BASE + "taxon/name/" + quote(name.replace(" ", "_"))
+        if other_group and bryophyte:
+            taxon_iri += "_-_bryophyte"  # apart from the flowering plant, should that be known by name only
         std = self.ipni.get(name) or self.ipni.get(self.aliases.get(name, name))
+        if bryophyte:
+            std = None  # the checklist of vascular plants has no mosses: a match is another plant
         via_wfo = False
         if not std and resolved and resolved.accepted_wfo_id:
             std = getattr(self, "wfo_to_ipni", {}).get(resolved.accepted_wfo_id)
@@ -312,8 +334,12 @@ class Builder:
             if self.is_copy(key, record):
                 counts["copies_left_out"] += 1
                 continue
+            if self._misfiled(key, record):
+                counts["misfiled_left_out"] += 1
+                continue
             page = re.search(r"page-(\d+)", record.get("source_id", ""))
-            taxon = self.taxon(record["taxon"], key, family=record.get("taxon_family", ""), page=page.group(1) if page else "")
+            taxon = self.taxon(record["taxon"], key, family=record.get("taxon_family", ""), page=page.group(1) if page else "",
+                               bryophyte=self._plant_group(record.get("taxon_family", ""), record.get("text", "")))
             statements = {s["statement_id"]: s for s in record.get("source_statements") or []}
             text = record.get("text", "")
             for index, assertion in enumerate(record.get("assertions") or []):
@@ -1047,9 +1073,11 @@ class Builder:
             with cfg["corpus"].open(encoding="utf-8") as src, fresh.open("w", encoding="utf-8") as dst:
                 for line in src:
                     record = json.loads(line)
-                    if self.is_copy(key, record):
+                    if self.is_copy(key, record) or self._misfiled(key, record):
                         continue
-                    record["taxon_iri"] = str(self.taxon(record["taxon"], key))
+                    record["taxon_iri"] = str(self.taxon(
+                        record["taxon"], key,
+                        bryophyte=self._plant_group(record.get("taxon_family", ""), record.get("text", ""))))
                     dst.write(json.dumps(record, ensure_ascii=False) + "\n")
             # Rewrite only on change: the assertion module (minutes to build) follows its mtime.
             if tagged.exists() and filecmp.cmp(fresh, tagged, shallow=False):
