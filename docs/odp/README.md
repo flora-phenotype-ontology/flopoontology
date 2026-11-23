@@ -109,6 +109,13 @@ The record (`fb:TraitRecord`) is what the website and SPARQL queries read:
 Only what holds of the plant goes into the OWL class. What is said *about* the statement (how
 often, how exactly, under which condition of the specimen) stays in the record (see "What goes into OWL and what stays in RDF" below).
 
+The records can be read without OWL. They use plain links only, no blank nodes: a record points
+to its taxon, part, value and sentence, and a taxon points to its records with `fb:record`. The
+OWL side (the annotation classes and the taxon axioms `taxon SubClassOf 'has phenotype' some P`)
+says the same in a form a reasoner can check, for example to find a taxon with both "flowers
+yellow" and "flowers absent". The download `plain-records.nt.gz` has the records, places, taxa and
+term names as N-Triples for stores that take triples only.
+
 ### From text to annotation
 
 1. A language model transcribes each statement of a description: part, quality, value, and the

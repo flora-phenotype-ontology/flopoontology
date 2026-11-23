@@ -5,6 +5,8 @@
 Writes ``RELEASE_DIR/downloads/``:
 
 - ``rdf/<graph file>.nq.gz``: the release's N-Quads files, one per named graph, compressed;
+- ``rdf/plain-records.nt.gz``: the flat records, places, taxa and term names as N-Triples
+  (no named graphs, no blank nodes, no OWL), for stores that take triples only;
 - ``tsv/traits-<source>.tsv.gz``: one row per trait record of a source (``fb:TraitRecord`` of its
   index graph), and ``tsv/traits-all.tsv.gz`` with every source;
 - ``tsv/occurrences.tsv.gz``, ``tsv/growth-traits.tsv.gz``, ``tsv/taxa.tsv.gz``,
@@ -322,6 +324,33 @@ class Gz:
         return self.rows
 
 
+PLAIN_KINDS = ("index", "places", "taxa", "vocab")
+PLAIN_NAME = "plain-records.nt.gz"
+_BLANK = r"^_:| _:[^ ]+ <[^ ]+> \.$"
+
+
+def plain_triples(release: Path, graphs: list[dict], target: Path) -> int:
+    """The flat graphs as one N-Triples file: graph names dropped, triples with a blank node left out.
+
+    These graphs (flat records, places, taxa, term names) use no OWL constructs, so the file can be
+    read without knowing OWL and loaded into a store that makes its own named graphs."""
+
+    paths = [str(release / g["file"]) for g in graphs
+             if g["graph"].rsplit("/", 1)[-1] in PLAIN_KINDS and (release / g["file"]).stat().st_size]
+    script = (f"cat \"$@\" | LC_ALL=C grep -v -E '{_BLANK}' | LC_ALL=C sed -E 's/ <[^ >]+> \\.$/ ./' "
+              f"| tee >(wc -l > \"$OUT.count\") | pigz -6 -p 6 > \"$OUT\"")
+    env = dict(os.environ, OUT=str(target))
+    subprocess.run(["bash", "-o", "pipefail", "-c", script, "plain", *paths], check=True, env=env)
+    count = Path(str(target) + ".count")
+    for _ in range(50):  # the counting process may end a moment after the pipeline
+        if count.exists() and count.read_text().strip():
+            break
+        time.sleep(0.1)
+    lines = int(count.read_text().strip())
+    count.unlink()
+    return lines
+
+
 def source_tables(task: tuple[str, str | None, str | None, str]) -> dict:
     """Tables of one source: its trait records, and its part of the place and growth tables."""
 
@@ -399,6 +428,14 @@ def readme(meta: dict, files: list[dict], sources: dict[str, dict]) -> str:
         "http://phenomebrowser.net/flopo/saudi-flora/graph/<name>. Blank-node labels are distinct",
         "between files, so the files can be loaded together or concatenated. Loading all files",
         "into a SPARQL store reproduces the public endpoint (http://phenomebrowser.net/flopo/sparql).",
+        "",
+        "Without OWL: rdf/plain-records.nt.gz has the flat records, the places, the taxa and the term",
+        "names of all sources as N-Triples: no named graphs, no blank nodes, no OWL constructs. It is",
+        "the file for a triple store that makes its own graphs, or for reading the data as a plain",
+        "graph. A record (fb:TraitRecord) points to its taxon (fb:taxon), plant part (fb:bearer),",
+        "value (fb:quality), numbers (fb:low, fb:high, fb:unit) and sentence (fb:text); a taxon",
+        "points to its records with fb:record. The same triples are in the <source>/index,",
+        "<source>/places, taxa and vocab graphs below.",
         "",
         "Each source has up to three graphs:",
     ]
@@ -480,6 +517,8 @@ def build(release: Path, jobs: int = 8) -> Path:
                 raise SystemExit("pigz failed")
             handle.close()
     print(f"rdf: {len(present)} files compressed ({time.time() - started:.0f}s)", file=sys.stderr)
+    plain_count = plain_triples(release, present, tmp / "rdf" / PLAIN_NAME)
+    print(f"rdf: {plain_count} plain triples ({time.time() - started:.0f}s)", file=sys.stderr)
 
     # Tables.
     LOOKUP = Lookup(release, meta["graphs"])
@@ -543,6 +582,10 @@ def build(release: Path, jobs: int = 8) -> Path:
         source, kind = name.rsplit("/", 1) if "/" in name else ("", name)
         files.append({"path": f"rdf/{target.name}", "format": "nquads", "graph": g["graph"], "source": source,
                       "kind": kind, "triples": g["triples"], "bytes": target.stat().st_size, "sha256": _sha256(target)})
+    plain = tmp / "rdf" / PLAIN_NAME
+    files.append({"path": f"rdf/{PLAIN_NAME}", "format": "ntriples", "kind": "plain", "source": "",
+                  "title": "Flat records, places, taxa and term names as plain triples",
+                  "triples": plain_count, "bytes": plain.stat().st_size, "sha256": _sha256(plain)})
     for path in sorted(tsv.glob("*.tsv.gz")):
         stem = path.name.removesuffix(".tsv.gz")
         source = stem.removeprefix("traits-") if stem.startswith("traits-") and stem != "traits-all" else ""

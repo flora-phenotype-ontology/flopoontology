@@ -346,6 +346,7 @@ class Builder:
         quality = values[0] if values else (relation.get("from_value") or a["pato_id"])
         g.add((formal, RDF.type, FB.TraitRecord))
         g.add((formal, FB.taxon, taxon))
+        g.add((taxon, FB.record, formal))  # so that a DESCRIBE of the taxon leads to its records
         g.add((formal, FB.source, source))
         g.add((formal, FB.bearer, URIRef(iri(bearer))))
         g.add((formal, FB.quality, URIRef(iri(quality))))
@@ -431,12 +432,12 @@ class Builder:
         if word:  # "seeds numerous": present, and how many as a word
             g.add((formal, FB.countWord, Literal(word["amount"])))
             g.add((formal, FB.countText, Literal(word.get("count_text", ""))))
-        position = a.get("count_position") or {}
-        if position:  # "veins 4-6 on each side of the midrib"
-            g.add((formal, FB.countPosition, Literal(position["kind"])))
-            g.add((formal, FB.countPositionText, Literal(position.get("position_text", ""))))
-            if position.get("landmark_term"):
-                g.add((formal, FB.countLandmark, URIRef(iri(position["landmark_term"]))))
+        count_position = a.get("count_position") or {}
+        if count_position:  # "veins 4-6 on each side of the midrib"
+            g.add((formal, FB.countPosition, Literal(count_position["kind"])))
+            g.add((formal, FB.countPositionText, Literal(count_position.get("position_text", ""))))
+            if count_position.get("landmark_term"):
+                g.add((formal, FB.countLandmark, URIRef(iri(count_position["landmark_term"]))))
         if a.get("value_union_scope") == "across_attributes":  # "simple or branched"
             g.add((formal, FB.unionScope, Literal("across_attributes")))
         for operand in a.get("value_operands") or []:
@@ -482,7 +483,7 @@ class Builder:
             if a.get("source_unit"):  # "15-30 feet", converted to metres
                 g.add((formal, FB.sourceUnit, Literal(a["source_unit"])))
                 g.add((formal, FB.unitFactor, Literal(float(a["unit_conversion_factor"]))))
-            if uo and not condition and not position and (a.get("value_low") is not None or a.get("value_high") is not None):
+            if uo and not condition and not count_position and (a.get("value_low") is not None or a.get("value_high") is not None):
                 # Counts per container or of pairs are other traits than counts of the bare part;
                 # a count at each place of a kind ("4-6 on each side") is merged with nothing.
                 # So are measurements at a stage or of a state ("calyx 8 mm in fruit", "young leaves").

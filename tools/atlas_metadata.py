@@ -71,7 +71,7 @@ VOCABULARIES = [
 REFERENCES = ["https://doi.org/10.1186/s13326-016-0107-8", "https://doi.org/10.1093/bib/bbx035"]
 FLOPO_AUTHORS = [('Hoehndorf', 'R'), ('Alshahrani', 'M'), ('Gkoutos', 'GV'), ('Gosline', 'G'), ('Groom', 'Q'), ('Hamann', 'T'), ('Kattge', 'J'), ('de Oliveira', 'SM'), ('Schmidt', 'M'), ('Sierra', 'S'), ('Smets', 'E'), ('Vos', 'RA'), ('Weiland', 'C')]
 HISTORY = Path("deploy/atlas/data-releases.tsv")
-MEDIA = {"nquads": "application/n-quads", "tsv": "text/tab-separated-values"}
+MEDIA = {"nquads": "application/n-quads", "ntriples": "application/n-triples", "tsv": "text/tab-separated-values"}
 XSD_TYPE = {"number": "decimal", "bool": "boolean"}
 
 
@@ -217,6 +217,10 @@ def void(meta: dict, listing: dict, history: list[dict]) -> str:
             table = listing["tables"][f["table"]]
             g.add((url, DCTERMS.title, Literal(table["title"] + (f" ({f['source']})" if f.get("source") else ""), lang="en")))
             g.add((url, DCTERMS.conformsTo, URIRef(f"{BASE}downloads/tsv/csv-metadata.json")))
+            continue
+        if f["format"] == "ntriples":  # several graphs in one file, without their names
+            g.add((url, DCTERMS.title, Literal(f["title"], lang="en")))
+            g.add((url, VOID.triples, Literal(int(f["triples"]))))
             continue
         graph = URIRef(f["graph"])  # the named graph is the subset; its dump is the file
         g.add((release, VOID.subset, graph))

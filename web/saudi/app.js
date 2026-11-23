@@ -700,6 +700,17 @@ SELECT ?taxon ?name ?annotation WHERE {
   ?colour rdfs:subClassOf* obo:FLOPO_0988004 .   # ISCC-NBS yellow
   ?taxon rdfs:label ?name .
 } ORDER BY ?name`,
+  "All records of one taxon, as plain RDF (no OWL)": `PREFIX fb: <${FB}>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+# Every record links its taxon, plant part, value and sentence directly.
+# The taxon links to its records with fb:record.
+SELECT ?part ?value ?low ?high ?unit ?text ?source WHERE {
+  <http://phenomebrowser.net/flopo/taxon/ipni-862354-1> fb:record ?r .   # Clerodendrum robecchii
+  ?r fb:bearer/rdfs:label ?part ; fb:quality/rdfs:label ?value ; fb:text ?text ; fb:source/rdfs:label ?source .
+  OPTIONAL { ?r fb:low ?low } OPTIONAL { ?r fb:high ?high } OPTIONAL { ?r fb:unit ?unit }
+  FILTER(LANG(?part) = "" && LANG(?value) = "")
+} ORDER BY ?part ?value`,
   "Shrubs taller than 2 m in Asir": `PREFIX fb: <${FB}>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -1461,6 +1472,7 @@ async function downloads() {
   const file = (f, text) => (f ? `<a href="downloads/${esc(f.path)}" download>${text || esc(f.path.split("/").pop())}</a> <span class="muted num">${size(f.bytes)}</span>` : `<span class="empty">·</span>`);
   const rdf = d.files.filter((f) => f.format === "nquads");
   const tsv = d.files.filter((f) => f.format === "tsv");
+  const plain = d.files.find((f) => f.format === "ntriples");
   const total = (list) => list.reduce((a, f) => a + f.bytes, 0);
   const all = tsv.find((f) => f.path === "tsv/traits-all.tsv.gz");
   const keys = [...new Set(rdf.filter((f) => f.source).map((f) => f.source))];
@@ -1494,6 +1506,8 @@ async function downloads() {
     <h2>By source</h2>
     <p>Each flora has a table of its trait records and up to three RDF graphs: the <b>annotations</b> in full (${esc(d.graph_kinds.assertions.replace(/^Annotations in full: /, "").replace(/\.$/, ""))}), the <b>flat records</b> (the form the tables and this website use, plus the statements not yet annotated), and <b>places</b>.</p>
     <div class="tablewrap"><table class="results"><thead><tr><th>Source</th><th>Trait records</th><th>Table</th><th>Annotations</th><th>Flat records</th><th>Places</th></tr></thead><tbody>${sourceRows}</tbody></table></div>
+    ${plain ? `<h2>Plain RDF, without OWL</h2>
+    <p>${file(plain)}: the flat records, places, taxa and term names of all sources as N-Triples (${n(plain.triples)} triples). It has no named graphs, no blank nodes and no OWL constructs, so it loads into any triple store, including those that make their own graphs. A record points to its taxon, plant part, value, numbers and sentence; a taxon points to its records with <code>fb:record</code>. The <a href="#/query">Query</a> page has an example. What it leaves out is in the files below: the OWL definitions of the annotation classes, the taxon axioms and the provenance of each annotation.</p>` : ""}
     <h2>Shared RDF graphs</h2>
     <p>RDF files are N-Quads, gzip-compressed, one named graph per file. Loading all of them into a SPARQL store gives the same data as the public endpoint. The OWL definitions of the annotation classes are in <code>annotation-classes</code>.</p>
     <div class="tablewrap"><table class="results"><thead><tr><th>Graph</th><th>Content</th><th>Triples</th><th>File</th></tr></thead><tbody>${shared}</tbody></table></div>
