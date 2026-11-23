@@ -34,6 +34,18 @@ def test_the_position_before_the_bearer_is_recorded():
     assert a["bearer_context_qualities"] == [words["basal"][0]]
 
 
+def test_a_record_that_is_not_linked_to_a_class_gets_the_position_but_no_class_identifier():
+    # "5-7 on each side" is written in the record only; the formal builder refuses a class on it
+    words = position.load()
+    pattern = position._pattern(words)
+    text = "lateral veins 5-7 on each side"
+    a = _assertion(text, "veins", "PO_0005020", "PATO_0000070")
+    a.pop("phenotype_class_iri")
+    a["count_position"] = {"kind": "each_side", "position_text": "on each side"}
+    assert position.apply(a, text, words, pattern) == "added"
+    assert a["bearer_context_qualities"] == [words["lateral"][0]] and "phenotype_class_iri" not in a
+
+
 def test_a_position_without_a_class_or_two_positions_go_to_review():
     words = position.load()
     pattern = position._pattern(words)

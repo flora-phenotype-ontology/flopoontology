@@ -49,6 +49,17 @@ def _pattern(words: dict) -> re.Pattern:
     return re.compile(rf"(?:^|[^\w-])((?:{word})(?:\s*(?:,|and|or|to)\s*(?:{word}))*)\s+$", re.IGNORECASE)
 
 
+def class_linked(assertion: dict) -> bool:
+    """Whether the record is linked to an annotation class. A value relation ("glabrous to
+    pubescent") and operands that a class cannot hold are written in the record only; such a
+    record must not carry a class identifier (the builder of the formal assertions refuses it)."""
+
+    from flopo2.annotation.operands import operands_fac_representable
+
+    return not (assertion.get("qualitative_value_relation") or not operands_fac_representable(assertion)
+                or assertion.get("specimen_condition") or assertion.get("count_position"))
+
+
 def apply(assertion: dict, text: str, words: dict, pattern: re.Pattern) -> str:
     """'' (nothing to do), 'added' or 'review'."""
 
@@ -87,6 +98,8 @@ def apply(assertion: dict, text: str, words: dict, pattern: re.Pattern) -> str:
             if before:
                 assertion["phenotype_class_iri"] = before
             return ""
+        if not class_linked(assertion):
+            assertion.pop("phenotype_class_iri", None)
         return "added"
     if any(w in present for w in (words.get(n, ("",))[0] for n in named)):
         return ""  # one of the positions is recorded already
