@@ -135,7 +135,7 @@ def preflight(release: Path, previous: Path | None, report: Report) -> None:
                             secrets[text[:60]] += 1
                 elif len(terms) >= 3 and terms[0].startswith(OBO + "FLOPO_"):
                     s, p, o = terms[0], terms[1], terms[2]
-                    if p.endswith("22-rdf-syntax-ns#type") and o.endswith("owl#Class"):
+                    if p.endswith("22-rdf-syntax-ns#type") and o.endswith(("owl#Class", "owl#ObjectProperty")):  # 'has position' is a FLOPO relation
                         declared.add(s)
                     elif p.endswith("IAO_0000114"):
                         status[s] = o
