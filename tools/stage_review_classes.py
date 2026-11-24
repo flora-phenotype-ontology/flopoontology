@@ -109,7 +109,7 @@ def clusters(rows: list[dict]) -> list[list[dict]]:
 
 def _best(members: list[dict]) -> dict:
     rank = {"high": 2, "medium": 1, "low": 0}
-    return max(members, key=lambda r: (rank.get(r["confidence"], 0), int(r["statements"])))
+    return max(members, key=lambda r: (rank.get(r["confidence"], 0), int(r["statements"] or 0)))
 
 
 def value_bearers() -> dict[str, list[str]]:
@@ -136,7 +136,16 @@ def main() -> None:
     parser.add_argument("--min-statements", type=int, default=20)
     parser.add_argument("--min-part-statements", type=int, default=10)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--review-dir", type=Path, help="a later review round (its date is taken from the folder name)")
+    parser.add_argument("--accept", type=Path,
+                        help="labels accepted by hand, one per line: only these are staged, whatever their count")
     args = parser.parse_args()
+    global REVIEW, DATE, NOTE
+    if args.review_dir:
+        REVIEW = args.review_dir
+        DATE = REVIEW.name.removeprefix("opus-review-")
+        NOTE = f"{DATE}: proposed by the second-model review (Claude Opus) and accepted one by one (AI review, Claude Fable 5.2)"
+    accepted = {_norm(line) for line in args.accept.read_text(encoding="utf-8").splitlines() if line.strip()} if args.accept else None
     res = na.load_resources()
     pato = parse_obo(Path("ont/quality.obo"))
     spec = _rows(VALUE_SPEC)
@@ -159,14 +168,14 @@ def main() -> None:
 
     # ---- quality values ----
     proposals = [r for r in _rows(REVIEW / "values.tsv") if r["decision"] == "new_class" and r["confidence"] != "low"]
-    groups = sorted(clusters(proposals), key=lambda g: -sum(int(r["statements"]) for r in g))
+    groups = sorted(clusters(proposals), key=lambda g: -sum(int(r["statements"] or 0) for r in g))
     next_id = max(int(r["flopo_id"].split(":")[1]) for r in spec) + 1
     new_spec: list[dict] = []
     labels_new: dict[str, str] = {}
     pending: list[tuple[dict, list[dict], int]] = []
     for members in groups:
         best = _best(members)
-        total = sum(int(r["statements"]) for r in members)
+        total = sum(int(r["statements"] or 0) for r in members)
         label = best["label"].strip()
 
         def drop(why: str, queue: str = "values", members=members, label=label, total=total) -> None:
@@ -181,7 +190,10 @@ def main() -> None:
                 decided.append({"queue": "values", "word": row["word"], "label": label,
                                 "flopo_id": staged_values[_norm(label)], "statements": total, "outcome": "new class"})
             continue
-        if total < args.min_statements:
+        if accepted is not None and _norm(label) not in accepted:
+            drop("not accepted in the review by hand")
+            continue
+        if accepted is None and total < args.min_statements:
             drop("fewer statements than the bar")
             continue
         existing = taken_words.get(_norm(label)) or flopo_names.get(_norm(label)) or SKIP_VALUE_LABELS.get(_norm(label))
@@ -287,7 +299,7 @@ def main() -> None:
     anatomy_ids = {r["flopo_id"] for r in registry}
     po_names = {_norm(name) for name in res.po_lexicon}
     proposals = [r for r in _rows(REVIEW / "bearers.tsv") if r["decision"] == "new_class" and r["confidence"] != "low"]
-    groups = sorted(clusters(proposals), key=lambda g: -sum(int(r["statements"]) for r in g))
+    groups = sorted(clusters(proposals), key=lambda g: -sum(int(r["statements"] or 0) for r in g))
     # FLOPO:0986056-0986062 were withdrawn before release (8be100d) and are not used again
     next_part = max(max(int(r["flopo_id"].split("_")[1]) for r in registry) + 1, 986063)
     part_names: set[str] = set()
@@ -299,7 +311,7 @@ def main() -> None:
     new_registry: list[dict] = []
     for members in groups:
         best = _best(members)
-        total = sum(int(r["statements"]) for r in members)
+        total = sum(int(r["statements"] or 0) for r in members)
         label = best["label"].strip()
 
         def drop(why: str, members=members, label=label, total=total) -> None:
@@ -316,7 +328,10 @@ def main() -> None:
                                 "flopo_id": allocated[spec_row["proposal_key"]], "statements": total,
                                 "outcome": "new class", "names": "|".join(dict.fromkeys([row["word"], *names]))})
             continue
-        if total < args.min_part_statements:
+        if accepted is not None and _norm(label) not in accepted:
+            drop("not accepted in the review by hand")
+            continue
+        if accepted is None and total < args.min_part_statements:
             drop("fewer statements than the bar")
             continue
         if _norm(label) in SKIP_PART_LABELS:
