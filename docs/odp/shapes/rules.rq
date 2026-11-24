@@ -27,7 +27,23 @@ SELECT ?record WHERE {
 ----------
 # rule: relation_target_is_not_the_bearer (docs/odp/09-relation-to-another-part.md)
 PREFIX fb: <http://phenomebrowser.net/flopo/browse#>
-SELECT ?record WHERE { ?record fb:towards ?part ; fb:bearer ?part }
+SELECT ?record WHERE { ?record fb:towards ?part ; fb:bearer ?part . FILTER NOT EXISTS { ?record fb:towardsPosition ?other } }
+----------
+# rule: counterpart_position_differs_from_own (docs/odp/25-comparison-with-an-implied-counterpart.md)
+PREFIX fb: <http://phenomebrowser.net/flopo/browse#>
+SELECT ?record WHERE { ?record fb:towardsPosition ?position ; fb:bearerState ?position }
+----------
+# rule: maximum_at_least_has_no_range (docs/odp/19-lower-bound-on-the-maximum.md)
+PREFIX fb: <http://phenomebrowser.net/flopo/browse#>
+SELECT ?record WHERE { ?record fb:maxAtLeast ?n . { ?record fb:low ?x } UNION { ?record fb:high ?x } UNION { ?record fb:phenotypeClass ?x } }
+----------
+# rule: extent_bounds_ordered (docs/odp/20-measured-extent-of-a-state.md)
+PREFIX fb: <http://phenomebrowser.net/flopo/browse#>
+SELECT ?record WHERE { ?record fb:extentLow ?low ; fb:extentHigh ?high . FILTER(?low > ?high || ?low < 0) }
+----------
+# rule: variable_presence_without_phenotype_class (docs/odp/23-optional-part.md)
+PREFIX fb: <http://phenomebrowser.net/flopo/browse#>
+SELECT ?record WHERE { ?record fb:presence "variable" ; fb:phenotypeClass ?class }
 ----------
 # rule: ratio_bounds_ordered_and_positive (docs/odp/10-ratio-to-another-part.md)
 PREFIX fb: <http://phenomebrowser.net/flopo/browse#>

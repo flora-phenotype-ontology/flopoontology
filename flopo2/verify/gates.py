@@ -67,6 +67,11 @@ _FR_BOUND_VERB = (
     r"(?:d[ée]passant|d[ée]passe(?:nt)?|atteignant|atteignent|atteint|"
     r"exc[ée]dant|exc[ée]de(?:nt)?)"
 )
+# "or more", "or longer" after a number: the bound is open above (patterns 02 and 19)
+BOUND_TAIL = re.compile(
+    r"\(?\s*\bor\s+(?:more|longer|taller|higher|larger|wider|broader|greater|thicker|bigger)\b\s*\)?|\band\s+more\b",
+    re.IGNORECASE,
+)
 UPPER_BOUND_EVIDENCE = re.compile(
     r"(?<!\w)(?:up\s+to|at\s+most|no\s+more\s+than|"
     r"not\s+(?:more\s+than|exceeding|over|longer\s+than|surpassing)|"
@@ -654,7 +659,9 @@ def check_assertion(
         if not re.fullmatch(r"(?:PO|FLOPO)_\d+", term):
             reasons.append("invalid_developmental_stage_term")
             score -= 0.5
-        if (context.get("temporal_relation", "present_during") or "present_during") != "present_during":
+        if (context.get("temporal_relation", "present_during") or "present_during") not in {
+            "present_during", "present_before", "present_after"  # "before flowering", "after anthesis"
+        }:
             reasons.append("invalid_developmental_stage_relation")
             score -= 0.5
         stage_text = str(context.get("stage_text", "") or "")
@@ -695,15 +702,22 @@ def check_assertion(
     elif operator == "one_of" and not _has_real_disjunction(source_context):
         reasons.append("disjunction_not_supported_by_source")
         score -= 0.4
+    open_bound = assertion.get("maximum_at_least") or (
+        assertion.get("value_low") is not None and assertion.get("value_high") is None)
+    if open_bound:
+        # "to 4 cm or longer", "8 or more": the "or" belongs to a bound that is open above
+        source_context = BOUND_TAIL.sub(" ", source_context)
     if (
         operator == "atomic"
         and not assertion.get("qualitative_value_relation")
+        and not assertion.get("presence_variable")  # "with or without": the "or" is the statement
         and _has_real_disjunction(source_context)
     ):
         approximate = assertion.get("modality_text", "") if assertion.get("value_qualifier") == "approximately" else ""
         factor = assertion.get("unit_conversion_factor")
         if unexplained_disjunction(
-            source_text, source_number(assertion.get("value_low"), factor),
+            BOUND_TAIL.sub(" ", source_text) if open_bound else source_text,
+            source_number(assertion.get("value_low"), factor),
             source_number(assertion.get("value_high"), factor), approximate,
         ):
             reasons.append("atomic_source_contains_disjunction")

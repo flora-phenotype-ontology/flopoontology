@@ -286,6 +286,49 @@ def pattern_issues(
         if position.landmark_term and not known_part(norm(position.landmark_term)):
             out.append(("count_position_landmark_unknown", str(position.landmark_term)))
 
+    # --- lower bound on the maximum (docs/odp/19-lower-bound-on-the-maximum.md)
+    at_least = parsed.maximum_at_least
+    if at_least is not None:
+        if not _span_ok(text, at_least.cue_text, at_least.start, at_least.end):
+            out.append(("maximum_at_least_cue_not_verbatim", repr(at_least.cue_text)))
+        if parsed.value_low is not None or parsed.value_high is not None:
+            out.append(("maximum_at_least_with_range", f"{parsed.value_low}-{parsed.value_high}"))
+        if parsed.phenotype_class_iri:
+            out.append(("maximum_at_least_with_phenotype_class", parsed.phenotype_class_iri))
+
+    # --- measured extent of a state (docs/odp/20-measured-extent-of-a-state.md)
+    extent = parsed.extent
+    if extent is not None:
+        from flopo2.ingest.review_patterns import extent_qualities
+
+        stated = {norm(parsed.quality), *(norm(v) for v in parsed.value_terms or [])}
+        if norm(extent.quality) not in extent_qualities() or norm(extent.quality) not in stated:
+            out.append(("extent_of_another_quality", str(extent.quality)))
+        if extent.value_low is None and extent.value_high is None:
+            out.append(("extent_without_number", str(extent.quality)))
+        if parsed.value_low is not None or parsed.value_high is not None:
+            out.append(("extent_with_measurement", f"{parsed.value_low}-{parsed.value_high}"))
+
+    # --- optional part (docs/odp/23-optional-part.md)
+    variable = parsed.presence_variable
+    if variable is not None:
+        if not _span_ok(text, variable.cue_text, variable.start, variable.end):
+            out.append(("presence_variable_cue_not_verbatim", repr(variable.cue_text)))
+        if norm(parsed.quality) != "PATO_0000467" or parsed.negated:
+            out.append(("presence_variable_without_presence", str(parsed.quality)))
+        if parsed.phenotype_class_iri:
+            out.append(("presence_variable_with_phenotype_class", parsed.phenotype_class_iri))
+
+    # --- comparison with an implied counterpart (docs/odp/25-...)
+    target = parsed.towards
+    if target is not None and getattr(target, "counterpart_position", None):
+        from flopo2.owl import position as _position
+
+        if not target.implied or not _position.is_position(target.counterpart_position):
+            out.append(("counterpart_position_unknown", str(target.counterpart_position)))
+        if norm(target.target_term) != norm(parsed.anatomical_entity):
+            out.append(("counterpart_is_another_part", str(target.target_term)))
+
     # --- specimen condition (docs/odp/specimen-condition.md)
     condition = parsed.specimen_condition
     if condition is not None:
@@ -489,6 +532,9 @@ def _pydantic_assertion(assertion: dict[str, Any]) -> TraitAssertion:
         "source_unit": _optional(assertion.get("source_unit")),
         "unit_conversion_factor": assertion.get("unit_conversion_factor"),
         "count_position": assertion.get("count_position") or None,
+        "maximum_at_least": assertion.get("maximum_at_least") or None,
+        "extent": assertion.get("extent") or None,
+        "presence_variable": assertion.get("presence_variable") or None,
         "value_union_scope": assertion.get("value_union_scope") or "same_attribute",
         "value_min_extreme": assertion.get("value_min_extreme"),
         "value_max_extreme": assertion.get("value_max_extreme"),

@@ -198,11 +198,12 @@ def _canonical_developmental_stage(context: dict[str, Any]) -> dict[str, str]:
             f"{context.get('stage_term')!r}"
         )
     relation = str(context.get("temporal_relation", "present_during") or "present_during")
-    if relation != "present_during":
+    if relation not in {"present_during", "present_before", "present_after"}:
         raise ValueError(f"unsupported developmental-stage relation: {relation!r}")
+    # "present_during" keeps the property it always had, so that no released class changes
     return {
         "term": term,
-        "property": FLOPOANN + "present_during_developmental_stage",
+        "property": FLOPOANN + relation + "_developmental_stage",
     }
 
 

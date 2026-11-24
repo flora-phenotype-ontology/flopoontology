@@ -47,6 +47,7 @@ from flopo2.annotation.provenance import FREQUENCY_ALIASES, stable_statement_id
 from flopo2.ingest import ncvc_guide
 from flopo2.ingest.colour_words import COLOUR_ATTRIBUTE, colour_value
 from flopo2.owl import carrier as carrier_rules
+from flopo2.owl import position as flopo_position
 from flopo2.owl.annotation_class import ensure_annotation_class_iri
 from flopo2.verify import gates
 from flopo2.verify.data_model import load_union_pairs, nearest_shared_attribute, validate_jsonl
@@ -96,6 +97,7 @@ _STRICT_LOWER_RE = re.compile(r"\b(?:more than|over|above|exceeding)\b|>", re.IG
 
 
 from flopo2.extract.measurement import is_supported_count  # noqa: E402
+from flopo2.ingest import review_patterns  # noqa: E402
 
 
 def normalize_key(text: str | None) -> str:
@@ -2009,6 +2011,16 @@ _RELATION_CONNECTORS = [
 ]
 
 
+def _side_class(res: "Resources", bearer: str, side: str) -> str:
+    """PO's class of the abaxial or adaxial side of a bearer, or ``""`` (the reviewed table of
+    :func:`flopo2.annotation.positional.surface_scope`)."""
+
+    from flopo2.annotation.positional import surface_scope
+
+    mapped = surface_scope(bearer, side, 0, 0)
+    return mapped.scope_class if mapped is not None and mapped.scope_class in res.po_catalog else ""
+
+
 def _attribute_ancestors(res: "Resources", value: str) -> list[str]:
     """Attribute-slim ancestors of a PATO value (itself first if it is one), nearest first.
 
@@ -2539,6 +2551,21 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                     normalization_status="proposed", rule_ids=list(grounding.rule_ids),
                 )
                 reason = ""
+        counterpart = None
+        if relational_gap and reason and grounding.po_id and res.relations and not has_value and not gates._has_real_disjunction(span_text):
+            # "paler beneath", "the inner smaller": the second term is the same part at the
+            # opposite place (docs/odp/25-comparison-with-an-implied-counterpart.md)
+            counterpart = review_patterns.implied_counterpart(
+                phenotype, span_text, grounding.po_id, lambda bearer, side: _side_class(res, bearer, side),
+                flopo_position.positioned_parts(),
+            )
+            if counterpart is not None:
+                grounding = Grounding(
+                    "assertion", po_id=counterpart.get("po_id", grounding.po_id), pato_id=counterpart["pato_id"],
+                    provenance=[*grounding.provenance, counterpart.pop("provenance")],
+                    normalization_status="proposed", rule_ids=list(grounding.rule_ids),
+                )
+                reason = ""
         if reason in {"no_ontology_term_for_quality", "missing_or_unsupported_bearer"} and phenotype.get("reread_reason"):
             reason = phenotype["reread_reason"]
         container_po = ""
@@ -2572,7 +2599,17 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                     + (f", {position['landmark_term']}" if position.get("landmark_term") else "")
                     + "); no phenotype class, the number is not that of the whole organ"
                 )
-        if not reason and position is None and not phenotype.get("count_container"):
+        if not reason and position is None and not phenotype.get("count_container") and grounding.pato_id == PATO_PRESENT:
+            # "rooting at the nodes": the part is present at a place, by a reviewed rule
+            # (docs/odp/22-part-present-at-a-place.md)
+            place_rule = res.rule_for("quality", normalize_key(phenotype.get("quality_en")), [])
+            if place_rule is not None and place_rule.kind == "entity_presence" and place_rule.container_id \
+                    and place_rule.po_id == grounding.po_id:
+                container_po = place_rule.container_id
+                grounding.provenance.append(
+                    f"presence: {grounding.po_id} at {container_po} (reviewed rule {place_rule.rule_id})"
+                )
+        if not reason and position is None and not phenotype.get("count_container") and not container_po:
             # "stipular colleter": a part with the whole it belongs to, by a reviewed rule
             for name in (phenotype.get("po_label"), phenotype.get("entity_en")):
                 bearer_rule = res.rule_for("bearer", normalize_key(name), [])
@@ -2617,9 +2654,22 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                     "alternatives: " + ", ".join(map(str, alternatives)) + " not in the source sentence; the row states one value"
                 )
                 alternatives = []
+        optional = None
+        if not reason and not grounding.value_terms and grounding.pato_id in {PATO_PRESENT, PATO_ABSENT} \
+                and not phenotype.get("count_word") and position is None:
+            # "with or without stipules", "pedicels absent or to 0.5 mm": present in some plants
+            # only (docs/odp/23-optional-part.md)
+            optional = review_patterns.optional_part(span_text)
+            if optional is not None:
+                alternatives = []
+        lower_tail = has_value and review_patterns.lower_bound_tail(
+            span_text, phenotype.get("value_low"), phenotype.get("value_high"))
+        bound_tail = lower_tail or (has_value and review_patterns.maximum_at_least(
+            span_text, phenotype.get("value_low"), phenotype.get("value_high")) is not None)
+        disjunction_text = review_patterns.without_bound_tail(span_text) if bound_tail else span_text
         if not reason and alternatives:
             reason = "taxon_level_alternatives_or_continuum"
-        if not reason and gates._has_real_disjunction(span_text):
+        if not reason and optional is None and gates._has_real_disjunction(disjunction_text):
             reason = "explicit_disjunction"
         nearly_so = None
         if not reason:
@@ -2631,12 +2681,13 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                 re.escape(value_word) + r"\W*$", span_text[:nearly.start()], re.IGNORECASE
             ):
                 nearly_so = nearly.group(0).lstrip(", ")
-            if gates.unexplained_disjunction(
-                span_text, phenotype.get("value_low") if has_value else None,
+            if optional is None and gates.unexplained_disjunction(
+                disjunction_text, phenotype.get("value_low") if has_value else None,
                 phenotype.get("value_high") if has_value else None, nearly_so or "",
             ):
                 reason = "explicit_disjunction"
         context = bearer_whole = None
+        stage_relation = "present_during"
         if not reason and str(qualifiers.get("stage") or "").strip():
             context = stage_context(
                 res, str(qualifiers["stage"]), text, start, end,
@@ -2674,16 +2725,31 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
             if context is None and not container_po and not unscoped:
                 bearer_whole = whole_context(res, str(qualifiers["stage"]), text, start, end, grounding.po_id)
             if context is None and bearer_whole is None and not unscoped:
+                # "after anthesis", "before flowering" (docs/odp/24-before-or-after-a-stage.md)
+                boundary = review_patterns.stage_boundary(res, str(qualifiers["stage"]), text, start, end)
+                if boundary is not None:
+                    context, stage_relation = boundary[:3], boundary[3]
+            if context is None and bearer_whole is None and not unscoped:
                 reason = "developmental_stage_context"
         if not reason and has_value:
             if unit not in LENGTH_UNITS and unit.lower() not in SI_CONVERSION and not is_supported_count(
                 unit, grounding.pato_id
             ):
                 reason = "count_or_non_length_measurement" if unit else "measurement_missing_unit"
-            elif grounding.pato_id not in res.attribute_ids:
+            elif grounding.pato_id not in res.attribute_ids and not review_patterns.extent_quality(
+                    grounding.pato_id, list(grounding.value_terms)):
                 reason = "numeric_quality_not_pato_attribute"
             else:
-                low, high, _bound, problem = normalize_bounds(
+                at_least = review_patterns.maximum_at_least(span_text, phenotype.get("value_low"), phenotype.get("value_high"))
+                extent_of = review_patterns.extent_quality(grounding.pato_id, list(grounding.value_terms)) if (
+                    grounding.value_terms or grounding.pato_id not in res.attribute_ids) else ""
+                if lower_tail:
+                    # "8 or more": the number is the lower bound, whichever slot the transcription used
+                    number = phenotype.get("value_low") if phenotype.get("value_low") is not None else phenotype.get("value_high")
+                    phenotype = {**phenotype, "value_low": number, "value_high": None}
+                    extremes = None
+                low, high, _bound, problem = (at_least["value"], at_least["value"], "single", "") if at_least else (
+                    _num(phenotype["value_low"]), None, "lower", "") if lower_tail else normalize_bounds(
                     extremes["low"] if extremes else phenotype.get("value_low"),
                     extremes["high"] if extremes else phenotype.get("value_high"), span_text
                 )
@@ -2704,9 +2770,20 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                         f"unit: {stated} {unit} in the source, converted to {converted} {si_unit} (x {factor:g})"
                     )
                     source_unit, unit = unit, si_unit
+        if not has_value or reason:
+            at_least, extent_of = None, ""
+        if at_least is not None and extent_of:
+            reason = "upper_bound_cue_not_supported"  # an open bound on an extent is not read
         negated = bool(qualifiers.get("negated")) and str(qualifiers.get("negated")).strip().lower() not in {
             "false", "0", "no", "none"
         }
+        if optional is not None and not reason:
+            # the part is neither stated present nor absent
+            negated = False
+            grounding.pato_id, grounding.negate = PATO_PRESENT, False
+            grounding.provenance.append(
+                f"presence: {optional['cue_text']!r} -> present in some plants of the taxon only; no phenotype class"
+            )
         if not reason and grounding.negate:
             negated = True
             grounding.provenance.append("negation: the reviewed rule states the absence of the part")
@@ -2855,7 +2932,26 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                 "value_low_inclusive": ratio["low_inclusive"], "value_high_inclusive": ratio["high_inclusive"],
                 "ratio_numerator": ratio["numerator"], "ratio_denominator": ratio["denominator"],
             })
-        if has_value:
+        if has_value and at_least is not None:
+            # the number bounds the largest plants from below; the record has no range
+            assertion.update({"maximum_at_least": {
+                "value": low, "unit": unit, "inclusive": at_least["inclusive"], "cue_text": at_least["cue_text"],
+                "start": start + at_least["cue_start"], "end": start + at_least["cue_end"]}})
+            grounding.provenance.append(
+                f"value: {at_least['cue_text']!r} -> the maximum is at least {low:g} {unit}; no range, no phenotype class"
+            )
+        elif has_value and extent_of:
+            # the number measures the state, not a dimension of the part: the class is that of the
+            # state, the number stays in the record
+            assertion["extent"] = {"quality": extent_of, "value_low": low, "value_high": high, "unit": unit}
+            if strict_high:
+                assertion["extent"]["value_high_inclusive"] = False
+            if strict_low:
+                assertion["extent"]["value_low_inclusive"] = False
+            grounding.provenance.append(
+                f"value: the extent of {extent_of} ({review_patterns.extent_qualities()[extent_of]['measures']})"
+            )
+        elif has_value:
             assertion.update({"value_low": low, "value_high": high, "unit": unit})
             if source_unit:
                 assertion.update({"source_unit": source_unit, "unit_conversion_factor": SI_CONVERSION[source_unit.lower()][1]})
@@ -2873,6 +2969,15 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                 assertion["value_low_inclusive"] = False
         if container_po:
             assertion["bearer_container"] = container_po
+        if optional is not None:
+            assertion["presence_variable"] = {
+                "cue_text": optional["cue_text"], "start": start + optional["cue_start"], "end": start + optional["cue_end"]}
+        if counterpart is not None:
+            target = counterpart["towards"]
+            target.update({"start": start + target["start"], "end": start + target["end"]})
+            assertion["towards"] = target
+            if counterpart.get("bearer_context_qualities"):
+                assertion["bearer_context_qualities"] = counterpart["bearer_context_qualities"]
         if position is not None:
             assertion["count_position"] = position
         if count_word is not None:
@@ -2969,7 +3074,7 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
             reading, cue_start, cue_end = context
             if reading["kind"] == "stage":
                 assertion["developmental_stage_contexts"] = [{
-                    "stage_term": reading["target"], "temporal_relation": "present_during",
+                    "stage_term": reading["target"], "temporal_relation": stage_relation,
                     "stage_text": text[cue_start:cue_end], "start": cue_start, "end": cue_end,
                 }]
             elif reading["kind"] in {"surface", "region"}:
@@ -3099,7 +3204,8 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
                 "frequency_qualifier", "unspecified"
             ) != "unspecified" and not assertion.get("modality_text"):
                 assertion["frequency_qualifier"] = "unspecified"
-            if not assertion.get("qualitative_value_relation") and not assertion.get("specimen_condition") and not assertion.get("count_position"):
+            if not assertion.get("qualitative_value_relation") and not assertion.get("specimen_condition") and not assertion.get("count_position") \
+                    and not assertion.get("maximum_at_least") and not assertion.get("presence_variable"):
                 # "leaves alternate", "sepals connate": the axis or the whorl has the quality
                 # (docs/odp/16-quality-of-a-whole-towards-its-parts.md)
                 whole = carrier_rules.carrier_for(assertion)

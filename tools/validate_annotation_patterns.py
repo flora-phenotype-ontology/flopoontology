@@ -66,6 +66,13 @@ PATTERNS = {
     "14 count at a position": ("CountAtAPosition", lambda a: bool(a.get("count_position"))),
     "15 absence of a part": ("AbsenceOfAPart", lambda a: _absence_of_part(a)),
     "16 quality of a whole towards its parts": ("QualityOfWholeTowardsParts", lambda a: bool(a.get("carrier"))),
+    "19 lower bound on the maximum": ("LowerBoundOnTheMaximum", lambda a: bool(a.get("maximum_at_least"))),
+    "20 measured extent of a state": ("MeasuredExtent", lambda a: bool(a.get("extent"))),
+    "23 optional part": ("OptionalPart", lambda a: bool(a.get("presence_variable"))),
+    "24 before or after a stage": ("BeforeOrAfterAStage", lambda a: any(
+        (s.get("temporal_relation") or "present_during") != "present_during"
+        for s in a.get("developmental_stage_contexts") or [])),
+    "25 comparison with an implied counterpart": ("ImpliedCounterpart", lambda a: bool((a.get("towards") or {}).get("implied"))),
 }
 
 

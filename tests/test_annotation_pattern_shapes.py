@@ -85,6 +85,27 @@ CASES = {
                          'fb:bearer obo:PO_0020140 ; fb:quality obo:PATO_0000070 ; fb:low 4.0 ; fb:high 6.0 ; fb:unit obo:UO_0000189 ; '
                          'fb:countPosition "each_side" ; fb:countPositionText "on each side of the midrib" ; '
                          'fb:phenotypeClass ex:class .'),
+    "LowerBoundOnTheMaximum": ('fb:bearer obo:PO_0000003 ; fb:quality obo:PATO_0000119 ; fb:maxAtLeast 1.5 ; '
+                               'fb:maxAtLeastExclusive true ; fb:unit obo:UO_0000008 ; fb:unitSymbol "m" .',
+                               'fb:bearer obo:PO_0000003 ; fb:quality obo:PATO_0000119 ; fb:maxAtLeast 1.5 ; fb:high 1.5 ; '
+                               'fb:unit obo:UO_0000008 ; fb:unitSymbol "m" .'),
+    "MeasuredExtent": ('fb:bearer obo:PO_0009067 ; fb:quality obo:PATO_0000623 ; fb:extentLow 5.5 ; fb:extentHigh 6.5 ; '
+                       'fb:extentUnit obo:UO_0000016 ; fb:extentUnitSymbol "mm" .',
+                       'fb:bearer obo:PO_0009067 ; fb:quality obo:PATO_0000623 ; fb:extentUnit obo:UO_0000016 ; '
+                       'fb:extentUnitSymbol "mm" .'),
+    "OptionalPart": ('fb:bearer obo:PO_0020041 ; fb:quality obo:PATO_0000467 ; fb:presence "variable" ; '
+                     'fb:presenceText "with or without" .',
+                     'fb:bearer obo:PO_0020041 ; fb:quality obo:PATO_0000467 ; fb:presence "variable" ; '
+                     'fb:presenceText "with or without" ; fb:phenotypeClass ex:class .'),
+    "BeforeOrAfterAStage": ('fb:bearer obo:PO_0030112 ; fb:quality obo:PATO_0002165 ; fb:stage obo:PO_0007616 ; '
+                            'fb:stageRelation "after" ; fb:stageText "after anthesis" .',
+                            'fb:bearer obo:PO_0030112 ; fb:quality obo:PATO_0002165 ; fb:stage obo:PO_0007616 ; '
+                            'fb:stageRelation "during" ; fb:stageText "at anthesis" .'),
+    "ImpliedCounterpart": ('fb:bearer obo:PO_0009066 ; fb:quality obo:PATO_0000587 ; fb:bearerState obo:FLOPO_0991378 ; '
+                           'fb:towards obo:PO_0009066 ; fb:comparison "smaller" ; fb:towardsImplied true ; '
+                           'fb:towardsPosition obo:FLOPO_0991379 .',
+                           'fb:bearer obo:PO_0009066 ; fb:quality obo:PATO_0000587 ; fb:towards obo:PO_0009066 ; '
+                           'fb:comparison "smaller" ; fb:towardsPosition obo:FLOPO_0991379 .'),
 }
 
 
@@ -124,6 +145,10 @@ BROKEN = {
     "count_position_without_phenotype_class": 'fb:countPosition "each_side" ; fb:phenotypeClass ex:class .',
     "count_landmark_is_not_the_bearer": "fb:bearer obo:PO_0020139 ; fb:countLandmark obo:PO_0020139 .",
     "carrier_is_not_the_bearer": "fb:bearer obo:PO_0025029 ; fb:carrier obo:PO_0025029 .",
+    "counterpart_position_differs_from_own": "fb:bearerState obo:FLOPO_0991378 ; fb:towardsPosition obo:FLOPO_0991378 .",
+    "maximum_at_least_has_no_range": "fb:maxAtLeast 1.5 ; fb:high 2.0 .",
+    "extent_bounds_ordered": "fb:extentLow 6.0 ; fb:extentHigh 5.0 .",
+    "variable_presence_without_phenotype_class": 'fb:presence "variable" ; fb:phenotypeClass ex:class .',
 }
 
 

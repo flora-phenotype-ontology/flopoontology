@@ -40,6 +40,13 @@ SELECTORS = {
     "15": "?r fb:negated true ; fb:quality <http://purl.obolibrary.org/obo/PATO_0000467> . FILTER NOT EXISTS { ?r fb:partQuality ?x }",
     "16": "?r fb:carrier ?carrier .",
     "17": "",  # a pattern for defining value classes: no record carries it
+    "19": "?r fb:maxAtLeast ?bound .",
+    "20": "?r fb:extentUnit ?unit .",
+    "21": "?r fb:bearer obo:PO_0000003 ; fb:quality ?habit . FILTER(?habit IN (obo:FLOPO_0991108, obo:FLOPO_0991411, obo:FLOPO_0991412))",
+    "22": "?r fb:bearer obo:PO_0000042 ; fb:quality obo:PATO_0000467 ; fb:container ?place ; fb:negated false .",
+    "23": '?r fb:presence "variable" .',
+    "24": "?r fb:stageRelation ?relation .",
+    "25": "?r fb:towardsImplied true .",
     "18": "?r fb:bearerState ?state . FILTER(?state IN (obo:FLOPO_0991002, obo:FLOPO_0991117, obo:FLOPO_0991376, obo:FLOPO_0991377, obo:FLOPO_0991378, obo:FLOPO_0991379, obo:FLOPO_0991380, obo:FLOPO_0991381, obo:PATO_0002476))",
 }
 

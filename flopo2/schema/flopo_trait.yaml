@@ -307,6 +307,27 @@ classes:
           position carries no phenotype_class_iri: the number says nothing about the total.
         inlined: true
         range: CountPosition
+      maximum_at_least:
+        description: >-
+          "to more than 1.5 m", "to at least 6 cm": the largest plants are at least this large,
+          and how large is not said. The assertion has no value range and no phenotype_class_iri
+          (docs/odp/19-lower-bound-on-the-maximum.md).
+        inlined: true
+        range: MaximumAtLeast
+      extent:
+        description: >-
+          The measured extent of a state or relation ("exserted 5-6 mm", "connate for 2 mm",
+          "decurrent 3-20 mm"). The quality of the assertion is the state; the number is not
+          part of the phenotype class (docs/odp/20-measured-extent-of-a-state.md).
+        inlined: true
+        range: Extent
+      presence_variable:
+        description: >-
+          "with or without stipules", "pedicels absent or to 0.5 mm": the part is present in
+          some plants of the taxon and absent in others. The quality is present; the assertion
+          has no phenotype_class_iri (docs/odp/23-optional-part.md).
+        inlined: true
+        range: PresenceVariable
       value_union_scope:
         description: >-
           For value_operator one_of: whether the alternatives are values of one attribute
@@ -750,6 +771,16 @@ classes:
       ratio_high:
         description: Upper bound of the stated ratio (3 in "2-3 times as long as").
         range: float
+      implied:
+        range: boolean
+        description: >-
+          The source does not name the second entity: it is the same part at the opposite place
+          ("paler beneath", "the inner smaller"), and target_text is the place word
+          (docs/odp/25-comparison-with-an-implied-counterpart.md).
+      counterpart_position:
+        description: >-
+          For an implied second entity without a class of its own: its position (a value of
+          config/bearer_positions.tsv); target_term is then the class of the bearer.
 
   Carrier:
     description: >-
@@ -824,6 +855,54 @@ classes:
       end:
         range: integer
         description: Exclusive offset of position_text in the source segment.
+
+  MaximumAtLeast:
+    description: A bound from below on the largest value of a dimension.
+    attributes:
+      value:
+        required: true
+        range: float
+        description: The number, in the unit of the record (SI for lengths).
+      unit:
+        required: true
+      inclusive:
+        range: boolean
+        description: True for "at least", "or more"; false for "more than", "over".
+      cue_text:
+        required: true
+        description: Exact cue copied from the source statement ("to more than").
+      start:
+        range: integer
+      end:
+        range: integer
+
+  Extent:
+    description: How far a state or relation reaches, as a length.
+    attributes:
+      quality:
+        required: true
+        description: The state or relation measured, a class of config/extent_qualities.tsv.
+      value_low:
+        range: float
+      value_high:
+        range: float
+      value_low_inclusive:
+        range: boolean
+      value_high_inclusive:
+        range: boolean
+      unit:
+        required: true
+
+  PresenceVariable:
+    description: The words by which a flora says that a part may be present or absent.
+    attributes:
+      cue_text:
+        required: true
+        description: Exact cue copied from the source statement ("with or without").
+      start:
+        range: integer
+      end:
+        range: integer
 
   SpecimenCondition:
     description: >-
@@ -1019,6 +1098,10 @@ enums:
     description: Temporal relation used for PO developmental-stage class restrictions.
     permissible_values:
       present_during:
+      present_before:
+        description: The state holds before the stage ("before flowering").
+      present_after:
+        description: The state holds after the stage ("after anthesis").
 
   NormalizationStatus:
     description: Provenance and confidence class of an assertion's ontology normalization.

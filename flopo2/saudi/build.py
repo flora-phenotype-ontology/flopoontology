@@ -385,6 +385,9 @@ class Builder:
         for stage in a.get("developmental_stage_contexts") or []:
             g.add((formal, FB.stage, URIRef(iri(stage["stage_term"]))))
             g.add((formal, FB.stageText, Literal(stage.get("stage_text", ""))))
+            relation = stage.get("temporal_relation") or "present_during"
+            if relation != "present_during":  # "after anthesis", "before flowering" (pattern 24)
+                g.add((formal, FB.stageRelation, Literal(relation.removeprefix("present_"))))
         for state in a.get("bearer_context_qualities") or []:
             g.add((formal, FB.bearerState, URIRef(iri(state))))
             # 'basal leaf', 'lateral vein': the class FLOPO or PO has for this part in this position
@@ -408,6 +411,11 @@ class Builder:
             g.add((formal, FB.towards, URIRef(iri(target["target_term"]))))
             g.add((formal, FB.comparison, Literal(target.get("comparison_text", ""))))
             self.used_terms.add(curie(target["target_term"]))
+            if target.get("implied"):  # "paler beneath": the same part at the opposite place (pattern 25)
+                g.add((formal, FB.towardsImplied, Literal(True)))
+                if target.get("counterpart_position"):
+                    g.add((formal, FB.towardsPosition, URIRef(iri(target["counterpart_position"]))))
+                    self.used_terms.add(curie(target["counterpart_position"]))
             for prop, field in ((FB.ratioLow, "ratio_low"), (FB.ratioHigh, "ratio_high")):
                 number = _number(target.get(field))  # "2-3 times as long as the calyx"
                 if number is not None:
@@ -438,6 +446,30 @@ class Builder:
             g.add((formal, FB.countPositionText, Literal(count_position.get("position_text", ""))))
             if count_position.get("landmark_term"):
                 g.add((formal, FB.countLandmark, URIRef(iri(count_position["landmark_term"]))))
+        at_least = a.get("maximum_at_least") or {}
+        if at_least:  # "to more than 1.5 m" (pattern 19): the largest plants are at least this large
+            g.add((formal, FB.maxAtLeast, _number(at_least["value"])))
+            if not at_least.get("inclusive", True):
+                g.add((formal, FB.maxAtLeastExclusive, Literal(True)))
+            uo = unit_uo(at_least["unit"])
+            g.add((formal, FB.unit, URIRef(iri(uo)) if uo else Literal(at_least["unit"])))
+            g.add((formal, FB.unitSymbol, Literal(at_least["unit"])))
+            if uo:
+                self.used_terms.add(curie(uo))
+        extent = a.get("extent") or {}
+        if extent:  # "exserted 5-6 mm" (pattern 20): how far the state reaches
+            for prop, field in ((FB.extentLow, "value_low"), (FB.extentHigh, "value_high")):
+                number = _number(extent.get(field))
+                if number is not None:
+                    g.add((formal, prop, number))
+            uo = unit_uo(extent["unit"])
+            g.add((formal, FB.extentUnit, URIRef(iri(uo)) if uo else Literal(extent["unit"])))
+            g.add((formal, FB.extentUnitSymbol, Literal(extent["unit"])))
+            if uo:
+                self.used_terms.add(curie(uo))
+        if a.get("presence_variable"):  # "with or without stipules" (pattern 23)
+            g.add((formal, FB.presence, Literal("variable")))
+            g.add((formal, FB.presenceText, Literal(a["presence_variable"].get("cue_text", ""))))
         if a.get("value_union_scope") == "across_attributes":  # "simple or branched"
             g.add((formal, FB.unionScope, Literal("across_attributes")))
         for operand in a.get("value_operands") or []:

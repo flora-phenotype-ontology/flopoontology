@@ -163,6 +163,44 @@ BASE <http://phenomebrowser.net/flopo/shapes/>
   fb:phenotypeClass . {0}                      # the number is not that of the whole organ
 } AND ( { fb:low xsd:decimal } OR { fb:high xsd:decimal } )
 
+# --- 19. lower bound on the maximum: "to more than 1.5 m", "to at least 6 cm" ----------------
+<LowerBoundOnTheMaximum> @<TraitRecord> AND {
+  fb:maxAtLeast xsd:decimal ;
+  fb:maxAtLeastExclusive [true] ? ;
+  fb:unit IRI /^http:\/\/purl\.obolibrary\.org\/obo\/UO_[0-9]+$/ ;
+  fb:low . {0} ; fb:high . {0} ;               # no range: how large the largest are is not said
+  fb:phenotypeClass . {0}
+}
+
+# --- 20. measured extent of a state or relation: "exserted 5-6 mm", "connate for 2 mm" --------
+<MeasuredExtent> @<TraitRecord> AND {
+  fb:extentUnit IRI /^http:\/\/purl\.obolibrary\.org\/obo\/UO_[0-9]+$/ ;
+  fb:extentUnitSymbol LITERAL ;
+  fb:low . {0} ; fb:high . {0}                 # the number measures the state, not the part
+} AND ( { fb:extentLow xsd:decimal } OR { fb:extentHigh xsd:decimal } )
+
+# --- 23. optional part: "with or without stipules", "pedicels absent or to 0.5 mm" ------------
+<OptionalPart> @<TraitRecord> AND {
+  fb:quality [obo:PATO_0000467] ;              # present
+  fb:presence ["variable"] ;
+  fb:presenceText LITERAL ;
+  fb:negated [false] ;
+  fb:phenotypeClass . {0}                      # neither presence nor absence holds of every plant
+}
+
+# --- 24. before or after a stage: "nodding after anthesis", "withering before flowering" ------
+<BeforeOrAfterAStage> @<TraitRecord> AND {
+  fb:stage IRI /^http:\/\/purl\.obolibrary\.org\/obo\/(PO|FLOPO)_[0-9]+$/ ;
+  fb:stageRelation ["before" "after"] ;
+  fb:stageText LITERAL
+}
+
+# --- 25. comparison with an implied counterpart: "paler beneath", "the inner smaller" ---------
+<ImpliedCounterpart> @<RelationToAnotherPart> AND {
+  fb:towardsImplied [true] ;
+  fb:towardsPosition IRI /^http:\/\/purl\.obolibrary\.org\/obo\/(PATO|FLOPO)_[0-9]+$/ ?
+}
+
 # --- 16. quality of a whole towards its parts: "leaves alternate", "sepals connate" -----------
 <QualityOfWholeTowardsParts> @<TraitRecord> AND {
   fb:carrier IRI /^http:\/\/purl\.obolibrary\.org\/obo\/(PO|FLOPO)_[0-9]+$/ ;   # the axis or the whorl

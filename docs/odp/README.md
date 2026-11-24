@@ -26,6 +26,17 @@ rules that are checked, and what is known about the pattern in the literature.
 | 16 | [Quality of a whole towards its parts](16-quality-of-a-whole-towards-its-parts.md) | leaves alternate, sepals connate | 2026-11-21 |
 | 17 | [Value defined by a measure](17-value-defined-by-a-measure.md) (defines value classes; no record carries it) | lanceolate, acute, opposite | 2026-11-21 |
 | 18 | [Position of the bearer](18-position-of-the-bearer.md) | basal leaves, lateral umbels, outer bracts | 2026-11-23 ('has position') |
+| 19 | [Lower bound on the maximum](19-lower-bound-on-the-maximum.md) | to more than 1.5 m, to at least 6 cm | 2026-11-24 |
+| 20 | [Measured extent of a state or relation](20-measured-extent-of-a-state.md) | exserted 5-6 mm, connate for 2 mm | 2026-11-24 |
+| 21 | [Growth-form noun](21-growth-form-noun.md) | Lianas, Vines, Twining shrubs | 2026-11-24 |
+| 22 | [Part present at a place](22-part-present-at-a-place.md) | rooting at the nodes | 2026-11-24 |
+| 23 | [Optional part](23-optional-part.md) | with or without stipules, pedicels absent or to 0.5 mm | 2026-11-24 |
+| 24 | [Before or after a stage](24-before-or-after-a-stage.md) | nodding after anthesis, withering before flowering | 2026-11-24 |
+| 25 | [Comparison with an implied counterpart](25-comparison-with-an-implied-counterpart.md) | paler beneath, the inner smaller | 2026-11-24 |
+
+Patterns 19 to 25 come from the second-model review of 23 November 2026
+(`curation/opus-review-2026-11-23/patterns-decided.tsv`): 344 of 466 statements for which the
+reviewer found no pattern fall under them.
 
 Earlier patterns (continuum and transition between two values, stage of development, surface or
 region of the bearer) are described in `docs/annotation-context-patterns.md`.

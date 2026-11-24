@@ -561,6 +561,13 @@ def _season_restrictions(
     return restrictions, True
 
 
+STAGE_RELATIONS = {
+    "present_during": FLOPOANN.present_during_developmental_stage,
+    "present_before": FLOPOANN.present_before_developmental_stage,
+    "present_after": FLOPOANN.present_after_developmental_stage,
+}
+
+
 def _developmental_stage_restrictions(
     graph: Graph, nodes: _Nodes, assertion: dict
 ) -> list[BNode]:
@@ -578,10 +585,11 @@ def _developmental_stage_restrictions(
     if operator not in {"atomic", "one_of", "all_of"}:
         raise ValueError(f"unsupported developmental-stage operator: {operator!r}")
     fillers: list[URIRef] = []
-    seen: set[str] = set()
+    bounded: list[BNode] = []
+    seen: set = set()
     for context in contexts:
         relation = context.get("temporal_relation", "present_during") or "present_during"
-        if relation != "present_during":
+        if relation not in STAGE_RELATIONS:
             raise ValueError(f"unsupported developmental-stage relation: {relation!r}")
         term = _curie_iri(context.get("stage_term"))
         if term is None or not str(term).startswith((OBO + "PO_", OBO + "FLOPO_")):
@@ -589,11 +597,22 @@ def _developmental_stage_restrictions(
                 "developmental stage must be a PO class or reviewed FLOPO-local PO extension: "
                 f"{context.get('stage_term')!r}"
             )
-        if str(term) in seen:
+        if (relation, str(term)) in seen:
             continue
-        seen.add(str(term))
+        seen.add((relation, str(term)))
         graph.add((term, RDF.type, OWL.Class))
+        if relation != "present_during":
+            # "after anthesis", "before flowering" (pattern 24): a relation of its own
+            graph.add((STAGE_RELATIONS[relation], RDF.type, OWL.ObjectProperty))
+            bounded.append(_some(graph, nodes, STAGE_RELATIONS[relation], term))
+            continue
         fillers.append(term)
+    if bounded:
+        if operator == "one_of" and len(contexts) > 1:
+            raise ValueError("alternative stages with 'before' or 'after' are not supported")
+        return bounded + [
+            _some(graph, nodes, FLOPOANN.present_during_developmental_stage, filler) for filler in fillers
+        ]
     if operator == "one_of" and len(fillers) > 1:
         return [
             _some(
@@ -885,7 +904,7 @@ def _taxon_class(graph: Graph, record: dict) -> URIRef | None:
 
 
 def _strict(assertion: dict, unqualified_as_universal: bool) -> bool:
-    if assertion.get("qualitative_value_relation") or assertion.get("specimen_condition") or assertion.get("count_position"):
+    if assertion.get("qualitative_value_relation") or assertion.get("specimen_condition") or assertion.get("count_position") or assertion.get("maximum_at_least") or assertion.get("presence_variable"):
         return False  # "black when dry" is not a claim about the living plant; "4-6 per side" not a total
     # Entailing degree operands keep strict eligibility; operand-level frequency or
     # approximation makes the claim qualified (schema extension E2).
@@ -1147,6 +1166,8 @@ def _declare_vocabulary(graph: Graph) -> None:
         HAPPENS_DURING,
         FLOPOANN.present_during,
         FLOPOANN.present_during_developmental_stage,
+        FLOPOANN.present_before_developmental_stage,
+        FLOPOANN.present_after_developmental_stage,
         FLOPOANN.has_value_unit,
         FLOPOANN.in_geographic_context,
         FLOPOANN.has_source_statement,
@@ -1282,7 +1303,7 @@ def build_assertion_ontology(
                     )
                 qualitative_relation = bool(assertion.get("qualitative_value_relation"))
                 structured_operands = not operands_fac_representable(assertion) or bool(
-                    assertion.get("specimen_condition") or assertion.get("count_position")
+                    assertion.get("specimen_condition") or assertion.get("count_position") or assertion.get("maximum_at_least") or assertion.get("presence_variable")
                 )
                 description: URIRef | None = None
                 if qualitative_relation or structured_operands:
@@ -1472,7 +1493,7 @@ def build_annotation_class_module(
                         continue
                     for assertion in json.loads(line).get("assertions", []) or []:
                         if assertion.get("qualitative_value_relation") or not operands_fac_representable(assertion) or (
-                            assertion.get("specimen_condition") or assertion.get("count_position")
+                            assertion.get("specimen_condition") or assertion.get("count_position") or assertion.get("maximum_at_least") or assertion.get("presence_variable")
                         ):
                             continue  # no annotation class (as in build_assertion_ontology)
                         description = URIRef(ensure_annotation_class_iri(assertion))

@@ -57,7 +57,8 @@ def class_linked(assertion: dict) -> bool:
     from flopo2.annotation.operands import operands_fac_representable
 
     return not (assertion.get("qualitative_value_relation") or not operands_fac_representable(assertion)
-                or assertion.get("specimen_condition") or assertion.get("count_position"))
+                or assertion.get("specimen_condition") or assertion.get("count_position")
+                or assertion.get("maximum_at_least") or assertion.get("presence_variable"))
 
 
 def apply(assertion: dict, text: str, words: dict, pattern: re.Pattern) -> str:

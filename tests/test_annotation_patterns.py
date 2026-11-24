@@ -390,3 +390,155 @@ def test_arrangement_is_a_quality_of_the_axis_and_fusion_of_the_whorl(res):
     assert annotation_class_iri(leaves) != annotation_class_iri({k: v for k, v in leaves.items() if k != "carrier"})
     assert leaves["phenotype_class_iri"] == annotation_class_iri(leaves)
 
+
+
+# --- patterns 19 to 25 (second-model review of 2026-11-23) ---------------------------------------
+
+
+def test_to_more_than_is_a_lower_bound_on_the_maximum_without_range_or_class(res):
+    text = "Subshrubs to more than 1.5 m high."
+    (a,), _ = annotate(res, text, {"entity_en": "whole plant", "quality_en": "height", "value_high": 1.5, "unit": "m",
+                                   "source_en": "Subshrubs to more than 1.5 m high"})
+    bound = a["maximum_at_least"]
+    assert (a["po_id"], a["pato_id"], bound["value"], bound["unit"], bound["inclusive"]) == ("PO_0000003", "PATO_0000119", 1.5, "m", False)
+    assert text[bound["start"]:bound["end"]] == "to more than"
+    assert a.get("value_low") is None and a.get("value_high") is None and not a.get("phenotype_class_iri")
+    assert issues(a, text) == []
+    assert "maximum_at_least_with_range" in issues({**a, "value_high": 1.5}, text)
+    assert "maximum_at_least_with_phenotype_class" in issues({**a, "phenotype_class_iri": "http://example.org/c"}, text)
+    from flopo2.owl.assertions import _strict
+
+    assert _strict({**a, "gate": {"status": "accepted"}}, True) is False
+
+
+def test_or_longer_after_a_number_is_the_same_bound_and_at_least_is_inclusive(res):
+    (a,), _ = annotate(res, "Petioles up to 4 cm long or longer.", {
+        "entity_en": "petiole", "quality_en": "length", "value_high": 4, "unit": "cm", "source_en": "Petioles up to 4 cm long or longer"})
+    assert a["maximum_at_least"]["value"] == 4.0 and a["maximum_at_least"]["inclusive"] is True
+    (b,), _ = annotate(res, "Tuber to at least 6 cm diam.", {
+        "entity_en": "tuber", "quality_en": "diameter", "value_high": 6, "unit": "cm", "source_en": "Tuber to at least 6 cm diam"})
+    assert b["maximum_at_least"]["inclusive"] is True
+
+
+def test_a_rare_exceedance_is_not_a_bound_on_the_maximum(res):
+    assertions, dispositions = annotate(res, "Plants rarely to more than 1 m high.", {
+        "entity_en": "whole plant", "quality_en": "height", "value_high": 1, "unit": "m", "source_en": "rarely to more than 1 m high"})
+    assert not any(a.get("maximum_at_least") for a in assertions)
+
+
+def test_a_number_beside_a_state_is_its_extent_and_the_class_is_that_of_the_state(res):
+    text = "Filaments exserted 5.5-6.5 mm."
+    (a,), _ = annotate(res, text, {"entity_en": "filament", "quality_en": "exserted", "value_low": 5.5, "value_high": 6.5,
+                                   "unit": "mm", "source_en": "exserted 5.5-6.5 mm"})
+    assert (a["po_id"], a["pato_id"]) == ("PO_0009067", "PATO_0000623")
+    assert a["extent"] == {"quality": "PATO_0000623", "value_low": 5.5, "value_high": 6.5, "unit": "mm"}
+    assert a.get("value_low") is None and a.get("value_high") is None
+    (plain,), _ = annotate(res, "Filaments exserted.", {"entity_en": "filament", "quality_en": "exserted", "source_en": "Filaments exserted"})
+    assert a["phenotype_class_iri"] == plain["phenotype_class_iri"] and issues(a, text) == []
+    assert "extent_with_measurement" in issues({**a, "value_low": 5.5}, text)
+    assert "extent_of_another_quality" in issues({**a, "extent": {**a["extent"], "quality": "PATO_0000122"}}, text)
+
+
+def test_a_number_beside_a_value_that_takes_no_extent_stays_unresolved(res):
+    assertions, dispositions = annotate(res, "Leaves glabrous 3 mm.", {
+        "entity_en": "leaf", "quality_en": "glabrous", "value_low": 3, "value_high": 3, "unit": "mm", "source_en": "glabrous 3 mm"})
+    assert assertions == [] and dispositions[0].reason == "numeric_quality_not_pato_attribute"
+
+
+def test_a_growth_form_noun_states_the_habit_of_the_whole_plant(res):
+    (liana,), _ = annotate(res, "Lianas to 12 m.", {"entity_en": "whole plant", "quality_en": "liana", "source_en": "Lianas"})
+    assert (liana["po_id"], liana["value_terms"]) == ("PO_0000003", ["FLOPO_0991412"]) and liana.get("phenotype_class_iri")
+    (twiner,), _ = annotate(res, "Deciduous twining shrubs.", {"entity_en": "whole plant", "quality_en": "twining", "source_en": "twining"})
+    assert twiner["value_terms"] == ["FLOPO_0991411"]
+    (vine,), _ = annotate(res, "Vines woody.", {"entity_en": "whole plant", "quality_en": "vine", "source_en": "Vines"})
+    assert vine["value_terms"] == ["FLOPO_0991108"]
+
+
+def test_rooting_at_the_nodes_is_a_root_present_at_the_node(res):
+    (a,), _ = annotate(res, "Stems creeping, rooting at the nodes.", {
+        "entity_en": "stem", "quality_en": "rooting at the nodes", "source_en": "rooting at the nodes"})
+    assert (a["po_id"], a["pato_id"], a["bearer_container"]) == ("PO_0000042", "PATO_0000467", "PO_0020141")
+    assert not a.get("negated") and a.get("phenotype_class_iri")
+
+
+def test_with_or_without_a_part_is_variable_presence_without_a_class(res):
+    text = "Plants with or without stolons."
+    (a,), _ = annotate(res, text, {"entity_en": "stolon", "quality_en": "present", "source_en": "with or without stolons"})
+    cue = a["presence_variable"]
+    assert (a["po_id"], a["pato_id"], a.get("negated", False)) == ("PO_0003024", "PATO_0000467", False)
+    assert text[cue["start"]:cue["end"]] == "with or without" and not a.get("phenotype_class_iri")
+    assert a["gate"]["status"] == "accepted" and issues(a, text) == []
+    assert "presence_variable_with_phenotype_class" in issues({**a, "phenotype_class_iri": "http://example.org/c"}, text)
+    assert "presence_variable_without_presence" in issues({**a, "negated": True, "negation_scope": "absence"}, text)
+
+
+def test_absent_or_with_a_measurement_is_variable_presence(res):
+    text = "Pedicels absent or to 0.5 mm."
+    (a,), _ = annotate(res, text, {"entity_en": "pedicel", "quality_en": "absent", "source_en": "Pedicels absent or to 0.5 mm"})
+    assert a["pato_id"] == "PATO_0000467" and not a.get("negated") and a["presence_variable"]["cue_text"] == "absent or"
+
+
+def test_after_a_stage_is_a_relation_of_its_own_and_another_class_than_at_the_stage(res):
+    text = "Pedicels nodding after anthesis."
+    (after,), _ = annotate(res, text, {"entity_en": "pedicel", "quality_en": "nodding", "stage": "after anthesis",
+                                       "source_en": "nodding after anthesis"})
+    context = after["developmental_stage_contexts"][0]
+    assert (context["stage_term"], context["temporal_relation"]) == ("PO_0007616", "present_after")
+    assert text[context["start"]:context["end"]] == "after anthesis" and issues(after, text) == []
+    (during,), _ = annotate(res, "Pedicels nodding at anthesis.", {"entity_en": "pedicel", "quality_en": "nodding", "stage": "at anthesis",
+                                                                    "source_en": "nodding at anthesis"})
+    assert during["developmental_stage_contexts"][0]["temporal_relation"] == "present_during"
+    assert after["phenotype_class_iri"] != during["phenotype_class_iri"]
+    (before,), _ = annotate(res, "Leaves withered before flowering.", {"entity_en": "leaf", "quality_en": "withered", "stage": "before flowering",
+                                                                        "source_en": "withered before flowering"})
+    assert before["developmental_stage_contexts"][0]["temporal_relation"] == "present_before"
+
+
+def test_the_stage_relation_is_written_in_owl_with_its_own_property():
+    from rdflib import Graph
+
+    from flopo2.owl import assertions as owl
+
+    graph = Graph()
+    owl._developmental_stage_restrictions(graph, owl._Nodes(), {"developmental_stage_contexts": [
+        {"stage_term": "PO_0007616", "temporal_relation": "present_after", "stage_text": "after anthesis"}]})
+    used = {str(o) for _, p, o in graph if str(p).endswith("onProperty")}
+    assert used == {str(owl.FLOPOANN.present_after_developmental_stage)}
+
+
+def test_paler_beneath_compares_the_two_sides_of_the_blade(res):
+    text = "Leaf blades paler beneath."
+    (a,), _ = annotate(res, text, {"entity_en": "leaf blade", "quality_en": "paler", "source_en": "paler beneath"})
+    target = a["towards"]
+    assert (a["po_id"], a["pato_id"], target["target_term"], target["implied"]) == ("PO_0000049", "PATO_0000328", "PO_0000050", True)
+    assert text[target["start"]:target["end"]] == "beneath" and target["comparison_text"] == "paler"
+    assert a.get("phenotype_class_iri") and issues(a, text) == []
+
+
+def test_the_inner_smaller_compares_with_the_same_part_at_the_opposite_position(res):
+    text = "Anthers 6, the inner smaller."
+    (a,), _ = annotate(res, text, {"entity_en": "anther", "quality_en": "smaller", "source_en": "the inner smaller"})
+    target = a["towards"]
+    assert (a["po_id"], a["pato_id"], a["bearer_context_qualities"]) == ("PO_0009066", "PATO_0000587", ["FLOPO_0991378"])
+    assert (target["target_term"], target["counterpart_position"], target["implied"]) == ("PO_0009066", "FLOPO_0991379", True)
+    assert text[target["start"]:target["end"]] == "inner" and issues(a, text) == []
+    assert "counterpart_is_another_part" in issues({**a, "towards": {**target, "target_term": "PO_0009029"}}, text)
+
+
+def test_a_negated_or_placeless_comparison_stays_unresolved(res):
+    for text, source in (("Leaf blade not paler beneath.", "not paler beneath"), ("Anthers smaller.", "Anthers smaller")):
+        assertions, dispositions = annotate(res, text, {"entity_en": "leaf blade" if "Leaf" in text else "anther",
+                                                         "quality_en": source.split()[-2] if "not" in source else "smaller",
+                                                         "source_en": source})
+        assert assertions == [] and dispositions[0].status == "unresolved"
+
+
+def test_or_more_without_to_is_a_lower_bound_on_every_plant(res):
+    (a,), _ = annotate(res, "Sori with 8 or more sporangia.", {
+        "entity_en": "sporangium", "quality_en": "number", "value_low": 8, "value_high": 8, "unit": "count",
+        "source_en": "Sori with 8 or more sporangia"})
+    assert (a["value_low"], a.get("value_high")) == (8.0, None) and not a.get("maximum_at_least")
+    assert a["gate"]["status"] == "accepted" and a.get("phenotype_class_iri")
+    (b,), _ = annotate(res, "Trees to 25 m or more.", {
+        "entity_en": "whole plant", "quality_en": "height", "value_high": 25, "unit": "m", "source_en": "Trees to 25 m or more"})
+    assert b["maximum_at_least"]["value"] == 25.0 and b["gate"]["status"] == "accepted"
