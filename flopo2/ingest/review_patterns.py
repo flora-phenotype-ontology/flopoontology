@@ -36,12 +36,23 @@ _MAXIMUM_AT_LEAST = re.compile(
 _RARE = re.compile(r"\b(?:rarely|seldom|never|not|scarcely|hardly|occasionally|sometimes)\b", re.IGNORECASE)
 
 
+def _numbers(low, high) -> set | None:
+    """The numbers of a row; ``None`` when a slot holds a word (Qwen writes "width", "lanceolate")."""
+
+    try:
+        return {float(v) for v in (low, high) if v is not None and v != ""}
+    except (TypeError, ValueError):
+        return None
+
+
 def maximum_at_least(span_text: str, low, high) -> dict | None:
     """"to more than 1.5 m": the largest plants are larger than the number, and how large is not
     said. ``{value, inclusive, cue_text, cue_start, cue_end}`` (offsets within the span); ``None``
     when the span has no such cue, a range, or a word that makes the bound a rare case."""
 
-    numbers = {float(v) for v in (low, high) if v is not None}
+    numbers = _numbers(low, high)
+    if numbers is None:
+        return None
     if len(numbers) != 1 or _RARE.search(span_text):
         return None
     found = _MAXIMUM_AT_LEAST.search(span_text)
@@ -63,7 +74,9 @@ def lower_bound_tail(span_text: str, low, high) -> bool:
     """"8 or more sporangia", "1 m or more in diameter": one number with "or more" after it and no
     "to" before it is a lower bound (pattern 02)."""
 
-    numbers = {float(v) for v in (low, high) if v is not None}
+    numbers = _numbers(low, high)
+    if numbers is None:
+        return False
     found = _MAXIMUM_AT_LEAST.search(span_text)
     return bool(len(numbers) == 1 and found and found.group("tail") and not _RARE.search(span_text)
                 and re.search(r"\d", span_text[:found.start()]) and maximum_at_least(span_text, low, high) is None)

@@ -542,3 +542,11 @@ def test_or_more_without_to_is_a_lower_bound_on_every_plant(res):
     (b,), _ = annotate(res, "Trees to 25 m or more.", {
         "entity_en": "whole plant", "quality_en": "height", "value_high": 25, "unit": "m", "source_en": "Trees to 25 m or more"})
     assert b["maximum_at_least"]["value"] == 25.0 and b["gate"]["status"] == "accepted"
+
+
+def test_bound_readers_ignore_rows_whose_number_slot_holds_a_word():
+    from flopo2.ingest import review_patterns
+
+    assert review_patterns.maximum_at_least("to more than 1.5 m", "height", None) is None
+    assert review_patterns.lower_bound_tail("8 or more sporangia", "numerous", None) is False
+    assert review_patterns.lower_bound_tail("8 or more sporangia", 8, None) is True

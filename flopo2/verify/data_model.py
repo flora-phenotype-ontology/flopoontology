@@ -115,7 +115,7 @@ def _load_attribute_ids(path: Path) -> set[str]:
         }
 
 
-def _own_disjunction(parsed) -> bool:
+def _own_disjunction(parsed, source_text: str | None = None) -> bool:
     """An "or" in the statement's words that the assertion does not account for: "4 or 5" is
     its range 4-5, "or nearly so" its approximation cue (flopo2.verify.gates)."""
 
@@ -127,7 +127,7 @@ def _own_disjunction(parsed) -> bool:
 
     factor = parsed.unit_conversion_factor
     return unexplained_disjunction(
-        parsed.source_text, source_number(parsed.value_low, factor), source_number(parsed.value_high, factor), cue
+        parsed.source_text if source_text is None else source_text, source_number(parsed.value_low, factor), source_number(parsed.value_high, factor), cue
     )
 
 
@@ -279,7 +279,8 @@ def pattern_issues(
     if position is not None:
         if not _span_ok(text, position.position_text, position.start, position.end):
             out.append(("count_position_text_not_verbatim", repr(position.position_text)))
-        if norm(parsed.quality) != "PATO_0000070" or (parsed.value_low is None and parsed.value_high is None):
+        if norm(parsed.quality) != "PATO_0000070" or (
+                parsed.value_low is None and parsed.value_high is None and parsed.maximum_at_least is None):
             out.append(("count_position_without_count", str(parsed.quality)))
         if parsed.phenotype_class_iri:
             out.append(("count_position_with_phenotype_class", parsed.phenotype_class_iri))
@@ -1481,16 +1482,27 @@ def _validate_assertion(
         parsed.source_start,
         parsed.source_end,
     )
+    open_bound = parsed.maximum_at_least is not None or (
+        parsed.value_low is not None and parsed.value_high is None)
+    own_source = parsed.source_text
+    if open_bound:
+        # "to 4 cm or longer", "8 or more": the "or" belongs to a bound that is open above (gates)
+        from flopo2.verify.gates import BOUND_TAIL
+
+        source_context = BOUND_TAIL.sub(" ", source_context)
+        own_source = BOUND_TAIL.sub(" ", own_source or "")
     if (
         parsed.value_operator == "atomic"
         # A qualitative value relation is the representation of "X or Y" / "X to Y".
         and not parsed.qualitative_value_relation
+        # "with or without stipules": the "or" is the statement (pattern 23)
+        and parsed.presence_variable is None
         # two alternatives that ground to one class ("scarlet or sealing-wax red"), recorded by
         # flopo2.verify.migrate_colour_backbone
         and not any(str(p).startswith("alternatives_collapsed:") for p in (parsed.mapping_provenance or ()))
         and _gate_disjunction(source_context)
         and (
-            _own_disjunction(parsed)
+            _own_disjunction(parsed, own_source)
             or (
                 gate_status_hint == "accepted"
                 and not _clause_disjunction_is_off_topic(source_context, parsed.quality)
@@ -1502,7 +1514,7 @@ def _validate_assertion(
             line_number,
             (
                 "atomic_source_contains_disjunction"
-                if _own_disjunction(parsed)
+                if _own_disjunction(parsed, own_source)
                 else "accepted_atomic_clause_contains_disjunction"
             ),
             repr(source_context),
