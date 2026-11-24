@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P01800",
+  "decision": "missing_term",
+  "target": "interfoliolar segment: the part of a (pinna) rachis between two successive leaflet insertions",
+  "fix": "Add a FLOPO anatomy class 'interfoliolar segment' (part of leaf rachis). Then the statement is a length range with an extreme (pattern 05). 'the longer' picks out members of a series and stays as an RDF qualifier.",
+  "reason": "The measurement is an ordinary length; the problem is that the bearer has no class in PO or FLOPO.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01801",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read '(to N unit)' after an opening parenthesis, and after a size adjective like 'long', as an inclusive upper bound (bract length <= 11 mm). 'subtending branches' is a position of the bract that can stay in the record.",
+  "reason": "'to' is a supported cue, but here it is in parentheses after 'long'. The diagnostic paragraph is still about this taxon.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01802",
+  "decision": "transcription_error",
+  "target": "entity pedicel of pistillate flower; quality accrescent (FLOPO:0991082) / length",
+  "fix": "Re-transcribe as: the pedicel of the female flower (pattern 12) is accrescent (FLOPO:0991082), with a length up to 10 mm when it has grown (pattern 02, after a stage). The flower is not the bearer.",
+  "reason": "The entity was given as 'flower' and the quality as 'pedicel'. The text says the pedicel of the ♀ flowers grows to 10 mm.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01803",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Use 07a: one_of ovate (FLOPO:0991024) | obovate (PATO:0001936), with 'often' as the frequency. Allow value_qualifier approximately on one operand ('somewhat obovate'), the same way pattern 08 allows a frequency per operand.",
+  "reason": "Both values are 2-D shapes. Right now the degree cue on one operand blocks the union.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01804",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Add the Spanish forms 'ligulada/liguladas/ligulado' to the reviewed 'ligulate' rule (C189 -> strap-shaped PATO:0002430). The stage reason is spurious: there is no stage word in the clause.",
+  "reason": "Leaves ligulate is the basic pattern; only the Spanish form is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01805",
+  "decision": "existing_pattern",
+  "target": "docs/odp/18-position-of-the-bearer.md",
+  "fix": "Grounding rule: after 'sepals in 2 whorls', 'inner whorl' and 'outer whorl' mean sepal + position inner (FLOPO:0991378) or outer. Then 07a over the shape values, with the compound 'ovate-elliptic' split into its two values, as the continuum pattern does.",
+  "reason": "'whorl' stands in for the organ of the sentence and is not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01806",
+  "decision": "missing_term",
+  "target": "contraligule: a ligule-like appendage at the mouth of a leaf sheath, on the side opposite the blade (Cyperaceae, e.g. Scleria)",
+  "fix": "Add a FLOPO anatomy class 'contraligule' (part of the leaf sheath). The value 'barbate' already maps to bearded (FLOPO:0991118), and 'usually' is the frequency.",
+  "reason": "The value and the frequency are covered; only the bearer has no class.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01807",
+  "decision": "existing_pattern",
+  "target": "docs/odp/01-approximate-value.md",
+  "fix": "Add French 'ou presque' (and 'ou à peu près') as a cue: 'glabres ou presque' becomes glabrous (PATO:0000453) with value_qualifier approximately. English 'or nearly so' is already read this way. Bearer: secondary veins.",
+  "reason": "'X or nearly so' is implemented in English only.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01808",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "count_word many, bearer stamen, container flower with the quality male (staminate), as in pattern 12 'part of a qualified whole'. 'less in number' in perfect flowers is a separate comparison and is left out.",
+  "reason": "'numerous' is an indefinite count, and patterns 12 and 13 together cover the qualified flower.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01809",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Join 'oblong- oblanceolate' into one word and split the compound into its values, giving one_of oblong (PATO:0000946) | oblanceolate (PATO:0002330). Keep the compound as the text of the operand.",
+  "reason": "A union whose operand is a hyphenated intermediate shape is not read yet; the extra space breaks the compound.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01810",
+  "decision": "existing_pattern",
+  "target": "docs/odp/15-absence-of-a-part.md",
+  "fix": "Add the rule epunctate -> negated_value punctate (PATO:0001512), negation_scope quality. The gate should accept a privative word matched by a negated_value rule as its own negation cue. The bearer is the corolla lobe and is better grounded as such than as petal.",
+  "reason": "The negation is part of the word (e-), so the gate finds no separate cue.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01811",
+  "decision": "existing_pattern",
+  "target": "docs/odp/18-position-of-the-bearer.md",
+  "fix": "'central' with leaflet is already read as median (FLOPO:0991381). The values need 07a with each compound (oblong-elliptic, obovate-elliptic) flattened into its values: one_of oblong | elliptic | obovate.",
+  "reason": "The position is covered; the block is the union of two compound shapes.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01812",
+  "decision": "new_pattern",
+  "target": "alternative bearers",
+  "fix": "Count 1-2 of a union of parts on the ventral leaf margin: 'has part' some ((tooth or trichome) and 'part of' some ventral margin), with the bounds on that count. In RDF, two fb:bearer values plus fb:bearerOperator one_of.",
+  "reason": "The disjunction is between two counted parts ('teeth or cilia'), not between values.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01813",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Grounding rule for older North American grass descriptions: 'first scale' of a spikelet means lower glume (PO:0006002). With that container, '7-nerved' is a count of 7 veins. The 'fourth scale' (lemma) needs a similar rule.",
+  "reason": "The 'N-nerved' split works; the container 'first scale' is not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01814",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "count_word many: bearer stem, container whole plant, quality present (PATO:0000467).",
+  "reason": "'Stems numerous' is the example of pattern 13.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01815",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md",
+  "fix": "Split the joint bearer (rachis, costa) into two records. Add 'stramineous' -> straw yellow (PATO_0104343). Read 'abaxially' on an axis (rachis, costa) as a pinned BSPO abaxial region; the surface rule only takes dorsiventral organs.",
+  "reason": "This is the slot-1 place-on-the-part case (kind C), but 'abaxially' on axes and the word 'stramineous' are missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01816",
+  "decision": "new_pattern",
+  "target": "part at a position",
+  "fix": "The statement is the presence of shoot-borne roots (PO:0000042) at the stem nodes of the basal region: 'has part' some ('shoot-borne root' and 'part of'/attached to some (stem node and 'part of' some basal region of stem)). In RDF: bearer the root, plus the container and the position.",
+  "reason": "This is a process phrase whose content is a part present at a place. The context doc lists that as open.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01817",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground 'bract-like scale(s)' on a stem as scale leaf (PO:0006003), optionally with bract-like (FLOPO:0991200). Count 1-3 with container stem; 'above leaves' is a position that can stay in the record.",
+  "reason": "The count and the container (stem) are clear; only the counted part's word has no rule.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01818",
+  "decision": "missing_term",
+  "target": "disarticulating: of a spikelet or rachilla, breaking apart at the joints at maturity so that the florets fall separately ('breaking up from the apex': from the top downward)",
+  "fix": "Add a FLOPO value 'disarticulating' (bearers spikelet and rachilla), possibly with a subclass for disarticulation from the apex downward. 'rhachilla fragile' supports the same value.",
+  "reason": "This is a dispersal quality of grass spikelets with no PATO or FLOPO class.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01819",
+  "decision": "transcription_error",
+  "target": "entity trichome (PO:0000282) on twig; quality length",
+  "fix": "Re-transcribe as: hair length 0.1-0.2 mm, with the twig (stem) as container. 'hairs' is the bearer, not the quality.",
+  "reason": "The entity was given as 'stem' and the quality as 'hairs', but the numbers are the length of the hairs.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01820",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Take the value word: 'narrowly ovoid' becomes ovoid (as the lexicon grounds it), with 'narrowly' kept as a width modifier in the record. '1–1.7 cm' is a separate length statement with a unit; the unit error is spurious.",
+  "reason": "The transcribed quality is the attribute 'shape', but the statement has the value word, and the basic pattern covers it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01821",
+  "decision": "existing_pattern",
+  "target": "docs/odp/15-absence-of-a-part.md",
+  "fix": "Rule R0020 (eciliate -> not ciliated, PATO_0001408) already exists. The gate has to accept the privative word as its own negation cue. Bearer: sepal margin.",
+  "reason": "The term rule is there; only the negation-cue gate blocks the statement.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01822",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground the sentence organ 'empty scales' (sterile glumes/lemmas in the older North American grass descriptions) as the container, with the region apex. Read '2-toothed or 2-lobed' as a count of 2 lobes ('toothed' and 'lobed' here describe the same division).",
+  "reason": "The 'N-lobed' split works; the container is the old 'scale' term and is not grounded.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01823",
+  "decision": "new_pattern",
+  "target": "growth form",
+  "fix": "A reviewed table splits each habit noun into (whole plant, value) pairs, which become an intersection in OWL. 'vine' becomes whole plant + climbing (FLOPO:0991108); 'herbaceous' is a second value. Where a named FLOPO habit class exists, link it as fb:flopoClass.",
+  "reason": "Habit nouns currently map to a FLOPO class with no EQ form, so no record can be built.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01824",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Add 'peeling off in strips' and 'peeling off' as synonyms or a rule for exfoliating (FLOPO:0991021). Its definition already names strips, and 'peeling' is already a synonym.",
+  "reason": "The term exists; this process wording of it is not matched.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01825",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Ground the bearer 'scape-bracts' as bracts on the peduncle and the value as red. 'with thin bases' is a separate statement (bract base thin). The unit reason is spurious.",
+  "reason": "The basic colour statement was misrouted, and the hyphenated bearer is not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01826",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept 'to' right after '(' as an inclusive upper bound: blade of the cauline leaf (PO:0000013) length <= 10 cm. 'smaller distally' (a gradient) is a separate statement and is left out.",
+  "reason": "The cue is supported, but the parenthesis and the clause after it stop the parser.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01827",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Add 'reaching (the) X' as an equality cue next to 'equalling': the style is as long as, or at the level of, the anthers (towards anther). In Primula this is the homostyly character.",
+  "reason": "Patterns 09 and 10 have the second-part slot; the cue 'reaching' is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01828",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Read 'containing many flowers' as count_word many: bearer flower, container inflorescence, quality present. Do not hold it as no_ontology_term:count.",
+  "reason": "This is the same as 'many-flowered', which pattern 13 covers.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01829",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Collapse 'narrowly to broadly elliptic' to elliptic (PATO:0000947), since the degree continuum spans the value. Then use 07a: one_of elliptic | obovate (PATO:0001936) | oblong (PATO:0000946).",
+  "reason": "All three are 2-D shapes; only the degree continuum on the first value blocks the union.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01830",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md",
+  "fix": "Match context words case-insensitively ('At apex' is in the table as 'at apex'). Spadix diameter (PATO:0001334) <= 9 mm in the apical region, pattern 02 with slot 1.",
+  "reason": "The region reading exists; the capital letter, or the second 'at base' bound in the same clause, keeps it from matching.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01831",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add French 'dépassant' as the 'exceeding' cue, and read 'ne ... pas' as negation_scope quality: corolla not longer than the calyx (towards calyx).",
+  "reason": "Comparison by 'exceeding' is implemented in English only; the French negated form is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01832",
+  "decision": "new_pattern",
+  "target": "optional part",
+  "fix": "State no presence in OWL, because 'present or absent' is a tautology. Mark the record fb:presence 'variable'. The qualities of the part when present (small, linear, basal) stay in RDF with the scope 'when present'.",
+  "reason": "The presence union says nothing; only the qualities of the bract when present have content.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01833",
+  "decision": "new_pattern",
+  "target": "growth form",
+  "fix": "Split 'climbing shrub' into whole plant + climbing (FLOPO:0991108) and whole plant + shrubby/frutescent, written as an intersection in OWL. Link the FLOPO habit class as fb:flopoClass.",
+  "reason": "This is the same habit-noun construction as P01823.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01834",
+  "decision": "existing_pattern",
+  "target": "docs/odp/15-absence-of-a-part.md",
+  "fix": "Grounding rule for moss treatments: 'specialized asexual reproduction absent' becomes gemma (PO:0025614) absent, at the least. Other propagules (brood bodies, flagelliform branches) can be added as further absences.",
+  "reason": "The process wording stands for the absence of propagules, which is an absence of a part.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01835",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "When 'thick' follows a number with a unit, ground it to the attribute thickness (PATO:0000915): rhizome thickness 1.5-5 mm.",
+  "reason": "This is a plain measurement; the value word 'thick' was taken where the attribute should be.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01836",
+  "decision": "new_pattern",
+  "target": "gradient along a series",
+  "fix": "Bearer: involucral bracts. Quality: length, with an fb:gradient 'decreasing' along the series (outer to inner). OWL can only state 'has member' some bract per position; the gradient stays in RDF until there are position-indexed members.",
+  "reason": "This compares the members of one series and has no single value; there is no pattern for it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01837",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Add 'not numerous' -> count_word few to INDEFINITE_AMOUNTS, with 'usually' as the frequency. Bearer: branch, container branch fascicle.",
+  "reason": "An indefinite count with a negated amount word that is not in the list.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01838",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md",
+  "fix": "Allow 'proximally' (kind region) on leaf blade: flat (PATO:0002305 or as grounded) stated of the pinned BSPO proximal region of the blade. The table reading 'lower part' is now limited to axes.",
+  "reason": "The region slot exists; this bearer is not in the reading of 'proximally'.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01839",
+  "decision": "existing_pattern",
+  "target": "docs/odp/15-absence-of-a-part.md",
+  "fix": "Add the rule efarinose -> negated_value mealy (PATO:0104364), mirroring 'farinose' (C223). The gate should accept the privative word as its own negation cue.",
+  "reason": "The negation is part of the word, as in epunctate and eciliate.",
+  "confidence": "high"
+ }
+]

@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P00760",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept 'to ±' (and 'to c.') as an inclusive upper-bound cue, with '±' read as value_qualifier approximately (pattern 01). Accept the abbreviated unit 'm.' with its period. The bearer is better the stem ('succulent stems to ± 1 m'): length, or height if the grounding rule for stems prefers it.",
+  "reason": "'to ± 1 m' is a plain upper bound with an approximation mark between the cue and the number; both patterns exist, but the parser does not know the combined cue.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00761",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "When the transcribed quality is a bare dimension word ('thick') with value_low/value_high and a length unit, map it to the attribute through _MEASURED_ATTRIBUTE (thick -> thickness PATO:0000915). Today measurements_from_quality handles it only when the number is inside the quality string. Accept 'mm.' with its period. Bearer: twig -> stem/branch per the bearer rules.",
+  "reason": "A thickness measurement of a twig. The attribute exists in PATO, and 'thick' was grounded to the value increased thickness instead of the attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00762",
+  "decision": "new_pattern",
+  "target": "comparison with an implied second term",
+  "fix": "Slots: bearer (the leaflet's abaxial epidermis, from the surface cue 'beneath'), a relational quality (high brightness / lighter colour), and the implied term, the opposite surface (adaxial epidermis). OWL: has part some (leaflet abaxial epidermis and has characteristic some (lightness and towards some leaflet adaxial epidermis)). The leaflet can also be stated discolorous (FLOPO:0991070). RDF: fb:towards with fb:implicitTarget true.",
+  "reason": "'paler ... beneath' compares the lower surface with the upper one, which is not named. The 2026-11-14 review lists this construction as still open.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00763",
+  "decision": "transcription_error",
+  "target": "sepal obtuse",
+  "fix": "Transcribe 'obtuse' as a value (PATO obtuse) without numbers. The bound 'to 28 mm long' is a separate statement: sepal length, upper bound 28 mm (pattern 02).",
+  "reason": "The value 'obtuse' was given the numbers of the next phrase, so it was held as a measurement without a unit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00764",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Grounding rule: the habit nouns 'vine' and 'liana' on the whole plant give the EQ value climbing FLOPO:0991108 (its context words already list liana and vine), not the signature-less lianescent class. 'trailing or high-climbing' is then a union under pattern 07 (creeping FLOPO:0991009 or climbing FLOPO:0991108; the pair needs a row in flora_union_pairs.tsv).",
+  "reason": "Climbing is an EQ value that exists. The row was held only because the habit noun was routed to a FLOPO class without an EQ signature.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00765",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Map French 'épais (de)' with a number and unit to thickness PATO:0000915 (as for 'thick'), and read 'environ' as value_qualifier approximately (pattern 01). The value is peduncle thickness 1 mm.",
+  "reason": "A plain thickness measurement in French. 'épais' was grounded to increased thickness, a value, not to the attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00766",
+  "decision": "transcription_error",
+  "target": "branch trichome PO:0025177, length",
+  "fix": "Entity: the hairs of the twig (branch trichome PO:0025177, or shoot axis trichome PO:0005003). Quality: length PATO:0000122, with a strict upper bound of 0.1 mm (pattern 02, 'less than').",
+  "reason": "The hairs were transcribed as the quality of the stem. The text gives the length of the hairs.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00767",
+  "decision": "existing_pattern",
+  "target": "docs/odp/15-absence-of-a-part.md",
+  "fix": "Bearer rule: 'specialized asexual reproduction' (FNA moss boilerplate) -> asexual propagule FLOPO:0986119 (FLOPO anatomy support class), with present negated and negation_scope absence. config/flora_rejected_bearer_words.tsv rejected 'reproductive structure' because there was no single class; FLOPO:0986119 is that class.",
+  "reason": "The statement is about the absence of propagules (gemmae, brood bodies), not about a process, and FLOPO has a class covering all of them.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00768",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "'later' is already in flora_context_words.tsv (mature PATO:0001701). The missing piece is a lexicon row for 'separated' of florets -> distant FLOPO:0991189 (a quality of the florets towards each other, pattern 16). With 'overlapping at first' (imbricate FLOPO:0991063, young), the pair is a temporal transition, which is already represented.",
+  "reason": "A state at a stage of the spikelet, not a process. The stage cue exists, but the value word has no grounding.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00769",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "Do not annotate 'drying' on its own. Its outcome, the prophyll falling ('rapidly splitting, drying and falling'), is a separate statement: caducous / deciduous of the prophyll.",
+  "reason": "A transient step of a process before the organ falls. It is not a lasting quality of the prophyll.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00770",
+  "decision": "new_pattern",
+  "target": "depth of division",
+  "fix": "OWL: has part some (petal limb and has characteristic some bifurcated PATO:0001784), where 'bifid' is a synonym of bifurcated. RDF: the depth as a fraction of the limb length, fb:divisionDepth low 0.5 with no upper bound, unit ratio, cue 'to middle or more'. 'or more' is an open bound, not a disjunction.",
+  "reason": "The value 'bifid' exists. The depth relative to the organ ('to middle or more') has no slot, and 'or more' was misread as an alternative.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00771",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Read 'at the apex' as count_position kind at_region, with the landmark the leaf-lobe apex. Counted part: tooth; container: leaf lobe; range 1-4. The alternative 'entire, ... or with 1-4 teeth' makes the range 0-4 when the union is folded.",
+  "reason": "A count of teeth at a named region. The kind at_region exists, but the cue was not found or linked.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00772",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Bearer rule: 'lóbulo(s) en la garganta' (corolla-throat lobes, the corona lobes of Apocynaceae) -> the PO corona / corolla appendage class, with region apex (slot 1). Quality: exserted PATO:0000623. Exserted needs no explicit second term (the corolla is implied), as in 'stamens exserted'.",
+  "reason": "The quality exists and is used without a second term elsewhere. The row was held because the throat lobe and its apex were not grounded.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00773",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Resolve the anaphor 'the lower ones' to the preceding part noun 'the teeth' (calyx lobe, PO), with position lower FLOPO:0991377 (pattern 18). The relation 'exceeding the tube' becomes increased length towards the calyx tube, which comparison() already reads.",
+  "reason": "'exceeding X' is a supported comparison. Grounding failed because the bearer is an anaphor and the bearer was transcribed as 'sepal'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00774",
+  "decision": "transcription_error",
+  "target": "pinna glabrous",
+  "fix": "Transcribe pinna glabrous PATO:0000453 with no numbers. 'on both sides' is an unscoped context word.",
+  "reason": "The numbers of a nearby spine length ('to 3 cm long') were attached to 'glabrous', which caused the measurement_missing_unit hold.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00775",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Rule: 'N-flowered verticillasters' -> flower amount N with count_position kind per_node (a verticillaster is the flowers at one node of the inflorescence), landmark inflorescence node, container inflorescence. This avoids a new anatomy class for 'verticillaster', which PO lacks.",
+  "reason": "The count is per pseudo-whorl, which is the per-node count of pattern 14. The container word had no grounding.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00776",
+  "decision": "transcription_error",
+  "target": "stem, extent of the purple-red colour from the base",
+  "fix": "Culm height is the separate value 24-53 cm. '(purple-red) to 4.8–8.1 cm at base' is the length of the coloured basal region. Once that is transcribed correctly, it needs the open pattern 'measured extent of a quality': a colour of the stem base, with the extent as a length in RDF.",
+  "reason": "The extent of a basal colour was transcribed as the height of the stem.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00777",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "'numerous' -> seed amount many (pattern 13), container fruit / capsule ('each seed capsule contains'). 'tiny' and 'about 0.5 mm' are a separate length statement and must not be attached to the count.",
+  "reason": "'numerous' is one of the documented wordings of pattern 13. The row was held as a non-length measurement because the size was mixed in.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00778",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Grounding rule as for 'vine': 'liana(s)' -> whole plant climbing FLOPO:0991108. 'woody' -> PATO woody on the stem / whole plant as a second statement.",
+  "reason": "A habit noun routed to the signature-less lianescent class, while the EQ value climbing exists.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00779",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "'Capitula numerous' -> amount many of capitulum (the PO head inflorescence / capitulum class, not generic inflorescence). The container is the plant; 'in panicles or pseudumbels' is arrangement and is separate.",
+  "reason": "This is exactly the wording of pattern 13. The bearer was too generic and the count was held for lacking a number.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00780",
+  "decision": "transcription_error",
+  "target": "phyllary margin membranous",
+  "fix": "Transcribe the phyllary margin as membranous FLOPO:0991046 with no numbers. '0.1-0.2 mm' is the margin width, a separate statement.",
+  "reason": "The width numbers of the margin were attached to the texture value.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00781",
+  "decision": "existing_pattern",
+  "target": "docs/odp/15-absence-of-a-part.md",
+  "fix": "'wanting' is already in _ABSENCE_AFTER (ncvc_annotate.py:574). Recover negated=true, negation_scope absence and the cue offsets from it when the transcription leaves them out.",
+  "reason": "This is the absence of a part with a known cue. The record lacked the negation fields or their cue span.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00782",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add the row 'denticulate -> tooth' to config/flora_counted_parts.tsv (dentate and toothed are there). Counted part: tooth, amount 3; container: the corolla lamina (ligule) of the ray floret; 'apically' is the region cue (apex).",
+  "reason": "This is an 'N-xed' compound count whose ending is missing from the table.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00783",
+  "decision": "transcription_error",
+  "target": "plant cell PO:0009002 (count of cells at the tooth base)",
+  "fix": "'2-celled base' counts cells, not locules. The 'celled -> locule' row of flora_counted_parts.tsv must not apply to teeth, hairs or bryophyte leaves. The right reading is 2 cells in the base of the marginal tooth (container: tooth); 'one cell long' is a further count.",
+  "reason": "The counted part is wrong: a locule was put in place of a cell.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00784",
+  "decision": "existing_pattern",
+  "target": "docs/odp/15-absence-of-a-part.md",
+  "fix": "'nulla' matches the absence cue nul\\w*. The missing piece is the bearer: 'verticilli IV' (the fourth androecial whorl of Lauraceae) means the stamens / staminodes of that whorl are absent. Ground it with pattern 18 as stamen with position inner FLOPO:0991378 (a lossy reading), or hold it if a whorl-number value is wanted.",
+  "reason": "An absence statement in Latin. It failed on the whorl-numbered bearer, not on the cue.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00785",
+  "decision": "missing_term",
+  "target": "twining: climbing by the stem winding spirally round a support (voluble); child of climbing FLOPO:0991108, sibling of root-climbing FLOPO:0991319; bearer whole plant or stem",
+  "fix": "Add the value and route 'twining' to it instead of the signature-less lianescent class. Until it exists, climbing FLOPO:0991108 is the fallback.",
+  "reason": "Twining is a distinct, common mode of climbing. FLOPO already splits climbing modes (root-climbing).",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00786",
+  "decision": "new_pattern",
+  "target": "projection beyond another part",
+  "fix": "OWL: has part some (stamen filament and has characteristic some exserted PATO:0000623). RDF: the length of the portion beyond the corolla as fb:low 4.5, fb:high 5.5, unit mm, with fb:projectionBeyond the corolla (towards). The number is not a length of the filament and stays out of the class.",
+  "reason": "The measurement is of the exserted portion, a length relative to another part. No pattern carries it.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00787",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Scope the disjunction to its own comma segment. 'very short or obsolete' is a union (decreased length or vestigial PATO:0000588; the pair needs a row in flora_union_pairs.tsv). 'pubescent' is a plain statement, androgynophore pubescent, and must not be held.",
+  "reason": "The 'or' belongs to another value of the same clause. The pubescent statement has no disjunction.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00788",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "The pair caespitose FLOPO:0991007 / mat-forming FLOPO:0991010 is already accepted in flora_union_pairs.tsv. The span must include both operands ('form clumps or mats'), and 'clumps' / 'form clumps' needs a grounding row -> caespitose. 'tends to' is a frequency cue (usually).",
+  "reason": "The transcribed fragment 'or mats' lost its first operand. The union pattern and the pair both exist.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00789",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Cut the statement to the clause 'secondary veins 2(or 3) on each side of midvein'. The cue 'on each side of midvein' then stands once (the whole sentence has it twice, with the teeth). Read '2(or 3)' as the range 2-3, kind each_side, landmark leaf midvein, container leaf blade.",
+  "reason": "The cue was not found once because the transcribed span was the whole sentence.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00790",
+  "decision": "new_pattern",
+  "target": "before or after a stage",
+  "fix": "Bearer: basal leaf FLOPO:0996000 (pattern 18). Quality: withered / wilted. Stage relation 'before' to the PO flowering stage, with frequency usually. The record carries stage_relation before plus the PO stage. The OWL class carries only the bearer and quality, or no class, as for kind A2 (the model has present_during only).",
+  "reason": "'before flowering' is the open 'before/after a stage' qualifier listed in annotation-context-patterns.md.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00791",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "The bare 'thick' with numbers and a unit -> thickness PATO:0000915 (same fix as P00761). Rootstock -> the PO rhizome / caudex per the bearer rules.",
+  "reason": "A plain thickness measurement. Only the attribute mapping of the bare dimension word is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00792",
+  "decision": "existing_pattern",
+  "target": "docs/odp/15-absence-of-a-part.md",
+  "fix": "Add 'ecarinate / ecarinado(s) / ecarinada(s)' to the privative words as quality negation: sepal keel-shaped PATO:0002522 with negated=true and negation_scope quality (the keel is a shape, not a separate part).",
+  "reason": "A privative word whose negation cue is inside the word (prefix e-). The model for negated qualities exists.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00793",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "This is a count with a container, not at a position. Counted part: spine (the PO spine / thorn class per the bearer rules); container: fruit, with the margin as a region. 'entire or with 1--8' folds to the range 0-8. The length 0.1--2.5 mm is a separate statement.",
+  "reason": "'margins ... with 1--8 spines' names the organ that has the spines. It was misread as a per-position count.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00794",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Apply the 'N-xed' split to range prefixes ('1-3-veined'): 'veined -> vein' is in flora_counted_parts.tsv. Counted part: vein, range 1-3, unit count, container leaf blade (mid cauline leaves, position via pattern 18).",
+  "reason": "A compound count whose table row exists. The split did not fire, so the numbers were held without a unit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00795",
+  "decision": "existing_pattern",
+  "target": "docs/odp/16-quality-of-a-whole-towards-its-parts.md",
+  "fix": "Read 'veins contiguous' as a quality of the veins towards each other: approximate FLOPO:0991190 (close together), with a lexicon row 'contiguous' for veins. If 'contiguous' means touching rather than close, hold the row.",
+  "reason": "A spacing quality of like parts. A suitable value exists, but the meaning of 'contiguous' here is uncertain.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00796",
+  "decision": "new_pattern",
+  "target": "distance from a landmark",
+  "fix": "OWL: has part some (trunk/stem and has characteristic some branched PATO:0000402). RDF: fb:distance 3 m (qualifier approximately, 'about') from landmark stem base, cue 'from the base'. The distance stays out of the class.",
+  "reason": "The number is the height at which branching starts, measured from a landmark. No pattern holds such a distance.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00797",
+  "decision": "existing_pattern",
+  "target": "docs/odp/08-alternative-with-frequency.md",
+  "fix": "'simple or occasionally branched' is the accepted pair branched/simple (flora_union_pairs.tsv row 2), with 'occasionally' as the frequency of the second operand ('occasionally' is in _OPERAND_FREQUENCY_WORDS). The parser must take the frequency word between 'or' and the value.",
+  "reason": "The pair and the frequency word are both supported. The annotator did not apply pattern 08.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00798",
+  "decision": "missing_term",
+  "target": "tripinnatisect: cut three times to the midrib, the ultimate segments not stalked; child of pinnatisect FLOPO:0991155, sibling of bipinnatisect FLOPO:0991284 (cf. tripinnatifid FLOPO:0991307)",
+  "fix": "Add the value, plus a rule: '2-pinnatisect' = bipinnatisect FLOPO:0991284 and '3-pinnatisect' = tripinnatisect. '2- or 3-pinnatisect' is then a union of one attribute (pattern 07a).",
+  "reason": "Bipinnatisect and tripinnatifid exist. Tripinnatisect is the one missing member of the series.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00799",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "'épais de 0,2-0,3 cm' -> thickness PATO:0000915 with the decimal comma read as a point (same fix as P00765).",
+  "reason": "A plain thickness measurement in French. Only the attribute mapping of 'épais' is missing.",
+  "confidence": "high"
+ }
+]

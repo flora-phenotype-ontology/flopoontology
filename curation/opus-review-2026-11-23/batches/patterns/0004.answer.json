@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P00160",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Split the clause into two records. (1) Position of the raceme: terminal PATO:0002476 or subterminal PATO:0002475, a union of values of one attribute (pattern 07). (2) Length 10-12 cm of the inflorescence (pattern 00 measurement); the disjunction does not reach the length. The bearer may be refined to a raceme if PO has one.",
+  "reason": "Both values exist in PATO and the length is a plain measurement. The held row mixed the alternative with the length.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00161",
+  "decision": "new_pattern",
+  "target": "region defined by a landmark",
+  "fix": "Bearer: the region of the lamina just below (proximal to) the fertile spike, as part of the lamina and adjacent to the spike. Quality: constricted PATO:0001847, with 'somewhat' as value_qualifier approximately. OWL: has part some (lamina and has part some (region and adjacent to some spike) and has characteristic some constricted). RDF keeps the landmark and the cue 'below the spike'.",
+  "reason": "Constricted exists. The place is set by another part, not by a fixed region such as the apex, base or margin, so slot 1 cannot hold it and pattern 09 does not fit, because constricted is not relational.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00162",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Bearer: upper glume PO:0006004 (from 'the upper' after 'glumes'). Length as a ratio of 0.67-0.75 towards the spikelet. Two things are missing: the cue 'N/M the length of X' with fractions, and resolving the elliptic 'the upper' to the upper glume. The parallel 'the lower 1/3-1/2' is the lower glume PO:0006002 with the same construction.",
+  "reason": "This is a fraction of the length of another part, which pattern 10 covers ('half the length of'). It is not a measurement without a unit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00163",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (row Q14 liana)",
+  "fix": "Give 'liane'/'liana' its entity + quality reading instead of the primitive FLOPO_0900035: whole plant PO:0000003, climbing FLOPO:0991108 and ligneous PATO:0002348. Drop 'Grande' as vague.",
+  "reason": "The fix is the same as P00096 of this review: the values exist, and liana is still a class without an EQ signature.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00164",
+  "decision": "new_pattern",
+  "target": "before or after a stage",
+  "fix": "Bearer: cauline leaf with the position lower ('proximal', pattern 18). Quality: senescent PATO:0001487 (withered). Stage relation: by the flowering stage PO:0007616. OWL holds the quality only; RDF holds fb:byStage.",
+  "reason": "'Withering by flowering' means 'no later than a stage', the same construction as P00052. The model has only present_during.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00165",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/flora_review_rules.tsv (quality rule)",
+  "fix": "Add a quality rule: 'breaking up at maturity' / 'breaking up' → jointed FLOPO:0991154 (the existing rules R0659 and R1568 read 'disarticulating' the same way). The stage 'at maturity' is read by the existing context word (kind A). The bearer is the spikelet; the following clause, 'disarticulating below each fertile floret', gives the place.",
+  "reason": "This is a quality under the name of a process: separating at joints at maturity, which FLOPO jointed already covers.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00166",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "Hypotrachyna is a lichen. Rhizines and the lichen thallus are outside the Plant Ontology, so FLOPO has no bearer for them, and 'sometimes forming a marginal mat' is also only occasional.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00167",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Indefinite count: amount 'many' (numerous) of innovations. Add a bearer grounding row 'innovation(s)' → basal axillary shoot system PO:0005001 (tiller), for grass descriptions. The container is the whole plant (the tuft).",
+  "reason": "'Numerous' is a cue of pattern 13. Only the bearer word is missing a grounding; PO has tiller under basal axillary shoot system.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00168",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (continuum)",
+  "fix": "Read 'oblong-elliptic' as the continuum between oblong and elliptic (qualitative_value_relation, as for linear-lanceolate). 'Young' is the bearer state young (kind A, pattern 04). The length '± 2 mm excluding the stylopodia' is a separate record.",
+  "reason": "A hyphenated compound of two shape values is the continuum pattern. Both values ground, and the stage has a reading.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00169",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add the cue 'jointed with' → articulated with PATO:0002278 to the relation reader. Bearer: achene (fruit). Towards: style (PO). OWL: has part some (fruit and has characteristic some (articulated with and towards some style)). 'Short slender' are separate qualities of the style.",
+  "reason": "PATO has the relational quality, and the second part is named in the clause. Only the cue is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00170",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add the Spanish 'dentado/dentada' → tooth to config/flora_counted_parts.tsv. Count: tooth, amount 3. Container: the labellum, with the apex as a region (slot 1), not a count position. 'Con el diente medio más largo' (the middle tooth longest) is a separate comparison within a series.",
+  "reason": "'3-dentado' is a count in a word. 'Ápice' names the organ that has the teeth, not a place for each count, so pattern 14 does not apply.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00171",
+  "decision": "missing_term",
+  "target": "urn: the spore-bearing body of a moss capsule, between the apophysis (neck) and the operculum",
+  "fix": "Ground 'urn(s)' to a PO moss sporangium class (as a lexicon synonym if PO's moss capsule class fits, otherwise a FLOPO anatomy class). Then pattern 09 applies: apophysis = sporangium base PO:0030040, with decreased length PATO:0000574 and decreased width PATO:0000599, each towards the urn. 'Much' goes in RDF.",
+  "reason": "The second term is stated ('than the urns'), but it does not ground. The PO lexicon has apophysis (sporangium base) and no urn.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00172",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add 'bracted' → bract to config/flora_counted_parts.tsv. Count: bracts 4-7. Container: inflorescence branch, with its proximal sterile part as a region (slot 1, 'sterile base').",
+  "reason": "This is a count in a word on a named organ. The ending 'bracted' is missing from the table, and the 'base' is the region of the container, not a count position.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00173",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The counted part is a cell of the stoma, not a locule: stomata (in the capsule neck) made of 3-6 cells. Restrict the 'celled → locule' row of config/flora_counted_parts.tsv to ovaries, fruits and anthers. For stomata, hairs, annuli and other cellular structures, count plant cells. 'Rudimentary' and 'on neck' are separate records.",
+  "reason": "A moss stoma has no locules. The table row for 'celled' was applied without regard to the bearer.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00174",
+  "decision": "new_pattern",
+  "target": "bound on the maximum",
+  "fix": "Whole plant height whose maximum exceeds 1.5 m: RDF fb:maxAtLeast 1.5 m, with the cue 'to more than'. OWL carries no data range, because the statement bounds the largest plants, not every plant. 'Subshrubs' is a separate habit record.",
+  "reason": "'To more than X' sets a lower bound on the maximum. It is neither the inclusive bound 'to' nor the strict lower bound 'more than' of pattern 02; this construction is listed as open.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00175",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (row Q14 liana)",
+  "fix": "Liana → whole plant climbing FLOPO:0991108 + ligneous PATO:0002348 (as for P00163). 'Fruticose or suffruticose' is a union (pattern 07): woody throughout or woody at the base, on the whole plant. 'Ferruginous-pubescent throughout' is separate.",
+  "reason": "Liana is still the primitive FLOPO_0900035 class, and the alternative is an ordinary union.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00176",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add a grounding rule for the ordinal 'scales' of the grass spikelet in North American Flora (Chase) descriptions: first scale → lower glume PO:0006002, second → upper glume PO:0006004, third → lower (sterile) lemma, fourth → upper lemma. Then: veins 5, container upper glume. 'The first scale wanting' is an absence record (pattern 15).",
+  "reason": "The count is ordinary. The container 'the second [scale]' is the second glume in this terminology and needs a reviewed rule, not a new term.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00177",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "With a number and unit, 'thick' is the attribute thickness PATO:0000915 (or diameter PATO:0001334 for terete axes), not a value. Measurement 3-4 mm. Bearer: leaf-bearing twig = stem of a branch. 'Below lowermost leaf' sets the place of the measurement; it goes in RDF as a cue or is dropped.",
+  "reason": "This is a numeric thickness measurement. The annotator kept 'thick' as a value instead of mapping it to its attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00178",
+  "decision": "missing_term",
+  "target": "ultimate segment: the division of the last order of a dissected (pinnatifid or compound) leaf",
+  "fix": "Add a bearer grounding: 'ultimate segment(s)' → a FLOPO anatomy class (leaf lobe of the last order, part of the leaf), or a reviewed rule to PO leaf lobe if that is accepted. Then pattern 03: teeth 2-3, container the ultimate segment.",
+  "reason": "The count is ordinary, but 'ultimate segment' has no PO or FLOPO class. It is frequent in Apiaceae and fern descriptions.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00179",
+  "decision": "existing_pattern",
+  "target": "config/flora_context_words.tsv (region 'base')",
+  "fix": "'Base' is the region of kind C, not a stage. Bearer: leaflet lamina with its base region (PO base class where PO has one, otherwise pinned BSPO basal region). Quality: cuneate. The annotator must not read 'base' as a developmental stage.",
+  "reason": "'Base' is already in the context table as a region. The row was held as a stage by mistake.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00180",
+  "decision": "existing_pattern",
+  "target": "docs/odp/11-ratio-of-two-dimensions.md",
+  "fix": "Flora Malesiana 'ratio N-M' after an 'L by W' measurement is length:width of the same organ: leaf blade length/width 2.1-5.8, unit ratio. Add 'ratio' (and 'index', as in P00161's context) as a cue after a length-by-width pair.",
+  "reason": "This is a ratio of two dimensions of one organ, which pattern 11 covers. A ratio has no unit, so the 'missing unit' hold is wrong.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00181",
+  "decision": "new_pattern",
+  "target": "description by reference to another part",
+  "fix": "Bearer: sepal of the female flower (pattern 12). The statement says its qualities are those of the sepal of the male flower. Represent it by copying the reviewed records of the referenced bearer to this bearer, each with fb:derivedByReference to the source record and the cue 'semblables à ceux des fleurs ♂'. OWL gets the copied classes only; 'similar' itself has no PATO term.",
+  "reason": "A frequent construction in descriptions of dimorphic flowers. It states no quality of its own and needs the other description to be resolved.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00182",
+  "decision": "existing_pattern",
+  "target": "docs/odp/08-alternative-with-frequency.md",
+  "fix": "Count of ribs (ribbed → rib, already in the table) on the achene margin: 2, or sometimes 3. Operands: 2 and 3 (counts), the second with frequency_qualifier 'sometimes'. Container: the fruit, with its margin region. 'Margin pale' is a separate colour record.",
+  "reason": "This is an alternative with its own frequency over two counts. The table and the pattern both exist.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00183",
+  "decision": "new_pattern",
+  "target": "comparison with an implied second term",
+  "fix": "Bearer: abaxial surface of the leaf blade (leaf lamina abaxial epidermis PO:0000049, slot 1). Colour: decreased saturation or increased brightness, towards the adaxial surface ('upper surface dark green' in the previous clause). OWL with towards; the cue 'paler' and the implied term go in RDF.",
+  "reason": "The second term is implicit (the other surface). This construction is listed as open in annotation-context-patterns.md.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00184",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/flora_review_rules.tsv R0668 (inermes)",
+  "fix": "R0668 reads 'inermes' as negated spiny PATO:0001365. The word itself is the lexical negation cue, so the gate must accept a negated_value rule's matched word as its negation cue. Add the Spanish 'en la parte superior' → region distal (upper part) of the stem to config/flora_context_words.tsv.",
+  "reason": "The term and the rule exist. The gate looked for a separate negation word, which a negated_value rule does not need.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00185",
+  "decision": "new_pattern",
+  "target": "length of a shape feature",
+  "fix": "Two records. (1) Leaf apex acuminate (pattern 00), 'shortly' as a qualifier. (2) The length of the acumen at most 1 cm: bearer acumen (the drawn-out tip, part of the leaf apex), length with an inclusive upper bound of 1 cm (pattern 02 on that bearer). The acumen needs a FLOPO anatomy class or a pinned region.",
+  "reason": "The 1 cm measures the acumen, not the blade. The same construction was named in this review before.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00186",
+  "decision": "existing_pattern",
+  "target": "docs/odp/08-alternative-with-frequency.md",
+  "fix": "Count of flowers per peduncle (container: the cyme on the peduncle): 3 with 'usually'; operands 1 and 7 with 'occasionally'. '1 or 7' are discrete values, not the range 1-7, so the '4 or 5 = range' rule must apply only to adjacent integers.",
+  "reason": "This is an alternative with its own frequency over counts. Only the discrete reading of non-adjacent numbers is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00187",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Indefinite count: root, amount 'few'. Container: the whole plant (or the rhizome). 'Few' is a listed cue of pattern 13 ('leaves few').",
+  "reason": "The cue and the bearer exist. The annotator held the row instead of using pattern 13.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00188",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "Two records, one per subclause. 'Twigs densely pubescent when young': young (kind A). 'Glabrescent with age': old PATO:0000308 (row 'with age'). The 'context word stands once in the clause' check must use the comma-delimited subclause, because each word scopes its own value. The two may also be linked as a temporal transition (annotation-context-patterns.md).",
+  "reason": "Both context words are in the table. The row was held because two stage words stand in one sentence.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00189",
+  "decision": "existing_pattern",
+  "target": "docs/odp/15-absence-of-a-part.md",
+  "fix": "Read a count of 0 as absence: no flower with cleistogamous FLOPO:0991176, part of the inflorescence. Resolve the elliptic 'cleistogamous' to 'cleistogamous flowers' from the parallel 'chasmogamous flowers 1-3 per branch'. The count '0' is the cue; no 'not' is needed.",
+  "reason": "'0' states the absence of a kind of part, which pattern 15 represents. The negation gate did not take '0' as a cue.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00190",
+  "decision": "existing_pattern",
+  "target": "config/flora_context_words.tsv (stage: 'when fully expanded')",
+  "fix": "Add 'when fully expanded' → bearer_quality mature. Bearer: the margin of the ultimate leaf segment (see P00178), not the leaf. Quality: revolute PATO:0001963.",
+  "reason": "The stage construction exists. This phrase has no row, and the bearer was coarsened.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00191",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add the cue 'sunken into' → sunken PATO:0002416 (or inserted into PATO:0000624) towards the ovary, with the apex as a region of the target. OWL: has part some (style and has characteristic some (sunken and towards some ovary)). 'Strongly' goes in RDF.",
+  "reason": "This is the attachment and position sub-case of slot 3, with a PATO quality and a named second part. Only the cue is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00192",
+  "decision": "new_pattern",
+  "target": "extent to a landmark",
+  "fix": "Bearer: leaf margin. Quality: revolute PATO:0001963 over the region from the base to the middle of the leaf or beyond. RDF: fb:extentTo 'mid leaf', with the 'or beyond' cue. OWL: has part some (leaf margin and has part some (proximal region) and has characteristic some revolute), the extent stays in RDF.",
+  "reason": "The quality covers a region bounded by a landmark. The same name was used before in this review.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00193",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Bearer: hairs of the callus (trichome, part of the spikelet callus), not 'spikelet length'. Quality: length 1/3 of the spikelet length, as pattern 10 (ratio to another part, towards the spikelet). 'White' is a separate record.",
+  "reason": "The transcription made 'spikelet length' the entity and read it as a count. The text gives a length ratio of the callus hairs.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00194",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Count of teeth ('dents' → tooth; add the French row if missing) 2-4, container leaf margin, with frequency 'parfois' (sometimes) in RDF. 'Vers l'apex' says where the teeth stand, not a count for each place, so pattern 14 does not apply; keep it as a cue. 'Obtuses, grossières' are separate qualities of the teeth.",
+  "reason": "The margin has 2-4 teeth in all. The place phrase was taken for a count position.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00195",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The source says 'flowers square, 2.4–3.2 mm in both directions'. Record length and width of the flower, each 2.4-3.2 mm (pattern 00). The square shape is a separate record.",
+  "reason": "The transcription cut the range at '3.' and lost the unit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00196",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The source says 'Hojas ... ovadas o lanceoladas'. Leaf shape: ovate PATO:0001891 or lanceolate, a union (pattern 07). It is not a measurement.",
+  "reason": "The transcription kept only 'ovadas', dropped the alternative and treated the shape as a measurement.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00197",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Count 6-10 of marginal projections. Container: indusium margin; 'margins with' names the container, not a count position. 'Teeth and/or lobes' is one count over tooth or lobe (a union bearer in OWL); the cue goes in RDF. 'Irregular, prominent' are separate qualities.",
+  "reason": "A count of parts of a named organ. The construction 'margins with N X' was taken for a position.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00198",
+  "decision": "new_pattern",
+  "target": "position of greatest width",
+  "fix": "Bearer: costa (leaf midvein of the moss leaf). Its greatest width lies at the middle of the leaf. RDF: fb:widestAt 'midleaf'. OWL: has part some (costa and has characteristic some (width and widest at some middle region)) once a value for the position of greatest width exists.",
+  "reason": "This says where the costa is widest, not a comparison with an unnamed part. The construction is listed as open.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00199",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Split the hyphenated compound 'X-Y-pubescent' into pubescent on the pedicel, plus the hairs of the pedicel (trichome, part of the pedicel) appressed and brown. Add a rule that hair modifiers before '-pubescent'/'-pilose'/'-hairy' are qualities of the hairs, not a continuum.",
+  "reason": "It was taken for a continuum. All three values exist; the construction is a quality of the part's hairs.",
+  "confidence": "medium"
+ }
+]

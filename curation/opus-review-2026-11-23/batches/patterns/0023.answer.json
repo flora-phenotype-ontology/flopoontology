@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P00920",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Add 'equal in length to' as an equality cue (ratio 1, towards the second part). The bearer is the anther tail (basal anther appendage), not the anther; the target 'thickened portion of filament' (filament collar of Asteraceae) needs an anatomy class or the rule 'portion of X' -> X with a region.",
+  "reason": "Equality to another part is pattern 10; the cue wording and both grounded parts are missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00921",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Re-point rule Q10 'climber' (and Q09, Q11) in flopo2/ingest/ncvc_normalization.tsv from flopo_phenotype_class FLOPO_0985031 to flopo_value FLOPO:0991108 climbing on whole plant PO:0000003, as was done for tree/shrub and for 'lianescent' (C354).",
+  "reason": "FLOPO:0991108 climbing exists since 2026-11-13; the old primitive class with no entity–quality definition still holds the row.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00922",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "The clause is 'Árboles hasta 8 m, arbustos o trepadoras': a union of growth forms on the whole plant (arborescent FLOPO_0987001, frutescent FLOPO_0987002, climbing FLOPO:0991108). Add trepador/trepadora -> climbing to the normalization table, and add or check the growth-form pairs in config/flora_union_pairs.tsv. Do not annotate 'climber' alone.",
+  "reason": "Annotating 'trepadoras' alone would misstate a three-way alternative of habit.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00923",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Re-point rule Q14 'liana' from FLOPO_0900035 (no entity–quality definition) to FLOPO:0991108 climbing on whole plant. Optionally add a second record ligneous for the woody sense; do not mint a liana value.",
+  "reason": "Liana is a woody climber; the climbing value covers it, as decided for 'lianescent'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00924",
+  "decision": "transcription_error",
+  "target": "taxon segmentation",
+  "fix": "The sentence belongs to Lamium petiolatum Royle ex Bentham, whose description starts in the same context; re-segment. Once attributed correctly it still needs 'comparison with an implied second term' (basal leaves smaller than the cauline leaves).",
+  "reason": "The statement is attached to the wrong taxon (Lamium album).",
+  "confidence": "high"
+ },
+ {
+  "id": "P00925",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1, region) + config/flora_context_words.tsv",
+  "fix": "'distally' is a region row (distal); apply it with the bearer leaf margin -> margin with a BSPO distal region and value serrulate FLOPO:0991081. Treat 'distinctly' as an intensity adverb and drop it. Bearer: moss leaf (phyllid) margin.",
+  "reason": "The cue and the value both exist; the annotator read 'distally' as a stage.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00926",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1, region) + docs/odp/01-approximate-value.md",
+  "fix": "OCR 'tinbase' is 'the base': needs an OCR repair of 'tin' -> 'the' for nybg-naf before cue matching. Then 'at the base' -> stem base, purplish = purple approximately, frequency 'often'.",
+  "reason": "The region cue exists but the OCR-garbled word prevents matching.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00927",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'Mature fruits and seeds unknown' states a gap in knowledge, not absence of seeds.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00928",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Let the 'N-xed' splitter accept a space before the hyphen ('1 -awned', POWO formatting); 'awned' -> awn is in config/flora_counted_parts.tsv. Container is the lemma (from 'Lemma apex'): count 1 awn part of lemma.",
+  "reason": "Count in a word with a known suffix, missed only because of the spacing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00929",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md + config/flora_context_words.tsv",
+  "fix": "Bearer is the lip (labellum), not a lip lobe; '3-lobed' is the quality trilobed (per the counted_parts note). Add 'apical half' / 'in apical half' as region distal so the quality sits on the distal region of the lip.",
+  "reason": "The region row for 'apical half' is missing ('distal half', 'upper half' exist); it is not a stage.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00930",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Quality should be the values, not the attribute 'color': a continuum light green PATO:0001250 to green PATO:0000320 ('mid-green' = green) on leaf blade, via the existing continuum relation.",
+  "reason": "No measurement is involved; the transcribed quality is the attribute instead of the values.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00931",
+  "decision": "new_pattern",
+  "target": "comparison between sides of one part",
+  "fix": "A quality 'dissimilar' (differing in colour and indumentum) of the leaflet towards its own opposite surface: leaflet abaxial epidermis has characteristic (dissimilar towards leaflet adaxial epidermis), with the degree 'somewhat to strongly' in RDF only. The following abaxial/adaxial colour statements carry the concrete values.",
+  "reason": "Two surfaces of one part are compared without a stated attribute; no pattern covers it.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00932",
+  "decision": "existing_pattern",
+  "target": "docs/odp/15-absence-of-a-part.md",
+  "fix": "Treat the privative prefix 'ex-' in 'exauriculate' as the negation cue inside the word: auriculate PATO:0001981, negated, negation_scope quality. Bearer is the leaf base of the axillary leaves (position axillary FLOPO:0991000, pattern 18).",
+  "reason": "Privative words are in pattern 15 ('exstipulate'); the cue is the word itself.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00933",
+  "decision": "missing_term",
+  "target": "twining (voluble): a climbing quality of a stem by virtue of its winding spirally round a support; child of FLOPO:0991108 climbing, synonyms voluble, volúvel",
+  "fix": "Bearer stem/branch, not whole plant; replace rule Q12 (FLOPO_0985034, no entity–quality definition) with the new value.",
+  "reason": "Twining is a common, distinct kind of climbing; there is no value for it, only the old class with no entity–quality definition.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00934",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Read the fraction range '1/3-1/2 length of corolla' as ratio 0.33-0.5 of length towards corolla PO:0009059; bearer corolla lobe.",
+  "reason": "'Half the length of' is pattern 10; fraction ranges are not yet read.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00935",
+  "decision": "new_pattern",
+  "target": "part present at a position",
+  "fix": "'rooting at the nodes' = adventitious roots present at the stem nodes: has part some (adventitious root and attached to some (shoot axis node and part of some stem)); 'fortement' as degree in RDF. Lexicon: radicant/radicante/rooting at nodes -> this construction.",
+  "reason": "A process word standing for the presence of a part at a place; listed as open.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00936",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Grounding rule: 'hairs <measurement>' on an organ -> bearer trichome PO:0000282 part of that organ (stem), quality length PATO:0000122, upper bound 0.5 mm with cue 'to'.",
+  "reason": "An upper-bound length of hairs; the annotator put 'hairs' in the quality slot.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00937",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Union over full statements: whole plant caespitose FLOPO:0991007 or (rhizome PO:0004542 present, long). Needs a reviewed row in config/flora_union_pairs.tsv (caespitose / rhizome long); treat as alternatives, not a continuum, since the values are not comparable.",
+  "reason": "Cross-attribute alternative; no pair row for caespitose vs rhizomatous.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00938",
+  "decision": "existing_pattern",
+  "target": "docs/odp/08-alternative-with-frequency.md",
+  "fix": "Add 'less often' as a frequency cue (= occasionally) for the operands rounded and obtuse PATO:0001935 beside cuneate. Bearer is leaf lamina base PO:0008019, not the blade.",
+  "reason": "'X, less often Y or Z' is an alternative with its own frequency.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00939",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Same grounding rule as P00936: hairs on twigs -> trichome PO:0000282 part of stem/twig, length 0.2 mm with min extreme 0.1 mm.",
+  "reason": "A range with an extreme of hair length; the hair belongs in the bearer, not the quality.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00940",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Read a parenthetical '(to N)' after an indefinite count as an inclusive upper bound of the count (pattern 02 cue 'to'), with no unit since it is a count: seeds numerous, high 100.",
+  "reason": "Both pieces exist; the parenthetical bound on a count is not parsed.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00941",
+  "decision": "existing_pattern",
+  "target": "docs/odp/01-approximate-value.md",
+  "fix": "Add French 'falciforme' as a synonym of falciform PATO:0002215; '±' -> approximately. Bearer legume (pod).",
+  "reason": "'±' plus a shape value; mislabelled as stage, and the transcribed quality is the attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00942",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add Spanish rows 'nervia/nervio/nervada' -> vein to config/flora_counted_parts.tsv. Container is the keel (quilla) of the glume: veins part of glume, with the keel as a region.",
+  "reason": "Count in a word; the Spanish suffix and the container are not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00943",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Add 'may reach' / 'can reach' as a maximum-extreme cue when a usual value of the same attribute is stated ('typically 30 feet or less'): diameter max extreme 1.5 m. The site condition goes to RDF as a note, not into OWL.",
+  "reason": "An exceptional maximum; RDF only, as pattern 05 does for extremes.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00944",
+  "decision": "existing_pattern",
+  "target": "docs/odp/15-absence-of-a-part.md",
+  "fix": "Add 'glandless' (and eglandular) as privative words -> gland (portion of secretory tissue PO:0005656) absent, part of the distal region of the fruit valve.",
+  "reason": "Privative word for absence of a part; the cue is the word itself.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00945",
+  "decision": "existing_pattern",
+  "target": "docs/odp/08-alternative-with-frequency.md",
+  "fix": "Split the clause: 'costa excurrent' (costa PO:0030072, excurrent FLOPO:0991162) has no disjunction and is annotatable. Separately, the awn is serrate or occasionally serrulate (FLOPO:0991081), with frequency 'occasionally'.",
+  "reason": "The disjunction belongs to the awn, not the costa, and blocked the whole span.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00946",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'one or two' is the range 1-2 (rule of 2026-11-14 for 'N or M'), with spelled-out numbers. Count of flowers part of inflorescence; 'terminal' as position (pattern 18).",
+  "reason": "A count with an 'or' range is already treated as a range.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00947",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Add the Spanish cue 'por nudo' (= per node) to the per-position cues: inflorescences 1-2 per node.",
+  "reason": "'flowers 1-3 per node' is the pattern's own example.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00948",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Grounding rule 'broad' with a measurement -> width PATO:0000921; read 'in.' as inch and convert to cm (factor recorded).",
+  "reason": "A plain width range; 'broad' was not taken as the attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00949",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "Quality should be axillary FLOPO:0991000 (bearer list includes inflorescence), not 'position'; bearer raceme/inflorescence. There is no measurement.",
+  "reason": "The transcribed quality is the attribute and the reason (missing unit) does not apply.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00950",
+  "decision": "new_pattern",
+  "target": "gradient along a series",
+  "fix": "'subaccrescent distally' = leaflets increasing in size towards the apex of the rachis: a quality of the set of leaflets (increasing size along the proximal-distal axis), approximate. The other operand 'subequilong' = equal FLOPO:0991102 approximately, joined by union.",
+  "reason": "A size gradient among like parts has no pattern; the alternative cannot be built without it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00951",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "'can reach 150 feet' after the usual '70-90 feet' is the max extreme of height (45.7 m after conversion), with 'can reach' as the cue across the two sentences; RDF only.",
+  "reason": "The usual range and the exceptional maximum fit pattern 05.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00952",
+  "decision": "new_pattern",
+  "target": "part present at a position",
+  "fix": "The persistent style is present at the centre of the seed apex: seed has part some (style and located in some (apex region and has position central)). The record keeps the bearer seed, the part style and the position.",
+  "reason": "Location of one part on another; not a quality of the seed apex.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00953",
+  "decision": "existing_pattern",
+  "target": "docs/odp/06-specimen-condition.md",
+  "fix": "Add 'when dry and empty' (and 'when empty' = after dehiscence) to config/flora_context_words.tsv as specimen_condition. Annotate as alternative smooth or slightly wrinkled (PATO:0001810, approximately) at the capsule base (region).",
+  "reason": "Specimen condition plus region; the combined cue is not in the table.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00954",
+  "decision": "missing_term",
+  "target": "firmly attached: of a marginal tooth or spine, not readily detached from the leaf margin (opposite of 'easily detached'), a diagnostic Agave character",
+  "fix": "Child of attached to PATO:0001667, towards leaf margin (pattern 09); bearer leaf margin tooth.",
+  "reason": "A real, recurrent character with no value; PATO 'attached to' alone loses the contrast.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00955",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read 'to more than N' as a strict lower bound (value_low 60, exclusive). Bearer lamina of the fertile frond (state fertile, pattern 04).",
+  "reason": "The 'more than' cue exists; the combination with 'to' is not parsed.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00956",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "'simple or branched' is the pattern's own example: stem simple PATO:0001503 or branched PATO:0000402. Split off 'at 1-2(4) nodes above the middle' as a separate count at a position (pattern 14).",
+  "reason": "The trailing locative phrase stopped the union from being built.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00957",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "'in age' is a bearer_quality row (old). Add a rule rubescent -> red, approximately. Bearer is the banner (standard petal), not petal in general; the white-to-reddish change can also use the temporal transition relation.",
+  "reason": "The state cue exists; the value word is not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00958",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add 'N or longer' / 'N or more' as an inclusive lower bound cue: peduncle length ≥ 100 mm, frequency 'usually' in RDF.",
+  "reason": "A lower bound misread as a disjunction.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00959",
+  "decision": "new_pattern",
+  "target": "substance produced by a part",
+  "fix": "Branch and leaf have part some (sap/latex and has characteristic some red). The record has the bearer, the substance and its colour; a substance class (sap, latex) is needed in FLOPO, since PO has none.",
+  "reason": "Exudates and juices of a part have no pattern.",
+  "confidence": "medium"
+ }
+]

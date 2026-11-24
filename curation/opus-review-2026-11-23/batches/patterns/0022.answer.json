@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P00880",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "The cue in count_position (flopo2/ingest/ncvc_annotate.py) is English only: 'axila' fails the axil(s|es)? match and 'por' is not a preposition. Add the Spanish/French place words (axila, nudo, lado; aisselle, nœud, côté) and prepositions (por, en cada, par, à chaque). Then: bearer staminate inflorescence, amount 1-2 ('1 o 2' is the range rule), count_position per_axil.",
+  "reason": "'1 o 2 por axila' is the per_axil kind of pattern 14; only the Spanish cue is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00881",
+  "decision": "existing_pattern",
+  "target": "docs/odp/18-position-of-the-bearer.md",
+  "fix": "Split the phrase: position 'upper' (FLOPO:0991376) via 'has position' on spike, value approximate (FLOPO:0991190, which lists spikes among its bearers). Do the same for 'lower ones remote' (lower FLOPO:0991377, distant FLOPO:0991189).",
+  "reason": "Not a relation to another part: approximate is a unary FLOPO value for spacing among like parts, and 'upper' is a series position.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00882",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Read 'N(or M)' and 'N, or sometimes M' as a usual value N with a max extreme M (value_low=value_high=3, value_max_extreme=4); add '(or' as an extreme cue.",
+  "reason": "The parenthetical alternative number is an extreme of the count, the same as '3(-4)'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00883",
+  "decision": "missing_term",
+  "target": "tearing (calyx): a calyx closed in bud that opens at anthesis by tearing irregularly between or through the lobes",
+  "fix": "Add a FLOPO value under a dehiscence-like or splitting quality (compare dehiscent FLOPO:0991149) and annotate calyx with it, negated ('no rompiendo'). The matrix-style source (character 'cáliz abertura', state 'no rompiendo') needs the Myrcia character states read as values.",
+  "reason": "This is a genuine calyx character in Myrcia (calyx opening not tearing / tearing / calyptrate), but no term covers it.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00884",
+  "decision": "transcription_error",
+  "target": "inflorescence / verticillate",
+  "fix": "Two statements: male flower whorled (PATO:0001951) on the raceme, with the flower as bearer; raceme amount 1-2 ('solitaires ou 2-nés', range rule), count_position per_axil if implied.",
+  "reason": "'Verticillées' describes the male flowers, not the inflorescence; the disjunction is a count of racemes.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00885",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Ground the value word 'caudate' (PATO:0001880) instead of the attribute 'shape'. A shape attribute with no number is not a measurement and should not be held for a missing unit.",
+  "reason": "Plain part and quality; the annotator kept the attribute and treated it as a measurement.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00886",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Strip the venation adverb as its own value (palmate venation) and split '3-5-veined' by the 'veined' row of config/flora_counted_parts.tsv: bearer vein, amount 3-5, container leaf blade.",
+  "reason": "The suffix row exists; the leading 'palmately' blocked the split.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00887",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add the Spanish suffix 'partido' (→ lobe) to config/flora_counted_parts.tsv, or map '2-partido' to parted FLOPO:0991234 as a value. Ground 'labio inferior' of the calyx to a lip class (corolla lip FLOPO:0985017 exists; calyx lip does not). 'por c. 4 mm' is a depth of division and stays held.",
+  "reason": "Counts inside a word are pattern 03; the container (calyx lower lip) and the Spanish suffix are what is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00888",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "A disjunction of degree adverbs on one value ('nettement ou abruptement acuminé') reduces to the single value acuminate. 'Sommet' grounds to the leaf apex region.",
+  "reason": "Both alternatives entail acuminate; no union is needed.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00889",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md",
+  "fix": "The 'distally' row exists in config/flora_context_words.tsv (region distal). Apply the BSPO distal-region part_restriction to style for orientation values (spreading PATO:0104356), since PO has no style apex class.",
+  "reason": "This is a place on the part (kind C, slot 1), not a developmental stage.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00890",
+  "decision": "missing_term",
+  "target": "twining: a climbing quality of a plant whose stem winds spirally round its support",
+  "fix": "Add twining as a child of climbing FLOPO:0991108 (sibling of root-climbing FLOPO:0991319), with 'twiner', 'twining climber' and 'voluble' as synonyms, on whole plant and stem. Until then the statement can be annotated as climbing.",
+  "reason": "The habit noun has its value class 'climbing', but the twining subtype is absent.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00891",
+  "decision": "transcription_error",
+  "target": "lobe / amount",
+  "fix": "Bearer: costa apex (moss leaf costa); value bifid (PATO:0001784, synonym 'bifid') for '2-fid', with ± as value_qualifier approximately (pattern 01).",
+  "reason": "The text describes the tip of the costa as forked, not a count of lobes.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00892",
+  "decision": "new_pattern",
+  "target": "comparison with an implied second term",
+  "fix": "Bearer midrib, a relative quality (lighter colour, i.e. increased brightness) 'towards' an implied part; here the lamina, the part that contains it. RDF records the implied target with a flag fb:impliedTarget and a rule for resolving it (containing part, series sibling, previous subject). OWL: only when the target is resolved; otherwise RDF only.",
+  "reason": "'plus clair' has no second term in the clause; pattern 09 requires it.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00893",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'string' is the moniliform fruit itself: container fruit, bearer fruit article (fruit segment, as used in the automatic EQ registry), amount 1-3. Ground 'string' to fruit for Alyxia-type moniliform fruits.",
+  "reason": "This is a count per fruit; only the container word failed to ground.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00894",
+  "decision": "existing_pattern",
+  "target": "docs/odp/15-absence-of-a-part.md",
+  "fix": "Add 'eglandular' to the privative words ('leafless', 'spineless'): gland absent on the hip (fruit). 'rarely sparsely stipitate-glandular' is the alternative with its own frequency (pattern 08).",
+  "reason": "The negation is in the prefix of the word, which pattern 15 covers for privative words.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00895",
+  "decision": "new_pattern",
+  "target": "before or after a stage",
+  "fix": "Bearer basal leaf (position basal, pattern 18), quality absent or deciduous (PATO:0001730), with a stage relation 'by' (before the end of) the PO flowering stage. RDF: fb:stageRelation 'before' and fb:stage, with 'usually' as frequency. OWL: none until the model has before/after relations beyond present_during.",
+  "reason": "This is the open item 'before and after a stage'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00896",
+  "decision": "new_pattern",
+  "target": "comparison with an implied second term",
+  "fix": "Bearer uppermost stem leaf (position upper), decreased size 'towards' the implied lower and median stem leaves of the same series. RDF records the implied target; OWL only when it is resolved.",
+  "reason": "'smaller' with no 'than'; the comparand is the preceding series member.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00897",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Split '2-4-lobed' with the 'lobed' row (a range has no term of its own): bearer lobe, amount 2-4, container fruit.",
+  "reason": "This is a count inside a word, wrongly held as missing a unit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00898",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Bearer branch in state spreading (pattern 04), amount 2, container branch fascicle. Ground 'branch fascicle' (Sphagnum) to a PO moss term or a FLOPO anatomy class; none was found in the lexicons. The pendent branches 1-2 are a second record.",
+  "reason": "This is a count of a qualified part in a container that is not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00899",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add a grounding rule 'd.b.h.' / 'dbh' → stem (trunk) diameter at breast height: bearer stem PO:0009047 (synonym trunk), quality diameter. The abbreviation's periods should not stop the 'to' cue from being found.",
+  "reason": "'to 30 cm' is an upper bound; the abbreviation hides the bearer, so it is not whole plant.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00900",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Ground 'campanulado' to campanulate PATO:0104350 (add the Spanish form if it is missing) instead of the attribute 'shape'.",
+  "reason": "This is a plain value word, held as a measurement.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00901",
+  "decision": "transcription_error",
+  "target": "leaflet / hairs",
+  "fix": "Bearer trichome (PO:0000282) of the leaflet (straight hairs), quality length, 0.5-1 mm with max extreme 1.5 mm (pattern 05).",
+  "reason": "The length belongs to the hairs, not the leaflet; 'hairs' is not a quality.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00902",
+  "decision": "existing_pattern",
+  "target": "docs/odp/08-alternative-with-frequency.md",
+  "fix": "Read 'simple, rarely branched' as unbranched (PATO:0000414) or branched (PATO:0000402), the second with frequency 'rarely'. 'rarely' is a frequency, not a negation cue.",
+  "reason": "This is an alternative with its own frequency.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00903",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Add 'surface' to _POSITION_KIND (each_side, or a per_surface kind) so that 'along each surface' is a cue. Bearer stomatal line, container leaf (needle), amount 4-5.",
+  "reason": "This is a count per surface of the leaf; the leaf is the container, and the cue word is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00904",
+  "decision": "missing_term",
+  "target": "subpercurrent: of a costa, ending in the upper part of the leaf below the apex",
+  "fix": "Add a sibling of percurrent FLOPO:0991163 and excurrent FLOPO:0991162 on the moss leaf costa; 'most' is the frequency qualifier.",
+  "reason": "This is a standard bryophyte character value with no term; the relation to the apex is built into the value.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00905",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md",
+  "fix": "Continuum entire (PATO:0104359) to serrulate (FLOPO:0991081) on the leaf margin, with 'obscurely' read as a weak-degree or approximately qualifier on serrulate.",
+  "reason": "The continuum pattern exists; the degree adverb blocked it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00906",
+  "decision": "existing_pattern",
+  "target": "docs/odp/18-position-of-the-bearer.md",
+  "fix": "Carry 'basal' from 'Leaves: basal ...' to the following clause: bearer leaf lamina part of a basal leaf (FLOPO:0996000; pattern 12 for the whole), value spatulate PATO:0001937.",
+  "reason": "The position word applies to the leaves whose blades are described; it is not a stage.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00907",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Allow a space between the number and the suffix ('5-6 veined') when splitting with the 'veined' row: bearer vein, amount 5-6, container leaflet.",
+  "reason": "This is a count inside a word, wrongly held as missing a unit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00908",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "'2-lobée' is bilobed (PATO:0002214), a value, not a count. The bearer 'écaille' here is the petal scale (petal appendage, Sapindaceae) and needs a FLOPO anatomy class or a rule. It must not be grounded to trichome through PO's 'scale' synonym.",
+  "reason": "Pattern 03 keeps 2-lobed as a quality where a term exists; the blocker is the bearer.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00909",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "When 'at the apex' follows the whole list, apply the region to every member of the union: leaf apex acuminate or apiculate or rounded. Also fix the apiculate grounding: config/pato_lexicon.tsv lists it as a synonym of the attribute sharpness (PATO:0000944).",
+  "reason": "A region cue after a list of alternatives is currently left alone.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00910",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Treat the transcribed quality 'number' with the word 'many' as an indefinite count: bearer branch, amount 'many'.",
+  "reason": "'branches many' is the 'seeds numerous' construction.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00911",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Spanish cue 'por axila' as in P00880: raceme amount 1 per_axil in pistillate inflorescences. '45 cm' is very likely '4-5 cm' (a lost dash) and is a separate raceme length.",
+  "reason": "This is a count per axil with an untranslated cue.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00912",
+  "decision": "transcription_error",
+  "target": "petal / width",
+  "fix": "Bearer corolla lobe in position median (FLOPO:0991381), part of the lower corolla lip (FLOPO:0985017, pattern 12); length ca. 3 mm and width ca. 5.5 mm, both approximately (pattern 01).",
+  "reason": "The text measures the middle lobe of the lower lip, not a petal, and 'ca.' is not a stage.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00913",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "Split the OCR join 'villouscanescent' into villous (FLOPO:0991051) and canescent (FLOPO:0991079) on the abaxial surface ('beneath') of the young leaflet ('when young'). 'in age glabrate' is a second record with state old.",
+  "reason": "The state and the surface are both implemented; the run-together word failed to ground.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00914",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read the parenthetical '(to 24 mm long)' as an upper bound: pedicel of male flower (pattern 12), length <= 24 mm. Drop the comparison with other species.",
+  "reason": "The measurement is a phenotype of the taxon even though it sits in the discussion text.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00915",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Parse 'ca. L × to W': the involucre is ca. 1 cm long (approximately) and up to 2.5 cm wide (upper bound on the second dimension).",
+  "reason": "The bound cue 'to' after '×' is not supported, and the transcription gave the wrong dimension.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00916",
+  "decision": "transcription_error",
+  "target": "fruit / loosely attached",
+  "fix": "Bearer the rind (pericarp PO:0009084, synonym fruit rind), with an attachment quality (loose) 'towards' the pulp (endocarp PO:0009086, synonym citrus pulp) as in pattern 09.",
+  "reason": "The text says the rind is loosely attached to the pulp, not the fruit.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00917",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Petiole terete or flattened on the adaxial side. Add a Spanish row 'adaxialmente' (surface or region adaxial) to config/flora_context_words.tsv, and ground 'deprimido' here to flattened (PATO:0002254), not to depressed FLOPO:0991103, which means flattened apex to base.",
+  "reason": "Union plus a region; the adverb and the sense of 'deprimido' are what failed.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00918",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Add the Spanish cue 'en cada lado' for each_side: bearer tooth, container leaf blade (margin), amount 20-30.",
+  "reason": "This is '30-75 teeth per side' in Spanish.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00919",
+  "decision": "new_pattern",
+  "target": "comparison with an implied second term",
+  "fix": "Bearer bracteole, decreased size 'towards' the bract, resolved from the previous clause's subject ('similar but somewhat smaller'). The rule takes the preceding subject when the clause begins 'similar'; 'somewhat' is a weak-degree qualifier in RDF.",
+  "reason": "The comparand is elided, so pattern 09 needs it in the clause.",
+  "confidence": "medium"
+ }
+]

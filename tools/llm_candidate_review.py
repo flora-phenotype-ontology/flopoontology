@@ -595,6 +595,12 @@ def _labels() -> dict[str, str]:
 def _candidates(file_name: str, key: str, extra: str) -> list[dict]:
     with REVIEWED.open(encoding="utf-8") as handle:
         done = {row["word"] for row in csv.DictReader(handle, delimiter="\t")}
+    # Words of the earlier rounds and words that have a rule by now are not asked again.
+    for earlier in glob.glob("curation/opus-review-*/values.tsv") + glob.glob("curation/opus-review-*/bearers.tsv"):
+        with open(earlier, encoding="utf-8") as handle:
+            done.update(row["word"] for row in csv.DictReader(handle, delimiter="\t"))
+    with open("flopo2/ingest/flora_review_rules.tsv", encoding="utf-8") as handle:
+        done.update(row["match_key"] for row in csv.DictReader(handle, delimiter="\t"))
     labels = _labels()
     merged: dict[str, dict] = {}
     for path in sorted(glob.glob(f"curation/candidates/*/{file_name}")):
@@ -736,7 +742,8 @@ def _review(queue: str, batch: Path, command: str, model: str, timeout: int) -> 
     return "done"
 
 
-def run(queues: list[str], workers: int, command: str, model: str, timeout: int, limit: int | None) -> None:
+def run(queues: list[str], workers: int, command: str, model: str, timeout: int, limit: int | None,
+        until: float | None = None) -> None:
     pending = {q: sorted(p for p in (OUT / "batches" / q).glob("[0-9]*.json")
                          if p.name.count(".") == 1 and not p.with_suffix(".answer.json").exists()) for q in queues}
     order = []  # round robin over the queues, so each gets its share before the credit ends
@@ -748,7 +755,7 @@ def run(queues: list[str], workers: int, command: str, model: str, timeout: int,
 
     def work(job: tuple[str, Path]) -> None:
         nonlocal stop
-        if stop:
+        if stop or (until and time.time() >= until):
             return
         queue, batch = job
         started = time.time()
@@ -772,7 +779,7 @@ def run(queues: list[str], workers: int, command: str, model: str, timeout: int,
         list(pool.map(work, order))
     with log.open("a", encoding="utf-8") as handle:
         handle.write(f"{time.strftime('%Y-%m-%dT%H:%M:%S')} "
-                     f"{'stopped: the account is out of credit' if stop else 'all batches done'}\n")
+                     f"{'stopped: the account is out of credit' if stop else 'stopped: the set time is reached' if until and time.time() >= until else 'all batches done'}\n")
 
 
 def _key(item: dict) -> str:
@@ -822,6 +829,7 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--limit", type=int, help="at most this many batches (for a trial)")
     parser.add_argument("--out", type=Path, help="output folder of this review round (default: the first round)")
     parser.add_argument("--seed", type=int, default=20261114, help="sample of the patterns queue")
+    parser.add_argument("--until", help="start no batch after this time (YYYY-MM-DDTHH:MM)")
     args = parser.parse_args(argv)
     queues = args.queues.split(",")
     global OUT, _patterns
@@ -834,7 +842,8 @@ def main(argv: list[str] | None = None) -> None:
     if args.action == "prepare":
         prepare(queues)
     elif args.action == "run":
-        run(queues, args.workers, args.command, args.model, args.timeout, args.limit)
+        run(queues, args.workers, args.command, args.model, args.timeout, args.limit,
+            time.mktime(time.strptime(args.until, "%Y-%m-%dT%H:%M")) if args.until else None)
     else:
         collect(queues)
 

@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P02480",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add a row 'laciniate -> lobe' to config/flora_counted_parts.tsv, so that '5-laciniate' becomes a count of 5 lobes with container style PO:0009074. The shape word itself stays laciniate FLOPO:0991116 on the style.",
+  "reason": "A count inside a word, like '5-fid', whose ending is not in the counted-parts table.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02481",
+  "decision": "new_pattern",
+  "target": "bound on the maximum",
+  "fix": "In RDF, record that the largest inflorescences exceed 15 cm (fb:maxAtLeast 15 cm, cue 'to >'). No OWL lower bound, because that would claim that every inflorescence is longer than 15 cm.",
+  "reason": "'to >15 cm' bounds the maximum from below. It is neither an upper bound nor a lower bound of the range (same case as P00037 of the 2026-11-15 review).",
+  "confidence": "high"
+ },
+ {
+  "id": "P02482",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Strip the adverb 'palmately' and read it with a rule as actinodromous PATO:0001967 on the leaf lamina. Read '5-7-veined' by the 'veined -> vein' row as 5-7 veins with container leaf lamina.",
+  "reason": "'veined' is in the counted-parts table. Only the venation adverb in front of the count blocked the split.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02483",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "Leave held.",
+  "reason": "'rarely narrower' means a rare, narrower form of the obovoid-obconical ovary. It names no shape or second part that could be grounded, and it is too vague to state.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02484",
+  "decision": "existing_pattern",
+  "target": "docs/odp/11-ratio-of-two-dimensions.md",
+  "fix": "Add the cue 'length/width ratio N-M' (also 'L/W ratio') to pattern 11: leaf lamina ratio PATO:0001470, 1.9-3, unit ratio, numerator length, denominator width.",
+  "reason": "An explicit ratio of length to width of the blade, written in a form the parser does not read.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02485",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The quality should be the value light brown PATO:0001246 on seed, under pattern 00 and not as a measurement. '± 1 cm. in diameter' is a separate measurement. 'area surrounding cavity darker' is a comparison between regions of one part, kept apart.",
+  "reason": "The quality slot holds the attribute 'color', not the value given in the text. The colour statement was sent to the unit check because the clause also has a diameter.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02486",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Parse 'simple and entire or sinuate' as 'simple' AND ('entire' OR 'sinuate'): leaf simple as its own record, and the union entire | sinuate FLOPO:0991113 on the leaf margin. The pair entire/sinuate is already accepted in config/flora_union_pairs.tsv.",
+  "reason": "The union exists. The 'and' in front of the 'or' blocked the split.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02487",
+  "decision": "new_pattern",
+  "target": "optional part",
+  "fix": "Bracteole of the male inflorescence pedicel: in RDF, count 2 with position basal (pattern 18) and presence 'optional' (cue 'or absent'). No OWL class, because 'present or absent' says nothing about every plant, and the count holds only when the bracteoles are present.",
+  "reason": "A count with absence as the alternative. Pattern 07 unions values of a present part, and the count range 0-2 would allow 1.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02488",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "Leave held, and never read 'unknown' as negation.",
+  "reason": "'unknown' means not yet collected or seen. It is not absence, and the taxon is not described as lacking bisexual flowers.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02489",
+  "decision": "new_pattern",
+  "target": "spacing of like parts",
+  "fix": "Frond (vascular leaf PO:0009025): distance PATO:0000040 towards the same kind of part (towards frond), value ca. 0.5 cm with 'ca.' as approximately (pattern 01) and 'apart' as the cue. OWL: the distance quality with towards. The number stays in RDF like a measurement.",
+  "reason": "Spacing between successive fronds along the rhizome is listed as open in annotation-context-patterns.md. The transcribed quality 'number' is also wrong.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02490",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Bearer endostome basal membrane FLOPO_0986125, target exostome grounded to peristome tooth PO:0030043. Read the fraction cue 'N/M X length' as ratio 0.5, i.e. decreased length PATO:0000574 towards peristome tooth (the rejected-bearer row 'exostome height' already gives this reading).",
+  "reason": "A fraction of another part's length is pattern 10. Only the fraction cue and the grounding of 'exostome' are missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02491",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Read '(1 or)2-seeded' as seed count 2 with a minimum extreme of 1 ('N or' in parentheses as an extreme). Use the 'seeded -> seed' row, container megasporangiate strobilus PO:0005032 (seed cone).",
+  "reason": "Not a true disjunction. It is a usual count with a rare extreme in parentheses.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02492",
+  "decision": "new_pattern",
+  "target": "quality of a process of the part",
+  "fix": "Bearer inflorescence (its flowers). The quality synchronous PATO:0000695 inheres in the flower-opening process in which the flowers take part. OWL: has part some (flower and participates in some (flower opening and has characteristic some synchronous)). RDF: the process and the cue 'opening simultaneously'.",
+  "reason": "Flowers opening at the same time is a quality of a process, not of a part. A PATO value exists, but no pattern attaches it to a process.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02493",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Add the Spanish cue 'por nudo' (and 'por nodo', 'en cada nudo') to count_position kind per_node: inflorescence count 1, container stem, landmark node. 'axilares' is the position (pattern 18).",
+  "reason": "Exactly the 'flowers 1-3 per node' case of pattern 14, worded in Spanish.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02494",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "Leave held.",
+  "reason": "The statement compares this subspecies with subsp. renigera and hedges with 'seem'. It is a diagnostic remark, not a description of the taxon's range.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02495",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Allow a hyphenated range of count words ('few-several-flowered') as count_word low 'few', high 'several'. Flower present, container capitulum inflorescence PO:0030121 ('heads'). OWL: presence only.",
+  "reason": "An indefinite count inside a compound word. The 'flowered -> flower' row exists; only the two-word amount is excluded by pattern 13's limits.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02496",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add the Portuguese cues 'maior(es) que' and 'menor(es) que'. 'tamanho' with 'maior' gives increased size PATO:0000586 towards leaf (vascular leaf PO:0009025). The bearer is the outer involucral bract.",
+  "reason": "A comparison of size with its second term named in the text. Only the language of the cue is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02497",
+  "decision": "missing_term",
+  "target": "'quickly glabrous' / 'soon glabrous' (after a 'when young' indument) -> rule to glabrescent FLOPO:0991052",
+  "fix": "Add a quality rule: 'quickly/soon/early glabrous' means becoming glabrous with age, which is glabrescent, on the rachis. The 'dense ferruginous pubescence when young' stays a young-state record (kind A).",
+  "reason": "Not a process: hairs lost early is the defined value glabrescent. Only the wording rule is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02498",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Allow 'several to numerous' as count_word range several..many: flower present with container raceme inflorescence PO:0030115. OWL: presence only.",
+  "reason": "An indefinite count. 'several to many' is left with the alternatives by the limits of pattern 13 but needs no union.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02499",
+  "decision": "existing_pattern",
+  "target": "config/flora_union_pairs.tsv (docs/odp/07-alternatives.md)",
+  "fix": "Add the reviewed pair scabrous FLOPO:0991058 / hirsute FLOPO:0991050 (roughness vs pilosity, so not a continuum). Add 'dessous' (and 'dessus') to config/flora_context_words.tsv as surface abaxial (adaxial), so the bearer becomes the abaxial leaf lamina epidermis.",
+  "reason": "Values under two attributes joined by 'à'. The secondary union with a pair table covers it once the pair and the French surface word exist.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02500",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept 'to' inside parentheses after a size adjective as an inclusive upper bound: length up to 650 µm; drop 'large'. Ground the liverwort 'bracteole' to a perichaetial underleaf class, not PO:0009043, which is an angiosperm term.",
+  "reason": "A plain upper bound. The parentheses and the vague adjective blocked the cue, and the bearer word is a liverwort homonym of the flowering-plant term.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02501",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The bearer should be capitulum inflorescence PO:0030121 with amount 3-8 (pattern 03). The container is the capitulescence, grounded to inflorescence PO:0009049, with 'terminal' as its position (pattern 18).",
+  "reason": "The noun 'capitulescence' was put into the quality slot. The statement counts heads in a compound inflorescence.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02502",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Spine count 2 with count_position kind per_axil (cue 'beside each [leaf]'; landmark leaf). Spine length 2 cm is a separate measurement. Keep the editorial '[leaf]' out of the cue offsets.",
+  "reason": "A count at each leaf, the per-axil case of pattern 14. 'paired' as a value would lose the position.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02503",
+  "decision": "new_pattern",
+  "target": "order of division",
+  "fix": "OWL: stem branched PATO:0000402. RDF: branching order with a lower bound of 2 (cue 'twice or more', fb:low 2, unit count). The order is not in the class, because it is a count of successive branchings and not of parts.",
+  "reason": "'twice or more' gives the depth of branching, not alternatives. No pattern records the order of branching or division.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02504",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The quality should be the value white on petal, under pattern 00. '2–2·5 mm. long' is a separate length record with unit 'mm.'.",
+  "reason": "The quality slot holds the attribute 'color', not the value 'white'. The colour statement was sent to the unit check because of the length that follows in the same clause.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02505",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "Leave held. The usual range 6-8(-11) cm is annotated from the main clause.",
+  "reason": "'on shoots' does not say which shoots (presumably vigorous or sucker shoots). An unqualified upper bound of 15 cm would contradict the main range.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02506",
+  "decision": "existing_pattern",
+  "target": "config/flora_context_words.tsv",
+  "fix": "Add 'from middle to apex' as region distal (BSPO distal region) and 'outside and inside' as unscoped (both surfaces). Bearer inner petal (position inner, pattern 18), puberulent on its distal region (slot 1).",
+  "reason": "Region and both-surface words, not a developmental stage. They fit slot 1 once the table has the rows.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02507",
+  "decision": "new_pattern",
+  "target": "bound on the maximum",
+  "fix": "In RDF, record that the largest stems exceed 40 cm (fb:maxAtLeast 40 cm, cue 'to more than'). No OWL bound.",
+  "reason": "Same construction as P02481. 'to more than' bounds the maximum, not the range.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02508",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Split '10-veined' by the 'veined -> vein' row: vein count 10, container calyx PO:0009060. Route N-xed compounds to pattern 03 before the unit check.",
+  "reason": "A count in a word whose ending is in the table. It was wrongly sent to the measurement check.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02509",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/flora_review_rules.tsv R0604 (edentate = not dentated)",
+  "fix": "Let the negating prefix of the rule word 'edentato' serve as its own negation cue (as for 'beakless'). Add the Latin 'edentatus/-o' as a form, and 'plerumque' as frequency 'usually'. Bearer: calyx, region margin of the mouth ('ore').",
+  "reason": "The rule exists. The gate looked for a separate negation word, and the Latin frequency word is unknown.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02510",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The quality should be scaly PATO:0001804 on rhizome (cue 'covered with ... scales'; 'densely' is degree). Scale records under pattern 00 take lanceolate PATO:0001877 and blackish brown, with container rhizome.",
+  "reason": "'covered' is not the quality the text gives, and there is no comparison here. The statement is the presence of scales on the rhizome, with their shape and colour.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02511",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add 'to as much as' as an inclusive upper-bound cue: pedicel length up to 2.5 mm with maximum extreme 3 mm (pattern 05). 'obscure' (pedicel hardly visible) gives no lower number.",
+  "reason": "An upper bound with an extreme. Only the cue wording is unknown.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02512",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Bracteole PO:0009043 ovate. Read 'subtended flower' as a descriptor that only says what a bracteole is, not as a qualifier. The record holds no alternative.",
+  "reason": "A plain part-and-quality statement in the structured Myrcia key format. The '/' elsewhere in the record seems to have triggered the alternatives hold.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02513",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Read 'N–M(–X) of Y height' as a ratio cue: inflorescence decreased length PATO:0000574 towards stem PO:0009047 ('culm'), ratio 0.21-0.57 with maximum extreme 0.95 in RDF.",
+  "reason": "A ratio to another part without 'times as long as'. It is not a measurement missing its unit.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02514",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Leaf count 4 per node (kind per_node, cue 'in whorls of'), with minimum extreme 3 from '(3 or)' (pattern 05). Also record leaves whorled PATO:0001951 by pattern 16, which is the OWL side.",
+  "reason": "'(3 or)4' is a usual value with an extreme, not a disjunction, and the number counts leaves per whorl.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02515",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Tooth count 1-3 (number words 'one to three'), container leaf lamina margin. 'the margins of the lamina with' names the container, not a count position. 'coarse' is a separate size quality of the teeth.",
+  "reason": "A plain count of marginal teeth. The margin was misread as a position.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02516",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (continuum)",
+  "fix": "Bracts and bracteoles: continuum lanceolate PATO:0001877 to ovate. Add the Spanish forms 'lanceolada(s)' and 'ovada(s)' to the lexicon. Leave the length '0.51.5 mm' held, because the range dash was lost.",
+  "reason": "A shape continuum on coordinated bearers. The garbled number in the clause sent it to the unit check.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02517",
+  "decision": "existing_pattern",
+  "target": "docs/odp/05-range-with-extremes.md",
+  "fix": "Ground 'anther-tube' to anther tube FLOPO_0986103, not stamen anther. Read the dashless '(3.5)' after a range as the maximum extreme: length 2.4-3.0 mm, extreme 3.5 mm.",
+  "reason": "A length with an extreme. The parenthesis without a dash and the compound bearer word blocked it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02518",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground the container 'sheaths' of the scape to leaf sheath PO:0020104. Count lobes 1-3 by the 'fid -> lobe' row. 'at the mouth' is a region (apex, slot 1), and 'shortly' (shallow division) is not kept.",
+  "reason": "The count word is in the table. Only the container 'sheath' failed to ground.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02519",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add the French cue 'plus court(e)s que' (with 'un peu' as degree, not kept) and 'étendard' as a synonym of banner petal PO:0025324. Make two records, wing petal PO:0025325 and keel petal PO:0025326, each decreased length PATO:0000574 towards banner petal.",
+  "reason": "The second term 'l'étendard' stands in the clause. The French cue and the coordinated bearers were missed.",
+  "confidence": "high"
+ }
+]

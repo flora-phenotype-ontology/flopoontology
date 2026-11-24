@@ -1,0 +1,367 @@
+[
+ {
+  "word": "vascularized",
+  "decision": "rule:entity_presence",
+  "target": "vascular bundle (PO_0005020) present",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "vascularizata",
+   "vascularizadas"
+  ],
+  "reason": "'Sarcotesta densely vascularized' says that the part contains vascular bundles. It is the counterpart of 'veinless' (rule C349, vascular bundle absent).",
+  "confidence": "medium"
+ },
+ {
+  "word": "purple streaks",
+  "decision": "pattern",
+  "target": "new: coloured marking (bearer streaked FLOPO:0991206, the streaks purple PATO_0000951)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Two values: the bearer is streaked (FLOPO:0991206) and the streaks are purple. Using only 'streaked' loses the colour, and using only 'purple' wrongly makes the whole part purple. 'Without purple streaks' is then the negation of that pair.",
+  "confidence": "medium"
+ },
+ {
+  "word": "sinuate-serrate",
+  "decision": "pattern",
+  "target": "docs/annotation-context-patterns.md (continuum of a hyphenated compound: sinuate FLOPO:0991113 - serrated PATO_0001206)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "sinuado-serrado"
+  ],
+  "reason": "A hyphenated compound of two existing margin values, which the playbook reads as a continuum between the two words.",
+  "confidence": "high"
+ },
+ {
+  "word": "not laciniate",
+  "decision": "rule:negated_value",
+  "target": "not laciniate (FLOPO:0991116)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "The negation of the existing value laciniate (FLOPO:0991116), as 'unlobed' is 'not lobed'.",
+  "confidence": "high"
+ },
+ {
+  "word": "ascending-pubescent",
+  "decision": "pattern",
+  "target": "new: quality of the covering (bearer pubescent PATO_0000455; its hairs antrorse PATO_0002238)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "The part is pubescent, and 'ascending' is the direction of the hairs (antrorse, PATO_0002238), not of the part. Two qualities with two bearers need a pattern, not a new term.",
+  "confidence": "medium"
+ },
+ {
+  "word": "proximate",
+  "decision": "rule:flopo_value",
+  "target": "approximate (FLOPO:0991190)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "próximos entre sí"
+  ],
+  "reason": "'Pseudobulbs proximate' and 'próximos o remotos entre sí' mean close to the next part of the same kind. That is approximate (FLOPO:0991190), and its opposite is distant (FLOPO:0991189).",
+  "confidence": "high"
+ },
+ {
+  "word": "bulliform",
+  "decision": "rule:flopo_value",
+  "target": "bullate (FLOPO:0991122)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "buliforme"
+  ],
+  "reason": "A 'bulliform' leaf has a blistered surface, which is bullate (FLOPO:0991122). In 'bulliform cells' the word names a part (PO_0004001 bulliform cell) and must not get this rule.",
+  "confidence": "medium"
+ },
+ {
+  "word": "dilated at the base",
+  "decision": "pattern",
+  "target": "docs/annotation-context-patterns.md slot 1 bearer_part (base of the bearer) + dilated PATO_0001571",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "The quality, widened (PATO_0001571 dilated), holds only at a region of the bearer, the base. That is the 'part of the bearer' slot, not a new value.",
+  "confidence": "medium"
+ },
+ {
+  "word": "hyaline-bordered",
+  "decision": "pattern",
+  "target": "docs/annotation-context-patterns.md slot 1 bearer_part (margin) + transparent PATO_0000964",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "hyaline-margined"
+  ],
+  "reason": "The margin of the tepal or sepal is hyaline, and 'hyaline' is a synonym of transparent (PATO_0000964). This is the same case as 'callous-margined', which could not be a plain value rule.",
+  "confidence": "medium"
+ },
+ {
+  "word": "tricarinate",
+  "decision": "pattern",
+  "target": "docs/odp/03-count-of-parts.md (tri- + carinate = 3 keels; add 'carinate' next to 'keeled' in config/flora_counted_parts.tsv)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "three-keeled"
+  ],
+  "reason": "A count word: three keels or ridges. The counted part is a ridge, not PO_0025327 keel, which is the keel petals of a pea-type flower (see the warning in flora_rejected_bearer_words.tsv).",
+  "confidence": "medium"
+ },
+ {
+  "word": "annular-thickened",
+  "decision": "pattern",
+  "target": "docs/annotation-context-patterns.md slot 1 bearer_part (throat or edge) + increased thickness PATO_0000591",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A ring-shaped thickening at one region of the bearer (the corolla throat, the upper edge of the fruit). The region carries the thickening (PATO_0000591), so this needs the region slot, not a new term.",
+  "confidence": "low"
+ },
+ {
+  "word": "oblongoblanceolate",
+  "decision": "pattern",
+  "target": "docs/annotation-context-patterns.md (continuum: oblong PATO_0000946 - oblanceolate PATO_0002330)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "oblong-oblanceolate"
+  ],
+  "reason": "A transcription of 'oblong-oblanceolate' with the hyphen lost: a compound of two existing shape values, read as a continuum.",
+  "confidence": "high"
+ },
+ {
+  "word": "calyptriform",
+  "decision": "new_class",
+  "target": "",
+  "label": "calyptriform",
+  "parent": "PATO:0002008",
+  "definition": "A concave 3-D shape quality inhering in a bearer by virtue of the bearer's being shaped like a calyptra: a conical or dome-shaped cap that covers the structure beneath it like a candle-snuffer. NOTE: Sibling of FLOPO:0991119 cucullate; not calyptrate, which means bearing a calyptra.",
+  "synonyms": [
+   "caliptriforme",
+   "calyptra-shaped",
+   "extinguisher-shaped"
+  ],
+  "reason": "A real shape term for a calyx or a petal lamina that forms a cap. Neither PATO nor FLOPO has a cap or calyptra shape.",
+  "confidence": "medium"
+ },
+ {
+  "word": "castaneous-lepidote",
+  "decision": "pattern",
+  "target": "new: quality of the covering (bearer scaly PATO_0001804; its scales reddish brown PATO_0001287)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Lepidote is scaly (rule C235), and the castaneous colour (reddish brown, PATO_0001287 in the colour synonyms) belongs to the scales, not to the leaf sheath. Two qualities on two bearers.",
+  "confidence": "medium"
+ },
+ {
+  "word": "carnosulous",
+  "decision": "pattern",
+  "target": "docs/odp/01-approximate-value.md (fleshy PATO_0002351, value_qualifier approximately)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "somewhat fleshy"
+  ],
+  "reason": "The diminutive of carnose: 'somewhat fleshy'. That is the existing value fleshy with the approximation qualifier, as for 'sub-'.",
+  "confidence": "medium"
+ },
+ {
+  "word": "reticulating",
+  "decision": "rule:flopo_value",
+  "target": "anastomosing (FLOPO:0991128)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Here the veins themselves form a network. FLOPO:0991128 anastomosing is the network quality that inheres in the veins; reticulate (FLOPO:0991100) is the one that inheres in the leaf.",
+  "confidence": "medium"
+ },
+ {
+  "word": "flushed with purple",
+  "decision": "rule:pato",
+  "target": "purple (PATO_0000951)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "purple-flushed",
+   "suffused with purple"
+  ],
+  "reason": "A diffuse purple colouring of the part, its secondary colour as in 'green or flushed with purple'. Mapped to the colour, as the 2026-11-14 review proposed for 'purple-tinged'.",
+  "confidence": "medium"
+ },
+ {
+  "word": "ledged",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "'Ledged above' refers to a ledge or transverse ridge on the claw of a petal, a part that has no PO class. The adjective without that structure does not give a clear quality.",
+  "confidence": "medium"
+ },
+ {
+  "word": "extending close",
+  "decision": "pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "'Extending close to the costa/apex' places the part relative to another part (adjacent to, PATO_0002259, with 'towards'). Without the second part it means nothing.",
+  "confidence": "high"
+ },
+ {
+  "word": "rotundum",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A Latin form with two senses: a round opening ('ostiolum rotundum', circular) and a rounded apex ('ad apicem rotundum', a shape at a position). Each should go through the Latin-to-English reading with its context, not through one rule.",
+  "confidence": "medium"
+ },
+ {
+  "word": "pergameneous",
+  "decision": "new_class",
+  "target": "",
+  "label": "pergamentaceous",
+  "parent": "PATO:0000150",
+  "definition": "A texture quality inhering in a bearer by virtue of the bearer's being thin but tough and rather stiff, like parchment. NOTE: Between PATO:0104010 papyraceous (chartaceous) and PATO:0104032 coriaceous on the botanical texture scale.",
+  "synonyms": [
+   "pergameneous",
+   "parchment-like",
+   "pergamentaceus"
+  ],
+  "reason": "Floras use 'parchment-like' as a texture between papery and leathery. The papyraceous term in PATO (synonym chartaceous) describes something thinner and softer.",
+  "confidence": "medium"
+ },
+ {
+  "word": "silvery lepidote",
+  "decision": "pattern",
+  "target": "new: quality of the covering (bearer scaly PATO_0001804; its scales silvery, white FLOPO:0988009)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Lepidote is scaly (rule C235), and 'silvery' is the colour of the scales, not of the petiole or twig. The same pattern as castaneous-lepidote.",
+  "confidence": "medium"
+ },
+ {
+  "word": "fiberless",
+  "decision": "rule:negated_value",
+  "target": "not fibrous (FLOPO:0991026)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "without fibers",
+   "sem fibras"
+  ],
+  "reason": "A bulb coat or leaf sheath 'without fibres' is the opposite of fibrous (FLOPO:0991026), the value used for fibrous bulb coats. The fibres are not separate parts that PO can count.",
+  "confidence": "medium"
+ },
+ {
+  "word": "not cordlike",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A negation needs an existing positive value, and 'cordlike' has none. Revisit if 'cord-like' is ever added.",
+  "confidence": "medium"
+ },
+ {
+  "word": "piloso-ciliate",
+  "decision": "rule:flopo_value",
+  "target": "pilose (FLOPO:0991048)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "The margin is fringed with long, soft pilose hairs. The bearers are already margins (leaf margin, bract margin), so pilose on the margin states it fully.",
+  "confidence": "medium"
+ },
+ {
+  "word": "turbino-campanulate",
+  "decision": "pattern",
+  "target": "docs/annotation-context-patterns.md (continuum: turbinate FLOPO:0991077 - campanulate PATO_0104350)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "turbinate-campanulate"
+  ],
+  "reason": "A hyphenated compound of two existing shape values of the involucre, read as a continuum.",
+  "confidence": "high"
+ },
+ {
+  "word": "hemicordate",
+  "decision": "rule:flopo_value",
+  "target": "semicordate (FLOPO:0991349)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "hemi-cordate"
+  ],
+  "reason": "Hemicordate (cordate on one side of an unequal base) is the existing semicordate (FLOPO:0991349) with a Greek prefix in place of the Latin one.",
+  "confidence": "high"
+ },
+ {
+  "word": "piloso-strigose",
+  "decision": "pattern",
+  "target": "docs/annotation-context-patterns.md (continuum: pilose FLOPO:0991048 - strigose FLOPO:0991086)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A compound of two existing hair values. The source phrase 'piloso-strigose to strigose' itself treats it as a point on a continuum.",
+  "confidence": "high"
+ },
+ {
+  "word": "without distal pair of recurved lateral teeth",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A phrase, not a quality word: the absence of filament teeth (as in Allium), a structure that has no PO or FLOPO class.",
+  "confidence": "high"
+ },
+ {
+  "word": "firm-herbaceous",
+  "decision": "rule:pato",
+  "target": "firm (PATO_0002450)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "The texture of a soft, green, non-woody leaf that is nonetheless firm. PATO_0002352 herbaceous means dying back each season, so it does not fit; firm is the part of the meaning that has a term.",
+  "confidence": "medium"
+ }
+]

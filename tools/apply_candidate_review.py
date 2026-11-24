@@ -260,13 +260,20 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--review-dir", type=Path, default=REVIEW)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--append", action="store_true",
+                        help="a later review round: keep the rules that are in the table and add the new ones")
     args = parser.parse_args()
+    global STAMP
+    existing = _rows(RULES) if args.append else []
+    if args.append:
+        STAMP = f"{args.review_dir.name.removeprefix('opus-review-')} AI review (Claude Opus, second model)"
     catalog = Catalog()
     taken = {
         (rule.match_field, rule.match_key)
         for table in REVIEWED_TABLES
         for rule in na.load_normalization_rules(table)
     }
+    taken.update((rule["match_field"], rule["match_key"]) for rule in existing)
     out: list[dict] = []
     skipped: list[dict] = []
     stats: Counter = Counter()
@@ -366,13 +373,14 @@ def main() -> None:
             continue
         rule, why = part_of_rule(catalog, row)
         add("bearers", row, rule, why, [row["word"]])
-    for index, rule in enumerate(out, 1):
+    first = 1 + max((int(rule["rule_id"][1:]) for rule in existing), default=0)
+    for index, rule in enumerate(out, first):
         rule["rule_id"] = f"R{index:04d}"
 
     # The rules were checked a second time (round 2: every rule by Sonnet, the disputed ones by
     # Opus, curation/opus-review-2026-11-15/disputed.tsv): the final verdicts.
     disputed = Path("curation/opus-review-2026-11-15/disputed.tsv")
-    if disputed.exists():
+    if disputed.exists() and not args.append:  # the verdicts are on the rules of the first round
         verdicts = {row["rule_id"]: row for row in _rows(disputed)}
         kept = []
         for rule in out:
@@ -444,7 +452,7 @@ def main() -> None:
             "value_a": pair[0], "value_b": pair[1], "label_a": labels[pair[0]], "label_b": labels[pair[1]],
             "decision": row["decision"], "example": row["example"],
             "note": re.sub(r"\s+", " ", row["reason"]),
-            "reviewed": f"2026-11-14 AI review (Claude Sonnet, second model; confidence {row['confidence']})",
+            "reviewed": f"{STAMP.split()[0]} AI review (Claude Sonnet, second model; confidence {row['confidence']})",
         })
         stats[f"unions {row['decision']}"] += 1
 
@@ -456,7 +464,7 @@ def main() -> None:
     with RULES.open("w", encoding="utf-8", newline="") as fh:
         writer = csv.DictWriter(fh, fieldnames=FIELDS, delimiter="\t", lineterminator="\n")
         writer.writeheader()
-        writer.writerows(out)
+        writer.writerows(existing + out)
     for path, new in ((UNION_PAIRS, pairs_new), (REJECTED_BEARERS, rejected_new)):
         if new:
             with path.open("a", encoding="utf-8", newline="") as fh:

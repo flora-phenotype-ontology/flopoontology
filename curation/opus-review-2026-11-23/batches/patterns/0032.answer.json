@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P01280",
+  "decision": "new_pattern",
+  "target": "distance from a landmark",
+  "fix": "A length (PATO length, with value and UO unit) whose bearer is the stamen's insertion point, measured from a landmark (corolla base, PO corolla). In OWL: has part some (stamen and has characteristic some (length and towards some corolla)) with the numbers as data ranges. In RDF: fb:towards the landmark, plus fb:landmarkText 'from corolla base'; the ratio '0.56-0.6 of tube length' goes in a second record (pattern 10).",
+  "reason": "Pattern 09 reads 'inserted at' as PATO:0000624 but its limits say that comparisons with a measurement are not read. Here the measurement is the distance of the insertion from the corolla base.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01281",
+  "decision": "existing_pattern",
+  "target": "docs/odp/15-absence-of-a-part.md",
+  "fix": "Add 'glandless' to the privative words (like leafless, spineless) as absence of gland, PO:0005656 portion of secretory tissue (synonym gland), on the whole plant. 'throughout' is the unscoped context kind and restricts nothing.",
+  "reason": "'glandless' is a privative word, so the negation is inside the word itself. Pattern 15 covers these words, but this one is not in its list.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01282",
+  "decision": "new_pattern",
+  "target": "continuum inside an alternative",
+  "fix": "A union (pattern 07) whose first operand is a continuum: (red with lightness from dark to pale) or greenish (green, value_qualifier approximately, pattern 01). The OWL side is has characteristic some (red or green); the dark-to-pale range stays in RDF as the words. The bearer should be the spathe: PO:0009054 inflorescence bract, synonym spathe, rather than plain bract.",
+  "reason": "'dark to pale red or greenish' puts a continuum inside an alternative. Neither pattern 07 nor the continuum pattern reads that combination.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01283",
+  "decision": "new_pattern",
+  "target": "continuum inside an alternative",
+  "fix": "Union of oblong with the continuum cordate (PATO:0000948 heart shaped) to deltoid (PATO:0001875 triangular). In OWL: has characteristic some (oblong or heart shaped or triangular). The continuum relation between cordate and deltoid stays in RDF. 'variously shaped' is a cue that the shape varies.",
+  "reason": "'oblong or cordate to deltoid' is the same construction as P01282, and all three values have terms.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01284",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Read 'widely opening' / 'opening widely' on a flower as open, PATO:0000610. Keep 'widely' as the words in RDF; no new term.",
+  "reason": "This is a state of the flower at anthesis, not an event, and PATO has open. A 'widely open' class would be doubtful, so 'widely' stays in RDF only.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01285",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "flora_counted_parts.tsv already has partite → lobe. The missing piece is the container: 'terminal lobe' should ground as a leaf lobe with terminal position (pattern 18), and the count is 3 segments of that lobe.",
+  "reason": "'3-partite' is a count inside a word, and the table row exists. The hold comes from the container 'terminal lobe' not being grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01286",
+  "decision": "new_pattern",
+  "target": "habit noun as phenotype",
+  "fix": "Map the habit noun 'Liane' to FLOPO_0900035 'whole plant lianescent' (synonym liana), and give that class its defining property: has part some ('whole plant' and has characteristic some climbing FLOPO:0991108 and has characteristic some woody). The record then has bearer whole plant and quality climbing, with the noun as the words.",
+  "reason": "The class exists but has no entity–quality signature, which is why it was held. The 2026-11-15 review already proposed habit nouns as a pattern.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01287",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "This is a colour, not a measurement: the value is white and the bearer is the lip spur, PO:0025511 petal spur. Route statements with attribute 'color' and a colour word to the basic pattern.",
+  "reason": "The reason 'measurement_missing_unit' is wrong. 'spur ... white' is a plain part and quality.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01288",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Same as P01284: 'opening widely' on a flower → open PATO:0000610, with 'widely' as words.",
+  "reason": "This is the flower's state at anthesis, not an event.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01289",
+  "decision": "missing_term",
+  "target": "acaulescent: a whole-plant value for a plant with no evident aerial stem, the leaves arising at ground level (any stem short or underground)",
+  "fix": "FLOPO_0980080 'whole plant acaulescent' exists with synonym acaulescent, but it has no equivalence axiom. Add a FLOPO value 'acaulescent' and define the class as whole plant has characteristic acaulescent. Pattern 15 (stem absent) is wrong, because the definition allows a short stem.",
+  "reason": "The word is a quality of the whole plant, and its FLOPO class lacks an entity–quality signature.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01290",
+  "decision": "new_pattern",
+  "target": "dimension in cells",
+  "fix": "A thickness (or width) measured in cell layers: the bearer is the marginal band of the lamina (leaf margin), the quality is thickness, and the unit is 'cell' (a count unit, not UO). In OWL: a data range on number of cell layers. In RDF: fb:low 2, fb:high 3, fb:unit cell. 'wide' and 'thick' become two records.",
+  "reason": "Moss descriptions give dimensions as numbers of cells. This is not a count at a position.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01291",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add Spanish 'lobulado(s)' → lobe to config/flora_counted_parts.tsv. The bearer is the corolla of the ray floret (pattern 12, part of a qualified whole); the count of lobes is 4.",
+  "reason": "'4 lobulado' is the Spanish form of '4-lobed', a count inside a word.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01292",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Bearer PO:0030104 caryopsis fruit; value PATO:0000947 elliptic (synonym ellipsoid). Route the shape attribute to the basic pattern.",
+  "reason": "This is a shape, not a measurement. Both terms exist.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01293",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Read French 'subparallèles à' as parallel to PATO:0002272, with 'sub-' as approximately (pattern 01), towards PO:0020139 leaf midvein ('nervure principale'). The bearer 'canaux sécréteurs' in a leaf should be PO:0005665 resin canal.",
+  "reason": "Pattern 09 lists 'parallel to'. The French cue and the 'sub-' prefix are missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01294",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Two values of the inflorescence: fascicled FLOPO:0991098 and axillary FLOPO:0991000. Add the noun 'fascicle(s)', with the misspelling 'fasicle(s)', as a lexicon form of fascicled on inflorescence.",
+  "reason": "'Axillary' is a position value, not a relation to another part, and both values exist.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01295",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "These are joined by a comma, not alternatives: the capsule apex is truncate (PATO:0000936, 'sub-' → approximately, pattern 01) and retuse (PATO:0001974). Bearer: fruit, with apex as the region (slot 1).",
+  "reason": "A comma-separated pair that is compatible (a truncate apex with a notch) is a conjunction. The annotator read it as alternatives.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01296",
+  "decision": "existing_pattern",
+  "target": "docs/odp/08-alternative-with-frequency.md",
+  "fix": "Union of arachnoid or glabrous, the second with frequency 'sometimes', borne by the adaxial leaf epidermis. Grounding rule: a surface cue at the end of the first operand applies to the whole union when the second operand has no place of its own.",
+  "reason": "This is an alternative with its own frequency. It was held because the surface cue 'adaxially' stands across the 'or'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01297",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Add the Spanish cue 'por axila' to count_position kind per_axil, with landmark PO:0009023 leaf axil. The count is inflorescences 1; 'Infls.' should resolve to inflorescence.",
+  "reason": "Pattern 14 lists 'per leaf axil'. The Spanish cue is not there.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01298",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (continuum)",
+  "fix": "Continuum from included (FLOPO:0991121) to exserted (PATO:0000623). Let the same-attribute check accept a FLOPO value that is defined as the opposite of the PATO value.",
+  "reason": "Both values have terms and the continuum pattern exists. It is held only by the attribute-comparability check.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01299",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (continuum)",
+  "fix": "A colour compound X-Y read like 'linear-lanceolate': a continuum between purple and yellow on the corolla. Route it away from the measurement branch.",
+  "reason": "This is a colour, not a measurement. 'purple-yellow' is a hyphen compound, though it could also mean bicoloured, so confidence is low.",
+  "confidence": "low"
+ },
+ {
+  "id": "P01300",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'more than 10-flowered' is flowered → flower with a strict lower bound (pattern 02). Grounding rule: a 'N-flowered' count on a rachis has the inflorescence as its container. 'laxly' is a separate value, lax, on the inflorescence.",
+  "reason": "The counted part is in the word and the table row exists. The container 'rachis' was not grounded to the inflorescence.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01301",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (temporal transition)",
+  "fix": "Bearer PO:0000033 fruit valve, not fruit. The transition is fleshy becoming woody, as in 'white becoming pink' (qualitative_value_relation). The transcribed quality 'valve woody' wrongly puts the part inside the quality.",
+  "reason": "'becoming' is the documented cue for a transition, not an event.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01302",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "The second term is stated: 'ressemblant aux feuilles mais plus petites' gives decreased size towards leaf. Add French 'plus petit(e)s' and let the target carry from 'ressemblant aux X'.",
+  "reason": "The leaves are named in the same clause, so this is not an implied comparison.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01303",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add French 'plus court(e)(s) que' → decreased length PATO:0000574 towards the corolla.",
+  "reason": "This is a comparison of a dimension with a named second part. Only the French cue is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01304",
+  "decision": "new_pattern",
+  "target": "comparison within a series",
+  "fix": "The bearer is a series member (upper leaf, pattern 18), with decreased size towards the other members of the same series (middle and lower stem leaves). In OWL: has part some (leaf and has position upper and has characteristic some (decreased size and towards some (leaf and has position middle))). The implied term comes from the sentence's previous series members.",
+  "reason": "'upper leaves smaller' compares members of one series. The 2026-11-15 review named this pattern.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01305",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Petal, yellow. Route the colour attribute to the basic pattern instead of the measurement branch.",
+  "reason": "This is a colour, not a measurement.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01306",
+  "decision": "existing_pattern",
+  "target": "docs/odp/06-specimen-condition.md",
+  "fix": "Capsule (moss sporophyte capsule), furrowed PATO:0001948, specimen_condition dry ('when dry'), with 'somewhat' as approximately (pattern 01).",
+  "reason": "'when dry' is the specimen-condition cue, and the value has a term.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01307",
+  "decision": "new_pattern",
+  "target": "comparison with an implied second term",
+  "fix": "Decreased saturation (paler) of the keel towards a part named earlier in the sentence (standard and wings, whose colour is purple). In OWL: towards some (wing or standard). The implied target is resolved from the preceding coloured parts of the same flower, or held.",
+  "reason": "The second term of 'paler' is not stated. This construction is still open in the context-patterns review.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01308",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "French 'plus courts que les sépales' → decreased length PATO:0000574 towards sepal.",
+  "reason": "This is a comparison with a named part. Only the French cue is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01309",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Upper bound 8 mm on stem diameter. Read the abbreviation 'diam.' as the attribute before the 'to' cue.",
+  "reason": "'to 8 mm' is a known upper-bound cue. The abbreviated attribute before it blocked the parse.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01310",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "Keep it as transcribed text only. Pattern 13 forbids a negated count word, and 'not many-flowered' is not the same as few-flowered.",
+  "reason": "A negated indefinite count is too vague to become a class.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01311",
+  "decision": "new_pattern",
+  "target": "count of rows",
+  "fix": "The count is of rows of lacunae, not of lacunae, at position each_side of the midrib (pattern 14, landmark PO:0020139). The quality is the number of rows, with a has member link from the row to the lacuna. In RDF: fb:countedUnit row, fb:low 2, fb:high 5.",
+  "reason": "'in 2-5 rows each side midrib' counts rows. The 2026-11-15 review named this pattern.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01312",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Read the participle 'reflexing' as reflexed PATO:0104353. The bearer is the lamina of the ray-floret corolla (pattern 12), not the corolla as a whole.",
+  "reason": "This is a state under a process word, like the dehiscent cases.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01313",
+  "decision": "existing_pattern",
+  "target": "docs/odp/15-absence-of-a-part.md",
+  "fix": "Add 'ebracteolate' to the privative words → bracteole PO:0009043 absent, on the pedicel. The transcription 'bract present' inverts the meaning and names the wrong part.",
+  "reason": "A privative word for absence, which pattern 15 covers.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01314",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Equality: lower lemma (PO:0009040 sterile lemma) as long as the spikelet, ratio 1.",
+  "reason": "'as long as' is pattern 10, not a measurement without a unit.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01315",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Union of raceme inflorescence PO:0030115 or compound raceme inflorescence PO:0030116. Add 'panicled-racemose' as a lexicon form of compound raceme.",
+  "reason": "Both alternatives have terms. The compound word has no lexicon row.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01316",
+  "decision": "missing_term",
+  "target": "longitudinally dehiscent: a dehiscent quality of an anther opening by a slit along its length (child of FLOPO:0991149 dehiscent, sibling of poricidal)",
+  "fix": "Add the value and read 'dehiscing longitudinally' / 'by longitudinal slits' as that value on the anther.",
+  "reason": "This is a standard anther character, and FLOPO has dehiscent but no longitudinal kind.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01317",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "A plain count of teeth on the margin of the larger lamina, range (25-)35-50 with extremes (pattern 05). Add Spanish 'con N dientes' as a count cue. There is no position cue.",
+  "reason": "'margins serrate, with 35-50 teeth' is a count with the margin as container, not a count per position.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P01318",
+  "decision": "transcription_error",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "The quality should be pedicellate PATO:0001438, not the noun 'pedicel'. The bearer is flower with state female (pattern 04).",
+  "reason": "The transcribed quality names a part, not the quality 'pedicellate'. There is no alternative in the statement.",
+  "confidence": "high"
+ },
+ {
+  "id": "P01319",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Read French 'adnée à' as fused with PATO:0000642 (adnate) towards sepal. Keep 'à la base de chaque' in comparison_text. The bearer is the gland of the female flower (pattern 12), grounded as gland PO:0005656.",
+  "reason": "This is attachment to a named part, which pattern 09 covers. The French cue is missing.",
+  "confidence": "medium"
+ }
+]

@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P02120",
+  "decision": "new_pattern",
+  "target": "growth-form-noun",
+  "fix": "A habit noun becomes a conjunction of whole-plant qualities, not a class with no definition: liana = whole plant (PO:0000003) has characteristic climbing (FLOPO:0991108) and has part some (stem and has characteristic some woody). Two records from one cue, each with the noun as text. 'woody' needs a value class (only semi-woody FLOPO:0991309 exists).",
+  "reason": "'Lianas' is a habit noun with no EQ signature. The context word 'liana' already belongs to climbing FLOPO:0991108, but the noun also says the plant is woody, and the doc lists habit nouns as open.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02121",
+  "decision": "transcription_error",
+  "target": "pedicel PO_0030112, length 1-2 mm, of pistillate flower",
+  "fix": "Bearer pedicel (PO_0030112), quality length, 1-2 mm. 'Fls. pistiladas' is the qualified whole (pattern 12: pedicel part of a female flower).",
+  "reason": "'pedicelo' was transcribed as the quality of the flower. It is the bearer of the measurement.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02122",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "Add the French row 'lors de l'anthèse' (and 'à l'anthèse') to config/flora_context_words.tsv as stage PO_0007616 flowering stage. Ground 'se séparant en N pièces' to split (PATO_0001786) on calyx; the 2 pieces may go in as a count of calyx lobes (pattern 03).",
+  "reason": "This is a state of the calyx at a stage, the same as 'at anthesis', which exists in English only. Splitting is the quality, not an event to drop.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02123",
+  "decision": "new_pattern",
+  "target": "growth-form-noun",
+  "fix": "'Climbing shrub' = whole plant with climbing (FLOPO:0991108) plus the shrub habit (frutescent, FLOPO:0987002, given an EQ form: whole plant with woody, branched-from-base stems). The adjective already grounds; the noun needs its decomposition.",
+  "reason": "The adjective 'climbing' has a value, but the noun 'shrub' maps to a habit class with no EQ signature.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02124",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "'dehiscing' is a listed synonym of dehiscent (FLOPO:0991149); the process gate must not hold a verb form that has a value term. Annotate capsule (fruit) dehiscent and keep 'basipetally' in the record text; no direction term is needed for one taxon.",
+  "reason": "The quality exists. The -ing form tripped the process_or_event gate.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02125",
+  "decision": "missing_term",
+  "target": "twining (volubile): a climbing quality of a stem or plant that climbs by winding spirally round its support",
+  "fix": "Add FLOPO value 'twining' under climbing FLOPO:0991108 (sibling of root-climbing FLOPO:0991319), with synonyms volubile and voluble, on lateral branch/stem/whole plant. It then gives the twining climbing phenotype FLOPO_0985034 an EQ signature.",
+  "reason": "PATO and the FLOPO value list have no twining. FLOPO_0985034 exists only as a phenotype class with no EQ, hence the reason given.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02126",
+  "decision": "existing_pattern",
+  "target": "docs/odp/15-absence-of-a-part.md",
+  "fix": "Read the privative 'ebracteolate' (the 'e-' prefix as the negation cue in the word) as bracteole absent on the male flower. The bearer state 'male flowers' is pattern 04. 'Shortly pedicellate' is a separate record (pedicellate PATO_0001438).",
+  "reason": "The negation is inside the word, so the cue check on the span failed. Absence of a part covers it.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02127",
+  "decision": "existing_pattern",
+  "target": "docs/odp/16-quality-of-a-whole-towards-its-parts.md",
+  "fix": "Add 'verticillate' as a synonym of whorled (PATO_0001951). Read 'N-verticillate' as whorled leaves with 'has number of parts per node' N; here 3-4, per_node as in pattern 14. The carrier is the stem.",
+  "reason": "This is a whorled leaf arrangement with leaves per node. It isn't a measurement that lacks a unit.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02128",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Resolve the anaphor 'each' to the subject of the clause ('Locules'): container fruit locule (PO_0025270), bearer seed, count 0-1. The locule count 1-2 is its own record.",
+  "reason": "Seeds per locule is a count of parts with a container, the same as '3 seeds per fruit'. The container just wasn't taken from the preceding noun.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02129",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (continuum, qualitative_value_relation)",
+  "fix": "Split the hyphenated compound 'campanulate-turbinate' into the continuum campanulate–turbinate. turbinate exists as a FLOPO value (top-shaped) and campanulate is PATO. Repair the missing space ('Involucrescampanulate') before matching.",
+  "reason": "Both values have terms. The continuum pattern covers 'X-Y' shapes; the run-together word blocked it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02130",
+  "decision": "transcription_error",
+  "target": "bearer perianth tube, quality persistent, stage fruit",
+  "fix": "Bearer perianth tube (perianth PO:0009058 tube, or FLOPO corolla tube FLOPO_0985018 analogue), quality persistent, stage 'in fruit' (PO_0001002). 'At the capsule apex' is its place.",
+  "reason": "A part ('persistent perianth tube') was written as the quality of the capsule.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02131",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add the row 'branched → branch' to config/flora_counted_parts.tsv (only when numbered: '2-7-branched'). Ground the container 'tendril' for a shoot tendril (branch tendril PO_0025364 in Cucurbitaceae) rather than the ambiguous synonym.",
+  "reason": "'2–7-branched' is a count of the tendril's branches in a word. The suffix row and the tendril container are missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02132",
+  "decision": "missing_term",
+  "target": "callus (grass floret): the hardened, often hairy or pointed base of the floret or lemma at its point of disarticulation",
+  "fix": "Add a FLOPO anatomy class (part of the floret/lemma). Block grounding to PO_0005052 'plant callus' (wound tissue). Then '2-toothed' is a count of teeth, pattern 03 with the existing 'toothed' row.",
+  "reason": "PO has only the tissue-culture/wound callus, so the container cannot be grounded.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02133",
+  "decision": "transcription_error",
+  "target": "leaf vein and leaf margin, smooth (PATO_0000701), approximately, abaxial",
+  "fix": "Quality smooth (PATO_0000701) with '±' as the approximation (pattern 01) and 'abaxially' as the surface. Two bearers: leaf margin PO_0020128 and leaf vein.",
+  "reason": "The attribute 'texture' was transcribed instead of the value 'smooth'. There is no measurement, so 'missing unit' is spurious.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02134",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Count of teeth, at_region with 'above' = distal part, low 1, open upper ('one to several'). The container is the underleaf (amphigastrium) margin; underleaf needs a FLOPO bryophyte-part class if the moss/liverwort pass has none.",
+  "reason": "This is a count at a place on the part. The number is partly indefinite.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02135",
+  "decision": "new_pattern",
+  "target": "growth-of-a-season",
+  "fix": "The bearer is a shoot/twig of a given age in growing seasons ('previous season's growth' = second-year shoot). Store 'has age in seasons' 2 as the bearer state (RDF fb:bearerState with the cue). OWL: has part some (bark and part of some (stem and has characteristic some 'age in seasons'=2) and has characteristic some exfoliating).",
+  "reason": "Young/mature (pattern 04) can't tell first-year, second-year and older bark apart, and the source contrasts all three.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02136",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md (negation)",
+  "fix": "Add Portuguese 'não' to the negation cues. The bearer is the base of the lower-lemma trichomes (trichome part of lemma), not the lemma: negated tuberculate FLOPO:0991060.",
+  "reason": "Negation is supported; the Portuguese cue is unknown, and the hairs (tricoma) are the bearer.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02137",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "Add 'in saplings' to config/flora_context_words.tsv as bearer_quality young (PATO_0000309) of the whole plant. The co-ordinated 'shade leaves' is an environmental condition with no reading: hold it as RDF-only, not linked to the adult leaf-blade class.",
+  "reason": "This is the juvenile/shade leaf form, given apart from the adult blade. It must not merge with the adult range.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02138",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Rule: 'narrowed to/into a stipe' → stipitate (FLOPO:0991065) on the utricle (perigynium), and the base tapered (PATO_0001500). 'gradually' is a degree in the text only.",
+  "reason": "This describes shape, not a process. Both values exist.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02139",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Teach comparison() the French 'plus court(e)s/long(ue)s/large(s) que X' with the degree 'un peu'. The towards target is petal (PO:0009032), which is stated.",
+  "reason": "The second term is in the text ('que les pétales'). Only the French comparative is unread.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02140",
+  "decision": "missing_term",
+  "target": "pyriform: synonym of pear shaped (PATO_0005002)",
+  "fix": "Add 'pyriform' as a synonym of PATO_0005002 in the lexicon. 'Pistillate flowers:' is a sex heading (pattern 04 / 12), not a stage; the ovary needs no qualifier.",
+  "reason": "The quality has a PATO class but no synonym for 'pyriform'. The stage hold is spurious.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02141",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Read 'nearly as long as X' as equality in length towards lemma with value_qualifier approximately. The bearer is trichome part of rachilla.",
+  "reason": "The equality-to-another-part pattern covers 'as long as'; the hedge 'nearly' was not read.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02142",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Ground 'separated by a constriction' to constricted (PATO_0001847) on the spathe limb, at region proximal (kind C context, 'proximal part').",
+  "reason": "This is a shape quality worded as a noun, not a process.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02143",
+  "decision": "new_pattern",
+  "target": "merosity",
+  "fix": "Flower has a merosity quality with 'has number of parts per whorl' 5 (extreme 7, pattern 05). OWL: has part some (flower and has characteristic some (merosity and 'has number of parts per whorl' value 5)). RDF: fb:low/fb:high with the count unit and the extremes.",
+  "reason": "Pattern 03 explicitly does not split 'merous' (it names no single part).",
+  "confidence": "high"
+ },
+ {
+  "id": "P02144",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add the row 'sect → lobe' to config/flora_counted_parts.tsv (beside fid/parted/partite). Calyx lobe count 5; 'from base' is the depth, kept in the record text.",
+  "reason": "A count in a word with an unknown suffix.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02145",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add the postposed cue 'N or more' (also 'or over') as an inclusive lower bound: value_low 30 cm, no upper. Don't treat this 'or' as a disjunction.",
+  "reason": "A lower bound misread as an alternative.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02146",
+  "decision": "transcription_error",
+  "target": "trichome of basal leaf, length up to 1 mm",
+  "fix": "Bearer trichome (part of the leaf, both surfaces), quality length, upper bound 1 mm (pattern 02); 'basal' is the position (pattern 18). Suberect is a second record.",
+  "reason": "'hairs' was written as the quality of the leaf. The hairs bear the length.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02147",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "Add the French rows 'd'abord' → young (PATO_0000309) and 'puis'/'ensuite' → mature (PATO_0001701) to config/flora_context_words.tsv, the counterparts of 'at first' and 'later'. The bearer stays the upper surface of the blade.",
+  "reason": "The same construction as 'at first tomentose, later glabrous', which exists in English only.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02148",
+  "decision": "new_pattern",
+  "target": "part-present-at-position",
+  "fix": "Presence of adventitious roots at the nodes: has part some (stem and has part some (shoot axis node PO:0005004 and 'attached to' some 'adventitious root')). RDF: bearer adventitious root, quality present, place node with its cue.",
+  "reason": "Not a quality of the stem but a part at a place. The doc lists this as open.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02149",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "'3-fid' splits with the existing 'fid → lobe' row. Ground the container 'central segment' as a leaf lobe with position median (FLOPO_0991381, pattern 18). 'To middle' is the division depth (record text).",
+  "reason": "The suffix row exists; the container 'segment' was not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02150",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md (region slot)",
+  "fix": "'apex' is a region row of config/flora_context_words.tsv, not a stage: the bearer is the apex of the pinnule (FLOPO_0985028), acute PATO_0000389.",
+  "reason": "The stage hold misfired on a place word.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02151",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Rule: 'paler beneath/abaxially' (with 'dark green adaxially' in the clause) → pinna discolorous (FLOPO value). The direction stays in the record text; no implied-comparison slot is needed.",
+  "reason": "Prefer a rule to a new pattern: the second term is the other surface of the same pinna, which 'discolorous' captures.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02152",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Resolve 'each' to the preceding noun 'nutlets' (pyrene). Bearer seed, count 1, container pyrene. The 10 nutlets per berry is its own count.",
+  "reason": "The same count-with-container as P02128: the anaphor was not resolved.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02153",
+  "decision": "new_pattern",
+  "target": "count-per-length",
+  "fix": "A density of parts along a length: bearer leaf margin, quality linear density towards tooth, 3-7 per cm (unit count per centimetre). RDF only, like pattern 14 (fb:countPosition 'per_length'); no phenotype class, because it is not a count of the organ.",
+  "reason": "Pattern 14 lists rates ('6-10 teeth per cm') as held.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02154",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Read 'few to more than 10-flowered' as an indefinite count of flowers in the inflorescence, few to many, with 'more than 10' in the text. No numeric bound is asserted.",
+  "reason": "The statement gives neither a firm lower nor a firm upper number. The indefinite count is the honest reading.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02155",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Accept the per-side cue inside parentheses: teeth 6-15, count_position each_side, container leaf margin/leaf.",
+  "reason": "'teeth 30-75 per side' is a listed wording of the pattern; the parentheses blocked the cue.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02156",
+  "decision": "transcription_error",
+  "target": "trichome of female flower, length 0.5-1 mm, dense, shaggy",
+  "fix": "Bearer trichome part of the female flower (pattern 12), length 0.5-1 mm. 'immature' is the bearer state young (pattern 04); dense/shaggy are separate records.",
+  "reason": "'hairs' was written as the quality of the flower. The hairs bear the length.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02157",
+  "decision": "new_pattern",
+  "target": "exsertion-length",
+  "fix": "Anther exserted (PATO_0000623) plus a distance of 4 mm beyond the perianth: has characteristic some (distance PATO:0000040 towards perianth, 4 mm). RDF: fb:low/fb:high on the distance, with the exsertion cue.",
+  "reason": "The number is how far the anthers project, not a size of the anther. No pattern measures projection beyond another part.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02158",
+  "decision": "new_pattern",
+  "target": "part-present-at-position",
+  "fix": "As P02148: adventitious root attached to the shoot axis node of the lower repent stem part (region proximal). Presence in OWL, place cue in RDF.",
+  "reason": "The same construction as P02148.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02159",
+  "decision": "existing_pattern",
+  "target": "docs/odp/16-quality-of-a-whole-towards-its-parts.md",
+  "fix": "Cue 'arranged in opposite pairs' → opposite (PATO_0001933) of the flowers, carrier the raceme rachis (arrangement). The upper half/third is a region in the text.",
+  "reason": "Flower arrangement on an axis is the arrangement kind of pattern 16. The cue wording was not read.",
+  "confidence": "high"
+ }
+]

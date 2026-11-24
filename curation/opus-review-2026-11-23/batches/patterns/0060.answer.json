@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P02400",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Make the hair the bearer: trichome PO:0000282 with unbranched PATO:0000414 ('simple'), on the whole plant. Record 'often absent' separately as an absence of trichomes (pattern 15) with frequency 'often', in RDF only. Don't record the whole plant as hairy in OWL, because the hairs are often missing.",
+  "reason": "The negation cue belongs to a second statement ('often absent'), not to 'indumentum of simple hairs'. Split them and the simple hairs can be annotated.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02401",
+  "decision": "new_pattern",
+  "target": "extent of a positional quality",
+  "fix": "Put leaf margin PO:0020128 revolute PATO:0001963 in OWL. Keep the extent in RDF: the region from the base up to at least the middle of the lamina (fb:extentToAtLeast 'middle', cue 'to mid leaf or beyond').",
+  "reason": "'or beyond' is not a disjunction of values. It is an open upper end of how far along the leaf the margin is rolled.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02402",
+  "decision": "existing_pattern",
+  "target": "config/flora_context_words.tsv (kind region)",
+  "fix": "Add the plurals 'towards apices' and 'toward apices' as region apex, next to the existing 'towards apex'. Ground 'twigs' to branch PO:0025073 (PO synonym 'twig'), not stem.",
+  "reason": "Hirsute on the distal part of the twigs is a region of the bearer (slot 1). Only the plural form of the cue is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02403",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The quality is lanceolate PATO:0001877, not the attribute 'shape' with a measurement. The 7-9 × 2-2.5 mm size is a separate statement.",
+  "reason": "'lanceolate' is a shape value, not a measurement, so 'measurement_missing_unit' doesn't apply.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02404",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Add the reviewed pair male PATO:0000384 ('staminate') / androgynous FLOPO:0991037 to config/flora_union_pairs.tsv. The bearer is the spike with position distal (pattern 18, 'distal spikes').",
+  "reason": "Both values exist. Only the union pair and the reading of 'staminate' as male on a spike are missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02405",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add 'to only' as an inclusive upper-bound cue: hair length ≤ 2 mm. The bearer is trichome PO:0000282 on the rachis and pedicels (two records). Don't keep 'similar to those of twigs'.",
+  "reason": "This is a plain upper bound with a cue the parser doesn't know.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02406",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Read 'few to several' as an indefinite count range (few…several) of stems per plant. 'from base' says where they arise and isn't a count position.",
+  "reason": "This is an indefinite count of stems. Only the 'few to several' range is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02407",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Add the count_position kind 'per_furrow' (cues 'in each furrow', 'in the intervals') to the model and to the ShEx list. Bearer vitta FLOPO_0986042, container mericarp PO:0020075, count 2-3 with frequency 'usually'. '4 on commissure' gets the kind at_region.",
+  "reason": "The same construction as P00028 in the previous review. The furrow position kind is still not in the pattern.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02408",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "Add Spanish 'cuando jóvenes' and 'cuando joven' to config/flora_context_words.tsv as bearer_quality young PATO_0000309. The bearer is the inner floral bract (position inner, pattern 18), with ciliate. 'volviéndose crenuladas' is a transition to crenulate.",
+  "reason": "'when young' is a bearer state that's already handled in English. Only the Spanish cue is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02409",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (growth-form row Q13)",
+  "fix": "Give 'vine' an EQ signature: whole plant PO:0000003 with climbing FLOPO:0991108, instead of the primitive class FLOPO_0985032. Drop 'of unknown size'.",
+  "reason": "The same as P00020/P00021 in the previous review. The value exists and the class has no signature yet.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02410",
+  "decision": "existing_pattern",
+  "target": "docs/odp/15-absence-of-a-part.md",
+  "fix": "Add a bearer rule mapping 'specialized asexual reproduction' to asexual propagule FLOPO_0986119 (gemmae, brood bodies), and record its absence (cue 'absent').",
+  "reason": "This is the standard bryophyte-flora wording for 'no gemmae or other propagules'. It's the absence of a part, not a process.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02411",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Accept 'to ±' as an inclusive upper bound with value_qualifier approximately, as in P00003 (whole plant height ≤ 3 m). 'Young plants' is the bearer state young PATO_0000309 (pattern 04). Accept 'm.' with a full stop as metre.",
+  "reason": "The same as P00003 in the previous review. The '±' after 'to' blocks the cue.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02412",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (growth-form row Q14)",
+  "fix": "Give 'liana' an EQ signature (whole plant PO:0000003, climbing FLOPO:0991108 and ligneous) instead of the primitive FLOPO_0900035, and add French 'liane' as a synonym.",
+  "reason": "The same as P00020 in the previous review.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02413",
+  "decision": "new_pattern",
+  "target": "comparison with an implied second term",
+  "fix": "Bearer leaf lamina abaxial epidermis PO:0000049, with a relative lightness of colour towards (RO:0002503) the adaxial epidermis. A rule pairs the implied term with the cue ('beneath' implies above, 'inner' implies outer). OWL: has_characteristic some (lighter colour and towards some adaxial epidermis); the cue goes in RDF.",
+  "reason": "This is listed as open in annotation-context-patterns.md ('paler beneath'). The second term is implicit: the upper surface.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02414",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "Add 'in male' and 'in female' (followed by a colon, after a named organ) to config/flora_context_words.tsv as bearer_quality male PATO:0000384 or female, on the inflorescence. Then read 'to 10 mm long' with the existing upper-bound cue 'to'.",
+  "reason": "The prefix 'in male:' sits between the bearer and the bound and stops the cue from being read. The construction is male inflorescence length ≤ 10 mm.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02415",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Add a quality rule 'soon glabrous' (and 'early glabrous') → glabrescent FLOPO:0991052. Don't read 'soon' as a stage.",
+  "reason": "'soon glabrous' means glabrescent, and that value exists.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02416",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Make the span 'yellow or reddish' and record a same-attribute union of yellow and reddish on prickle, on young leaves (bearer state young, 'when young').",
+  "reason": "A colour union of one attribute is already supported. The statement was cut down to 'or reddish' and lost its first alternative.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02417",
+  "decision": "new_pattern",
+  "target": "distance from a landmark",
+  "fix": "Bearer tendril, with the branch point at distance PATO:0000040 1-5 cm towards the tendril base (has magnitude, UO cm) in RDF. Put tendril branched in OWL, with the branch count 2-7 as in 'count of branches of a branched part'.",
+  "reason": "1-5 cm is where the branching starts, measured from the base, not the tendril's length. The transcribed 'length' is wrong, and no pattern handles a distance from a landmark.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02418",
+  "decision": "existing_pattern",
+  "target": "docs/odp/08-alternative-with-frequency.md",
+  "fix": "Bearer leaf lamina (not lobe). Record entire PATO:0104359 or, occasionally, trilobed PATO:0002241 (a quality, as in P00016). 'toward apex' is the region apex (slot 1), not a count position. Add the pair entire/trilobed to flora_union_pairs.tsv.",
+  "reason": "This is an alternative with its own frequency. The count-at-position reading was a misparse.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02419",
+  "decision": "existing_pattern",
+  "target": "docs/odp/18-position-of-the-bearer.md",
+  "fix": "Read 'lateral' as position lateral of petal (pattern 18) and 'united' as the petals being connate in pairs (pattern 16). The length 21-26 mm belongs to the fused pair, so note in RDF that the bearer is the united pair.",
+  "reason": "In Impatiens the lateral petals are fused in pairs. 'lateral' is a position word, not a developmental stage.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02420",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (growth-form row Q10)",
+  "fix": "Map 'climber(s)' to whole plant PO:0000003 + climbing FLOPO:0991108, as one operand of the family's habit alternatives (trees, shrubs, herbs or climbers).",
+  "reason": "The same as P00021 in the previous review.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02421",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Make a secondary union over full statements: spike sessile (approximately, 'sub-') or pedunculate PATO:0002388 with a short peduncle. Add the reviewed pair sessile/pedunculate. 'at lower part' means the lower lateral spikes (position lower, pattern 18) and is kept as the cue of the second operand.",
+  "reason": "These are alternatives under different attributes, a case already described in annotation-context-patterns.md. Only the pair is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02422",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (growth-form row Q14)",
+  "fix": "Read 'Liane ou petit arbuste lianiforme': both alternatives are woody climbers, so whole plant climbing FLOPO:0991108 and ligneous. Add French 'liane' and 'lianiforme'.",
+  "reason": "The same as P00020 in the previous review. The OCR colons break the phrase but not its meaning.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02423",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "The second term is stated: apophysis (sporangium base PO_0030040, rule R2592) width towards the urn. Add the bare 'urn(s)' as a bearer rule → sporangium PO_0025094 (like R2736 'capsule urn'). Read 'ca. three times broader' as a width ratio of about 3 with frequency 'usually', and 'much broader' as increased width.",
+  "reason": "The comparison names its second term ('the urns'), so the 'no second term' reason is wrong.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02424",
+  "decision": "missing_term",
+  "target": "branch fascicle (Sphagnum): a cluster of gametophore branches arising together at a stem node, made up of spreading and pendent branches",
+  "fix": "Add the group class (members via has member RO:0002351). Then count branches with the bearer state pendent: 2 per fascicle, and spreading 3 (sometimes 2) with pattern 08.",
+  "reason": "The count is fine. The container 'branch fascicle' has no class (the PO flower and leaf fascicles don't fit).",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02425",
+  "decision": "transcription_error",
+  "target": "",
+  "fix": "The quality is the colour value green, not the attribute 'color' with a measurement. The bearer is the floral bract (inflorescence bract PO:0009054).",
+  "reason": "'green' is a colour value, so 'measurement_missing_unit' doesn't apply.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02426",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Make the span 'linear or narrowly oval' and record the union linear / elliptic PATO_0000947 (rule R0274 'narrowly oval'). The bearer 'calyx-segments' grounds to the sepal or calyx lobe.",
+  "reason": "Both values have terms. The statement was cut down to its second alternative.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02427",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (growth-form row Q14)",
+  "fix": "Map 'Liane' to whole plant + climbing FLOPO:0991108 + ligneous, as for P02412.",
+  "reason": "The same as P00020 in the previous review.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02428",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add the Flora of China ending 'sect' (3-sect = 3-sected, cut nearly to the base) to config/flora_counted_parts.tsv → lobe, like 'parted' and 'partite'. Result: 3 lobes on the bract.",
+  "reason": "A count in a word whose ending isn't in the table.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02429",
+  "decision": "existing_pattern",
+  "target": "config/flora_context_words.tsv (kind unscoped)",
+  "fix": "Add 'late' before glabrescent as an unscoped timing word that restricts nothing. Record inflorescence glabrescent FLOPO:0991052 and keep 'late' as a cue in RDF.",
+  "reason": "'late glabrescent' is still glabrescent. 'late' only says when the hairs are lost, and isn't a stage of the bearer.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02430",
+  "decision": "existing_pattern",
+  "target": "docs/odp/06-specimen-condition.md",
+  "fix": "Let 'drying' scope over the colour list that follows ('bluish, greyish green above, blackening, brownish below'). Read 'blackening' as black PATO:0000317 under specimen_condition dry, in RDF only.",
+  "reason": "The colours describe the dried blade. The process reading of 'blackening' is a misparse.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02431",
+  "decision": "missing_term",
+  "target": "annulus (moss capsule): a ring of differentiated, often thick-walled cells between the capsule mouth and the operculum, helping the operculum come off",
+  "fix": "Add a FLOPO anatomy class (PO has none) and annotate it absent (pattern 15, cue 'lacking'). Also annotate inner peristome as endostome FLOPO_0986064 absent (rule R3394), which needs no new term.",
+  "reason": "These are two absences of parts, not a comparison. The annulus has no class.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02432",
+  "decision": "existing_pattern",
+  "target": "docs/odp/12-part-of-qualified-whole.md",
+  "fix": "The peduncle is part of the fruiting syncarp of the sentence: bearer peduncle with the stage 'in fruit' (fruit development stage PO_0001002) carried over from 'Fruiting syncarp'. Length 3-4 cm.",
+  "reason": "This is the peduncle of the infructescence, so the stage comes from the subject of the sentence and has no cue of its own in the clause.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02433",
+  "decision": "new_pattern",
+  "target": "alternatives of combined values",
+  "fix": "Make one_of operands that are each a conjunction of values of one bearer: (green and striped and spotted with reddish brown) or (uniformly greenish yellow). OWL: has_characteristic some (A and B) or has_characteristic some C, with each operand's cues in RDF.",
+  "reason": "Pattern 07 unions single values. Here one alternative is a combined colour pattern.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02434",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add the compound ending 'dentate-lobed' → lobe to config/flora_counted_parts.tsv (2-4 lobes on the stipule margin). Record 'or serrate' as a union with serrate (pattern 07).",
+  "reason": "A count in a compound word whose ending isn't in the table.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02435",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "The 'ribbed' → rib row already exists. Ground the container from the clause ('perigynia', the Carex utricle) and count 2 ribs. Treat 'prominently' as a degree word and drop it.",
+  "reason": "A count in a word. The container is in the clause, but the degree adverb and the container blocked the split.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02436",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Allow a space after the hyphen ('4-5- ribbed') when splitting N-xed words: rib count 4-5 on stem.",
+  "reason": "The 'ribbed' row exists. Only the stray space blocked the split.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02437",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Container: Carex 'scale' as a floral bract (as in P00024, not trichome), qualified as pistillate (female, pattern 04/12). Count 3 veins by the 'veined' row.",
+  "reason": "A count in a word. The container failed because 'scale' grounds to trichome.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02438",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read 'N mm thick' as a measurement of thickness PATO:0000915 (a number + unit + 'thick' gives the attribute, not the value increased thickness). Petiole thickness 0.5-1.8 mm.",
+  "reason": "A plain measurement. The word 'thick' just needs mapping to its PATO attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02439",
+  "decision": "existing_pattern",
+  "target": "flopo2/ingest/ncvc_normalization.tsv (growth-form row Q14)",
+  "fix": "Map Latin 'liana' to whole plant + climbing FLOPO:0991108 + ligneous. 'magna' is vague and isn't kept. 'nigrescens' and 'lepidota' are separate statements.",
+  "reason": "The same as P00020 in the previous review, from a Latin diagnosis.",
+  "confidence": "high"
+ }
+]

@@ -1,4 +1,4 @@
-# FLOPO Candidate Additions — Kew African Flora Species (`kew-african`)
+# FLOPO Candidate Additions — Flora of Tropical East Africa (Royal Botanic Gardens, Kew; database export of 2014) (`kew-african`)
 
 - **Records processed**: 12,104
 - **Extracted trait rows**: 524,005

@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P00480",
+  "decision": "new_pattern",
+  "target": "lower_bound_on_maximum",
+  "fix": "\"to at least 1.5 cm\" says that the largest fruit seen reaches at least 1.5 cm. It is not a lower bound for every fruit. RDF: a record with fb:maxAtLeast 1.5 cm, the cue \"to at least\" and the bearer state immature (pattern 04). OWL: only the existential `has part some (fruit and has characteristic some (length and has magnitude some xsd:decimal[>= 1.5]))`, which is true of the plant.",
+  "reason": "The parser reads \"to\" as an upper cue and \"at least\" as a lower cue. Together they bound the maximum, which neither pattern 02 nor any other pattern covers.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00481",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Add the pair axillary / cauliflorous (FLOPO:0991175) to config/flora_union_pairs.tsv. Widen the bearer constraint of cauliflorous so that it also takes an inflorescence (the fig); \"solitary\" is a separate conjoined statement. \"On up to 1 cm long spurs\" stays in the record.",
+  "reason": "Axillary or cauliflorous are alternative positions of the figs, both have terms, and the reviewed pair table lacks the pair.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00482",
+  "decision": "existing_pattern",
+  "target": "docs/odp/15-absence-of-a-part.md",
+  "fix": "Add the privative words with the prefix e- (eglandular, and also eciliate, epapillose, estipulate) to NEGATION_EVIDENCE in flopo2/verify/gates.py. \"Panicle eglandular\" is then glandular (PATO:0002117) negated with negation_scope quality, or glands absent on the inflorescence.",
+  "reason": "\"Eglandular\" is a negation in one word, like \"ebracteate\", and is missing from the list of privative cues.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00483",
+  "decision": "transcription_error",
+  "target": "trichome PO:0000282 on the abaxial leaf surface; length PATO:0000122",
+  "fix": "The bearer is the hairs (trichome) of the lower surface of the blade, not the leaf blade. The numbers are their length: 0.1(-0.3) mm, a range with an extreme (pattern 05). \"Appressed\" is a separate record; \"widely spaced\" and \"of mixed sizes\" are not annotated.",
+  "reason": "\"Hairs\" is not a quality. The number measures the hairs, not the blade.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00484",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add the Portuguese comparison cues \"mais curta/curto que\" and \"mais longa/longo que\", read as decreased or increased length towards the target. Ground \"folha(s)\" to leaf for the towards slot.",
+  "reason": "\"Shorter than the leaves\" is the comparison of pattern 09, but only English comparison words are read.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00485",
+  "decision": "new_pattern",
+  "target": "distance_from_landmark",
+  "fix": "Depth of the rhizome below the soil surface: PATO depth (PATO:0001595) or distance (PATO:0000040), measured from a landmark that is not a plant part (the soil surface), with the usual range 2.5-5 cm and the extreme 'common to 10 cm' in RDF. OWL: `has part some (rhizome and has characteristic some (depth and towards some 'soil surface'))` once an ENVO landmark is allowed; until then a record only.",
+  "reason": "This is not a dimension of the rhizome but its position relative to the soil surface, which no pattern covers. \"Common to\" also carries a frequency.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00486",
+  "decision": "existing_pattern",
+  "target": "docs/odp/15-absence-of-a-part.md",
+  "fix": "Add \"eglandular\" to the privative cues in NEGATION_EVIDENCE. The record is trichome with glandular (PATO:0002117) negated, negation_scope quality, with \"simple\" as a second record, frequency \"nearly always\" and the place 'abaxial surface of lamina' (slot 1).",
+  "reason": "The hairs are present but are not glandular. This is a negated quality whose cue is in one word.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00487",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Add a count_position kind per_series (cues \"in each series/row/whorl\"), with the capitulum or involucre as container and phyllary as bearer, about 8 (value_qualifier approximately). A pattern-14 record, so no phenotype class.",
+  "reason": "\"About 8 in each series\" is a count per place of a kind. Pattern 14 lacks the series kind, so the container was not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00488",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Route a transcribed quality \"number\" whose value is a word of INDEFINITE_AMOUNTS (\"many\") to indefinite_counts instead of the measurement parser. The container is the synflorescence named in the preceding clause.",
+  "reason": "\"Capitula many\" is pattern 13 word for word, but it was held as a non-length measurement.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00489",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Read \"2-lobed\" as a compound count word (lobed → lobe, or bilobed) before the unit check, which mistook \"2-\" for a number without a unit. \"Or lobes coherent\" is an alternative (pattern 07) of lobes fused (PATO:0000642 among the lobes, pattern 16).",
+  "reason": "The statement is a count in a word, not a measurement.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00490",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Take the container from the subject of the clause: the side lobe of the lip, i.e. lobe with position lateral (pattern 18) and part of the labellum. Then nerves 3-5 is a count of vein within that container.",
+  "reason": "The count is plain. The container, the side lobes of the lip, stands earlier in the clause and was not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00491",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "As for the other \"many\" rows: a quality \"number\" with the word \"many\" goes to indefinite_counts. Spikelet is present in the panicle, the container of the clause.",
+  "reason": "\"Spikelets many\" is an indefinite count.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00492",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Add a grounding rule: \"épais de N mm\" (and \"thick\" or \"épais\" with a number) is the attribute thickness (PATO:0000915) with the range 1-2.5 mm. It is not the value increased thickness.",
+  "reason": "A measured thickness was grounded to the value \"thick\" rather than to the PATO attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00493",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1, kind C) and config/flora_context_words.tsv",
+  "fix": "Split \"inside and along margin\" into two place cues, giving two records. Allow \"inside\" on a calyx or corolla (the adaxial side, a pinned BSPO region); at present it is restricted to single perianth members and bracts.",
+  "reason": "These are places on the bearer, not stages. Two cues in one clause, and the restriction on \"inside\", kept the row out.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00494",
+  "decision": "new_pattern",
+  "target": "relational_quality_with_magnitude",
+  "fix": "A relational quality with a measured extent: exserted (PATO:0000623) towards anther, with the distance by which it projects as an upper bound of 2 mm. OWL: `has part some (style and has characteristic some (exserted and towards some anther))`. RDF: the record adds fb:high 2, unit mm and a property marking it as the extent of the relation.",
+  "reason": "Pattern 09 gives the relation and pattern 02 the bound, but no pattern attaches a magnitude to a relation.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00495",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "A union over full statements: fruit glabrous, or fruit with hairs (sparse, count word few) at its apical region (slot 1). The second operand needs its own region; \"4-seeded\" is a separate count record (pattern 03).",
+  "reason": "Glabrous versus hairy near the apex is an alternative of the indumentum, but one operand carries a place.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00496",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add a row \"sect\" (and \"sected\") → lobe/segment to config/flora_counted_parts.tsv. Read \"from base\" as divided to the base, i.e. dissected (PATO:0104362).",
+  "reason": "\"3-sect\" is a count in a word whose suffix is missing from the table.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00497",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Bract attenuate (PATO:0001982), plus a second record of its basal region (slot 1) approximately lanceolate (PATO:0001877, pattern 01, \"sub-\"). \"Evenly\" stays in the record. The unit check fired by mistake.",
+  "reason": "It is a shape statement with existing terms, not a measurement.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00498",
+  "decision": "new_pattern",
+  "target": "lower_bound_on_maximum",
+  "fix": "\"To over 60 cm\": the largest leaves exceed 60 cm. RDF: fb:maxAtLeast 60, strict, with the cue \"to over\". OWL: only `has part some (leaf and has characteristic some (length and has magnitude some xsd:decimal[> 60]))`, never a bound on all leaves.",
+  "reason": "Same construction as \"to at least\": a bound on the maximum, not a lower bound of the range.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00499",
+  "decision": "existing_pattern",
+  "target": "docs/odp/11-ratio-of-two-dimensions.md",
+  "fix": "Add the wording \"N times longer than wide\" (and \"N times broader than long\") beside \"N times as long as wide\": a length:width ratio of 2-4, with unit ratio.",
+  "reason": "This is the ratio of two dimensions in a variant wording the parser lacks.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00500",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Let the bare-\"to\" cue in UPPER_BOUND_EVIDENCE match directly after \"(\" without a space (\"(to 0.5 cm)\"). The bearer is the petiolule of the lateral leaflets (pattern 18, position lateral).",
+  "reason": "An upper bound whose cue was missed only because of the parenthesis.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00501",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Add a rule: \"elongate(s/ing) at/in fruit\", said of a pedicel or stalk, is accrescent (FLOPO:0991082). \"Slightly\" is kept as a degree, and \"at fruiting\" as the stage cue (PO:0001002).",
+  "reason": "Growing longer after flowering is what accrescent means, and the term exists; it is not an open process.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00502",
+  "decision": "transcription_error",
+  "target": "whole plant: sparsely pubescent or glabrous; not a negation",
+  "fix": "\"Only slightly if at all pubescent\" is sparse pubescence, or glabrous, with frequency usually. It is not a negated pubescent. The clause that follows (\"sparsely appressed pilose especially on the younger shoots\") is the annotatable statement.",
+  "reason": "The negation is not in the text; \"if at all\" is a hedge.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00503",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Look for the position cue in the whole clause, which here comes before the count. Add the wording \"along each side of the (leaf) margin(s)\" as kind each_side, with leaf as container and leaf margin as landmark.",
+  "reason": "\"7-15 teeth along each side of the margin\" is pattern 14. The cue is in the context, not in the transcribed span.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00504",
+  "decision": "transcription_error",
+  "target": "petiolule PO:0020050 (of the lower leaflet pair), length",
+  "fix": "The 5 mm is the length of the petiolule of the lower pair (\"shortly (to ± 5 mm) petiolulate\"), not of the leaflet. The cue \"to ±\" also needs \"±\" among the approximation words in UPPER_BOUND_EVIDENCE (pattern 02 with pattern 01).",
+  "reason": "The transcribed bearer is wrong. The bound cue would also be missed.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00505",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Do not hold \"numerous\" by the quality rule (no_ontology_term:count). Send it to indefinite_counts first: flower present in the inflorescence, count word many.",
+  "reason": "\"Numerous flowers\" is pattern 13; a hold rule caught the word first.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00506",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Add the inverted wording \"each node with N X\" as kind per_node: inflorescence branch 3 per node, with the rachis as container. Split the long statement into atomic ones: rachis 4-7 nodes is a pattern-03 count, branches up to 4-5.5 cm is pattern 02.",
+  "reason": "This is a count per node, but the statement is a whole paragraph and the cue wording is inverted.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00507",
+  "decision": "existing_pattern",
+  "target": "docs/odp/15-absence-of-a-part.md",
+  "fix": "Add \"eglandular\" to the privative cues in NEGATION_EVIDENCE. The record is the faces of the blade with glandular negated, negation_scope quality.",
+  "reason": "Same missing privative cue as the other \"eglandular\" rows.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00508",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Read \"adnate at (the) base of X\" like \"adnate to X\": fused with (PATO:0000642), or adnate FLOPO:0991129, towards sepal. \"At base of\" is kept in comparison_text.",
+  "reason": "Attachment to another part with the target named; only the preposition differs from the read wording.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00509",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground \"fruit-calyx\" to calyx with the stage of fruit development (pattern 04, PO:0001002). Then 5-lobed is a count of lobes of the calyx. \"To almost the base\" is parted (FLOPO:0991234).",
+  "reason": "The count is clear. The container \"fruit-calyx\" was not grounded.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00510",
+  "decision": "new_pattern",
+  "target": "relational_quality_with_magnitude",
+  "fix": "Stamen exserted (PATO:0000623), towards the perianth or the tube when the clause names it, with the projecting length 1-2 mm. OWL: the relational quality only. RDF: fb:low 1, fb:high 2, mm, as the extent of the exsertion.",
+  "reason": "A relation that carries a measurement, as in \"exserted up to 2 mm beyond anthers\".",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00511",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Let the bare-\"to\" cue also follow \"×\" (\"3.5-10 × to 10(-13.5) cm\"): width ≤ 10 cm, with the extreme 13.5 (pattern 05).",
+  "reason": "An upper bound of the width that is missed only because of the preceding \"×\".",
+  "confidence": "high"
+ },
+ {
+  "id": "P00512",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "Add \"eciliado/eciliate\" to the privative cues anyway. \"Márgenes ciliados o eciliados\" is a union of ciliated and not ciliated, which says nothing in OWL.",
+  "reason": "\"Ciliate or eciliate\" only says that the character varies. The union is a tautology, as the reviewed pair table already decided for \"eglandular or ...\" rows.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00513",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "A quality \"number\" with the word \"many\" is routed to indefinite_counts: capitulum present in the synflorescence, many.",
+  "reason": "\"Capitula many\" is an indefinite count.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00514",
+  "decision": "new_pattern",
+  "target": "relational_quality_with_magnitude",
+  "fix": "Lateral sepals (pattern 18) fused with each other (PATO:0000642 towards lateral sepal, pattern 16), with the length of the fusion 8-12 mm as the extent of the relation. OWL: `has part some (sepal and has position some lateral and has characteristic some ('fused with' and towards some sepal))`. RDF: fb:low 8, fb:high 12, mm on the record.",
+  "reason": "\"Connate for 8-12 mm\" measures the extent of a fusion, which is the same construction as a measured exsertion.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00515",
+  "decision": "new_pattern",
+  "target": "part_at_a_place",
+  "fix": "A part that sits at a named place of another part: leaf located at the apex of a stem tooth. OWL: `has part some (leaf and 'part of'/'located in' some (apex and 'part of' some 'stem tooth'))`, plus leaf subulate and 2-5 mm. RDF: the record with the place cue \"tipped with\".",
+  "reason": "The presence of a part at a landmark on another part is listed as open, and no pattern covers it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00516",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Split the span. \"Herbs\" is whole plant herbaceous (PATO:0002352). \"Annual or biennial\" is a union of one attribute: annual life span PATO:0104360 or biennial life span PATO:0104367.",
+  "reason": "The disjunction belongs to the life span, not to \"herb\". Both values exist and are of one attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00517",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "\"Dents peu nombreuses\" is count word few (\"peu nombreuses\" is in INDEFINITE_AMOUNTS): tooth present, leaf margin as container. \"Marges à\" is not a position cue for pattern 14. \"Atteignant 1 mm\" is a separate upper bound of the tooth length (pattern 02).",
+  "reason": "An indefinite count that was misrouted to the count-at-a-position check.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00518",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Map \"liane/liana\" to whole plant climbing (FLOPO:0991108) together with ligneous (PATO:0002348), or give the lianescent class an EQ signature, instead of the rule to a FLOPO class without one.",
+  "reason": "The habit has value terms. Only the normalization rule points to a class without an EQ signature.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00519",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "A union of shape values on leaflet: orbicular (PATO:0001934) approximately (pattern 01, \"sub-\"), or the continuum obovate (PATO:0001936)–oblong (PATO:0000946). The union operand has to accept a hyphenated compound value.",
+  "reason": "Both values are groundable shapes of one attribute. The compound \"obovate-oblong\" inside the union blocks it.",
+  "confidence": "medium"
+ }
+]

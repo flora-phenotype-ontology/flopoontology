@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P00240",
+  "decision": "missing_term",
+  "target": "longitudinally dehiscent (rimose): dehiscent by a slit or slits running along the length of the bearer; child of dehiscent FLOPO:0991149, beside septicidal/loculicidal/poricidal",
+  "fix": "Add the value class with synonyms 'dehiscent by longitudinal slits', 'longitudinally dehiscent', 'opening by longitudinal slits', 'déhiscent par une fente longitudinale'. Rule R0099 already says the mode 'longitudinally' maps to a child of dehiscent, but no such child exists. 'versatile' (FLOPO:0991136) and '2-celled' (count of locules, pattern 03) are separate statements.",
+  "reason": "Dehiscence by slits is a structural quality, not a process. Its parent exists, and the candidate files show 63+ anther statements in eflora-foc alone with this wording.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00241",
+  "decision": "new_pattern",
+  "target": "distance from a landmark",
+  "fix": "Slots: bearer stamen, quality distance PATO:0000040 towards the landmark (corolla base, PO corolla tube base region), magnitude 2-3.1 mm. The relative form '0.3-0.4 of tube length' is a ratio to another part (pattern 10) kept in RDF only. OWL: has part some (stamen and has characteristic some (distance and towards some corolla tube)); the numbers stay in the record.",
+  "reason": "This is the insertion height of the stamens, measured from the base of the corolla. Pattern 09 keeps the insertion region only as words and reads no measurement.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00242",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add a relation-word row 'below / beneath / au-dessous de / situé sous X' → proximal to PATO:0001195 towards X on an axis, with French relation words. The target here is leaf (PO:0025034). The whole clause 'axillaires ou situées au-dessous des feuilles' is a union (pattern 07) with axillary FLOPO:0991000.",
+  "reason": "The inflorescences are borne on the older wood below the leafy part. The second part (the leaves) is named, so slot 3 'towards' applies.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00243",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "count_position() only knows English cues (on/at/per + node). Add Spanish 'por nudo' / 'en cada nudo' (and French 'par nœud') → per_node, landmark stem node. 'hasta 3 juntas cuando terminales' is a second statement: an upper bound of 3 for a group of inflorescences in the terminal position (pattern 02 + 18).",
+  "reason": "'1 per node' is exactly pattern 14, kind per_node. Only the language of the cue is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00244",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1, kind C region)",
+  "fix": "'upper part' is in config/flora_context_words.tsv (region, distal) but is only read as a qualifier after the organ. Also read the prefix form 'upper part of <organ>' (and 'lower part of', 'apical part of') with the organ as the bearer. Here: leaf lamina, a distal region with fertile PATO:0000955.",
+  "reason": "This is a quality of a region of the lamina (fern frond fertile distally), not a developmental stage.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00245",
+  "decision": "new_pattern",
+  "target": "measured extent of a state",
+  "fix": "Slots: bearer leaf base (decurrent PATO:0001984), plus a length of the decurrent part (the wing running down the stem) 3-20 mm. OWL: leaf base has characteristic some decurrent; the extent is in RDF as a measurement of the decurrent wing (length PATO:0000122), or OWL with a FLOPO 'decurrent leaf base wing' part. The source clause is a three-way alternative (pattern 07) of decurrent 3-20 mm, clasping and decurrent 1-3 mm, and not decurrent.",
+  "reason": "The number measures how far the decurrence runs, not the quality 'decurrent' itself. No pattern attaches a length to a state.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00246",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add 'denticulate → tooth' (and 'denticled') to config/flora_counted_parts.tsv; it has 'dentate' and 'toothed' only. 'apically' is already a region cue (apex). The bearer is the ray floret limb (ligule/lamina of the ray corolla), not the corolla as a whole.",
+  "reason": "'3-denticulate' is an N-xed compound with the counted part in the word: pattern 03.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00247",
+  "decision": "transcription_error",
+  "target": "leaf apex (subula) + length PATO:0000122 = 1 mm",
+  "fix": "The '(1 mm)' is the length of the subula. Transcribe the entity as leaf apex / awn, the quality length with value 1 mm, and 'fragile' and 'multistratose' as separate statements. 'abruptly rounded to long … subulae' is a continuum of apex forms (pattern 07 continuum).",
+  "reason": "'long' was transcribed as the quality with a number, but the number belongs to the length attribute.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00248",
+  "decision": "missing_term",
+  "target": "longitudinally dehiscent (rimose): dehiscent by a slit or slits running along the length of the bearer; child of dehiscent FLOPO:0991149",
+  "fix": "Same term as P00240. 'single' and 'abaxial' can go into the record (a count of 1 slit; abaxial as a region via slot 1); the class is capsule longitudinally dehiscent.",
+  "reason": "Dehiscence mode is a structural quality. The parent exists but no longitudinal child does.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00249",
+  "decision": "transcription_error",
+  "target": "rostellum lobe FLOPO:0986102 + antrorse PATO:0002238",
+  "fix": "The bearer is the rostellum lobe (rules R3551-R3553); 'directed forward' already maps to antrorse (R0781). 'spreading' and 'angular' are further qualities of the same bearer. No second part is involved.",
+  "reason": "The orientation of the lobes was transcribed as a quality of the rostellum and misread as a relation to another part.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00250",
+  "decision": "new_pattern",
+  "target": "alternative with its own bearer",
+  "fix": "Slots: two operands with different bearers: (sepal, reddish) or (inner sepal [FLOPO inner FLOPO:0991378 via pattern 18], petaloid FLOPO:0991141, approximately for 'sub-'). OWL: the taxon has phenotype some (P1 or P2), where P1 and P2 are the two phene classes. Pattern 07 only allows unions over values of one bearer.",
+  "reason": "The alternatives differ in both the part (all sepals or the inner ones) and the quality.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00251",
+  "decision": "existing_pattern",
+  "target": "docs/odp/15-absence-of-a-part.md",
+  "fix": "Read a postposed 'none' (and 'wanting', 'O') after the part as the absence cue with its offsets, and ground 'main stem' to stem PO:0009047. The transcription with quality 'present' without the negation flag must be set to negated.",
+  "reason": "'Main stem none' is an acaulescent plant: absence of a part, pattern 15. The cue 'none' is in the span.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00252",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "The second term (lemma, PO) is present. Read 'shorter than or subequaling X' as a union: decreased length PATO:0000574 towards lemma, or same length (pattern 10, 'subequaling' = equalling, approximately), both with the target X after the coordinated relation words. 'slightly' is a degree word, dropped.",
+  "reason": "The comparison names its second term, but the coordinated relation words before it blocked target reading.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00253",
+  "decision": "new_pattern",
+  "target": "habit noun as phenotype",
+  "fix": "Give the held growth-form classes an EQ signature instead of rule kind flopo_phenotype_class. FLOPO_0985032 'vine' = has part some (whole plant and has characteristic some climbing FLOPO:0991108); 'liana' FLOPO_0900035 = climbing and ligneous; twining FLOPO_0985034 = a twining child of climbing. 'woody' is then a second statement, ligneous.",
+  "reason": "The class exists but has no EQ definition, so the annotator cannot assert it.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00254",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add the cue 'N unit to obsolete / to 0 / to nearly absent' as a range with the lower end 0 (petiole nearly absent, recorded as an approximately-absent extreme) and upper bound N = 7 cm. OWL: length ≤ 7 cm.",
+  "reason": "This is a measurement range whose lower end is the vanishing of the part. Upper bounds are pattern 02, and only the cue is unknown.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00255",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "'X or subX' collapses to X with value_qualifier approximately (as was done for 'glabrous or nearly so'), here opposite PATO:0001933. Leaflet arrangement is a quality of the leaf towards its leaflets (pattern 16).",
+  "reason": "'opposite or subopposite' is one value with an approximation, not a real taxon-level alternative.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00256",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Add the Latin cue 'utrinque' (on each side) → each_side, and read 'saepius' (more often, usually) as frequency_qualifier usually. Bearer: leaf margin teeth (tooth, container leaf); count 3.",
+  "reason": "'Teeth usually 3 on each side' is a count at a position. Only Latin cues are missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00257",
+  "decision": "new_pattern",
+  "target": "distance from a landmark",
+  "fix": "Slots: bearer leaf lamina intramarginal vein PO:0025520 ('nervura-marginal' needs a bearer rule), quality distance PATO:0000040 towards leaf margin, range given as alternatives '≤1 mm / 1-2 mm' (union, i.e. up to 2 mm). OWL: has part some (intramarginal vein and has characteristic some (distance and towards some leaf lamina margin)); numbers in the record.",
+  "reason": "The distance of the marginal vein from the margin is a standard Myrtaceae character with no pattern yet.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00258",
+  "decision": "existing_pattern",
+  "target": "docs/odp/18-position-of-the-bearer.md",
+  "fix": "Read the anaphoric 'the more distal ones' / 'the proximal ones' after a series noun (here the cauline leaves) as has position upper FLOPO:0991376 / distal. 'semi-amplexicaul' maps to clasping PATO:0104363 (R0033), and the bearer is the leaf base, not the leaf.",
+  "reason": "The context is a member of a series (distal cauline leaves), not a developmental stage.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00259",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Split 'accrescent to N unit' into calyx lobe accrescent FLOPO:0991082 (pattern 00) and calyx lobe length ≤ 1.5 cm with stage 'in fruit' (fruit development stage PO:0001002, from the sentence about the fruit). There is no negation, so the negation-cue check should not fire on this row.",
+  "reason": "Both the quality and the bound are covered by existing patterns. The row was held for a spurious negation reason.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00260",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Add a quality rule 'opening widely' / 'opening wide' → open PATO:0000610 on flower. 'widely' is a degree word, dropped as in 'acutely angled' (R0745).",
+  "reason": "A flower that opens widely is an open flower at anthesis: a quality, not a process. PATO open exists.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00261",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "indefinite_counts() reads the count word from quality_en only. When the transcribed quality is the attribute 'number'/'amount' and the span holds 'several'/'many'/'numerous' after the part, read the word from the span with offsets (amount several).",
+  "reason": "'Stems several' is the indefinite count pattern. The word was transcribed as 'number'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00262",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Add a quality rule 'not opening' / 'never opening' → closed PATO:0000608 on flower. Do not map it to cleistogamous FLOPO:0991176 unless the source says self-pollinated in the closed bud.",
+  "reason": "Flowers that do not open are closed flowers: a state, not an event.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00263",
+  "decision": "existing_pattern",
+  "target": "docs/odp/08-alternative-with-frequency.md",
+  "fix": "'rarely X' alone is an implicit alternative 'unbranched, rarely branched'. Record branched with frequency_qualifier rarely and cue, without a taxon axiom for 'branched'. 'rarely' must not be read as a negation cue.",
+  "reason": "A frequency qualifier on one value. The row was held because 'rarely' was treated as negation.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00264",
+  "decision": "new_pattern",
+  "target": "spacing of like parts",
+  "fix": "Slots: bearer costule, quality distance PATO:0000040 towards the adjacent costule (same class), upper bound 8 mm (pattern 02 bound). OWL: has part some (costule and has characteristic some (distance and towards some costule)); the number in the record.",
+  "reason": "'X mm apart' is spacing between members of one series. It is listed as open in annotation-context-patterns.md and has no odp file.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00265",
+  "decision": "new_pattern",
+  "target": "habit noun as phenotype",
+  "fix": "As P00253: give twining FLOPO_0985034 an EQ signature, whole plant has characteristic some twining (a child of climbing FLOPO:0991108). 'Deciduous' (PATO deciduous (plant)) and 'shrubs' (frutescent) are separate statements.",
+  "reason": "This growth-form class has no EQ definition, so it is held.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00266",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "The bearer is leaflet apex (region cue 'the apex'), not leaflet. Union of acuminate PATO:0002228 (short-, degree dropped) or rounded with value_qualifier approximately (cue 'nearly', pattern 01).",
+  "reason": "Both values are apex shapes, and 'nearly' is a known approximation cue.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00267",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "As P00261: read 'many' from the span when the transcribed quality is 'number'; amount many, part stamen. 'longer than or nearly as long as petals' is a separate pattern 09/10 statement.",
+  "reason": "'Stamens many' is the example given in pattern 13 itself.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00268",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Read 'margins entire or with 2 to 3 teeth' as an alternative across attributes: leaf margin entire, or tooth count 2-3 (pattern 03, container leaf margin, not a position). This uses the secondary union over statements.",
+  "reason": "No per-position cue is present. This is a count inside an alternative, though the FEIS prose leaves unclear whether the count is per lobe or per leaf.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00269",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Add a count_position kind per_row ('per (diagonal) row across X') with the landmark stem segment (Opuntia cladode, 'midstem' = a middle segment of the stem). As with the other kinds, no phenotype class is linked.",
+  "reason": "The areoles per row is a count at a place of a kind, which fits pattern 14 with one more kind of place.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00270",
+  "decision": "new_pattern",
+  "target": "bound on the maximum",
+  "fix": "Slots: bearer peduncle, length, maximum ≥ 20 cm (the largest values exceed 20 cm). This is not a range of the usual values. RDF: fb:maxAtLeast 20 with the unit and cue 'to more than'. OWL: no class (it says nothing of every peduncle), as for extremes in pattern 05.",
+  "reason": "'to more than 20 cm' bounds the maximum from below. It is neither an upper nor a lower bound of the values.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00271",
+  "decision": "transcription_error",
+  "target": "trichome PO:0000282 part of fruit + length PATO:0000122 = 0.1-0.2 mm",
+  "fix": "The bearer is the hairs of the fruit (pattern 12: part of a qualified whole), and the quality is length 0.1-0.2 mm. 'persistent', 'dense', 'scurfy' FLOPO:0991127 and 'dark rusty' are separate statements of the same bearer.",
+  "reason": "'hairs' was transcribed as the quality, but it is the bearer of the measurement.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00272",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Read the construction 'nodes with N X' / 'nudos con N X' (the node as the subject) as per_node with the landmark stem node: bud count 1 per node. 'central' is a position (pattern 18, median FLOPO:0991381) and 'triangular' a shape. 'hasta 50 ramas subsidiarias' is a second per-node count with an upper bound.",
+  "reason": "A count at each node, with the cue in Spanish and the node as the grammatical subject.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00273",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "As P00243: add the Spanish cue 'por nudo' → per_node.",
+  "reason": "This is a per-node count. Only the Spanish cue is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00274",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "The bearer is leaf apex (region cue 'apex'), not leaf blade. Continuum acuminate PATO:0002228 to caudate PATO:0001880 (qualitative_value_relation, both shape values).",
+  "reason": "'X to Y' between two shape values is the implemented continuum. The wrong bearer kept it unresolved.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00275",
+  "decision": "new_pattern",
+  "target": "part present at a position",
+  "fix": "Slots: the part (extrafloral nectary PO:0009057, shape 'phalloid' in RDF), the place (base of pedicel, on one side), relation 'subtends'/adjacent to. OWL: has part some (extrafloral nectary and 'adjacent to' some pedicel). 'characteristic of ser. Laxiflorae' is taxonomy and not annotated.",
+  "reason": "This states that a nectary exists at a place. It is neither a quality of the pedicel nor a relational quality in PATO.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00276",
+  "decision": "new_pattern",
+  "target": "depth of division",
+  "fix": "Slots: bearer petal, quality split PATO:0001786 (bifid at the apex), depth of the incision 0.5-1.5 mm. OWL: petal has characteristic some split; the depth is a length of the cleft region in RDF (or ratio of the petal length, as in 'divided 1/3').",
+  "reason": "The number measures how deep the petal is split, which no pattern covers.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00277",
+  "decision": "new_pattern",
+  "target": "habit noun as phenotype",
+  "fix": "As P00253: define whole plant lianescent FLOPO_0900035 as climbing FLOPO:0991108 and ligneous. 'Shrub, Liana' is then an alternative of two habit classes (pattern 07).",
+  "reason": "Liana maps to a FLOPO class without an EQ signature, so it is held.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00278",
+  "decision": "transcription_error",
+  "target": "flower + sessile (sensu botany) PATO:0001436",
+  "fix": "'Fls.' is the abbreviation for flowers and 'sésiles' means sessile. Transcribe flower sessile with no number, and add 'sésil(es)' as a quality rule if missing.",
+  "reason": "'pedicel' was transcribed as a measured quality, but the text states sessile flowers.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00279",
+  "decision": "new_pattern",
+  "target": "habit noun as phenotype",
+  "fix": "As P00253/P00277: the French 'Lianes' should reach the defined liana class (climbing and ligneous). 'ligneuses' repeats ligneous.",
+  "reason": "This growth-form class has no EQ definition, so it is held.",
+  "confidence": "high"
+ }
+]

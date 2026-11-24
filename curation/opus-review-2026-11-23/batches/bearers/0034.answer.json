@@ -1,0 +1,385 @@
+[
+ {
+  "word": "ovuled",
+  "decision": "rule:bearer",
+  "target": "plant ovule (PO_0020003)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "ovule",
+   "-ovuled"
+  ],
+  "reason": "Exact: the counted-part suffix of '2-ovuled', '15-ovuled' (pattern 03), and config/flora_counted_parts.tsv already maps ovuled -> ovule. It failed to ground because PO_0020003 'plant ovule' has no plain synonym 'ovule' in config/po_lexicon.tsv. Add 'ovule' as a synonym of PO_0020003. The container is the ovary or locule.",
+  "confidence": "high"
+ },
+ {
+  "word": "false spike",
+  "decision": "rule:bearer",
+  "target": "inflorescence (PO_0009049)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "faux épi",
+   "faux épis",
+   "pseudospike"
+  ],
+  "reason": "Narrower: a 'faux épi' is a condensed inflorescence that only looks like a spike (for example contracted cymes or glomerules). It must not ground to spike inflorescence (PO_0030117), because it is not a true spike. Ground it to inflorescence; the spike-like look is a quality of the inflorescence, not a separate part.",
+  "confidence": "medium"
+ },
+ {
+  "word": "calyx upper lip",
+  "decision": "new_class",
+  "target": "calyx lip, in upper position (FLOPO_0991376, pattern 18)",
+  "label": "calyx lip",
+  "parent": "is_a cardinal organ part (PO_0025001); part_of calyx (PO_0009060)",
+  "definition": "A cardinal organ part of a bilabiate calyx, made of two or more connate sepals or calyx lobes, that forms one of the two lip-like divisions of the calyx limb.",
+  "synonyms": [
+   "lèvre du calice",
+   "calyx lip",
+   "upper calyx lip",
+   "lower calyx lip"
+  ],
+  "reason": "Bilabiate calyces are common in Lamiaceae, Fabaceae and Acanthaceae. The upper lip is several fused sepals, so 'upper sepal' (FLOPO_0996029) does not fit. Corolla lip (FLOPO_0985017) is for the corolla only. Make 'calyx lip' as the sibling of corolla lip and give upper or lower by pattern 18. Propose it to PO together with corolla lip.",
+  "confidence": "medium"
+ },
+ {
+  "word": "digit",
+  "decision": "not_a_part",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "'3-5-digitées' and '3 digitada(s)' give how many times a leaf or blade is digitately (palmately) divided. That is a division quality of the leaf counted by pattern 03, not a part. Same reasoning as 'pinnation' and 'ternate' in the 2026-11-14 review; 'digitation' was rejected then too.",
+  "confidence": "high"
+ },
+ {
+  "word": "domate",
+  "decision": "rule:bearer",
+  "target": "domatium (FLOPO_0986021)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "domatie",
+   "domaties",
+   "domatia"
+  ],
+  "reason": "Exact: a bad lemma of the French 'domaties'. The class exists; add the French forms as synonyms. 'Présentes' and 'munies de' are presence statements (pattern 15/00).",
+  "confidence": "high"
+ },
+ {
+  "word": "micropyle",
+  "decision": "rule:bearer",
+  "target": "plant ovule micropyle (PO_0020025)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "mikropil",
+   "micropyle"
+  ],
+  "reason": "Exact: 'micropyle' is already a synonym of PO_0020025. Its extrorse or apical position and its length are ovule statements (gymnosperm and Gnetales descriptions). Use seed micropyle (PO_0006334) when the statement is about the seed. Add the form 'mikropil'.",
+  "confidence": "high"
+ },
+ {
+  "word": "collar present",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "'Collet' covers a ring or collar of the filaments ('collet des filets'), the base of a fruit or seed, or the root–stem junction. Leaf collar (PO_0006012) is the grass leaf structure and does not fit. The examples do not show which organ is meant; 'ring' was rejected as a generic part on 2026-11-13.",
+  "confidence": "medium"
+ },
+ {
+  "word": "female locule",
+  "decision": "rule:bearer_part",
+  "target": "plant ovary locule (PO_0025266), part of the ovary of a pistillate flower (PO_0025599), pattern 12",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "loge",
+   "loges"
+  ],
+  "reason": "'Loges 6(8)' in the description of female flowers is the number of ovary locules. Express it as a count of locules (pattern 03) in the ovary of a qualified whole, the female flower (pattern 12, female = PATO_0000383).",
+  "confidence": "high"
+ },
+ {
+  "word": "globular",
+  "decision": "not_a_part",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A shape quality (globose) of the appendages ('à appendices globuleux'). The part is a generic appendage, which was rejected on 2026-11-13.",
+  "confidence": "high"
+ },
+ {
+  "word": "massule",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "French for massula. The 2026-11-14 review rejected 'massula': it has two unrelated senses (the Azolla microspore massula with glochidia, which fits these examples, and the orchid pollen packet) and only two floras use it. Keep it as a possible PO request.",
+  "confidence": "high"
+ },
+ {
+  "word": "young",
+  "decision": "not_a_part",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A state of the bearer: young (PATO_0000309) is already a context word (pattern 04). 'Graines jeunes 2' is a count of young seeds whose bearer is the following noun.",
+  "confidence": "high"
+ },
+ {
+  "word": "en",
+  "decision": "not_a_part",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "The French or Spanish preposition 'en' ('en 2 lobes', 'en cada lado'), a parsing fragment like 'de'.",
+  "confidence": "high"
+ },
+ {
+  "word": "fertile division",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "In 'dépassant le limbe stérile' it is a fern fertile part (the sporophore of Ophioglossaceae, or fertile pinnae or segments of dimorphic fronds). 'Division' is generic (rejected 2026-11-13), and which structure is meant depends on the family. 'Fertile' itself is the state PATO_0000955 (pattern 04).",
+  "confidence": "medium"
+ },
+ {
+  "word": "fraction of blade length",
+  "decision": "not_a_part",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "'Atteignant les 3/4 de la longueur' gives how deep a lobe or incision reaches, as a ratio to the length of the leaf lamina (pattern 10). It is a ratio, not a structure.",
+  "confidence": "high"
+ },
+ {
+  "word": "funnel leaf",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "The examples ('nombreuses', 'peu nombreuses') carry no context. 'Funnel' leaves could be bromeliad tank rosettes, funnel-shaped (infundibular) leaves, or a mistranslation. The shape would be a quality of the vascular leaf in any case.",
+  "confidence": "low"
+ },
+ {
+  "word": "inflorescence tendril",
+  "decision": "rule:bearer",
+  "target": "branch tendril (PO_0025364)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "vrille",
+   "inflorescence tendril"
+  ],
+  "reason": "Narrower: a tendril formed from an inflorescence branch (Paullinia and Serjania in Sapindaceae, Vitaceae). PO_0025364 is 'a branch that is slender and coiling'. Bare 'tendril' was rejected as generic, but here the organ is stated.",
+  "confidence": "medium"
+ },
+ {
+  "word": "involucral bract appendage",
+  "decision": "rule:bearer_part",
+  "target": "plant organ apex (FLOPO_0985023) part_of involucral bract (PO_0009045), pattern 12",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "phyllary appendage",
+   "appendice des bractées involucrales"
+  ],
+  "reason": "The distinct apical appendage of Asteraceae phyllaries (Centaurea and allies): membranous, reticulate or fimbriate. It is the apical region of the involucral bract, so the patterns can express it; keep in mind a 'phyllary appendage' class if more floras use it.",
+  "confidence": "medium"
+ },
+ {
+  "word": "lower lip median lobe",
+  "decision": "rule:bearer_part",
+  "target": "corolla lobe (FLOPO_0986006) in median position (FLOPO_0991381), part of corolla lip (FLOPO_0985017) in lower position (FLOPO_0991377); patterns 12 and 18",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "lobe médian de la lèvre inférieure"
+  ],
+  "reason": "Narrower: in a bilabiate corolla the lower lip is usually three-lobed. Both position words are existing values ('median' is already allowed with 'lip'). The orchid labellum has one lip and no 'lower lip', so the corolla reading is the safe one.",
+  "confidence": "medium"
+ },
+ {
+  "word": "lower lip median segment",
+  "decision": "rule:bearer_part",
+  "target": "corolla lobe (FLOPO_0986006) in median position (FLOPO_0991381), part of corolla lip (FLOPO_0985017) in lower position (FLOPO_0991377); patterns 12 and 18",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "segment médian de la lèvre inférieure"
+  ],
+  "reason": "Same structure as 'lower lip median lobe'. Here 'segment' is the flora's word for the lobe.",
+  "confidence": "medium"
+ },
+ {
+  "word": "nectariferous ring",
+  "decision": "rule:bearer",
+  "target": "nectary (PO_0009035)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "anneau nectarifère",
+   "nectariferous ring"
+  ],
+  "reason": "Narrower: an annular nectary. Where it is an intrastaminal disc, floral disc (FLOPO_0986025) is more specific, but 'ring of 4 free scales' shows not every case is a disc. 'Annular' is a shape quality.",
+  "confidence": "medium"
+ },
+ {
+  "word": "neutral flower",
+  "decision": "rule:bearer_part",
+  "target": "flower (PO_0009046) in the state sterile (PATO_0000956), pattern 04",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "fleur neutre",
+   "neuter flower"
+  ],
+  "reason": "A neutral (neuter) flower is a flower with neither functional stamens nor carpels, so it is the sterile state of flower. But every example here is '☿', which floras use for bisexual (hermaphrodite) flowers, a synonym of PO_0009046 flower. Fix the mapping of the symbol ☿ from 'neutral' to bisexual.",
+  "confidence": "medium"
+ },
+ {
+  "word": "pod suture",
+  "decision": "rule:bearer",
+  "target": "fruit dehiscence zone (PO_0004707), part of legume fruit (PO_0030100), pattern 12",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "suture",
+   "ventral suture",
+   "dorsal suture"
+  ],
+  "reason": "Narrower: the sutures of a legume are the lines along which it dehisces. Bare 'suture' was rejected as generic; here the organ (pod = legume fruit) is stated.",
+  "confidence": "medium"
+ },
+ {
+  "word": "reprise",
+  "decision": "not_a_part",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "French 'à 1–5 reprises' = 'times': it gives how many times something forks (a degree of branching), like 'fois', which the 2026-11-14 review rejected.",
+  "confidence": "high"
+ },
+ {
+  "word": "second-order division",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "An order of division without its organ, like 'secondary division', 'tertiary segment' and 'primary segment', which were rejected before. It could be pinnules, segments of a pinna, or inflorescence branches.",
+  "confidence": "high"
+ },
+ {
+  "word": "strie",
+  "decision": "not_a_part",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "French 'stries' = striae, a surface marking. Following the earlier 'striae' and 'stria' decisions, it is the quality striated (PATO_0001410) of the part that bears it, counted with pattern 03.",
+  "confidence": "high"
+ },
+ {
+  "word": "style branches",
+  "decision": "rule:bearer",
+  "target": "style branch (FLOPO_0986008)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "style branches",
+   "branches du style"
+  ],
+  "reason": "Exact: the plural of an existing class. The plural form failed to normalize, so add it as a synonym.",
+  "confidence": "high"
+ },
+ {
+  "word": "swollen",
+  "decision": "not_a_part",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A quality. 'Renflements latéraux' and 'swollen-ribs' are swellings or ribs of an organ that is not named, and 'swelling' was rejected as generic on 2026-11-14.",
+  "confidence": "high"
+ },
+ {
+  "word": "needles per fascicle",
+  "decision": "rule:bearer_part",
+  "target": "count of vascular leaf (PO_0009025, synonym 'needle-like leaf') per short shoot (PO_0004701), pattern 03",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "needles per fascicle",
+   "agujas por fascículo"
+  ],
+  "reason": "In Pinus a needle fascicle is a short shoot carrying 2–5 needle leaves. The counted part is the needle (vascular leaf) and the container is the short shoot. 'Fascicle' alone stays rejected because it is generic.",
+  "confidence": "medium"
+ },
+ {
+  "word": "bracteole segment",
+  "decision": "rule:bearer_part",
+  "target": "phyllome lamina lobe (PO_0025514) part_of bracteole (PO_0009043), pattern 12",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "segment de bractéole"
+  ],
+  "reason": "Narrower: the segments of a divided bracteole are lobes of a phyllome. 'Segment' alone is a rejected generic word, but here the organ is stated.",
+  "confidence": "medium"
+ },
+ {
+  "word": "lamina lower surface",
+  "decision": "rule:bearer_part",
+  "target": "leaf lamina (PO_0020039) on its abaxial surface (context word 'lower surface' -> abaxial)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "envés",
+   "face inférieure du limbe"
+  ],
+  "reason": "'Lower surface' is already a surface context word (abaxial) in config/flora_context_words.tsv, and 'lamina' grounds to leaf lamina. The density and hairiness statements refer to the indumentum or venation on that surface.",
+  "confidence": "high"
+ }
+]

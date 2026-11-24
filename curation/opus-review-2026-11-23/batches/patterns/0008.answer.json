@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P00320",
+  "decision": "transcription_error",
+  "target": "rameaux jeunes couvert de cils ... entremêlés de longs cils glanduleux",
+  "fix": "'covered' is not a quality and nothing is compared. Re-transcribe as two records: young branch (state 'jeunes', pattern 04) ciliate or pubescent, and trichome part of the branch glandular, with the long/short hair lengths left out.",
+  "reason": "The annotator read 'couvert de' as a relation. The statement describes the indumentum of the young branchlets: a mixture of short simple hairs and long glandular hairs.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00321",
+  "decision": "new_pattern",
+  "target": "comparison with an implicit second term",
+  "fix": "Bearer: leaf lamina abaxial epidermis (slot 1, 'beneath'). Quality: a lighter colour 'towards' the implied counterpart, the adaxial epidermis, which comes from a table of opposite places (beneath/above, inner/outer). OWL: has part some (abaxial epidermis and has characteristic some (light and towards some adaxial epidermis)). RDF: fb:implicitTerm true.",
+  "reason": "The second term (the upper surface) is implied by 'beneath' and is not stated. This construction is listed as open in docs/annotation-context-patterns.md (76 statements).",
+  "confidence": "high"
+ },
+ {
+  "id": "P00322",
+  "decision": "missing_term",
+  "target": "woody herb → semi-woody FLOPO:0991309 on whole plant PO:0000003",
+  "fix": "Add a rule mapping 'woody herb' to semi-woody (synonyms subwoody, suffrutescent). The list 'annual or perennial herb or woody herb' then resolves as a pattern 07 union over the habit values.",
+  "reason": "A woody herb is a herb that is lignified in part. FLOPO semi-woody already has this definition; only the phrase rule is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00323",
+  "decision": "transcription_error",
+  "target": "Calyculus 0",
+  "fix": "The entity is epicalyx PO:0009063 (po_lexicon lists calyculus as a synonym), not calyx. '0' is the absence cue of pattern 15 ('stipules 0'), so the record is epicalyx present, negated, scope absence.",
+  "reason": "The calyx of Emilia is the pappus, which the next clause describes. 'Calyx absent' would be a wrong record that contradicts the pappus.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00324",
+  "decision": "missing_term",
+  "target": "liana → climbing FLOPO:0991108 on whole plant (EQ signature for FLOPO_0985031)",
+  "fix": "Give FLOPO_0985031 'whole plant climbing phenotype' the EQ signature PO:0000003 + FLOPO:0991108, or add a rule mapping 'liana' to climbing. The habit list 'arbusto, trepadora, liana, epífita' is then a pattern 07 union.",
+  "reason": "The term exists. The grounding stops at a FLOPO phenotype class that has no EQ signature (same as P00077 of the 2026-11-14 review).",
+  "confidence": "high"
+ },
+ {
+  "id": "P00325",
+  "decision": "existing_pattern",
+  "target": "13-indefinite-count.md",
+  "fix": "'numerous' is the indefinite-count cue. Use 'basal leaf' FLOPO:0996000 as the counted part (pattern 18 position), with value 'many' and no numbers.",
+  "reason": "'Basal leaves numerous' has the same form as the pattern's own example, 'seeds numerous'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00326",
+  "decision": "existing_pattern",
+  "target": "09-relation-to-another-part.md",
+  "fix": "Resolve the anaphor 'those of the keel-petals' to the blade of the keel petal (PO:0025326), and take the comparison target from the previous clause: the blades of the wings. Record: increased width towards wing petal blade. comparison() has to accept a target from the preceding clause of the same sentence.",
+  "reason": "The second term is stated just before ('blades of the wings ... those of the keel-petals broader'). It is elided, not missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00327",
+  "decision": "missing_term",
+  "target": "sympodial unit (shoot segment of a sympodium, from one axillary bud to its terminal inflorescence); count container",
+  "fix": "Add a FLOPO anatomy class 'sympodial unit' (part of the shoot system) and the counted-parts row 'foliate → leaf'. Record: leaf, count 3-6, part of sympodial unit (pattern 03), 'typically' as frequency. The transcribed 'leaflet' is wrong: -foliate counts leaves, -foliolate counts leaflets.",
+  "reason": "This is a standard Solanum character. The container has no term, and 'foliate' is not in config/flora_counted_parts.tsv.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00328",
+  "decision": "transcription_error",
+  "target": "prickles ... yellowish",
+  "fix": "The bearer is prickle PO:0025169, not spine. 'Yellowish' is pattern 00 with approximately (pattern 01). The disjunction 'scattered or in pairs' belongs to a separate arrangement record.",
+  "reason": "Prickles are epidermal outgrowths; spines are modified organs. The disjunction does not involve the colour.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00329",
+  "decision": "new_pattern",
+  "target": "parts borne on a part",
+  "fix": "Bearer: stem base. A carried part: leaf sheath with the qualities fibrous and persistent. OWL: has part some (stem base and has part some (leaf sheath and has characteristic some fibrous and has characteristic some persistent)). RDF: fb:bearer stem base, fb:carriedPart leaf sheath, with the qualities of the carried part.",
+  "reason": "The statement says that a part (old sheaths) is present at a place on another part. This 'part present at a place' is listed as open.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00330",
+  "decision": "missing_term",
+  "target": "perpendicular(es) without an object, on perianth members → spreading PATO:0104356",
+  "fix": "Add a rule mapping bare 'perpendicular' on petals and sepals to spreading (patent, held at a right angle to the floral axis). Keep PATO 'perpendicular to' for statements that name the second part.",
+  "reason": "This flora is a character matrix: 'perpendicular' states the petal orientation against the floral axis, which is the patent/spreading state. Read that way, no second term is needed.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00331",
+  "decision": "existing_pattern",
+  "target": "14-count-at-a-position.md",
+  "fix": "Make 'in each furrow' a position cue grounded to canal PO:0025132 (synonyms furrow, vallecula), and 'on commissure' a second position. The counted part is vitta, from the existing rules; the container is the fruit.",
+  "reason": "'Veins 4-6 on each side of the midrib' has the same form. The position words are missing from the cue table.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00332",
+  "decision": "existing_pattern",
+  "target": "15-absence-of-a-part.md (negation_scope quality)",
+  "fix": "Add 'neither ... nor' as a negation cue that covers both coordinated adjectives. This gives two records: seed not papillose (FLOPO:0991059, synonym papillate) and seed not furrowed (rule R1781 'not furrowed').",
+  "reason": "Both values have terms. Only the cue 'neither/nor' is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00333",
+  "decision": "existing_pattern",
+  "target": "13-indefinite-count.md",
+  "fix": "'many' is the indefinite-count cue. The counted part is the stipe (petiole of the frond), and the container is the caudex taken from the subheading.",
+  "reason": "'A tuft of many stipes' is an indefinite count. 'Tuft' adds only a clustered arrangement.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00334",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md, slot 1 (region of the bearer)",
+  "fix": "Read 'proximally' as the region cue (proximal region, BSPO), not as a stage. Records: petiole villous in the proximal region, with 'mostly' as the extent qualifier, and trichome (part of the petiole) brown. The transcribed 'brown' on the petiole is the colour of the hairs.",
+  "reason": "This is a place on the part (kind C), which is implemented. It was mislabelled as developmental stage.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00335",
+  "decision": "transcription_error",
+  "target": "upward glabrate",
+  "fix": "The quality is glabrescent FLOPO:0991052 (glabrate), not negated pubescent. 'Upward' is the distal-region cue (slot 1) on the stipe.",
+  "reason": "'Glabrate' is a positive term with its own value. Recording it as negated pubescent invents a negation and explains the missing cue.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00336",
+  "decision": "missing_term",
+  "target": "abruptly narrowing (to petiole) → abruptly narrowed FLOPO:0991316",
+  "fix": "Add the verb form 'abruptly narrowing (to petiole)' as a synonym rule. Bearer: base of the leaf blade (region slot). '±' is pattern 01.",
+  "reason": "The value exists. The participle was read as a process.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00337",
+  "decision": "existing_pattern",
+  "target": "03-count-of-parts.md",
+  "fix": "Add the Turkish row 'damarlı → vein' to config/flora_counted_parts.tsv. The container is the tepal PO:0009033, the organ of the clause.",
+  "reason": "'15-20 damarlı' is the Turkish form of '15-20-nerved'. The count-in-a-word pattern covers it once the table has the word.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00338",
+  "decision": "new_pattern",
+  "target": "fraction of a reference extent",
+  "fix": "OWL: stamen inserted into (PATO:0000624) towards corolla tube (pattern 09). RDF only: the insertion point as 0.3-0.7 of the tube length from the base, as fb:low/fb:high with unit 'ratio' and fb:reference corolla tube length.",
+  "reason": "The insertion level is given as a fraction of another part's length. No pattern measures a position relative to a reference extent.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00339",
+  "decision": "transcription_error",
+  "target": "Perigynia ... black distally",
+  "fix": "The bearer is perigynium PO:0009044, not fruit. The quality is the value black, not the attribute 'color' read as a measurement. 'Distally' is the distal-region cue (slot 1). 'Pale brown proximally' is the matching record.",
+  "reason": "A colour value was transcribed as an attribute with no unit. The Carex perigynium has its own PO term.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00340",
+  "decision": "transcription_error",
+  "target": "Corolla ... glabrous",
+  "fix": "The quality is glabrous PATO:0000453, not negated pubescent. 'Cream-coloured' is a separate colour record.",
+  "reason": "'Glabrous' is a positive term, and no negation is in the text.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00341",
+  "decision": "existing_pattern",
+  "target": "09-relation-to-another-part.md",
+  "fix": "Add the French cues 'plus long que / plus court que / plus large que' to comparison(). Record: banner petal PO:0025324 (standard), increased length towards keel PO:0025327.",
+  "reason": "This is a comparison of a dimension with its second term stated. comparison() reads English only.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00342",
+  "decision": "missing_term",
+  "target": "twining → climbing FLOPO:0991108 (EQ signature for FLOPO_0985034)",
+  "fix": "Give FLOPO_0985034 'twining climbing phenotype' an EQ signature on climbing, or add a rule mapping 'twining' to climbing, as for twiner (R0321) and left-twining (R1215). Bearer: branch.",
+  "reason": "The definition of climbing includes twining. The grounding stopped at a FLOPO class without a signature.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00343",
+  "decision": "new_pattern",
+  "target": "timing relative to a stage",
+  "fix": "Slots: an event of the bearer (flowering, from 'opening'), a relation (before | simultaneous with), and a reference stage (leaf expansion). RDF: fb:event, fb:relation, fb:relativeTo the PO stage. OWL: a union of synanthous and proteranthous (precocious) phenotype values once such values exist.",
+  "reason": "The statement gives the timing of flowering relative to leafing. 'Before/after a stage' is still open.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00344",
+  "decision": "missing_term",
+  "target": "twining → climbing FLOPO:0991108; direction value sinistrorse (left-twining) as a possible later class",
+  "fix": "Same fix as P00342. Rule R1215 'left-twining' already maps to climbing, and the transcription has to keep 'to left' as part of the value. Bearer: stem.",
+  "reason": "The value exists. The twining direction (a real Dioscorea character) is lost until a sinistrorse/dextrorse value is added.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00345",
+  "decision": "existing_pattern",
+  "target": "02-bounded-measurement.md",
+  "fix": "Add 'can reach' / 'reaching' to the upper-bound cue list. Record: stem length ≤ 5 m.",
+  "reason": "This is an upper bound with an unknown cue. Only the cue list needs extending.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00346",
+  "decision": "existing_pattern",
+  "target": "02-bounded-measurement.md",
+  "fix": "Let the L × W parser accept 'to N' as the width operand in '15-60 × to 45 cm'. Records: length 15-60 cm, width ≤ 45 cm.",
+  "reason": "The 'to' cue is supported on its own but not inside a length × width expression.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00347",
+  "decision": "missing_term",
+  "target": "climber → climbing FLOPO:0991108 on whole plant (EQ signature for FLOPO_0985031)",
+  "fix": "Same fix as P00324. Rule R1890 'woody climber' exists, but the transcription split the phrase and kept only 'climber', so a rule for the bare noun or the class's EQ signature is needed.",
+  "reason": "The term exists. The grounding reaches a class without an EQ signature.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00348",
+  "decision": "missing_term",
+  "target": "trepadora (Spanish 'climber') → climbing FLOPO:0991108 on whole plant",
+  "fix": "Same fix as P00324 (EQ signature for FLOPO_0985031). Also add a source-language rule for 'trepadora'.",
+  "reason": "A Spanish habit noun that means climber.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00349",
+  "decision": "existing_pattern",
+  "target": "03-count-of-parts.md",
+  "fix": "Add the Spanish row 'nervia(s)/nervio(s) → vein' to config/flora_counted_parts.tsv. The container is the glume PO:0009039, from the clause subject 'Glumas'.",
+  "reason": "'1-3-nervias' is the Spanish form of '1-3-nerved'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00350",
+  "decision": "missing_term",
+  "target": "liana → climbing FLOPO:0991108 on whole plant (EQ signature for FLOPO_0985031)",
+  "fix": "Same fix as P00324. Rule R1674 'lianeux' → climbing already exists, but the transcription normalised the word to English 'liana' and that went to the class without a signature.",
+  "reason": "The term and the source-word rule exist. The English normalisation hits the unsigned class.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00351",
+  "decision": "transcription_error",
+  "target": "with small (up to 0.6 mm long) weaker hairs",
+  "fix": "Bearer: trichome, part of the stem (also of branches and leaves). Quality: length ≤ 0.6 mm (pattern 02, cue 'up to'). 'Weaker' compares these hairs with the hispid hairs and is left unannotated.",
+  "reason": "'hairs' was put in the quality slot. The measurable statement is the length of the hairs.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00352",
+  "decision": "existing_pattern",
+  "target": "15-absence-of-a-part.md (negation_scope quality)",
+  "fix": "Rule R0629 already maps exauriculate to 'not auriculate'. The gate must accept the privative prefix of a rule-negated word as its own negation cue. Bearer: the petioloid leaf base, not the whole leaf.",
+  "reason": "A privative word carries its negation inside the word, so no separate cue can be found in the span.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00353",
+  "decision": "existing_pattern",
+  "target": "04-state-of-the-bearer.md",
+  "fix": "Add 'second year's' (and 'current year's') to config/flora_context_words.tsv as stage/state rows (kind A2, an older shoot). Value: chestnut colour PATO:0104329 (rule R0017 castaneous). Bearer: stem (branchlet).",
+  "reason": "'In the second year' is listed as kind A2, 'table to extend'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00354",
+  "decision": "existing_pattern",
+  "target": "07-alternatives.md",
+  "fix": "Add the reviewed pair coriaceous PATO:0104032 / inflexible PATO:0001545 (rigid) to config/flora_union_pairs.tsv. 'X to Y' across attributes is then a union, not a continuum.",
+  "reason": "Both values exist. The continuum fails because texture and flexibility are different attributes, and the pair table does not have this pair.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00355",
+  "decision": "missing_term",
+  "target": "liane/liana → climbing FLOPO:0991108 on whole plant (EQ signature for FLOPO_0985031)",
+  "fix": "Same fix as P00324. Also fix rule R0234 'liane': its bearer restriction (hair|trichome|...|lip) was merged in from a 'curly hairs' check, so the rule never fires on a whole plant.",
+  "reason": "The term exists. The class has no signature, and the rule for the source word is broken.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00356",
+  "decision": "new_pattern",
+  "target": "bound on the maximum",
+  "fix": "Slots: an uncertain maximum given as a range (1-3 mm), with no lower bound. RDF: fb:maxLow 1, fb:maxHigh 3, unit mm. OWL: only the safe bound, length some float[<= 3] mm.",
+  "reason": "'to 1-3 mm' gives a range for the maximum. 'A bound on the maximum' is listed as open; this is not an alternative.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00357",
+  "decision": "existing_pattern",
+  "target": "15-absence-of-a-part.md",
+  "fix": "Rule R0003 maps eglandular to gland (PO:0005656) absent. Accept the privative word as its own cue. Bearer: leaf margin, from 'margins eciliate, eglandular', not the leaf blade.",
+  "reason": "The rule exists. The gate expects a separate negation cue.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00358",
+  "decision": "existing_pattern",
+  "target": "15-absence-of-a-part.md",
+  "fix": "Same as P00357 (R0003, privative word as cue). Bearer: fruit valve PO:0000033, with region 'in upper 1/3' (distal region, slot 1).",
+  "reason": "The rule exists. Only the cue check blocks it.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00359",
+  "decision": "existing_pattern",
+  "target": "07-alternatives.md",
+  "fix": "Make the union of the two habits: frutescent FLOPO:0987002 or the tree habit, on whole plant. Drop 'large'/'small' (or keep them in RDF only), together with the height 2-4 m.",
+  "reason": "A plain habit alternative. The size adjectives on each alternative probably blocked the union.",
+  "confidence": "medium"
+ }
+]

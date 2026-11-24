@@ -1,0 +1,414 @@
+[
+ {
+  "word": "synsepal",
+  "decision": "new_class",
+  "target": "",
+  "label": "synsepal",
+  "parent": "is_a PO_0025023 (collective phyllome structure); part_of PO_0009060 (calyx)",
+  "definition": "A collective phyllome structure that consists of two or more sepals, usually the lateral sepals, connate for most of their length so that they act as one organ, as in Cypripedioideae and many Pleurothallidinae (Orchidaceae).",
+  "synonyms": [
+   "synsepalum",
+   "ventral sepal (related)",
+   "connate lateral sepals (related)"
+  ],
+  "reason": "A real structure that PO lacks. It is modelled like keel (PO_0025327), which is the two lowest petals as one collective phyllome structure. Mapping it to lateral sepal (FLOPO_0996002) would be wrong, because a synsepal's width and shape are those of the fused pair, not of one sepal. It is common in orchid floras, so propose it to PO upstream.",
+  "confidence": "medium"
+ },
+ {
+  "word": "spike rachis",
+  "decision": "rule:bearer_part",
+  "target": "inflorescence axis (PO_0020122) with bearer_container spike inflorescence (PO_0030117), as a part with a fixed whole (pattern 12)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "rachis of the spike",
+   "spike rhachis"
+  ],
+  "reason": "Narrower: the rachis of a spike is its inflorescence axis. Bare 'rachis' was rejected only because it lacks a whole; here the whole is named and has a PO class.",
+  "confidence": "high"
+ },
+ {
+  "word": "labellum limb",
+  "decision": "rule:bearer_part",
+  "target": "lamina (PO_0025060) with bearer_container orchid labellum (FLOPO_0980978)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "limbe du labelle",
+   "labellum blade"
+  ],
+  "reason": "The limb is the expanded blade of the labellum (French 'limbe' already maps to lamina). Apply the container only in orchid context. The labellum of Zingiberales is staminodial, not a perianth part, and must not get FLOPO_0980978.",
+  "confidence": "medium"
+ },
+ {
+  "word": "leaf blade hair",
+  "decision": "rule:bearer_part",
+  "target": "trichome (PO_0000282) with bearer_container leaf lamina (PO_0020039)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "hairs of the leaf blade",
+   "lamina hair"
+  ],
+  "reason": "Hair maps to trichome under a reviewed rule. PO has leaf abaxial/adaxial trichome but no side-neutral leaf lamina trichome, so the lamina is given as the container. If a side is stated, use PO_0025210 or PO_0025211 instead.",
+  "confidence": "high"
+ },
+ {
+  "word": "scape bract blade",
+  "decision": "rule:bearer_part",
+  "target": "lamina (PO_0025060) with bearer_container bract (PO_0009055)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "scape-bract blade",
+   "peduncle bract blade"
+  ],
+  "reason": "The blade (lamina) of the bracts on the scape, as in Bromeliaceae. 'Scape' maps to peduncle, but the container only holds one whole, so the bract is kept and the scape position is lost. That is acceptable.",
+  "confidence": "medium"
+ },
+ {
+  "word": "leaf blade surface",
+  "decision": "rule:bearer",
+  "target": "leaf lamina epidermis (PO_0000047)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "surface of the leaf blade",
+   "lamina surface",
+   "surface du limbe"
+  ],
+  "reason": "Exact: PO models surfaces as epidermis, the same reading as the reviewed upper/lower surface rules. Use this only when no side is given. Examples such as 'surface above' and 'below' should go to PO_0000050 and PO_0000049.",
+  "confidence": "high"
+ },
+ {
+  "word": "pm",
+  "decision": "not_a_part",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "OCR error for µm (micrometre) in '15-19 pm long': a unit of measurement, not a structure. Fix it in unit normalisation (pm -> µm when it follows a number in a length).",
+  "confidence": "high"
+ },
+ {
+  "word": "female flower bud",
+  "decision": "rule:bearer_part",
+  "target": "flower bud (PO_0000056) with the bearer state female (PATO_0000383), pattern 04",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "pistillate flower bud",
+   "bouton floral femelle"
+  ],
+  "reason": "Narrower: a flower bud is the flower at an early stage, so sex is a state of the bearer itself (pattern 04), not of a containing whole (pattern 12).",
+  "confidence": "high"
+ },
+ {
+  "word": "perianth segment apex",
+  "decision": "rule:bearer",
+  "target": "tepal apex (PO_0025143)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "apex of the perianth segment",
+   "perianth lobe apex (related)"
+  ],
+  "reason": "Exact in sense: 'perianth segment' is already an exact synonym of tepal in the positioned parts (outer/inner tepal), and PO has a tepal apex class. Lobes of a connate perianth would instead take apex with container perianth lobe (FLOPO_0986004).",
+  "confidence": "medium"
+ },
+ {
+  "word": "trichilia",
+  "decision": "new_class",
+  "target": "",
+  "label": "trichilium",
+  "parent": "is_a PO_0025001 (cardinal organ part); part_of PO_0020038 (petiole)",
+  "definition": "A cardinal organ part that is a cushion of dense trichomes on the abaxial side of the petiole base, from which food bodies (Müllerian bodies) are produced for ant partners, as in Cecropia (Urticaceae).",
+  "synonyms": [
+   "trichilia",
+   "trichilium"
+  ],
+  "reason": "A real, diagnostic structure whose presence, fusion (paired or fused) and hair colour are scored in Cecropia treatments. It is not just indumentum. Watch for collision with the genus Trichilia (Meliaceae): apply only to lowercase 'trichilia' with present/absent/hair context. It is too taxon-specific for a strong PO case; keep it FLOPO-local first.",
+  "confidence": "medium"
+ },
+ {
+  "word": "dorsal tepal",
+  "decision": "rule:bearer_part",
+  "target": "tepal (PO_0009033) at position upper (FLOPO_0991376), pattern 18 (new positioned part 'upper tepal')",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "posterior tepal (related)",
+   "adaxial tepal (related)",
+   "upper tepal"
+  ],
+  "reason": "Narrower: the dorsal tepal is the upper (posterior) tepal of a zygomorphic perianth. This parallels upper sepal (FLOPO_0996029), which already carries 'dorsal sepal' as a related synonym.",
+  "confidence": "high"
+ },
+ {
+  "word": "tissue",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A generic part that needs the organ it belongs to, as with 'segment' and 'surface' in the previous review. PO 'portion of plant tissue' (PO_0009007) would say nothing; the examples cover interpetiolar tissue, whole-plant tissues blackening on drying, and swollen translucent tissue.",
+  "confidence": "medium"
+ },
+ {
+  "word": "style crest",
+  "decision": "rule:bearer_part",
+  "target": "plant organ apex (FLOPO_0985023) with bearer_container style branch (FLOPO_0986008)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "crest of the style branch",
+   "style-arm crest"
+  ],
+  "reason": "In Iris and related Iridaceae the crests are the paired lobes at the distal end of the petaloid style branch, beyond the stigma. They are the apical part of the style branch, which the container pattern can express.",
+  "confidence": "medium"
+ },
+ {
+  "word": "filament base",
+  "decision": "rule:bearer_part",
+  "target": "plant organ base (FLOPO_0985024) with bearer_container filament (PO_0009067)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "base of the filament",
+   "base du filet"
+  ],
+  "reason": "A region of an existing class, with the same shape as the documented 'style base' fixed-whole rule.",
+  "confidence": "high"
+ },
+ {
+  "word": "leaf blade upper surface",
+  "decision": "rule:bearer",
+  "target": "leaf lamina adaxial epidermis (PO_0000050)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "face supérieure du limbe",
+   "upper surface of the leaf blade"
+  ],
+  "reason": "Exact: the same class as the reviewed rules for 'upper surface of the leaf blade' and 'face supérieure du limbe'.",
+  "confidence": "high"
+ },
+ {
+  "word": "terminal appendix",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Ambiguous without context. A filamentous terminal appendix 2-4 mm long could be a spadix appendix (FLOPO_0986049), a connective appendage (FLOPO_0986073), or the tip of a leaf or bract.",
+  "confidence": "medium"
+ },
+ {
+  "word": "utricle apex",
+  "decision": "rule:bearer_part",
+  "target": "plant organ apex (FLOPO_0985023) with bearer_container perigynium (PO_0009044)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "perigynium apex",
+   "apex of the utricle"
+  ],
+  "reason": "In these statements utricle is the Carex sense (perigynium: 'beakless', 'contracted into a beak'), not utricle capsule fruit (PO_0030097, Amaranthaceae). Apex is a region the container pattern expresses.",
+  "confidence": "high"
+ },
+ {
+  "word": "leaf keel",
+  "decision": "rule:bearer",
+  "target": "leaf midvein (PO_0020139)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "keel of the leaf",
+   "quilla de la hoja",
+   "carène de la feuille"
+  ],
+  "reason": "Narrower: a keeled leaf (grasses, sedges, monocots) has its abaxially projecting midrib as the keel. Do not ground to PO_0025327 keel, which is the two lowest petals of a papilionaceous corolla.",
+  "confidence": "medium"
+ },
+ {
+  "word": "calyx gland",
+  "decision": "rule:bearer_part",
+  "target": "portion of secretory tissue (PO_0005656) with bearer_container calyx (PO_0009060)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "calycine gland",
+   "glande du calice"
+  ],
+  "reason": "Gland maps to PO_0005656 under the previous rule (C265), and the calyx is the whole. The counts ('2(3) glandes', 'row of 3-6 glands') belong to pattern 03, with calyx as the container of the count.",
+  "confidence": "high"
+ },
+ {
+  "word": "internal sepal",
+  "decision": "rule:bearer",
+  "target": "inner sepal (FLOPO_0996006)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "sépale interne",
+   "sépales internes"
+  ],
+  "reason": "Exact: 'internal' is the French 'interne', meaning inner; the positioned part class exists.",
+  "confidence": "high"
+ },
+ {
+  "word": "fruit-stalk",
+  "decision": "rule:bearer",
+  "target": "pedicel (PO_0030112)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "fruit stalk",
+   "fruiting pedicel"
+  ],
+  "reason": "Narrower: in these floras a fruit-stalk is the pedicel at fruiting stage. Keep the fruiting state via pattern 04 if needed. For a solitary fruit on a peduncle it can mean the peduncle, but the pedicel reading dominates.",
+  "confidence": "medium"
+ },
+ {
+  "word": "achene stipe",
+  "decision": "rule:bearer_part",
+  "target": "stalk (PO_0025066) with bearer_container achene fruit (PO_0030107)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "stipe of the achene",
+   "achene stalk"
+  ],
+  "reason": "Stipe maps to stalk under rule C264, which explicitly covers the fruit stipe. The achene is the whole (as in Cyperaceae).",
+  "confidence": "high"
+ },
+ {
+  "word": "floral rhachis",
+  "decision": "rule:bearer",
+  "target": "inflorescence axis (PO_0020122)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "floral rachis",
+   "flowering rhachis"
+  ],
+  "reason": "Exact in sense: the rachis bearing the flowers, as opposed to the leaf rhachis (PO_0020055). PO already lists 'inflorescence rachis' and 'inflorescence rhachis'.",
+  "confidence": "high"
+ },
+ {
+  "word": "utricle orifice",
+  "decision": "rule:bearer_part",
+  "target": "plant organ apex (FLOPO_0985023) with bearer_container perigynium beak (FLOPO_0986070)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "perigynium orifice",
+   "orifice of the beak",
+   "utricle mouth"
+  ],
+  "reason": "The orifice of a Carex utricle is the mouth at the tip of the perigynium beak; 'emarginate' and 'obliquely truncate' describe that tip. Where a utricle is beakless, the apex of the perigynium (PO_0009044) is the fallback container.",
+  "confidence": "medium"
+ },
+ {
+  "word": "central segment",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A generic part that needs its organ. The examples mix a pinnately divided leaf segment (median leaf lamina lobe, FLOPO_0996031, has 'median segment' as related) with filiform, acuminate segments that may be labellum or perianth parts. Ground it only when the organ is named.",
+  "confidence": "medium"
+ },
+ {
+  "word": "fruit stipe",
+  "decision": "rule:bearer_part",
+  "target": "stalk (PO_0025066) with bearer_container fruit (PO_0009001)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "stipe of the fruit",
+   "fruit stalk (related)"
+  ],
+  "reason": "Rule C264 says the stalk class holds for the fruit stipe. This makes the fruit the fixed whole. A stipe is the stalk of the fruit itself (e.g. a gynophore that persists), not the pedicel.",
+  "confidence": "high"
+ },
+ {
+  "word": "trophophore stalk",
+  "decision": "rule:bearer_part",
+  "target": "stalk (PO_0025066) with bearer_container leaf (PO_0025034)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "stalk of the trophophore",
+   "sterile blade stalk"
+  ],
+  "reason": "In Ophioglossaceae the trophophore is the sterile laminar part of the leaf, and PO has no class for it. Its stalk is a stalk within the leaf. This is a rule rather than a new class because few floras use it; propose 'trophophore' as a class only if Ophioglossaceae treatments accumulate.",
+  "confidence": "low"
+ },
+ {
+  "word": "stigmatic arm",
+  "decision": "rule:bearer",
+  "target": "stigma lobe (FLOPO_0986009)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "stigma arm",
+   "stigmatic arms",
+   "stigmatic lobe"
+  ],
+  "reason": "Exact in sense: stigmatic arms are the elongate lobes of a divided stigma (porrect, clavate, papillose). Where the arm is a style branch bearing stigmatic surface, style branch (FLOPO_0986008) is the alternative.",
+  "confidence": "medium"
+ },
+ {
+  "word": "carpoid",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A misnormalised lemma of 'carpidium/carpídio/carpodia' whose sense is split. In Malvaceae ('número de carpídio 5...') it is the mericarp (PO_0020075); in apocarpous fruits it is the monocarp (FLOPO_0986046). Add a contextual rule for 'carpidium' instead of grounding 'carpoid'.",
+  "confidence": "medium"
+ },
+ {
+  "word": "corolla beak",
+  "decision": "rule:bearer_part",
+  "target": "plant organ apex (FLOPO_0985023) with bearer_container corolla lip (FLOPO_0985017)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "galea beak",
+   "beak of the galea",
+   "corolla rostrum"
+  ],
+  "reason": "In Pedicularis (Orobanchaceae) the beak is the narrowed, prolonged apex of the upper corolla lip (galea): linear, curved, exserted, 18-24 mm. That makes it a region of an existing class. FLOPO fruit beak (FLOPO_0986139) is for fruits only.",
+  "confidence": "medium"
+ }
+]

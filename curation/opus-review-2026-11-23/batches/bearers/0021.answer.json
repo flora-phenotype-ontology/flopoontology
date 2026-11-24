@@ -1,0 +1,365 @@
+[
+ {
+  "word": "squamae",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "The examples are garbled scans of 'squamellae', the pappus scales of Asteraceae ('pappus-squamellae 12-15'). The lexicon lists squamae as a synonym of trichome (PO_0000282), which is the wrong grounding here. Bare 'scale' was rejected in the 2026-11-13 review as a generic part. Where the pappus is named, the count belongs on pappus (PO_0025393) by pattern 03, and the extractor should split the 'pappus-squamellae' compound.",
+  "confidence": "medium"
+ },
+ {
+  "word": "fruit angle",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "No class exists for an angle (edge) of an organ, and bare 'angle' is on the generic rejected list. The number of angles is already handled by 'angled -> angle' in flora_counted_parts (pattern 03, '3-angled fruit'). The qualities here (prominent, obtuse, smooth or tuberculate) belong to the angles, not the fruit, so moving them to fruit (PO_0009001) would misstate them.",
+  "confidence": "medium"
+ },
+ {
+  "word": "perigynium body",
+  "decision": "new_class",
+  "target": "",
+  "label": "perigynium body",
+  "parent": "is_a cardinal organ part (PO_0025001); part_of perigynium (PO_0009044)",
+  "definition": "The portion of a perigynium below the beak, which closely encloses the achene; together with the perigynium beak it makes up the perigynium.",
+  "synonyms": [
+   "body of perigynium",
+   "perigynium body proper"
+  ],
+  "reason": "Carex treatments give the body's size and shape separately from the beak ('body 2.2-3 x 1.5-2.2 mm'). Grounding to perigynium would turn body length into whole-perigynium length. It is the counterpart of the existing perigynium beak (FLOPO_0986070). Propose it to PO upstream together with the perigynium beak.",
+  "confidence": "medium"
+ },
+ {
+  "word": "rachilla hair",
+  "decision": "rule:bearer_part",
+  "target": "trichome (PO_0000282) part_of spikelet rachilla (PO_0009080), pattern 12 (part of a qualified whole)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "rachilla hairs"
+  ],
+  "reason": "Hairs on the spikelet rachilla of grasses. Both classes exist, and the part-of construction states their length, stiffness and branching.",
+  "confidence": "high"
+ },
+ {
+  "word": "dentation",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Dentation means tooth, a generic part that needs its organ. This matches the 2026-11-14 rejections of denticle, dent and crenulation. On a leaf margin it is leaf lamina tooth (PO_0025518) by the margin rule. 'callose' and 'acute' are qualities of the teeth of an organ the statement does not name.",
+  "confidence": "high"
+ },
+ {
+  "word": "spadix stipe",
+  "decision": "rule:bearer_part",
+  "target": "stalk (PO_0025066) part_of spadix inflorescence (PO_0030120), pattern 12",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "stipe of spadix",
+   "spadix stalk"
+  ],
+  "reason": "The aroid spadix stipe is the bare stalk of the spadix between the spathe insertion and the flowers. Stipe already grounds to stalk (rule C264). 'Prominently stipitate' is better recorded on the spadix (stalked or stipitate quality); the lengths belong to the stalk.",
+  "confidence": "medium"
+ },
+ {
+  "word": "episepal",
+  "decision": "rule:bearer",
+  "target": "epicalyx segment (FLOPO_0986038)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "episepals",
+   "epicalyx bract"
+  ],
+  "reason": "Exact synonym: an episepal is one member of the epicalyx (Malvaceae, Rosaceae). PO also has epicalyx bract (PO_0025577), but the existing FLOPO class is the one that pairs with epicalyx (FLOPO_0986037).",
+  "confidence": "high"
+ },
+ {
+  "word": "reproductive body",
+  "decision": "rule:bearer",
+  "target": "asexual propagule (FLOPO_0986119)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "asexual reproductive body",
+   "asexual reproductive bodies"
+  ],
+  "reason": "Moss treatments write 'Asexual reproductive bodies usually present/none'. 'Asexual reproductive body' is an exact synonym of asexual propagule. Bare 'reproductive body' is broader, so the rule should fire only when 'asexual' comes before it or the treatment is a bryophyte one.",
+  "confidence": "medium"
+ },
+ {
+  "word": "times longer than wide",
+  "decision": "not_a_part",
+  "target": "pattern 11 (ratio of two dimensions) on the part named in the statement",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A length-to-width ratio of the described part (cells, leaves), not a structure.",
+  "confidence": "high"
+ },
+ {
+  "word": "style-branch appendage",
+  "decision": "rule:bearer_part",
+  "target": "style branch (FLOPO_0986008), region distal (upper part) via flora_context_words",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "style-arm appendage",
+   "style branch appendage"
+  ],
+  "reason": "In Asteraceae the appendage is the sterile tip of the style branch beyond the stigmatic lines. It is a region of an existing class, not a separate organ. Its shape (lanceolate, narrowly triangular) and hairiness fit the distal part of the style branch.",
+  "confidence": "medium"
+ },
+ {
+  "word": "aerenchyma space",
+  "decision": "rule:bearer_part",
+  "target": "plant anatomical space (PO_0025117) part_of aerenchyma (PO_0005702), pattern 12",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "aerenchyma lacuna",
+   "air space of aerenchyma"
+  ],
+  "reason": "An air space (lacuna) inside aerenchyma. PO lists lacuna as a synonym of plant anatomical space. Its diameter and width belong to the space.",
+  "confidence": "medium"
+ },
+ {
+  "word": "circumferential row",
+  "decision": "not_a_part",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A row is an arrangement of other parts (hooked bristles). The number of rows is a quality of the arranged parts. Same decision as 'vertical row' (2026-11-14).",
+  "confidence": "high"
+ },
+ {
+  "word": "fraction of stem",
+  "decision": "not_a_part",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A proportion of the stem length over which another part extends, i.e. the extent of a quality. Same decision as 'fraction of length' and 'fraction'.",
+  "confidence": "high"
+ },
+ {
+  "word": "on larger spike",
+  "decision": "not_a_part",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A fragment naming the container of a count ('Perigynia 15-80 on larger spikes'). The bearer is the perigynium (PO_0009044), counted per spike. Same decision as the 'per X' fragments.",
+  "confidence": "high"
+ },
+ {
+  "word": "consecutive node",
+  "decision": "not_a_part",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A fragment giving where tendrils or inflorescences are placed ('at ... consecutive nodes'), not a structure. The node itself is stem node (PO_0020141) where one is meant.",
+  "confidence": "high"
+ },
+ {
+  "word": "perigynium suture",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "The abaxial suture of the Carex perigynium is a real feature, but bare 'suture' is rejected as generic and no suture or line class exists. Its colour is not the colour of the abaxial face, so a region rule would misstate it. Two floras and five statements are too few for a Carex-only class. Revisit if 'perigynium body' is added.",
+  "confidence": "low"
+ },
+ {
+  "word": "ray cypsela",
+  "decision": "rule:bearer_part",
+  "target": "cypsela (FLOPO_0986053) part_of ray flower (PO_0025331), pattern 12",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "ray achene",
+   "cypsela of ray floret"
+  ],
+  "reason": "The fruit of the ray florets as opposed to the disc florets of a capitulum. Both classes exist, and the qualities (hairy, glabrous, stramineous, width) belong to the cypsela.",
+  "confidence": "high"
+ },
+ {
+  "word": "times petal length",
+  "decision": "not_a_part",
+  "target": "pattern 10 (ratio to another part), towards petal (PO_0009032)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A length ratio of the described part to the petals, not a structure.",
+  "confidence": "high"
+ },
+ {
+  "word": "ultimate teeth",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "The final-order teeth of some organ the statement does not name (involucre, calyx, leaf). Teeth are generic, as with 'lateral teeth' and 'teeth or lobe' (2026-11-14).",
+  "confidence": "high"
+ },
+ {
+  "word": "navel",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "'Navel open or closed' could mean the eye of a pome or berry (the calyx end), the ostiole of a fig (FLOPO_0986063), or a seed hilum (PO_0020063). The examples do not say which.",
+  "confidence": "medium"
+ },
+ {
+  "word": "nectar disc",
+  "decision": "rule:bearer",
+  "target": "floral disc (FLOPO_0986025)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "nectary disc",
+   "nectariferous disc"
+  ],
+  "reason": "Exact synonym: the floral disc is the nectar-secreting disc. This matches the earlier grounding of 'anneau nectarifère' to the floral disc. Its fleshy, glabrous and papillate combinations are already allowed in valid_combinations.",
+  "confidence": "high"
+ },
+ {
+  "word": "nectariferous tissue",
+  "decision": "rule:bearer",
+  "target": "nectary (PO_0009035)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "nectar-secreting tissue"
+  ],
+  "reason": "Related synonym: the statements say where nectar-secreting tissue is present, which is a nectary. Use flower nectary (PO_0009056) when the context is floral. PO also has nectary parenchyma (PO_0000309), but that is a finer tissue than the floras mean.",
+  "confidence": "medium"
+ },
+ {
+  "word": "reflexed spine",
+  "decision": "rule:bearer_part",
+  "target": "spine leaf (PO_0025173) with 'reflexed' as the bearer's state (pattern 04)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "The examples are cactus areole spines ('1 in some areoles', 'rarely present'). The part is spine leaf, and 'reflexed' picks out which spines are counted or said to be present. It is a state, not a separate structure.",
+  "confidence": "medium"
+ },
+ {
+  "word": "small spine",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A spine with a size word, and the organ is not given. It could be cactus areole spines, stipular spines or spines on a fruit or phyllary. Same decision as 'basal spine' and 'lateral spine'.",
+  "confidence": "medium"
+ },
+ {
+  "word": "winter bud stalk",
+  "decision": "rule:bearer_part",
+  "target": "stalk (PO_0025066) part_of vegetative bud (PO_0000058) in the resting (winter) state, pattern 12 with pattern 04",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "stalk of winter bud",
+   "bud stalk"
+  ],
+  "reason": "The stalked resting buds of e.g. Alnus. 'Winter' is the state of the bud, and the measured part is its stalk.",
+  "confidence": "medium"
+ },
+ {
+  "word": "culm sheath hair",
+  "decision": "rule:bearer_part",
+  "target": "trichome (PO_0000282) part_of leaf sheath (PO_0020104) on stem (culm), pattern 12",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "culm-sheath hairs"
+  ],
+  "reason": "Hairs on the culm sheaths of bamboos and grasses. Culm sheaths are already grounded under leaf sheath in valid_combinations. The qualities (deciduous, stiff, white, length) belong to the hairs.",
+  "confidence": "medium"
+ },
+ {
+  "word": "cupular",
+  "decision": "not_a_part",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "An adjective ('cupular glands'), the cupulate quality (PATO_0002342) of the glands. The bearer is the gland (portion of secretory tissue PO_0005656, or extrafloral nectary PO_0009057 on a leaf).",
+  "confidence": "high"
+ },
+ {
+  "word": "nuts per cupule",
+  "decision": "not_a_part",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A count of nuts (nut fruit PO_0030102) inside the cupule (FLOPO_0986036). The cupule is only the container. Same decision as 'per cupule' (2026-11-14).",
+  "confidence": "high"
+ },
+ {
+  "word": "scarious appendage",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "'Appendage' is a rejected generic part, and 'scarious' is the existing quality FLOPO:0991047. The examples are phyllary appendages, but the statement only says they are absent, without naming the organ in the fragment.",
+  "confidence": "medium"
+ },
+ {
+  "word": "spiny",
+  "decision": "not_a_part",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A quality (spiny, bearing spines) of the organ described: adaxial surface, margins, wings. The bearer is that organ, and the spines are generic until their organ is named.",
+  "confidence": "high"
+ }
+]

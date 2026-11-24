@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P02200",
+  "decision": "transcription_error",
+  "target": "style branch apex: truncated PATO:0000936",
+  "fix": "Re-transcribe 'Rami styli ... apice truncato' ('truneato' is an OCR error) as style branch (style PO:0009074) apex truncated PATO:0000936, with region apex. There is no lobe and no count.",
+  "reason": "The words describe the shape of the style-branch tips. The transcription made it a count of lobes.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02201",
+  "decision": "new_pattern",
+  "target": "distance from a landmark",
+  "fix": "Slots: the part (nectary PO:0009035), a length range with unit, the landmark (base of the corolla lobe) and its cue. RDF: a PATO distance PATO:0000040 measurement with fb:low/fb:high/fb:unit and the landmark. OWL: at most has part some (nectary and part of some corolla lobe), the presence only, like pattern 14.",
+  "reason": "Pattern 09 covers relations to a part without a number, and 14 covers counts. No pattern covers a distance measured from a landmark. The 2026-11-14 review lists this as open.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02202",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'Pod unknown' says the material is missing. It says nothing about the plant and does not mean the fruit is absent.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02203",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "Bare 'similar' names no attribute. The 2026-11-13 review rejected it (C245) because it needs its second term. The useful content of the sentence is in the following clauses (the glume length ratio).",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02204",
+  "decision": "existing_pattern",
+  "target": "docs/odp/06-specimen-condition.md",
+  "fix": "'when wet' is already a specimen_condition row (moistened) in flora_context_words.tsv, and 'above' is a region word. Missing: a split of the compound 'flexuose-curved' into curved PATO:0000406 (with flexuous as an approximation) so the value grounds. The bearer is seta PO:0030032.",
+  "reason": "This is a condition of the specimen, not a process. The pattern and its cue exist, but the compound value did not ground.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02205",
+  "decision": "missing_term",
+  "target": "liana / scandent shrub: habit nouns → whole plant PO:0000003 climbing FLOPO:0991108",
+  "fix": "Both alternatives entail climbing (scandent is already a synonym of FLOPO:0991108). Add habit-noun rules so 'liana' and 'scandent shrub' give whole plant climbing. A union is then needed only for the woody vs shrub distinction.",
+  "reason": "The disjunction is harmless: the shared value can be annotated without a union. The block is the missing habit-noun grounding, as in the 2026-11-14 review (P00386).",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02206",
+  "decision": "new_pattern",
+  "target": "projection beyond another part",
+  "fix": "Slots: the part (stamen PO:0009029), exserted PATO:0000623 towards the perianth, and the length of the projecting portion (1-2 mm). OWL: has part some (stamen and has characteristic some (exserted and towards some perianth)). RDF: the projection length as fb:low/fb:high/fb:unit. The alternative 'not exserted or' stays a union (pattern 07).",
+  "reason": "'exserted 1-2 mm' measures how far one part projects beyond another. No pattern has a slot for it, and the 2026-11-14 review used this name.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02207",
+  "decision": "existing_pattern",
+  "target": "docs/odp/18-position-of-the-bearer.md",
+  "fix": "Add the post-nominal Spanish 'pinna terminal' as a position cue (terminal) for leaflet PO:0020049 (pinna is a synonym) in flora_context_words.tsv. Then the record is terminal leaflet sessile.",
+  "reason": "This is the terminal member of a series, not a developmental stage.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02208",
+  "decision": "missing_term",
+  "target": "falling entire: spikelet shed as one unit → deciduous (generic) PATO:0001730 on spikelet PO:0009051",
+  "fix": "Add a rule that 'falling entire' on a spikelet is the spikelet deciduous as a whole (disarticulating below the glumes).",
+  "reason": "This is a disarticulation character of grasses, a quality under another name and not a process. The term exists; the rule is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02209",
+  "decision": "missing_term",
+  "target": "woody vine: habit noun → whole plant PO:0000003 climbing FLOPO:0991108 (+ woody)",
+  "fix": "Give the FLOPO habit class its EQ signature (whole plant + climbing) and add a rule for the noun 'woody vine'. The woody part needs a woody value, which FLOPO does not have yet.",
+  "reason": "Same decision as the 2026-11-14 review (P00386, P00701): habit nouns need the EQ signature.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02210",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground the container 'ultimate branch' to branch PO:0025073 (branchlet is already a synonym) and keep 'ultimate' as a position. The leaves are part of the branch, so this is a count with bearer_container, not a count at a place.",
+  "reason": "A count with a container; only the grounding of the container word is missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02211",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Add a rule that a union where one value subsumes the other (broadly ovate is a kind of ovate) reduces to the broader value, ovate. The 'outer' cue gives the position (pattern 18).",
+  "reason": "Both alternatives are under one attribute and one entails the other, so the union is trivial.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02212",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (slot 1, surface)",
+  "fix": "'upper surface' is a surface row (adaxial) in flora_context_words.tsv. Missing: armature values (spiny) on the list of values the surface rule accepts, or else spiny stated of the adaxial BSPO region of the leaf.",
+  "reason": "This is a place on the part, not a stage. The surface substitution is limited to colour, hairs and roughness.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02213",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add the cue '× to N' (an upper bound on the second dimension) so that width is 'up to 1.5 cm' next to the length 2-6.5 cm.",
+  "reason": "This is a strict upper bound in a length × width pair. The parser does not know the cue after '×'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02214",
+  "decision": "new_pattern",
+  "target": "count of the members with a quality",
+  "fix": "Slots: the whole (androecium), the members (stamen), a quality of a subset (fused), and the size of the subset (9 of 10). OWL: has part some (stamen and has characteristic some (fused with and towards some stamen)), presence only. RDF: the subset count and the free member ('la vexillaire libre').",
+  "reason": "'9 soudées, la vexillaire libre' counts the members that have a quality. No pattern counts a qualified subset. 'diadelphes' in the same clause can be annotated on its own.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02215",
+  "decision": "transcription_error",
+  "target": "trichome PO:0000282 length PATO:0000122 0.3-0.6 mm",
+  "fix": "Re-transcribe as bearer hair (trichome), quality length, 0.3-0.6 mm, with the whole plant as its container.",
+  "reason": "The measurement is the length of the hairs. 'Hairs' is not a quality of the whole plant.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02216",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "'perpendicular' without the axis it is perpendicular to was rejected on 2026-11-13 (C368). PATO:0002434 is relational, and the matrix-style source does not give the second term.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02217",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add the Spanish 'verticilastro(s)' as a synonym of cyme inflorescence PO:0030126 ('verticillaster' is already one) so that the container grounds: flowers 4-8 per verticillaster.",
+  "reason": "A count with a container. Only a Spanish synonym is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02218",
+  "decision": "transcription_error",
+  "target": "split the clause into statements",
+  "fix": "Transcribe separately: the row count (4 or 5 rows); yellowish green; apex or whole phyllary dark purple (an alternative of region); glabrous or sparsely pubescent (pattern 07); apex subacute to obtuse (a continuum). The bearer is phyllary (involucral bract).",
+  "reason": "The statement is a whole multi-clause sentence, but the quality is only the first colour. The disjunctions belong to other clauses.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02219",
+  "decision": "missing_term",
+  "target": "liane (French): habit noun → whole plant PO:0000003 climbing FLOPO:0991108",
+  "fix": "Add French 'liane' to the habit-noun rule that grounds liana to whole plant + climbing, and give the FLOPO liana habit class that EQ signature.",
+  "reason": "Same as the other habit nouns: the value exists, but the noun rule and the class's EQ signature are missing.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02220",
+  "decision": "existing_pattern",
+  "target": "docs/odp/08-alternative-with-frequency.md",
+  "fix": "Read 'sometimes in pseudoheads or enclosed in an involucre' as two alternatives with frequency 'sometimes'. Annotate the second as presence of an involucre PO:0009100 around the flowers (pattern 00 presence), with the frequency kept in RDF.",
+  "reason": "The involucre is a part that is present, not a quality of the inflorescence. The statement is at genus level and hedged, so only the presence with its frequency is safe.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02221",
+  "decision": "existing_pattern",
+  "target": "negation (docs/annotation-context-patterns.md, 'What is already represented')",
+  "fix": "Add the Portuguese 'não' to the negation cues. Then node PO:0000014 (leaf node) swollen PATO:0001851 is negated, with the cue at its offsets.",
+  "reason": "The negation is in the span; the cue list lacks the Portuguese word.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02222",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Add a rule that 'N mm thick' is a measurement of thickness PATO:0000915 (the attribute), not the value 'thick'.",
+  "reason": "This is a measurement with a unit; it was grounded to a value instead of the attribute.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02223",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Add the Spanish 'por lado' as an each_side cue. The landmark is the leafless node.",
+  "reason": "This is a count at a position, kind each_side; only the Spanish cue is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02224",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Let the region words of flora_context_words.tsv ('toward base') serve as at_region cues. Keep 'sometimes' as the frequency. The bearer is the marginal tooth of the ventral scale.",
+  "reason": "This is a count at a region of the part, which pattern 14 has as at_region.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02225",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Treat 'apex' as the bearer region (leaf apex PO:0020137), not as a count position. Split '2-lobed' into lobe count 2, and annotate 'unequally' as asymmetrical PATO:0000616 of the apex.",
+  "reason": "This is a compound count on a region (a bilobed leaf apex), which patterns 03 and slot 1 cover.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02226",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add 'perpendicular to X' as a relation cue with PATO:0002434 towards the inflorescence branch, and 'almost' as approximately (pattern 01). Re-cut the statement to the spikelet clause.",
+  "reason": "Here the second term is given ('to the branches'), so the 'without second term' rejection does not apply.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02227",
+  "decision": "existing_pattern",
+  "target": "docs/odp/08-alternative-with-frequency.md",
+  "fix": "Let pattern 08 take a continuum ('green to yellow-green') as the first operand, with 'reddish' as the second operand with frequency 'rarely'.",
+  "reason": "This is an alternative with its own frequency; only the first operand is a continuum.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02228",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add the French 'cymule(s)' as a synonym of cyme inflorescence PO:0030126 ('cymule' is already a synonym), and attach 'de 1-3 fleurs' to it as the container across the intervening 'sessiles, avec bractées'.",
+  "reason": "A count with a container that did not ground in French.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02229",
+  "decision": "new_pattern",
+  "target": "part present at a place",
+  "fix": "Slots: the part (leaf sheath PO:0020104, in the state old/dead), the place (stem base PO:0008039), and qualities of the part (dark brown, persistent). OWL: has part some (leaf sheath and has characteristic some non-deciduous PATO:0001732 and part of some stem base). RDF: the place cue and 'remains'.",
+  "reason": "This is the persistence of dead parts at a place on another organ. It is not a comparison, and no pattern covers it; the 2026-11-14 review lists it as open.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02230",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read '(to 10)' as an upper bound on the count (amount, high 10, unit count). Keep 'few' as the count_word, and the fruit as bearer_container.",
+  "reason": "A count of seeds per fruit with an upper-bound cue in parentheses, which the cue list lacks.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02231",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Split '5nerved' without the hyphen. Ground 'the second (scale)' of a Paspalum spikelet to the upper glume (glume PO:0009039, upper position), following Chase's scale numbering. Result: vein count 5 on the upper glume.",
+  "reason": "A compound count whose bearer is a scale named by its ordinal.",
+  "confidence": "low"
+ },
+ {
+  "id": "P02232",
+  "decision": "missing_term",
+  "target": "climbing shrub: habit noun → whole plant PO:0000003 climbing FLOPO:0991108",
+  "fix": "Add the habit-noun rule 'climbing shrub' → whole plant climbing (with the shrub growth form), and give the FLOPO habit class its EQ signature.",
+  "reason": "Same as the other habit nouns.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02233",
+  "decision": "missing_term",
+  "target": "farinose: covered with fine flour-like powder (farina); efarinose = its negation",
+  "fix": "Add a FLOPO texture value 'farinose' next to mealy PATO:0104364. The PATO comment keeps farinose apart from mealy. Then read the prefix 'e-' as negation, giving 'efarinose' = farinose negated.",
+  "reason": "A diagnostic character of Primula. Without farinose there is nothing for the negation to apply to.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02234",
+  "decision": "new_pattern",
+  "target": "count of series",
+  "fix": "Bearer: the whorl (involucre PO:0009100). OWL: multiseriate FLOPO:0991084, which holds for any count of 2 or more. RDF: the number of series 5-6 (unit count) with the counted item 'series', because pattern 03 does not split 'seriate'.",
+  "reason": "Pattern 03 does not split 'N-seriate' because the word names no part. The 2026-11-14 review proposed this name.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02235",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Map the transcribed quality 'number' to amount and read 'many' as count_word many. 'Bracteoles many' is the listed wording of the pattern.",
+  "reason": "This is an indefinite count; it was held only because the quality was 'number'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02236",
+  "decision": "transcription_error",
+  "target": "peduncle PO:0009053, count per_axil",
+  "fix": "The bearer is peduncle, not pedicel. Also add the abbreviation 'lf-axil' as a per_axil cue for pattern 14.",
+  "reason": "'Peduncles' was transcribed as pedicel. Once that is fixed, it is a count at a position (per leaf axil).",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02237",
+  "decision": "existing_pattern",
+  "target": "docs/odp/18-position-of-the-bearer.md",
+  "fix": "Add the Spanish 'las superiores'/'las inferiores' as position cues (upper/lower) for bract PO:0009055. Ground 'patentes' to spreading PATO:0104356.",
+  "reason": "This is a series member with a value. There is no measurement, so 'measurement_missing_unit' is a wrong reading.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P02238",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Map 'number' to amount and read 'many' as the count_word.",
+  "reason": "Same as P02235.",
+  "confidence": "high"
+ },
+ {
+  "id": "P02239",
+  "decision": "new_pattern",
+  "target": "count of series",
+  "fix": "As in P02234: move the bearer from bract to involucre PO:0009100, multiseriate FLOPO:0991084 in OWL, and the count 5 in RDF with 'environ' as approximately (pattern 01).",
+  "reason": "'5-sériées' counts the rows of the involucre, not the bracts.",
+  "confidence": "medium"
+ }
+]

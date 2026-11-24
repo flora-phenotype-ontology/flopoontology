@@ -1,0 +1,365 @@
+[
+ {
+  "word": "median sheath cell",
+  "decision": "rule:bearer_part",
+  "target": "native plant cell (PO_0025606) part_of leaf base (PO_0020040, exact synonym 'phyllid base') of a non-vascular leaf (PO_0025075), has position median (FLOPO:0991381)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A moss word: the cells in the middle of the sheathing leaf base (cells 2-15 µm wide are moss cells). It is a cell of a region of an existing class plus a position (pattern 18). It is not PO 'sheath cell' (PO_0004531), which is a cell of a wood ray. FLOPO_0986095 vaginant lamina is the narrower bearer only in Fissidens.",
+  "confidence": "medium"
+ },
+ {
+  "word": "pleat",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A generic part. The examples are folds of a leaf ('ventral pleats unarmed'), of a corolla ('plicae ovate') and of cells ('cells with pleats'). This is the same as the rejections of 'plicae' and 'fold'. Where the whole is a sympetalous corolla, corolla plica (FLOPO_0986067) applies; the quality is plicate (PATO_0104365).",
+  "confidence": "high"
+ },
+ {
+  "word": "leaflet base",
+  "decision": "rule:bearer",
+  "target": "leaflet base (FLOPO_0986001)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "base de la foliole",
+   "base des folioles"
+  ],
+  "reason": "Exact: the FLOPO anatomy class already exists with this label (config/reviewed_local_bearers.tsv). The grounding missed it, probably for French and inflected forms ('obliquement', 'inégale'); add the missing forms as exact synonyms.",
+  "confidence": "high"
+ },
+ {
+  "word": "apical bud",
+  "decision": "rule:bearer",
+  "target": "terminal bud (PO_0004713)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "apical bud",
+   "gema apical"
+  ],
+  "reason": "Exact: an apical bud is the bud at the end of a shoot axis, which is PO's terminal bud. The release already states it as the named positioned part 'bud' + terminal (config/flopo_positioned_parts.tsv).",
+  "confidence": "high"
+ },
+ {
+  "word": "medial and distal cell",
+  "decision": "rule:bearer_part",
+  "target": "laminal cell (FLOPO_0986100) with has position median (FLOPO:0991381), and laminal cell with has position upper (FLOPO:0991376): one record for each position",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Moss leaf cells of the middle and upper lamina. Two positions are joined, which pattern 18 flags as bearer_position_not_modelled. The statement holds of both, so split it into two records rather than add a class.",
+  "confidence": "medium"
+ },
+ {
+  "word": "labellum apex",
+  "decision": "rule:bearer_part",
+  "target": "orchid labellum (FLOPO_0980978) with a BSPO apical region as part_restriction (region pattern, docs/annotation-context-patterns.md)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "sommet du labelle",
+   "lip apex"
+  ],
+  "reason": "The apex of the orchid lip, a region of an existing FLOPO class. Neither PO nor FLOPO has a 'labellum apex' class, so the region pattern applies (as for organs without a PO apex class). 'Labellum lobe' (FLOPO_0986028) is a different part.",
+  "confidence": "high"
+ },
+ {
+  "word": "median leaf cell",
+  "decision": "rule:bearer_part",
+  "target": "laminal cell (FLOPO_0986100), has position median (FLOPO:0991381)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Moss leaf cells of the middle of the lamina (rhombic, fusiform, prorate, measured in µm). A laminal cell plus the median position. 'mid-leaf cell' and 'mid leaf cell' are the same thing.",
+  "confidence": "high"
+ },
+ {
+  "word": "rhizoidal tuber cell",
+  "decision": "rule:bearer_part",
+  "target": "native plant cell (PO_0025606) part_of gemma (PO_0025614) borne on a rhizoid (PO_0030078)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "The cells of the rhizoidal tubers of mosses (Bryum and related genera): smooth or protuberant, 20-50 µm. A rhizoidal tuber is a narrower kind of gemma. If 'rhizoidal tuber' itself turns up in several floras, it is a candidate class: is_a gemma (PO_0025614), part_of rhizoid (PO_0030078).",
+  "confidence": "medium"
+ },
+ {
+  "word": "lumina",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Same as the rejection of 'lumen' (generic, needs its whole). The examples mix the lumina of a pollen or spore reticulum ('width 0.6-0.8 µm') with cell lumina ('large and transparent'). PO 'plant anatomical space' (PO_0025117, synonym lumina) is not specific enough to use.",
+  "confidence": "high"
+ },
+ {
+  "word": "anthocarp",
+  "decision": "new_class",
+  "target": "",
+  "label": "anthocarp",
+  "parent": "is_a PO:0025496 multi-tissue plant structure; has_part PO:0009001 fruit",
+  "definition": "A multi-tissue plant structure (PO:0025496) that is a dispersal unit made of a fruit (PO:0009001) enclosed by the persistent, often hardened and ribbed, glandular or winged basal part of the perianth (PO:0009058), as in the Nyctaginaceae.",
+  "synonyms": [
+   "anthocarpe",
+   "anthocarps",
+   "anthocarpous fruit"
+  ],
+  "reason": "A real structure that floras describe on its own for every member of the Nyctaginaceae (Boerhavia, Commicarpus, Pisonia, Mirabilis). PO 'fruit' develops from the gynoecium only, so it does not cover the perianth part that carries the glands, ribs and wings these statements describe. Calling it 'fruit' would put the gland statements on the wrong part. Propose to PO upstream.",
+  "confidence": "medium"
+ },
+ {
+  "word": "distal medial cell",
+  "decision": "rule:bearer_part",
+  "target": "laminal cell (FLOPO_0986100), has position median (FLOPO:0991381), in the distal region of the non-vascular leaf (BSPO distal region as part_restriction)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Moss leaf cells near the leaf axis in the upper leaf. It could also be a list ('distal and medial'); either way it is a laminal cell with position. A record that cannot be split goes to the laminal cell without a position.",
+  "confidence": "low"
+ },
+ {
+  "word": "upper leaf cell",
+  "decision": "rule:bearer_part",
+  "target": "laminal cell (FLOPO_0986100), has position upper (FLOPO:0991376)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Moss leaf cells of the upper lamina (rhombic, fusiform, porose, µm sizes). A laminal cell plus the upper position.",
+  "confidence": "high"
+ },
+ {
+  "word": "apical segment",
+  "decision": "rule:bearer_part",
+  "target": "terminal leaflet (FLOPO_0996015 = leaflet PO_0020049 + terminal PATO_0002476) for the end segment of a pinna; pinna (FLOPO_0985027) + has position terminal (PATO_0002476) where the end of the frond is meant",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "segmento apical",
+   "terminal segment"
+  ],
+  "reason": "Fern words: the last segment of a pinna or frond ('apical segment of each pinna', 'decurrent at the base'). 'segment' alone was rejected as generic, but the examples name the pinna, so it is a positioned part (pattern 18). If the whole is not given, leave the record for review.",
+  "confidence": "medium"
+ },
+ {
+  "word": "inner cell",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A generic part: the inner cells of a seta in cross-section, of segments, of walls. 'cell' and 'cells' were rejected as needing their whole, and 'inner' adds no whole.",
+  "confidence": "high"
+ },
+ {
+  "word": "capsule exothecial cell",
+  "decision": "rule:bearer_part",
+  "target": "plant epidermal cell (PO_0004013) part_of exothecium (PO_0030073; exact synonym 'sporangium epidermis') of the sporangium (PO_0025094, 'moss capsule')",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "exothecial cell"
+  ],
+  "reason": "The cells of the outer wall of the moss capsule, a standard character (short-rectangular, collenchymatous). Every part is in PO, so it is a cell of an existing tissue. A named class is only worth proposing to PO if exothecial cells recur widely.",
+  "confidence": "high"
+ },
+ {
+  "word": "germination",
+  "decision": "not_a_part",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A process, not a part. 'Germination epigeal/hypogeal' is a quality of the seedling: the cotyledons are carried above the ground or stay below it. If wanted, it belongs to a value rule on the seedling (PO_0008037) or the seedling cotyledon (PO_0025471), not to a bearer.",
+  "confidence": "high"
+ },
+ {
+  "word": "leaf medial cell",
+  "decision": "rule:bearer_part",
+  "target": "laminal cell (FLOPO_0986100), has position median (FLOPO:0991381)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Moss leaf cells of the middle lamina. The examples come from 'medial and distal cells', so a record taken from that wording also gets the upper position (see 'medial and distal cell').",
+  "confidence": "high"
+ },
+ {
+  "word": "stigmatic cavity",
+  "decision": "rule:bearer",
+  "target": "stigma (PO_0009073)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "cavité stigmatique",
+   "cavidad estigmática",
+   "stigma cavity"
+  ],
+  "reason": "Narrower: in orchids the receptive stigma is a cavity on the column (shapes oblong, rhomboid, elliptic). The statements are about the stigma's shape and colour. PO's stigma is the closest class, and the cavity form is not a separate structure.",
+  "confidence": "medium"
+ },
+ {
+  "word": "outer cell",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "A generic part: the outer cells of a seta in cross-section, of a wall, of a tuber. Same as the rejection of 'cell'. The whole is named only in some examples.",
+  "confidence": "high"
+ },
+ {
+  "word": "mid-leaf cell",
+  "decision": "rule:bearer_part",
+  "target": "laminal cell (FLOPO_0986100), has position median (FLOPO:0991381)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "The same as 'median leaf cell': moss leaf cells of the middle lamina.",
+  "confidence": "high"
+ },
+ {
+  "word": "vagrant lamina cell",
+  "decision": "rule:bearer_part",
+  "target": "native plant cell (PO_0025606) part_of vaginant lamina (FLOPO_0986095)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "vaginant lamina cell"
+  ],
+  "reason": "'vagrant' is an OCR error for 'vaginant'. FLOPO_0986095 already has 'vagrant lamina' as a related synonym. These are the cells of the sheathing lamina of Fissidens: a cell of an existing FLOPO part.",
+  "confidence": "high"
+ },
+ {
+  "word": "intermediate vein",
+  "decision": "rule:bearer",
+  "target": "leaf lamina vein (PO_0020138)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "nervure intermédiaire",
+   "intermediate nerve"
+  ],
+  "reason": "Narrower: the smaller veins between the main veins (intersecondary veins in dicots; the thinner parallel veins in monocot blades). PO has no single class for them. The count and visibility statements ('1-4 intermediate veins', 'evanescent') can sit on the lamina vein.",
+  "confidence": "medium"
+ },
+ {
+  "word": "basal region",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "The organ is not given. The examples ('region in 2 or 3 rows, indistinctly delimited') seem to be the basal or alar cell region of moss leaves, but that cannot be told safely. Where the organ is given, the region pattern (BSPO basal region) or PO alar cells already apply.",
+  "confidence": "medium"
+ },
+ {
+  "word": "mid leaf cell",
+  "decision": "rule:bearer_part",
+  "target": "laminal cell (FLOPO_0986100), has position median (FLOPO:0991381)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "The same as 'median leaf cell' and 'mid-leaf cell'.",
+  "confidence": "high"
+ },
+ {
+  "word": "upper and medial laminal cell",
+  "decision": "rule:bearer_part",
+  "target": "laminal cell (FLOPO_0986100) with has position upper (FLOPO:0991376), and laminal cell with has position median (FLOPO:0991381): one record for each position",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Two positions joined by 'and'. The statement holds of both, so split it into two records (as for 'medial and distal cell') rather than flag it as not modelled.",
+  "confidence": "medium"
+ },
+ {
+  "word": "style-arm",
+  "decision": "rule:bearer",
+  "target": "style branch (FLOPO_0986008)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "style-arms",
+   "style arm"
+  ],
+  "reason": "Exact: 'style arm' is already an exact synonym of FLOPO_0986008. Only the hyphenated spelling is missing.",
+  "confidence": "high"
+ },
+ {
+  "word": "abaxial blade cell",
+  "decision": "rule:bearer_part",
+  "target": "laminal cell (FLOPO_0986100), on the abaxial side (surface pattern: abaxial)",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Moss leaf cells (25-30 × 12-18 µm) seen from the abaxial side, where the leaf has cell layers or lamellae that differ from side to side. A laminal cell with the surface qualifier. If the source is Fissidens, the dorsal lamina (FLOPO_0986123) is the narrower whole.",
+  "confidence": "low"
+ },
+ {
+  "word": "lamina cell wall",
+  "decision": "rule:bearer_part",
+  "target": "laminal cell (FLOPO_0986100); the wall as its part, cell wall (GO:0005618), or the quality stated of the laminal cell where GO parts are not used",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [
+   "walls of the lamina cells",
+   "laminal cell wall"
+  ],
+  "reason": "Unlike the rejected 'basal cell wall', the whole is named: the walls of moss laminal cells (thickened, porose, bulging). A cell wall is a GO cellular component, not a PO structure, so no new anatomy class is needed.",
+  "confidence": "medium"
+ },
+ {
+  "word": "denticles",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "Same as the rejection of 'denticle' (2026-11-14): a generic small tooth that needs its organ. On a leaf margin, leaf lamina tooth (PO_0025518) applies through the margin rule.",
+  "confidence": "high"
+ },
+ {
+  "word": "muri",
+  "decision": "rejected",
+  "target": "",
+  "label": "",
+  "parent": "",
+  "definition": "",
+  "synonyms": [],
+  "reason": "The ridges of a reticulate sculpture on spores, pollen or seed coats. The whole is not given, as with the rejected 'ridges' and 'lumen'. 'Spores with muri' is better read as the surface quality netted (PATO_0001947, synonym reticulated) on the plant spore (PO_0025017) where the source names the spore.",
+  "confidence": "medium"
+ }
+]

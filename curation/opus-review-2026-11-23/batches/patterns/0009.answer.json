@@ -1,0 +1,322 @@
+[
+ {
+  "id": "P00360",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "'several' is already in INDEFINITE_AMOUNTS. The row was held because the quality was transcribed as 'number' rather than amount. Read the count word whatever the transcribed quality label is. Use 'per raceme' as the container cue: bearer flower PO:0009046, bearer_container raceme inflorescence PO:0030115, count_word several.",
+  "reason": "This is a count without a number, inside a named container. Pattern 13 covers it exactly.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00361",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "flopo2/ingest/ncvc_normalization.tsv row Q75 sends fruit 'winged' to the primitive class FLOPO_0900021, which has no EQ signature. Row Q83 holds 'winged' because there is no wing-bearing term. The PATO lexicon now has winged (PATO:0104354, synonym alate). Map both rows to PATO:0104354 on fruit PO:0009001. 'Surrounded by a membrane' is a separate statement.",
+  "reason": "The part and the quality both have terms. Only an out-of-date normalization rule blocks it.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00362",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Add a row for 'fascicled' to config/flora_counted_parts.tsv. Here the counted part is the bearer itself (flower), and the container is flower fascicle PO:0025323: flowers 2-4, part of a flower fascicle. Also annotate flower fascicled FLOPO:0991098 as a pattern-00 record.",
+  "reason": "'2-4-fascicled' means flowers in fascicles of 2-4. That is a count of flowers per fascicle, and PO has the fascicle.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00363",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "ncvc_normalization.tsv row Q11 'climbing shrub' (and Q10 'climber') still point to the held class FLOPO_0985031. Make them flopo_value FLOPO:0991108 climbing on whole plant PO:0000003, as rules R1297, R1610 and R2016 already do for liana-like. The shrub part is a separate habit statement. The 2026-09-18 curator decision to hold climbers was made before FLOPO:0991108 existed, so a curator should confirm this change.",
+  "reason": "Climbing is a reviewed FLOPO value of the whole plant.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00364",
+  "decision": "transcription_error",
+  "target": "trophophore stalk / blade base: attenuate",
+  "fix": "Re-transcribe as: the base of the trophophore blade is attenuate (PATO:0001982), tapering gradually into the stalk. 'Stalk' is a part, not a quality. 'Trophophore' needs a bearer rule (the sterile lamina of the Ophioglossum leaf).",
+  "reason": "The sentence says there is no abrupt junction between stalk and blade. It does not give 'stalk' as a quality of the trophophore.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00365",
+  "decision": "transcription_error",
+  "target": "dorsal sepal and petals: recurved",
+  "fix": "There are two records: the dorsal sepal (sepal with its position, pattern 18) recurved PATO:0002211, and the petals recurved PATO:0002211. 'Em relação à coluna' only says what the orientation is measured against. It is not a second part.",
+  "reason": "An orchid has no 'dorsal petal'. The text gives the orientation of the dorsal sepal and the petals, and its value is 'recurvadas'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00366",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "Add 'branched → branch PO:0025073' to config/flora_counted_parts.tsv. Read 'from base' as count_position kind at_region with the stem base as landmark. The result is a count of 2-4 branches at the base of the stem, with no phenotype class.",
+  "reason": "A number inside a word, at a named place. Patterns 03 and 14 together cover it. It is not a measurement.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00367",
+  "decision": "new_pattern",
+  "target": "comparison within a series",
+  "fix": "The bearer is leaflet with 'has position' terminal (PATO:0002476). Its quality is increased width towards some (leaflet and 'has position' some lateral). In OWL: has part some (leaflet and has position some terminal and has characteristic some (increased width and towards some (leaflet and has position some lateral))). 'Usually' and 'rather' stay in RDF.",
+  "reason": "The second term ('the laterals') is given, but it is the same part at another position. The comparison() rule requires a target class other than the bearer.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00368",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Add the French 'lianiforme' as a rule to FLOPO:0991108 climbing on whole plant, as R1297 liana-like and R2016 liane-like do. Change normalization row Q14 'liana' from FLOPO_0900035 to the same value. The clause 'parfois buissonnant ou lianiforme' is an alternative with its own frequency (pattern 08).",
+  "reason": "There is a reviewed value for this. The French spelling and the old normalization row are what is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00369",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Drop the stage qualifier. The capsule is where the spines are, not a stage. Ground the bearer as spine part of fruit, using bearer_container fruit PO:0009001 (PO's spine classes are leaf, stipule and root spines and do not apply). The quality is linear, with the length 6-7 mm as a second record.",
+  "reason": "The spines on the capsule wall are linear. The 'fruiting' context leaked in from the neighbouring 'Fruiting pedicel'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00370",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Add the Spanish 'numeroso', 'numerosos', 'numerosa' and 'numerosas' to INDEFINITE_AMOUNTS 'many' (the French forms are already listed). Bearer: capitulum inflorescence PO:0030121, present, count_word many.",
+  "reason": "Spanish 'capítulos numerosos' is the same construction as 'seeds numerous'.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00371",
+  "decision": "existing_pattern",
+  "target": "docs/odp/04-state-of-the-bearer.md",
+  "fix": "There is no negation in the clause. Resolve 'young ones' to the branchlets (branch PO:0025073) with bearer_context_quality young. The quality is compressed (flattened PATO:0002254). Treat 'slightly' as a degree cue (pattern 01).",
+  "reason": "The anaphor 'young ones' plus a state of the bearer is already covered. The held reason (negation) is spurious.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00372",
+  "decision": "new_pattern",
+  "target": "state after a stage",
+  "fix": "Pedicel PO:0030112 descending FLOPO:0991207 (rule R0326 'declined'), with a developmental-stage context whose relation is 'after' the anthesis stage instead of present_during. 'Early' is a timing cue that stays in RDF. In OWL, only the stage-bounded quality goes into the class, as for 'in fruit'.",
+  "reason": "The wording describes a change in orientation after anthesis. Before and after a stage are listed as still open (kind A2).",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00373",
+  "decision": "existing_pattern",
+  "target": "docs/odp/14-count-at-a-position.md",
+  "fix": "'dentate → tooth' is already in the counted-parts table. Add the place kind one_side (cue 'on one side') beside each_side. Count 1 of tooth, container the leaf lobe or segment, with frequency 'sometimes'. As with each_side, there is no phenotype class.",
+  "reason": "This is a count at a place on the part. The only missing piece is the 'one side' cue.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00374",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Read 'to more than 2 cm' as a strict lower bound (>2 cm) on inflorescence length, not an upper bound. Add 'to more than' and 'reaching more than' to the cue list for lower bounds.",
+  "reason": "The phrase reaches past 2 cm. The annotator took 'to' as an upper bound and then found that 'more than' contradicted it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00375",
+  "decision": "new_pattern",
+  "target": "depth of division",
+  "fix": "Bracteole PO:0009043 split PATO:0001786. The depth of the split is a length of 5-8 mm on the cleft region: has part some (bracteole and has characteristic some split and has part some (cleft region and has characteristic some (length and has magnitude 5-8 and has value unit mm))). 'Unilaterally' is a lateral position cue. Fractions ('divided 1/3') would use the same slot with a ratio unit.",
+  "reason": "A division measured by its depth. No pattern gives a length to a split.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00376",
+  "decision": "new_pattern",
+  "target": "projection beyond another part",
+  "fix": "Style PO:0009074 exserted PATO:0000623 towards the perianth (corolla or petals). The length of the projecting portion (1-1.4 mm) is a measurement of the part of the style outside it, held in the record as fb:low/fb:high with the exserted value. The class carries exserted towards the enclosing part.",
+  "reason": "'Exserted' with a measured distance. Pattern 09 has no slot for the size of the projection.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00377",
+  "decision": "missing_term",
+  "target": "semitriangular: a 2-D shape whose outline is like one half of a triangle, cut along its axis (asymmetric, with one basal angle), as in Vicia stipules",
+  "fix": "Add a FLOPO value under 2-D shape PATO:0002006, a sibling of semisagittate FLOPO:0991352. 'Sagittate or semitriangular' then goes through the union (pattern 07).",
+  "reason": "Sagittate has a term. 'Semitriangular' has no term and no rule, so the union cannot be built. It is a common stipule shape in Vicia and Lathyrus.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00378",
+  "decision": "new_pattern",
+  "target": "comparison within a series",
+  "fix": "Anther PO:0009066 part of an inner stamen (inner FLOPO:0991378), decreased size towards some anther of an outer stamen (outer FLOPO:0991379). The second term ('outer anthers') comes from the preceding clause. 'Paler' is the same construction with colour.",
+  "reason": "The comparison is between members of one series, and the second term is only implied. This is listed as open.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00379",
+  "decision": "existing_pattern",
+  "target": "docs/odp/02-bounded-measurement.md",
+  "fix": "Strip cross-reference parentheticals such as '(see p.NNN)' before reading the bound cue. The result is two bounds: flower bud length ≤35 mm and width ≤15 mm.",
+  "reason": "'to 35 x 15mm' is a normal upper bound. The parenthetical cross-reference hid the cue.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00380",
+  "decision": "existing_pattern",
+  "target": "docs/annotation-context-patterns.md (stage kind C, region)",
+  "fix": "'at base' is a region reading (stem base) and not a stage. Ground 'woody' to ligneous PATO:0002348, as the NCVC normalization does. 'Often' is the frequency qualifier.",
+  "reason": "A quality of a region of the stem. The region slot is implemented, and the row was sent to the stage branch by mistake.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00381",
+  "decision": "existing_pattern",
+  "target": "docs/odp/15-absence-of-a-part.md",
+  "fix": "Pattern 15 lists 'stipules 0' as wording, so accept '0' as the absence cue. The bearer is perianth bristle FLOPO_0986044 (reviewed rules R2835 and R3145), present, negated, negation_scope absence.",
+  "reason": "A count of 0 means the part is absent. The annotator did not see '0' as a negation cue.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00382",
+  "decision": "not_annotatable",
+  "target": "",
+  "fix": "",
+  "reason": "Whether plants form dense stands is a population or ecological property, not a phenotype of a part of the plant.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00383",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "Add the cue 'same size as' (equality, ratio 1) with the target leaf PO:0025034. 'Same shape as' has no value and stays in RDF only.",
+  "reason": "Equality to another named part, which pattern 10 covers. The target was not returned.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00384",
+  "decision": "new_pattern",
+  "target": "comparison within a series",
+  "fix": "Petal PO:0009032 with 'has position' anterior: decreased length towards some (petal and not anterior), which in practice means the lateral and upper petals. 'Conspicuously' stays in RDF. Use the same form as for the terminal and lateral leaflets.",
+  "reason": "One member of a series is compared with the others of the same kind, so the target class is the bearer's own class.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00385",
+  "decision": "new_pattern",
+  "target": "projection beyond another part",
+  "fix": "Stigma PO:0009073 exserted PATO:0000623 towards the corolla tube, with an upper bound of 10 mm on the projecting length (pattern 02 cue 'up to'). 'Reaching the corolla mouth or' is the first alternative (pattern 07). The class carries exserted, and the distance stays in the record.",
+  "reason": "The same construction as styles 'exserted 1-1.4 mm'.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00386",
+  "decision": "missing_term",
+  "target": "pebbled: a seed surface covered with low, rounded, closely set convexities like pebbles (FNA Caryophyllaceae usage)",
+  "fix": "Add a FLOPO surface value. 'Pebbled or, less frequently, smooth' then follows pattern 08 (alternative with its own frequency), with smooth PATO:0000701.",
+  "reason": "The structure is covered. No term or rule exists for 'pebbled', and it is not the same as tuberculate.",
+  "confidence": "low"
+ },
+ {
+  "id": "P00387",
+  "decision": "transcription_error",
+  "target": "peristome cilia: absent, or 1-2 rudimentary",
+  "fix": "The bearer is the cilia of the endostome, part of the peristome PO:0030042. The statement is an absence that is usually true, or 1-2 rudimentary cilia present (pattern 08 with a count).",
+  "reason": "The context is the moss capsule. 'Leaf' is wrong.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00388",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Change normalization row Q10 'climber' to flopo_value FLOPO:0991108 climbing on whole plant PO:0000003. 'Herbaceous' gives a second record (PATO herbaceous, as in the NCVC rules).",
+  "reason": "Two qualities of the whole plant, both with terms. Only the held growth-form class blocks it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00389",
+  "decision": "existing_pattern",
+  "target": "docs/odp/09-relation-to-another-part.md",
+  "fix": "Add the French cue 'soudé(e)(s) à/aux' → fused with PATO:0000642, towards the target 'pétales' → petal PO:0009032. The bearer is filament PO:0009067. '±' is pattern 01.",
+  "reason": "An attachment to a named second part, which pattern 09 covers. The French cue is missing.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00390",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Add the rule 'déhiscentes par fentes latérales' / 'dehiscing by lateral slits' → latrorse FLOPO:0991373 on anther PO:0009066. Fall back to dehiscent FLOPO:0991149, as rule R0099 does.",
+  "reason": "This is a mode of dehiscence, which is a quality, not a process. A reviewed value exists for it.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00391",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Ground the container 'partial inflorescence' here to cyme inflorescence PO:0030126 (synonym cymule). Count of flower = 3, container that cyme.",
+  "reason": "A plain count. Only the container lacked a grounding.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00392",
+  "decision": "existing_pattern",
+  "target": "docs/odp/03-count-of-parts.md",
+  "fix": "Pairs of pinnae (leaflet PO:0020049, collection size 2), upper bound 16 (pattern 02, cue 'up to'), container leaf lamina. 'On large lamina' is a condition kept in RDF and not a growth stage. An upper bound holds for every lamina, so the class remains true.",
+  "reason": "A bounded count of pairs. The size condition was misread as a stage.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00393",
+  "decision": "existing_pattern",
+  "target": "docs/odp/00-part-and-quality.md",
+  "fix": "Ground 'arcuate' to curved PATO:0000406, and keep 'slightly' as a degree cue (pattern 01). The bearer is the secondary vein of the leaf lamina. This is a shape, not a measurement.",
+  "reason": "A shape of a vein. It was sent to the measurement branch by mistake.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00394",
+  "decision": "existing_pattern",
+  "target": "docs/odp/18-position-of-the-bearer.md",
+  "fix": "Resolve 'middle and inner ones' to phyllaries (involucral bracts), with 'has position' inner FLOPO:0991378 and middle (median FLOPO:0991381) as two records. The length is ca. 3 mm (pattern 01) and the shape is elliptic.",
+  "reason": "Members of a series. Pattern 18 covers this, and it is not a developmental stage.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00395",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "Read 'with multicellular uniseriate hairs' as hairy PATO:0000454, and 'subglabrous' as glabrous, approximately. Both are values of one attribute, so the union is primary. The bearer is leaf lamina PO:0020039.",
+  "reason": "A two-way alternative of pilosity. The first alternative is worded as 'with hairs' and was not grounded as a value.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00396",
+  "decision": "existing_pattern",
+  "target": "docs/odp/13-indefinite-count.md",
+  "fix": "Leaf PO:0025034, present, count_word several. As for 'flowers several per raceme', the count word must be read even though the quality was transcribed as 'number'.",
+  "reason": "An indefinite count, which pattern 13 covers.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00397",
+  "decision": "existing_pattern",
+  "target": "docs/odp/10-ratio-to-another-part.md",
+  "fix": "The bearer is the corolla lobe and not the petal. 'Equaling' with the target corolla tube gives equality (ratio 1), and 'about' makes it approximate (pattern 01).",
+  "reason": "Equality to a named second part. The target was not returned and the bearer was mistranscribed.",
+  "confidence": "high"
+ },
+ {
+  "id": "P00398",
+  "decision": "existing_pattern",
+  "target": "docs/odp/08-alternative-with-frequency.md",
+  "fix": "Split 'save for hairy domatia' into its own record: domatium FLOPO_0986021 hairy. The lamina is glabrous, or rarely appressed-pilose, as an alternative with frequency 'rarely'.",
+  "reason": "An exception plus an alternative with its own frequency. Both pieces exist once the exception is split off.",
+  "confidence": "medium"
+ },
+ {
+  "id": "P00399",
+  "decision": "existing_pattern",
+  "target": "docs/odp/07-alternatives.md",
+  "fix": "The bearer is a male inflorescence (pattern 04, male). The alternatives are of different attributes: solitary and axillary versus paniculate (panicle inflorescence type). Add the pair to config/flora_union_pairs.tsv so the secondary union applies.",
+  "reason": "The two values are under different attributes. The reviewed pair table handles this.",
+  "confidence": "medium"
+ }
+]
