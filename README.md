@@ -135,6 +135,34 @@ the three matching assets, run the full gate without this option, then update
 staging option for updates to `master`. The staging result is
 not a claim that the public release has passed the complete Dashboard.
 
+### 2026-11-24
+
+28,498 FLOPO classes (1,306 deprecated identifiers retained); every earlier identifier preserved.
+52 classes are new, after a second-model review of the words and statements the floras still
+left open (Claude Opus, 23 November 2026) and a check of each proposal
+(`curation/opus-review-2026-11-23/`):
+
+- 26 quality values, FLOPO:0991387 to FLOPO:0991412: resprouting, villosulous, inframedial,
+  supramedial, replicate, infrafoliar, subpercurrent, pachymorph, longitudinally dehiscent,
+  obtrulloid, biporate, anthocyanic, glandular-striate, transversely ellipsoid, amentiform,
+  geotropic, depressed ovate, depressed obovate, acrid, tank-forming, ventrifixed, free-central,
+  gynomonoecious, tristichous, and the habits twining and lianescent (both under climbing).
+- 26 plant parts, FLOPO:0986140 to FLOPO:0986165: latex, sympodial unit, elaiophore, underleaf,
+  labellum callus, petal appendage, thallus air pore, thallus air chamber, cyathial gland
+  appendage, fruit wing, stem internode wall, cephalium, synsepal, trichilium, closing body,
+  leaf lobule, culm leaf, bacterial leaf nodule, endoglossum, leaf lamina intercostal region,
+  leaf rachis segment, cell papilla, awn column, cone scale umbo, anthocarp, rachilla extension.
+  Each is under its closest Plant Ontology class and is a candidate for the Plant Ontology.
+- The named positioned parts have the synonyms botanists use ("lateral vein" for 'lateral
+  vascular bundle', "radical leaf" for 'basal leaf').
+- No identifier, label or definition of an earlier release changes.
+
+Seven annotation patterns were added with this release (`docs/odp/`, 19 to 25): a lower bound on
+the maximum ("to more than 1.5 m"), the measured extent of a state ("exserted 5-6 mm"),
+growth-form nouns ("Lianas"), a part present at a place ("rooting at the nodes"), an optional
+part ("with or without stipules"), before or after a stage ("nodding after anthesis"), and a
+comparison with an implied counterpart ("paler beneath").
+
 ### 2026-11-23
 
 - New relation `has position` (FLOPO:0995004), a sub-relation of `has characteristic`: a plant
