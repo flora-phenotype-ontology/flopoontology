@@ -2972,7 +2972,9 @@ def annotate_record(rec: dict, res: Resources) -> tuple[list[dict], list[Disposi
         if optional is not None:
             assertion["presence_variable"] = {
                 "cue_text": optional["cue_text"], "start": start + optional["cue_start"], "end": start + optional["cue_end"]}
-        if counterpart is not None:
+        if counterpart is not None and relation is None and union is None:
+            # (a row whose own value is "oblong-ovate" keeps that reading; the "largest" beside it
+            # belongs to another row)
             target = counterpart["towards"]
             target.update({"start": start + target["start"], "end": start + target["end"]})
             assertion["towards"] = target

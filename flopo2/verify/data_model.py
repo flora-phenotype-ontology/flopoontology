@@ -126,9 +126,11 @@ def _own_disjunction(parsed, source_text: str | None = None) -> bool:
     from flopo2.verify.gates import source_number
 
     factor = parsed.unit_conversion_factor
-    return unexplained_disjunction(
-        parsed.source_text if source_text is None else source_text, source_number(parsed.value_low, factor), source_number(parsed.value_high, factor), cue
-    )
+    low, high = source_number(parsed.value_low, factor), source_number(parsed.value_high, factor)
+    if parsed.extent is not None and low is None and high is None:
+        # "coalesced to 3 or 4 cm": the numbers of the extent are the statement's numbers (pattern 20)
+        low, high = parsed.extent.value_low, parsed.extent.value_high
+    return unexplained_disjunction(parsed.source_text if source_text is None else source_text, low, high, cue)
 
 
 def _gate_disjunction(source_text: str) -> bool:
@@ -1483,7 +1485,8 @@ def _validate_assertion(
         parsed.source_end,
     )
     open_bound = parsed.maximum_at_least is not None or (
-        parsed.value_low is not None and parsed.value_high is None)
+        parsed.value_low is not None and parsed.value_high is None) or (
+        parsed.extent is not None and parsed.extent.value_low is not None and parsed.extent.value_high is None)
     own_source = parsed.source_text
     if open_bound:
         # "to 4 cm or longer", "8 or more": the "or" belongs to a bound that is open above (gates)
