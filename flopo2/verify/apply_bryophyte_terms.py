@@ -177,9 +177,29 @@ class Terms:
                 # FLOPO has no class for the new part yet. Where the new part is a kind of the old
                 # one (non-vascular leaf, a leaf), the class of the old part still holds and stays.
                 gate["flopo_iri"], gate["flopo_status"] = "", "new_class_candidate"
+        fix_carrier(assertion)
         had = assertion.pop("phenotype_class_iri", None)
         if had and class_linked(assertion):
             ensure_annotation_class_iri(assertion)
+
+
+def fix_carrier(assertion: dict) -> bool:
+    """The whole that carries an arrangement ("leaves imbricate" on the shoot axis, pattern 16)
+    follows from the part. After the part changes, the slot is the one of the new part, or goes:
+    the tables name no carrier for a non-vascular leaf yet. True when the slot changed."""
+
+    from flopo2.owl import carrier
+
+    if not assertion.get("carrier"):
+        return False
+    want = carrier.carrier_for({**assertion, "carrier": None})
+    if want == assertion["carrier"]:
+        return False
+    if want is None:
+        del assertion["carrier"]
+    else:
+        assertion["carrier"] = want
+    return True
 
 
 def run(paths: list[Path], suffix: str | None) -> dict:
