@@ -53,6 +53,29 @@ def main(folder):
         for pid, ext in sorted(photos.items()):
             out.write(f'{pid}\t{ext}\n')
     print(dict(counts), len(photos), 'photos')
+    all_photos(folder, set(photos))
+
+
+def all_photos(folder, first_two):
+    """Every photograph of the labelled observations, in order (``field-obs-photos.tsv``), and those beyond the first two."""
+    seen, rest = set(), {}
+    with open(folder / 'field-obs-photos.tsv', 'w') as out:
+        out.write('observation\tphoto_id\tposition\textension\n')
+        for line in open(folder / 'inat-fields.jsonl'):
+            r = json.loads(line)
+            if r['observation'] in seen:
+                continue
+            seen.add(r['observation'])
+            for k, p in enumerate(r['photos']):
+                ext = p['url'].rsplit('.', 1)[-1].split('?')[0]
+                out.write(f"{r['observation']}\t{p['id']}\t{k}\t{ext}\n")
+                if p['id'] not in first_two and 'inaturalist-open-data' in p['url']:
+                    rest[p['id']] = ext
+    with open(folder / 'field-photos-rest.tsv', 'w') as out:
+        out.write('photo_id\textension\n')
+        for pid, ext in sorted(rest.items()):
+            out.write(f'{pid}\t{ext}\n')
+    print(len(seen), 'observations;', len(rest), 'photographs beyond the first two')
 
 
 if __name__ == '__main__':
