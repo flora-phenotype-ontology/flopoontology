@@ -2,10 +2,10 @@
 
 - **Records processed**: 1,383
 - **Extracted trait rows**: 48,948
-- **Formal assertions emitted**: 32,100
-- **Distinct candidate value terms**: 498
-- **Distinct candidate anatomical bearers**: 240
-- **Distinct novel PO × PATO/FLOPO combinations**: 2,017
+- **Formal assertions emitted**: 32,274
+- **Distinct candidate value terms**: 483
+- **Distinct candidate anatomical bearers**: 219
+- **Distinct novel PO × PATO/FLOPO combinations**: 2,048
 
 ## Top Candidate FLOPO Value Terms (`value_term_candidates.tsv`)
 

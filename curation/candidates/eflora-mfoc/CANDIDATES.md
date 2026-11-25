@@ -2,16 +2,16 @@
 
 - **Records processed**: 1,655
 - **Extracted trait rows**: 70,314
-- **Formal assertions emitted**: 39,234
-- **Distinct candidate value terms**: 581
-- **Distinct candidate anatomical bearers**: 241
-- **Distinct novel PO × PATO/FLOPO combinations**: 2,246
+- **Formal assertions emitted**: 39,430
+- **Distinct candidate value terms**: 567
+- **Distinct candidate anatomical bearers**: 220
+- **Distinct novel PO × PATO/FLOPO combinations**: 2,274
 
 ## Top Candidate FLOPO Value Terms (`value_term_candidates.tsv`)
 
 | Quality word | Count | Taxa | Suggested PATO parent | Top bearers |
 |---|---:|---:|---|---|
-| `thick-walled` | 323 | 227 | `PATO:0000141` (structure) | `PO_0009002|laminal cell|cell|PO_0025034|basal laminal cell` |
+| `thick-walled` | 322 | 226 | `PATO:0000141` (structure) | `PO_0009002|laminal cell|cell|PO_0025034|basal laminal cell` |
 | `thin-walled` | 286 | 247 | `PATO:0000141` (structure) | `PO_0009002|laminal cell|cell|PO_0025034|PO_0009047` |
 | `double` | 124 | 122 | `PATO:0000141` (structure) | `PO_0030042|PO_0030072|PO_0025034|PO_0030043|PO_0020128` |
 | `strong` | 88 | 85 | `PATO:0000141` (structure) | `PO_0030072|PO_0025034|FLOPO_0986075|PO_0020128|PO_0025166` |
@@ -41,12 +41,12 @@
 
 | Bearer word | Count | Taxa | Qualities seen |
 |---|---:|---:|---|
-| `laminal cell` | 1580 | 596 | `width|length|smooth|quadrate|rectangular` |
-| `basal cell` | 287 | 137 | `width|rectangular|length|smooth|porose` |
+| `laminal cell` | 1581 | 596 | `width|length|smooth|quadrate|rectangular` |
+| `basal cell` | 288 | 137 | `width|rectangular|length|smooth|porose` |
 | `basal laminal cell` | 277 | 123 | `rectangular|length|width|quadrate|differentiated` |
 | `distal laminal cell` | 220 | 93 | `width|length|isodiametric|not pitted|convex` |
 | `marginal cell` | 117 | 62 | `amount|linear|length|short-linear|quadrate` |
-| `medial cell` | 97 | 45 | `width|length|short-fusiform|fusiform|smooth` |
+| `medial cell` | 98 | 45 | `width|length|short-fusiform|fusiform|smooth` |
 | `proximal laminal cell` | 92 | 38 | `width|length|pitted|quadrate|rectangular` |
 | `basal marginal laminal cell` | 86 | 36 | `quadrate|straight|hyaline|thickened|thick` |
 | `cell wall` | 75 | 58 | `thick|thin|pitted|incrassate|thickened` |
@@ -79,7 +79,7 @@
 | `PO_0000003` | whole plant | `FLOPO_0991093` | autoicous | `EQ|PO_0000003|FLOPO_0991093` | `allowed` / `new_class_candidate` | 177 | 177 |
 | `PO_0030072` | costa | `FLOPO_0991162` | excurrent | `EQ|PO_0030072|FLOPO_0991162` | `allowed` / `new_class_candidate` | 170 | 169 |
 | `PO_0030091` | capsule fruit | `PATO_0001873` | cylindrical | `EQ|PO_0030091|PATO_0001873` | `allowed` / `new_class_candidate` | 163 | 162 |
-| `PO_0030072` | costa | `FLOPO_0991163` | percurrent | `EQ|PO_0030072|FLOPO_0991163` | `allowed` / `new_class_candidate` | 151 | 147 |
+| `PO_0030072` | costa | `FLOPO_0991163` | percurrent | `EQ|PO_0030072|FLOPO_0991163` | `allowed` / `new_class_candidate` | 107 | 104 |
 | `PO_0020128` | leaf margin | `PATO_0000407` | flat | `EQ|PO_0020128|PATO_0000407` | `allowed` / `new_class_candidate` | 106 | 106 |
 | `PO_0030091` | capsule fruit | `PATO_0000406` | curved | `EQ|PO_0030091|PATO_0000406` | `allowed` / `new_class_candidate` | 99 | 99 |
 | `PO_0025034` | leaf | `FLOPO_0991146` | secund | `EQ|PO_0025034|FLOPO_0991146` | `allowed` / `new_class_candidate` | 93 | 92 |

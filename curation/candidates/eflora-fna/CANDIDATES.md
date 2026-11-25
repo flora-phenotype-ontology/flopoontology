@@ -2,10 +2,10 @@
 
 - **Records processed**: 11,192
 - **Extracted trait rows**: 503,751
-- **Formal assertions emitted**: 373,014
-- **Distinct candidate value terms**: 2,121
-- **Distinct candidate anatomical bearers**: 610
-- **Distinct novel PO × PATO/FLOPO combinations**: 8,610
+- **Formal assertions emitted**: 374,439
+- **Distinct candidate value terms**: 1,985
+- **Distinct candidate anatomical bearers**: 459
+- **Distinct novel PO × PATO/FLOPO combinations**: 8,716
 
 ## Top Candidate FLOPO Value Terms (`value_term_candidates.tsv`)
 
@@ -15,7 +15,7 @@
 | `stalked` | 141 | 120 | `PATO:0000141` (structure) | `PO_0000282|PO_0005656|PO_0025034|PO_0020049|PO_0004509` |
 | `round` | 126 | 119 | `PATO:0000141` (structure) | `PO_0025359|PO_0009053|PO_0005656|PO_0009010|segment` |
 | `parallel` | 85 | 85 | `PATO:0000141` (structure) | `PO_0009001|PO_0009060|PO_0009032|FLOPO_0986041|FLOPO_0986017` |
-| `thin-walled` | 82 | 72 | `PATO:0000141` (structure) | `PO_0009001|PO_0009002|PO_0025034|cell|wing` |
+| `thin-walled` | 81 | 71 | `PATO:0000141` (structure) | `PO_0009001|PO_0009002|PO_0025034|cell|wing` |
 | `separate` | 65 | 64 | `PATO:0000052` (shape) | `PO_0030117|PO_0020049|PO_0009049|PO_0025393|PO_0009044` |
 | `sexual` | 65 | 65 | `PATO:0000141` (structure) | `PO_0000003` |
 | `scale-like` | 61 | 61 | `PATO:0000052` (shape) | `PO_0025393|PO_0004518|PO_0020039|rachis|PO_0009047` |
@@ -55,8 +55,8 @@
 | `complex grappling-hook` | 30 | 30 | `present` |
 | `bisexual floret` | 27 | 27 | `amount` |
 | `perianth blade` | 27 | 7 | `incurved|apiculate|acuminate|ovate|short-oblong` |
+| `pistillate spike` | 26 | 24 | `amount|widely separated` |
 | `basal cell` | 25 | 16 | `pitted|porose|yellowish|wider|length` |
-| `pistillate spike` | 25 | 24 | `amount` |
 | `trichome ray` | 25 | 11 | `amount|furcate|bifurcate|fused` |
 | `marginal lamina` | 24 | 13 | `erect|toothed|entire|plane|inflexed` |
 | `pistillate` | 24 | 21 | `amount` |
@@ -80,6 +80,7 @@
 | `PO_0025034` | leaf | `PATO_0104359` | entire | `EQ|PO_0025034|PATO_0104359` | `allowed` / `new_class_candidate` | 299 | 297 |
 | `PO_0009044` | perigynium | `PATO_0000921` | width | `EQ|PO_0009044|PATO_0000921` | `allowed` / `new_class_candidate` | 291 | 257 |
 | `PO_0025331` | ray flower | `PATO_0000122` | length | `EQ|PO_0025331|PATO_0000122` | `allowed` / `new_class_candidate` | 253 | 227 |
+| `PO_0020138` | leaf lamina vein | `PATO_0000070` | amount | `EQ|PO_0020138|PATO_0000070` | `allowed` / `new_class_candidate` | 241 | 238 |
 | `PO_0020039` | leaf lamina | `PATO_0001963` | revolute | `EQ|PO_0020039|PATO_0001963` | `allowed` / `new_class_candidate` | 229 | 228 |
 | `PO_0009055` | bract | `PATO_0104359` | entire | `EQ|PO_0009055|PATO_0104359` | `allowed` / `new_class_candidate` | 227 | 212 |
 | `PO_0009045` | involucral bract | `FLOPO_0991101` | unequal | `EQ|PO_0009045|FLOPO_0991101` | `allowed` / `new_class_candidate` | 226 | 226 |
@@ -95,4 +96,3 @@
 | `PO_0025600` | staminate flower | `PATO_0000070` | amount | `EQ|PO_0025600|PATO_0000070` | `allowed` / `new_class_candidate` | 183 | 171 |
 | `PO_0020039` | leaf lamina | `FLOPO_0991054` | mucronate | `EQ|PO_0020039|FLOPO_0991054` | `allowed` / `new_class_candidate` | 182 | 182 |
 | `PO_0025034` | leaf | `FLOPO_0991005` | rosulate | `EQ|PO_0025034|FLOPO_0991005` | `allowed` / `new_class_candidate` | 182 | 182 |
-| `PO_0009049` | inflorescence | `FLOPO_0991198` | panicle-like | `EQ|PO_0009049|FLOPO_0991198` | `allowed` / `new_class_candidate` | 174 | 174 |

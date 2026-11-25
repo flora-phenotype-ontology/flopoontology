@@ -2,10 +2,10 @@
 
 - **Records processed**: 395
 - **Extracted trait rows**: 22,080
-- **Formal assertions emitted**: 14,871
-- **Distinct candidate value terms**: 222
-- **Distinct candidate anatomical bearers**: 61
-- **Distinct novel PO × PATO/FLOPO combinations**: 1,448
+- **Formal assertions emitted**: 14,948
+- **Distinct candidate value terms**: 219
+- **Distinct candidate anatomical bearers**: 56
+- **Distinct novel PO × PATO/FLOPO combinations**: 1,461
 
 ## Top Candidate FLOPO Value Terms (`value_term_candidates.tsv`)
 
@@ -52,8 +52,6 @@
 | `pistillate flower zone` | 3 | 1 | `cylindrical|length|width` |
 | `pistillate portion` | 3 | 2 | `wide|long` |
 | `carpellary appendage` | 2 | 1 | `flat|cuneate` |
-| `digitate` | 2 | 1 | `amount` |
-| `episepal` | 2 | 1 | `peltate|dry` |
 | `hand` | 2 | 2 | `amount` |
 | `hastula` | 2 | 1 | `conspicuous|rudimentary` |
 | `secretory duct` | 2 | 1 | `visible|intermittent` |
@@ -66,17 +64,20 @@
 | `fertile locule` | 1 | 1 | `amount` |
 | `first order branch` | 1 | 1 | `amount` |
 | `geniculate` | 1 | 1 | `present` |
+| `geniculus` | 1 | 1 | `absent` |
+| `green parts` | 1 | 1 | `scaberulous` |
 
 ## Top Novel PO × PATO / FLOPO Class Candidates (`novel_po_pato_combinations.tsv`)
 
 | PO ID | PO Label | Quality ID | Quality Label | Signature | Status | Count | Taxa |
 |---|---|---|---|---|---|---:|---:|
 | `FLOPO_0986007` | spathe | `PATO_0000122` | length | `EQ|FLOPO_0986007|PATO_0000122` | `allowed` / `new_class_candidate` | 67 | 61 |
+| `PO_0000003` | whole plant | `FLOPO_0991108` | climbing | `EQ|PO_0000003|FLOPO_0991108` | `allowed` / `new_class_candidate` | 35 | 34 |
 | `FLOPO_0986007` | spathe | `PATO_0000921` | width | `EQ|FLOPO_0986007|PATO_0000921` | `allowed` / `new_class_candidate` | 29 | 26 |
 | `PO_0006003` | scale leaf | `PATO_0000122` | length | `EQ|PO_0006003|PATO_0000122` | `allowed` / `new_class_candidate` | 28 | 28 |
 | `FLOPO_0986007` | spathe | `PATO_0001877` | lanceolate | `EQ|FLOPO_0986007|PATO_0001877` | `allowed` / `new_class_candidate` | 21 | 21 |
 | `PO_0000003` | whole plant | `FLOPO_0991110` | epiphytic | `EQ|PO_0000003|FLOPO_0991110` | `allowed` / `new_class_candidate` | 21 | 20 |
-| `PO_0000003` | whole plant | `FLOPO_0991108` | climbing | `EQ|PO_0000003|FLOPO_0991108` | `allowed` / `new_class_candidate` | 19 | 19 |
+| `PO_0025348` | phyllome lamina vein | `PATO_0000070` | amount | `EQ|PO_0025348|PATO_0000070` | `novel` / `new_class_candidate` | 21 | 16 |
 | `PO_0006003` | scale leaf | `FLOPO_0991076` | subcoriaceous | `EQ|PO_0006003|FLOPO_0991076` | `allowed` / `new_class_candidate` | 18 | 18 |
 | `PO_0020039` | leaf lamina | `FLOPO_0991076` | subcoriaceous | `EQ|PO_0020039|FLOPO_0991076` | `allowed` / `new_class_candidate` | 18 | 18 |
 | `FLOPO_0986007` | spathe | `FLOPO_0988006` | green | `EQ|FLOPO_0986007|FLOPO_0988006` | `allowed` / `new_class_candidate` | 17 | 17 |
@@ -89,10 +90,9 @@
 | `PO_0020038` | petiole | `FLOPO_0991105` | sheathing | `EQ|PO_0020038|FLOPO_0991105` | `allowed` / `new_class_candidate` | 16 | 14 |
 | `FLOPO_0986007` | spathe | `FLOPO_0988008` | purple | `EQ|FLOPO_0986007|FLOPO_0988008` | `allowed` / `new_class_candidate` | 14 | 12 |
 | `PO_0009039` | glume | `PATO_0000574` | decreased length | `EQ|PO_0009039|PATO_0000574` | `novel` / `new_class_candidate` | 14 | 14 |
+| `PO_0000049` | leaf lamina abaxial epidermis | `PATO_0000328` | low saturation | `EQ|PO_0000049|PATO_0000328` | `novel` / `new_class_candidate` | 13 | 13 |
 | `PO_0005020` | vascular bundle | `FLOPO_0991067` | connate | `EQ|PO_0005020|FLOPO_0991067` | `allowed` / `new_class_candidate` | 13 | 11 |
 | `PO_0005020` | vascular bundle | `PATO_0000464` | inconspicuous | `EQ|PO_0005020|PATO_0000464` | `allowed` / `new_class_candidate` | 13 | 13 |
 | `PO_0006003` | scale leaf | `FLOPO_0988003` | brown | `EQ|PO_0006003|FLOPO_0988003` | `allowed` / `new_class_candidate` | 13 | 13 |
 | `PO_0006003` | scale leaf | `PATO_0001730` | deciduous (generic) | `EQ|PO_0006003|PATO_0001730` | `allowed` / `new_class_candidate` | 13 | 13 |
 | `FLOPO_0986007` | spathe | `PATO_0000946` | oblong | `EQ|FLOPO_0986007|PATO_0000946` | `allowed` / `new_class_candidate` | 12 | 12 |
-| `PO_0000003` | whole plant | `FLOPO_0991111` | terrestrial | `EQ|PO_0000003|FLOPO_0991111` | `allowed` / `new_class_candidate` | 12 | 12 |
-| `PO_0006003` | scale leaf | `FLOPO_0991026` | fibrous | `EQ|PO_0006003|FLOPO_0991026` | `allowed` / `new_class_candidate` | 12 | 12 |

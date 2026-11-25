@@ -2,10 +2,10 @@
 
 - **Records processed**: 3,855
 - **Extracted trait rows**: 6,316
-- **Formal assertions emitted**: 5,519
+- **Formal assertions emitted**: 5,893
 - **Distinct candidate value terms**: 3
 - **Distinct candidate anatomical bearers**: 0
-- **Distinct novel PO × PATO/FLOPO combinations**: 10
+- **Distinct novel PO × PATO/FLOPO combinations**: 11
 
 ## Top Candidate FLOPO Value Terms (`value_term_candidates.tsv`)
 
@@ -24,7 +24,8 @@
 
 | PO ID | PO Label | Quality ID | Quality Label | Signature | Status | Count | Taxa |
 |---|---|---|---|---|---|---:|---:|
-| `PO_0000003` | whole plant | `FLOPO_0991108` | climbing | `EQ|PO_0000003|FLOPO_0991108` | `allowed` / `new_class_candidate` | 359 | 243 |
+| `PO_0000003` | whole plant | `FLOPO_0991108` | climbing | `EQ|PO_0000003|FLOPO_0991108` | `allowed` / `new_class_candidate` | 502 | 269 |
+| `PO_0000003` | whole plant | `FLOPO_0991412` | lianescent | `EQ|PO_0000003|FLOPO_0991412` | `allowed` / `new_class_candidate` | 228 | 121 |
 | `PO_0000003` | whole plant | `FLOPO_0991110` | epiphytic | `EQ|PO_0000003|FLOPO_0991110` | `allowed` / `new_class_candidate` | 188 | 110 |
 | `PO_0000003` | whole plant | `FLOPO_0991228` | hemi-epiphytic | `EQ|PO_0000003|FLOPO_0991228` | `allowed` / `new_class_candidate` | 57 | 38 |
 | `PO_0000003` | whole plant | `FLOPO_0991003` | solitary | `EQ|PO_0000003|FLOPO_0991003` | `allowed` / `new_class_candidate` | 42 | 21 |

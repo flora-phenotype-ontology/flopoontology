@@ -2,10 +2,10 @@
 
 - **Records processed**: 184
 - **Extracted trait rows**: 2,890
-- **Formal assertions emitted**: 1,766
+- **Formal assertions emitted**: 1,769
 - **Distinct candidate value terms**: 65
 - **Distinct candidate anatomical bearers**: 13
-- **Distinct novel PO × PATO/FLOPO combinations**: 136
+- **Distinct novel PO × PATO/FLOPO combinations**: 137
 
 ## Top Candidate FLOPO Value Terms (`value_term_candidates.tsv`)
 
@@ -76,6 +76,7 @@
 | `PO_0025025` | root system | `PATO_0104356` | spreading | `EQ|PO_0025025|PATO_0104356` | `novel` / `new_class_candidate` | 2 | 2 |
 | `PO_0025083` | strobilus | `FLOPO_0988019` | yellow (ISCC-NBS level 2) | `EQ|PO_0025083|FLOPO_0988019` | `allowed` / `new_class_candidate` | 2 | 1 |
 | `PO_0025083` | strobilus | `FLOPO_0988082` | light brown | `EQ|PO_0025083|FLOPO_0988082` | `novel` / `new_class_candidate` | 2 | 2 |
+| `PO_0025083` | strobilus | `PATO_0000070` | amount | `EQC|PO_0025083|n|PATO_0000070` | `blocked` / `new_class_candidate` | 2 | 2 |
 | `PO_0025083` | strobilus | `PATO_0000574` | decreased length | `EQ|PO_0025083|PATO_0000574` | `novel` / `new_class_candidate` | 2 | 1 |
 | `PO_0025083` | strobilus | `PATO_0104035` | pendent | `EQ|PO_0025083|PATO_0104035` | `novel` / `new_class_candidate` | 2 | 2 |
 | `PO_0030112` | pedicel | `PATO_0000591` | increased thickness | `EQ|PO_0030112|PATO_0000591` | `allowed` / `new_class_candidate` | 2 | 2 |
@@ -83,4 +84,3 @@
 | `PO_0030112` | pedicel | `PATO_0002212` | slender | `EQ|PO_0030112|PATO_0002212` | `allowed` / `new_class_candidate` | 2 | 2 |
 | `FLOPO_0986005` | calyx lobe | `FLOPO_0991102` | equal | `EQ|FLOPO_0986005|FLOPO_0991102` | `novel` / `new_class_candidate` | 1 | 1 |
 | `FLOPO_0986024` | drupelet | `PATO_0000467` | present | `EQ|FLOPO_0986024|PATO_0000467` | `allowed` / `new_class_candidate` | 1 | 1 |
-| `FLOPO_0986026` | pyrene | `FLOPO_0988084` | dark brown | `EQ|FLOPO_0986026|FLOPO_0988084` | `allowed` / `new_class_candidate` | 1 | 1 |

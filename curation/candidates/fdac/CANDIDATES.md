@@ -2,10 +2,10 @@
 
 - **Records processed**: 6,570
 - **Extracted trait rows**: 428,692
-- **Formal assertions emitted**: 309,305
-- **Distinct candidate value terms**: 1,908
-- **Distinct candidate anatomical bearers**: 458
-- **Distinct novel PO × PATO/FLOPO combinations**: 8,299
+- **Formal assertions emitted**: 310,441
+- **Distinct candidate value terms**: 1,840
+- **Distinct candidate anatomical bearers**: 367
+- **Distinct novel PO × PATO/FLOPO combinations**: 8,364
 
 ## Top Candidate FLOPO Value Terms (`value_term_candidates.tsv`)
 
@@ -44,7 +44,6 @@
 | `basal bract` | 54 | 41 | `amount|width|connate|membranous|diameter` |
 | `gutter` | 49 | 49 | `present` |
 | `reticulation` | 46 | 36 | `prominent|loose|colored|visible|invisible` |
-| `stigmatic branch` | 40 | 30 | `length|amount|linear-subulate|linear-acuminate|decumbent` |
 | `calicle bract` | 38 | 33 | `amount|present|ciliate|puberulent|narrowly linear` |
 | `lateral leaf` | 37 | 13 | `width|acute|rounded|inequilateral|truncated` |
 | `antheropodium` | 30 | 23 | `widening|widened|linear|broadening|length` |
@@ -60,39 +59,40 @@
 | `style appendage` | 14 | 11 | `papillose|length|subulate|filiform|papillose-hairy` |
 | `perigone limb` | 11 | 6 | `length|hairy|glabrous|glabrescent|ciliate` |
 | `pseudostaminode` | 10 | 6 | `length|linear|obovate|appendiculate|acute` |
-| `hypanthium gland` | 9 | 5 | `length|amount|free|emarginate|oblong` |
-| `leaf blade upper surface` | 9 | 5 | `pubescent|glabrous|dense|simple|stellate` |
 | `limen` | 9 | 5 | `cupuliforme|annular|cupuliform|fleshy|entire` |
 | `primary division` | 9 | 8 | `amount|petiolate|opposite` |
 | `standard appendix` | 9 | 7 | `subglobose|small|inconspicuous|hairy|pubescent` |
+| `basal gland` | 8 | 4 | `minute|length|pedicellate|absent|barely distinct` |
 | `flore` | 8 | 7 | `amount` |
+| `leaf blade lower surface` | 8 | 6 | `puberulent|pubescent|glabrous|quilted|glabrescent` |
+| `terminal leaflet` | 8 | 7 | `width|tapered|ovate|present|obovate` |
 
 ## Top Novel PO × PATO / FLOPO Class Candidates (`novel_po_pato_combinations.tsv`)
 
 | PO ID | PO Label | Quality ID | Quality Label | Signature | Status | Count | Taxa |
 |---|---|---|---|---|---|---:|---:|
 | `PO_0020140` | secondary leaf vein | `PATO_0000070` | amount | `EQC|PO_0020140|2|PATO_0000070` | `allowed` / `new_class_candidate` | 913 | 901 |
+| `PO_0000003` | whole plant | `FLOPO_0991412` | lianescent | `EQ|PO_0000003|FLOPO_0991412` | `allowed` / `new_class_candidate` | 729 | 729 |
 | `PO_0006011` | lateral leaf vein | `PATO_0000070` | amount | `EQC|PO_0006011|2|PATO_0000070` | `allowed` / `new_class_candidate` | 544 | 543 |
 | `PO_0025034` | leaf | `FLOPO_0991161` | trifoliolate | `EQ|PO_0025034|FLOPO_0991161` | `allowed` / `new_class_candidate` | 351 | 351 |
 | `PO_0025324` | banner petal | `PATO_0000921` | width | `EQ|PO_0025324|PATO_0000921` | `allowed` / `new_class_candidate` | 334 | 333 |
 | `PO_0020039` | leaf lamina | `PATO_0104359` | entire | `EQ|PO_0020039|PATO_0104359` | `allowed` / `new_class_candidate` | 324 | 323 |
-| `PO_0000003` | whole plant | `FLOPO_0991108` | climbing | `EQ|PO_0000003|FLOPO_0991108` | `allowed` / `new_class_candidate` | 318 | 313 |
 | `PO_0025393` | pappus | `FLOPO_0991124` | setaceous | `EQ|PO_0025393|FLOPO_0991124` | `allowed` / `new_class_candidate` | 298 | 295 |
 | `PO_0009032` | petal | `FLOPO_0991169` | clawed | `EQ|PO_0009032|FLOPO_0991169` | `allowed` / `new_class_candidate` | 271 | 267 |
 | `PO_0020049` | leaflet | `PATO_0000070` | amount | `EQC|PO_0020049|2|PATO_0000070` | `allowed` / `new_class_candidate` | 266 | 254 |
 | `PO_0030112` | pedicel | `PATO_0002212` | slender | `EQ|PO_0030112|PATO_0002212` | `allowed` / `new_class_candidate` | 256 | 249 |
 | `PO_0030112` | pedicel | `FLOPO_0991154` | jointed | `EQ|PO_0030112|FLOPO_0991154` | `allowed` / `new_class_candidate` | 253 | 245 |
+| `PO_0000003` | whole plant | `FLOPO_0991108` | climbing | `EQ|PO_0000003|FLOPO_0991108` | `allowed` / `new_class_candidate` | 240 | 237 |
 | `FLOPO_0986015` | gynostemium | `PATO_0000122` | length | `EQ|FLOPO_0986015|PATO_0000122` | `allowed` / `new_class_candidate` | 235 | 235 |
 | `PO_0025034` | leaf | `FLOPO_0991117` | cauline | `EQ|PO_0025034|FLOPO_0991117` | `allowed` / `new_class_candidate` | 232 | 232 |
 | `PO_0025034` | leaf | `PATO_0104359` | entire | `EQ|PO_0025034|PATO_0104359` | `allowed` / `new_class_candidate` | 228 | 227 |
 | `FLOPO_0980978` | orchid labellum | `PATO_0000122` | length | `EQ|FLOPO_0980978|PATO_0000122` | `allowed` / `new_class_candidate` | 227 | 227 |
 | `PO_0005020` | vascular bundle | `PATO_0000070` | amount | `EQC|PO_0005020|2|PATO_0000070` | `allowed` / `new_class_candidate` | 218 | 217 |
 | `PO_0020039` | leaf lamina | `FLOPO_0991076` | subcoriaceous | `EQ|PO_0020039|FLOPO_0991076` | `allowed` / `new_class_candidate` | 204 | 204 |
+| `PO_0020138` | leaf lamina vein | `PATO_0000070` | amount | `EQ|PO_0020138|PATO_0000070` | `allowed` / `new_class_candidate` | 203 | 200 |
 | `PO_0020039` | leaf lamina | `PATO_0000331` | discolored | `EQ|PO_0020039|PATO_0000331` | `blocked` / `new_class_candidate` | 201 | 201 |
 | `PO_0020039` | leaf lamina | `PATO_0000150` | texture | `EQ|PO_0020039|PATO_0000150` | `allowed` / `new_class_candidate` | 196 | 193 |
-| `PO_0025327` | keel | `FLOPO_0991028` | beaked | `EQ|PO_0025327|FLOPO_0991028` | `allowed` / `new_class_candidate` | 191 | 180 |
-| `PO_0020138` | leaf lamina vein | `PATO_0000070` | amount | `EQ|PO_0020138|PATO_0000070` | `allowed` / `new_class_candidate` | 184 | 181 |
+| `PO_0025327` | keel | `FLOPO_0991028` | beaked | `EQ|PO_0025327|FLOPO_0991028` | `allowed` / `new_class_candidate` | 192 | 181 |
 | `PO_0009045` | involucral bract | `PATO_0000946` | oblong | `EQ|PO_0009045|PATO_0000946` | `allowed` / `new_class_candidate` | 183 | 166 |
 | `PO_0009045` | involucral bract | `FLOPO_0991047` | scarious | `EQ|PO_0009045|FLOPO_0991047` | `allowed` / `new_class_candidate` | 168 | 162 |
 | `PO_0030114` | fruit pedicel | `PATO_0000122` | length | `EQ|PO_0030114|PATO_0000122` | `allowed` / `new_class_candidate` | 168 | 167 |
-| `PO_0009073` | stigma | `FLOPO_0991006` | capitate | `EQ|PO_0009073|FLOPO_0991006` | `allowed` / `new_class_candidate` | 150 | 149 |

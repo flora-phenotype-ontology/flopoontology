@@ -2,10 +2,10 @@
 
 - **Records processed**: 562
 - **Extracted trait rows**: 33,729
-- **Formal assertions emitted**: 25,069
-- **Distinct candidate value terms**: 396
-- **Distinct candidate anatomical bearers**: 108
-- **Distinct novel PO × PATO/FLOPO combinations**: 2,231
+- **Formal assertions emitted**: 25,151
+- **Distinct candidate value terms**: 378
+- **Distinct candidate anatomical bearers**: 97
+- **Distinct novel PO × PATO/FLOPO combinations**: 2,249
 
 ## Top Candidate FLOPO Value Terms (`value_term_candidates.tsv`)
 
@@ -43,9 +43,7 @@
 |---|---:|---:|---|
 | `stegma` | 12 | 5 | `length|curved|long|acicular|hooked` |
 | `terminal leaflet` | 8 | 2 | `elliptic|length|width|cuneate|acute` |
-| `staminal ring` | 7 | 5 | `diameter|present|reflexed|glabrous` |
 | `marginal vein` | 6 | 6 | `amount` |
-| `setula` | 6 | 1 | `present|long|multiseriate|terete|unbranched` |
 | `ectocolpus` | 5 | 2 | `length|slit-like|long` |
 | `flower tube` | 5 | 1 | `length|width|obovoid|pale brown|smooth` |
 | `guide rail` | 5 | 2 | `protruding|length|straight` |
@@ -57,6 +55,7 @@
 | `pistillate bud` | 3 | 1 | `amount|opposite|purplish` |
 | `pollinarium` | 3 | 3 | `ovoid|broadly obovoid` |
 | `pseudo-petiole` | 3 | 2 | `elongated|length|width` |
+| `suprareticulum` | 3 | 1 | `microreticulate|ornate|smooth` |
 | `thyrse` | 3 | 3 | `present` |
 | `anther crest` | 2 | 2 | `long|beaked` |
 | `arms` | 2 | 1 | `obovate|rounded` |
@@ -66,6 +65,7 @@
 | `corolla throat` | 2 | 1 | `white|glandular` |
 | `elaiophore` | 2 | 1 | `oblong|whitish` |
 | `exine` | 2 | 1 | `thickness` |
+| `gland appendage` | 2 | 1 | `laciniate|greenish` |
 
 ## Top Novel PO × PATO / FLOPO Class Candidates (`novel_po_pato_combinations.tsv`)
 

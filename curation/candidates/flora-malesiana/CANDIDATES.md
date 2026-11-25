@@ -2,16 +2,16 @@
 
 - **Records processed**: 2,992
 - **Extracted trait rows**: 183,550
-- **Formal assertions emitted**: 125,893
-- **Distinct candidate value terms**: 740
-- **Distinct candidate anatomical bearers**: 255
-- **Distinct novel PO × PATO/FLOPO combinations**: 3,716
+- **Formal assertions emitted**: 126,768
+- **Distinct candidate value terms**: 719
+- **Distinct candidate anatomical bearers**: 230
+- **Distinct novel PO × PATO/FLOPO combinations**: 3,738
 
 ## Top Candidate FLOPO Value Terms (`value_term_candidates.tsv`)
 
 | Quality word | Count | Taxa | Suggested PATO parent | Top bearers |
 |---|---:|---:|---|---|
-| `distinct` | 153 | 148 | `PATO:0001435` (attachment quality) | `PO_0025034|sclerenchyma sheath|PO_0005660|PO_0000031|PO_0004518` |
+| `distinct` | 152 | 147 | `PATO:0001435` (attachment quality) | `PO_0025034|sclerenchyma sheath|PO_0005660|PO_0000031|PO_0004518` |
 | `appressed-puberulous` | 86 | 61 | `PATO:0000066` (pilosity) | `PO_0020041|PO_0025034|PO_0009047|PO_0009055|PO_0009001` |
 | `scale-like` | 86 | 58 | `PATO:0000052` (shape) | `rachis|PO_0009001|PO_0004518|PO_0009053|PO_0000058` |
 | `separate` | 85 | 85 | `PATO:0000052` (shape) | `PO_0025359|PO_0009066|FLOPO_0986025|PO_0025034|part:` |
@@ -52,12 +52,8 @@
 | `adnate` | 8 | 7 | `amount` |
 | `aerophore` | 8 | 3 | `elongate|horn-like|blunt|slender|hook-shaped` |
 | `pinnule-segment` | 8 | 2 | `linear|entire|sterile|broad|coriaceous` |
-| `rament` | 8 | 4 | `short|scattered|branched|sparse|pointed` |
-| `free veinlet` | 7 | 7 | `simple` |
-| `frond base` | 7 | 5 | `imbricated|dilated|narrowed` |
 | `rhizome scale cell` | 7 | 6 | `rectangular|small|isodiametric` |
 | `subepidermal bundle` | 7 | 7 | `absent|present` |
-| `tertiary leaflet` | 7 | 6 | `amount|deeply lobed` |
 | `bracteole scar` | 6 | 6 | `present|median|position|invisible` |
 | `dorsal strand` | 6 | 6 | `amount` |
 | `smaller` | 6 | 6 | `amount` |
@@ -65,17 +61,22 @@
 | `waxy gland` | 6 | 6 | `present` |
 | `antherode` | 5 | 3 | `length|broad` |
 | `blot` | 5 | 3 | `oval|white|wide|amount|present` |
-| `hair ray` | 5 | 3 | `boat-shaped|straight|short` |
+| `indurated annulus cell` | 5 | 5 | `amount` |
+| `marginal vein` | 5 | 5 | `absent|present` |
+| `marginal veinlet` | 5 | 5 | `simple|short|amount` |
+| `pseudohypodermis` | 5 | 5 | `absent` |
+| `style head apex` | 5 | 4 | `long|length|indistinct` |
 
 ## Top Novel PO × PATO / FLOPO Class Candidates (`novel_po_pato_combinations.tsv`)
 
 | PO ID | PO Label | Quality ID | Quality Label | Signature | Status | Count | Taxa |
 |---|---|---|---|---|---|---:|---:|
 | `PO_0005020` | vascular bundle | `PATO_0000070` | amount | `EQC|PO_0005020|2|PATO_0000070` | `allowed` / `new_class_candidate` | 408 | 397 |
+| `PO_0000003` | whole plant | `FLOPO_0991108` | climbing | `EQ|PO_0000003|FLOPO_0991108` | `allowed` / `new_class_candidate` | 340 | 338 |
 | `PO_0020039` | leaf lamina | `PATO_0104359` | entire | `EQ|PO_0020039|PATO_0104359` | `allowed` / `new_class_candidate` | 270 | 256 |
-| `FLOPO_0986068` | lithocyst | `PATO_0000467` | present | `EQ|FLOPO_0986068|PATO_0000467` | `allowed` / `new_class_candidate` | 213 | 213 |
+| `FLOPO_0986068` | lithocyst | `PATO_0000467` | present | `EQ|FLOPO_0986068|PATO_0000467` | `allowed` / `new_class_candidate` | 220 | 220 |
 | `PO_0020039` | leaf lamina | `PATO_0000070` | amount | `EQC|PO_0020039|2|PATO_0000070` | `allowed` / `new_class_candidate` | 194 | 193 |
-| `PO_0025034` | leaf | `FLOPO_0991114` | spirally arranged | `EQ|PO_0025034|FLOPO_0991114` | `allowed` / `new_class_candidate` | 193 | 193 |
+| `PO_0025034` | leaf | `FLOPO_0991114` | spirally arranged | `EQ|PO_0025034|FLOPO_0991114` | `allowed` / `new_class_candidate` | 194 | 194 |
 | `PO_0025034` | leaf | `FLOPO_0991204` | scalariform | `EQ|PO_0025034|FLOPO_0991204` | `allowed` / `new_class_candidate` | 190 | 190 |
 | `PO_0025034` | leaf | `FLOPO_0991106` | dull | `EQ|PO_0025034|FLOPO_0991106` | `allowed` / `new_class_candidate` | 185 | 185 |
 | `PO_0025034` | leaf | `PATO_0001470` | ratio | `EQ|PO_0025034|PATO_0001470` | `allowed` / `new_class_candidate` | 166 | 166 |
@@ -86,13 +87,12 @@
 | `PO_0006011` | lateral leaf vein | `PATO_0000070` | amount | `EQC|PO_0006011|2|PATO_0000070` | `allowed` / `new_class_candidate` | 128 | 128 |
 | `PO_0020039` | leaf lamina | `PATO_0001963` | revolute | `EQ|PO_0020039|PATO_0001963` | `allowed` / `new_class_candidate` | 127 | 127 |
 | `PO_0025034` | leaf | `PATO_0000070` | amount | `EQC|PO_0025034|n|PATO_0000070` | `allowed` / `new_class_candidate` | 127 | 125 |
-| `FLOPO_0985027` | pinna | `PATO_0000070` | amount | `EQC|FLOPO_0985027|2|PATO_0000070` | `allowed` / `new_class_candidate` | 125 | 112 |
-| `PO_0020049` | leaflet | `PATO_0000070` | amount | `EQC|PO_0020049|2|PATO_0000070` | `allowed` / `new_class_candidate` | 115 | 109 |
+| `FLOPO_0985027` | pinna | `PATO_0000070` | amount | `EQC|FLOPO_0985027|2|PATO_0000070` | `allowed` / `new_class_candidate` | 126 | 113 |
+| `PO_0020049` | leaflet | `PATO_0000070` | amount | `EQC|PO_0020049|2|PATO_0000070` | `allowed` / `new_class_candidate` | 118 | 111 |
 | `PO_0005020` | vascular bundle | `PATO_0000464` | inconspicuous | `EQ|PO_0005020|PATO_0000464` | `allowed` / `new_class_candidate` | 113 | 106 |
+| `PO_0020038` | petiole | `FLOPO_0991021` | exfoliating | `EQ|PO_0020038|FLOPO_0991021` | `allowed` / `new_class_candidate` | 97 | 97 |
 | `PO_0000058` | vegetative bud | `PATO_0000454` | hairy | `EQ|PO_0000058|PATO_0000454` | `allowed` / `new_class_candidate` | 96 | 96 |
 | `PO_0030112` | pedicel | `PATO_0002212` | slender | `EQ|PO_0030112|PATO_0002212` | `allowed` / `new_class_candidate` | 96 | 94 |
 | `FLOPO_0986025` | floral disc | `PATO_0000122` | length | `EQ|FLOPO_0986025|PATO_0000122` | `novel` / `new_class_candidate` | 95 | 95 |
 | `PO_0020038` | petiole | `PATO_0001732` | non-deciduous (any body part) | `EQ|PO_0020038|PATO_0001732` | `allowed` / `new_class_candidate` | 95 | 95 |
 | `PO_0020139` | leaf midvein | `PATO_0000463` | conspicuous | `EQ|PO_0020139|PATO_0000463` | `allowed` / `new_class_candidate` | 93 | 91 |
-| `FLOPO_0986019` | androphore | `PATO_0000122` | length | `EQ|FLOPO_0986019|PATO_0000122` | `allowed` / `new_class_candidate` | 90 | 90 |
-| `PO_0020038` | petiole | `FLOPO_0991021` | exfoliating | `EQ|PO_0020038|FLOPO_0991021` | `allowed` / `new_class_candidate` | 90 | 90 |

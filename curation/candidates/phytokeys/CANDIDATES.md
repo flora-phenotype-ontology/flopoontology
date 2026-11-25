@@ -2,10 +2,10 @@
 
 - **Records processed**: 283
 - **Extracted trait rows**: 24,012
-- **Formal assertions emitted**: 18,109
-- **Distinct candidate value terms**: 179
-- **Distinct candidate anatomical bearers**: 71
-- **Distinct novel PO × PATO/FLOPO combinations**: 1,312
+- **Formal assertions emitted**: 18,229
+- **Distinct candidate value terms**: 168
+- **Distinct candidate anatomical bearers**: 61
+- **Distinct novel PO × PATO/FLOPO combinations**: 1,327
 
 ## Top Candidate FLOPO Value Terms (`value_term_candidates.tsv`)
 
@@ -24,7 +24,6 @@
 | `subentire` | 4 | 3 | `PATO:0000141` (structure) | `scale|margin` |
 | `darkened` | 3 | 3 | `PATO:0000141` (structure) | `scale|PO_0009055|PO_0009029` |
 | `irregularly branched` | 3 | 3 | `PATO:0000141` (structure) | `PO_0009006|PO_0009047` |
-| `not geminate` | 3 | 3 | `PATO:0000052` (shape) | `sympodial unit` |
 | `obdeltoid` | 3 | 2 | `PATO:0000052` (shape) | `PO_0020039|PO_0025034` |
 | `pungent` | 3 | 3 | `PATO:0001331` (odor) | `PO_0000003` |
 | `stalked` | 3 | 3 | `PATO:0000141` (structure) | `FLOPO_0985027|PO_0000282` |
@@ -36,6 +35,7 @@
 | `cataphyllous` | 2 | 1 | `PATO:0000141` (structure) | `PO_0005001|PO_0020104` |
 | `conform` | 2 | 1 | `PATO:0000141` (structure) | `FLOPO_0985027|PO_0020049` |
 | `corymbosely paniculiform` | 2 | 2 | `PATO:0000052` (shape) | `PO_0009049` |
+| `difoliate` | 2 | 1 | `PATO:0000052` (shape) | `sympodial unit|PO_0025034` |
 
 ## Top Candidate Anatomical Bearers (`bearer_candidates.tsv`)
 
@@ -44,11 +44,9 @@
 | `leaf lobe margin` | 13 | 4 | `repand|curved|shallowly curved|entire|ampliate` |
 | `cortical cell` | 12 | 8 | `amount|firm|straight|brown-pigmented|tan-pigmented` |
 | `cortical cell wall` | 12 | 6 | `thickened|thin|yellow-brown|heavily thickened` |
-| `leaf lobe cell` | 12 | 3 | `length|width|rounded|concave|absent` |
 | `medulla cell wall` | 9 | 6 | `yellow-pigmented|thickened|thin|unthickened|yellow-brown` |
 | `per herbarium sheet` | 8 | 8 | `amount` |
 | `lobe margin cell` | 6 | 2 | `quadrate|length|width` |
-| `sleeve` | 6 | 5 | `short|present|length` |
 | `lobule margin` | 5 | 3 | `free|ampliate|plane` |
 | `stem insertion` | 5 | 3 | `curved|not revolute|straight` |
 | `antherode` | 4 | 1 | `v-shaped|yellow|oblanceolate|divergent` |
@@ -56,16 +54,18 @@
 | `corpuscle` | 3 | 2 | `length|width` |
 | `cupulum tooth` | 3 | 1 | `equal|broadly triangular|short` |
 | `leaf lobe margin cell` | 3 | 1 | `quadrate|length|width` |
-| `medullar cell` | 3 | 2 | `amount|unpigmented` |
-| `on a side` | 3 | 3 | `amount` |
 | `postical margin` | 3 | 3 | `straight|curved` |
 | `raphidia` | 3 | 3 | `amount` |
+| `sympodial unit` | 3 | 3 | `not geminate` |
 | `anthopodium` | 2 | 1 | `present|long` |
 | `cell wall` | 2 | 1 | `thickened|unthickened` |
 | `eophyll` | 2 | 1 | `length|width` |
 | `leaf lobe cell wall` | 2 | 2 | `thin|thickened` |
-| `lobule apex` | 2 | 2 | `apiculate|narrowly rounded` |
 | `nectariferous disk` | 2 | 1 | `length|width` |
+| `nut scar` | 2 | 1 | `pale yellow-whitish|grooved` |
+| `raphidium` | 2 | 2 | `present|amount` |
+| `thyrse` | 2 | 1 | `amount|present` |
+| `trigone` | 2 | 2 | `small|present` |
 
 ## Top Novel PO × PATO / FLOPO Class Candidates (`novel_po_pato_combinations.tsv`)
 
@@ -78,7 +78,8 @@
 | `PO_0025034` | leaf | `PATO_0000070` | amount | `EQC|PO_0025034|2|PATO_0000070` | `allowed` / `new_class_candidate` | 37 | 37 |
 | `PO_0009066` | anther | `FLOPO_0991147` | connivent | `EQ|PO_0009066|FLOPO_0991147` | `allowed` / `new_class_candidate` | 35 | 35 |
 | `PO_0009045` | involucral bract | `FLOPO_0991249` | hair-pointed | `EQ|PO_0009045|FLOPO_0991249` | `allowed` / `new_class_candidate` | 33 | 33 |
-| `PO_0009066` | anther | `FLOPO_0991153` | poricidal | `EQ|PO_0009066|FLOPO_0991153` | `allowed` / `new_class_candidate` | 31 | 31 |
+| `PO_0000003` | whole plant | `FLOPO_0991108` | climbing | `EQ|PO_0000003|FLOPO_0991108` | `allowed` / `new_class_candidate` | 32 | 29 |
+| `PO_0009066` | anther | `FLOPO_0991153` | poricidal | `EQ|PO_0009066|FLOPO_0991153` | `allowed` / `new_class_candidate` | 32 | 32 |
 | `PO_0009073` | stigma | `FLOPO_0991006` | capitate | `EQ|PO_0009073|FLOPO_0991006` | `allowed` / `new_class_candidate` | 30 | 30 |
 | `PO_0020039` | leaf lamina | `PATO_0000070` | amount | `EQC|PO_0020039|2|PATO_0000070` | `allowed` / `new_class_candidate` | 27 | 26 |
 | `PO_0025034` | leaf | `PATO_0104359` | entire | `EQ|PO_0025034|PATO_0104359` | `allowed` / `new_class_candidate` | 26 | 26 |
@@ -94,5 +95,4 @@
 | `PO_0030107` | achene fruit | `PATO_0104016` | terete | `EQ|PO_0030107|PATO_0104016` | `novel` / `new_class_candidate` | 14 | 14 |
 | `FLOPO_0986113` | pedicel scar | `PATO_0000330` | irregular spatial pattern | `EQ|FLOPO_0986113|PATO_0000330` | `blocked` / `new_class_candidate` | 13 | 13 |
 | `PO_0009045` | involucral bract | `FLOPO_0991063` | imbricate | `EQ|PO_0009045|FLOPO_0991063` | `blocked` / `new_class_candidate` | 13 | 13 |
-| `PO_0009029` | stamen | `FLOPO_0991102` | equal | `EQ|PO_0009029|FLOPO_0991102` | `allowed` / `new_class_candidate` | 12 | 12 |
-| `PO_0009031` | sepal | `FLOPO_0991140` | saccate | `EQ|PO_0009031|FLOPO_0991140` | `allowed` / `new_class_candidate` | 12 | 12 |
+| `PO_0020038` | petiole | `FLOPO_0991411` | twining | `EQ|PO_0020038|FLOPO_0991411` | `allowed` / `new_class_candidate` | 13 | 13 |

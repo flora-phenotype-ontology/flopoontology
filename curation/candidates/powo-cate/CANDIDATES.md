@@ -2,16 +2,16 @@
 
 - **Records processed**: 111
 - **Extracted trait rows**: 9,241
-- **Formal assertions emitted**: 5,586
-- **Distinct candidate value terms**: 122
-- **Distinct candidate anatomical bearers**: 28
-- **Distinct novel PO × PATO/FLOPO combinations**: 705
+- **Formal assertions emitted**: 5,622
+- **Distinct candidate value terms**: 121
+- **Distinct candidate anatomical bearers**: 25
+- **Distinct novel PO × PATO/FLOPO combinations**: 711
 
 ## Top Candidate FLOPO Value Terms (`value_term_candidates.tsv`)
 
 | Quality word | Count | Taxa | Suggested PATO parent | Top bearers |
 |---|---:|---:|---|---|
-| `semiglossy` | 42 | 30 | `PATO:0000141` (structure) | `PO_0025034|PO_0020039|PO_0020038|PO_0009033|PO_0020049` |
+| `semiglossy` | 41 | 30 | `PATO:0000141` (structure) | `PO_0025034|PO_0020039|PO_0020038|PO_0009033|PO_0020049` |
 | `naked` | 13 | 12 | `PATO:0000141` (structure) | `rib|PO_0025034|posterior rib` |
 | `tinged` | 8 | 7 | `PATO:0000141` (structure) | `FLOPO_0986007|PO_0030120|PO_0006003|PO_0025060|PO_0009053` |
 | `semi-glossy` | 6 | 5 | `PATO:0000141` (structure) | `PO_0020039|PO_0009031|PO_0025034|PO_0005679` |
@@ -45,7 +45,6 @@
 | `spathe base` | 4 | 1 | `maroon|whitish|variable|verrucate` |
 | `female zone` | 3 | 2 | `cylindric|shape` |
 | `pistillate portion` | 3 | 2 | `medium|long|wide` |
-| `spadix stipe` | 3 | 2 | `length|prominently stipitate` |
 | `spathe limb margin` | 3 | 2 | `violet|reddish|crinkly` |
 | `staminate portion` | 3 | 3 | `bluntly pointed|sterile|long` |
 | `floral pit` | 2 | 1 | `widely spaced|shallow` |
@@ -55,10 +54,8 @@
 | `costal vein` | 1 | 1 | `amount` |
 | `foliage leaves absent` | 1 | 1 | `present` |
 | `geniculate` | 1 | 1 | `present` |
-| `leaflet base` | 1 | 1 | `ear-like` |
 | `median vein` | 1 | 1 | `pale green` |
 | `of the length of the spadix` | 1 | 1 | `amount` |
-| `per crown` | 1 | 1 | `amount` |
 | `pistillate zone` | 1 | 1 | `cylindrical` |
 | `primary lateral veins per side` | 1 | 1 | `amount` |
 | `primary spiral` | 1 | 1 | `amount` |
@@ -66,6 +63,9 @@
 | `reticulate vein` | 1 | 1 | `prominulous` |
 | `spadix-appendix` | 1 | 1 | `exserted` |
 | `stolon internode` | 1 | 1 | `long` |
+| `style apex` | 1 | 1 | `domed` |
+| `times as long as the fertile part` | 1 | 1 | `amount` |
+| `times longer than the tube` | 1 | 1 | `amount` |
 
 ## Top Novel PO × PATO / FLOPO Class Candidates (`novel_po_pato_combinations.tsv`)
 
@@ -81,9 +81,10 @@
 | `PO_0020038` | petiole | `FLOPO_0991105` | sheathing | `EQ|PO_0020038|FLOPO_0991105` | `allowed` / `new_class_candidate` | 17 | 15 |
 | `FLOPO_0986007` | spathe | `FLOPO_0988006` | green | `EQ|FLOPO_0986007|FLOPO_0988006` | `allowed` / `new_class_candidate` | 16 | 16 |
 | `FLOPO_0986007` | spathe | `PATO_0001877` | lanceolate | `EQ|FLOPO_0986007|PATO_0001877` | `allowed` / `new_class_candidate` | 16 | 16 |
+| `PO_0000003` | whole plant | `FLOPO_0991108` | climbing | `EQ|PO_0000003|FLOPO_0991108` | `allowed` / `new_class_candidate` | 16 | 16 |
 | `FLOPO_0986007` | spathe | `PATO_0000600` | increased width | `EQ|FLOPO_0986007|PATO_0000600` | `blocked` / `new_class_candidate` | 14 | 14 |
 | `FLOPO_0986007` | spathe | `PATO_0002228` | acuminate | `EQ|FLOPO_0986007|PATO_0002228` | `allowed` / `new_class_candidate` | 13 | 13 |
-| `PO_0000003` | whole plant | `FLOPO_0991108` | climbing | `EQ|PO_0000003|FLOPO_0991108` | `allowed` / `new_class_candidate` | 13 | 13 |
+| `PO_0000049` | leaf lamina abaxial epidermis | `PATO_0000328` | low saturation | `EQ|PO_0000049|PATO_0000328` | `novel` / `new_class_candidate` | 13 | 12 |
 | `PO_0005020` | vascular bundle | `PATO_0000070` | amount | `EQC|PO_0005020|2|PATO_0000070` | `allowed` / `new_class_candidate` | 12 | 9 |
 | `PO_0025034` | leaf | `FLOPO_0991106` | dull | `EQ|PO_0025034|FLOPO_0991106` | `allowed` / `new_class_candidate` | 12 | 12 |
 | `FLOPO_0986007` | spathe | `FLOPO_0988008` | purple | `EQ|FLOPO_0986007|FLOPO_0988008` | `allowed` / `new_class_candidate` | 11 | 10 |
@@ -95,4 +96,3 @@
 | `PO_0006003` | scale leaf | `FLOPO_0988003` | brown | `EQ|PO_0006003|FLOPO_0988003` | `allowed` / `new_class_candidate` | 10 | 10 |
 | `PO_0006003` | scale leaf | `FLOPO_0991026` | fibrous | `EQ|PO_0006003|FLOPO_0991026` | `allowed` / `new_class_candidate` | 10 | 10 |
 | `PO_0006003` | scale leaf | `PATO_0001730` | deciduous (generic) | `EQ|PO_0006003|PATO_0001730` | `allowed` / `new_class_candidate` | 10 | 10 |
-| `PO_0009062` | gynoecium | `FLOPO_0991193` | emergent | `EQ|PO_0009062|FLOPO_0991193` | `allowed` / `new_class_candidate` | 10 | 10 |

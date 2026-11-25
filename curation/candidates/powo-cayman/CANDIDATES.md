@@ -2,10 +2,10 @@
 
 - **Records processed**: 168
 - **Extracted trait rows**: 4,064
-- **Formal assertions emitted**: 3,291
+- **Formal assertions emitted**: 3,355
 - **Distinct candidate value terms**: 33
 - **Distinct candidate anatomical bearers**: 4
-- **Distinct novel PO × PATO/FLOPO combinations**: 241
+- **Distinct novel PO × PATO/FLOPO combinations**: 244
 
 ## Top Candidate FLOPO Value Terms (`value_term_candidates.tsv`)
 
@@ -50,7 +50,7 @@
 
 | PO ID | PO Label | Quality ID | Quality Label | Signature | Status | Count | Taxa |
 |---|---|---|---|---|---|---:|---:|
-| `PO_0000003` | whole plant | `FLOPO_0991108` | climbing | `EQ|PO_0000003|FLOPO_0991108` | `allowed` / `new_class_candidate` | 10 | 9 |
+| `PO_0000003` | whole plant | `FLOPO_0991108` | climbing | `EQ|PO_0000003|FLOPO_0991108` | `allowed` / `new_class_candidate` | 22 | 16 |
 | `PO_0020049` | leaflet | `PATO_0000070` | amount | `EQC|PO_0020049|2|PATO_0000070` | `allowed` / `new_class_candidate` | 7 | 7 |
 | `PO_0025034` | leaf | `FLOPO_0991174` | gland-dotted | `EQ|PO_0025034|FLOPO_0991174` | `allowed` / `new_class_candidate` | 7 | 7 |
 | `PO_0030112` | pedicel | `PATO_0002212` | slender | `EQ|PO_0030112|PATO_0002212` | `allowed` / `new_class_candidate` | 6 | 6 |
@@ -60,6 +60,7 @@
 | `PO_0009046` | flower | `PATO_0000070` | amount | `EQC|PO_0009046|n|PATO_0000070` | `allowed` / `new_class_candidate` | 4 | 3 |
 | `PO_0025034` | leaf | `PATO_0104359` | entire | `EQ|PO_0025034|PATO_0104359` | `allowed` / `new_class_candidate` | 4 | 4 |
 | `FLOPO_0986016` | pollinium | `PATO_0000070` | amount | `EQ|FLOPO_0986016|PATO_0000070` | `allowed` / `new_class_candidate` | 3 | 3 |
+| `PO_0000042` | shoot-borne root | `PATO_0000467` | present | `EQ|PO_0000042|PATO_0000467` | `allowed` / `new_class_candidate` | 3 | 3 |
 | `PO_0030112` | pedicel | `PATO_0000591` | increased thickness | `EQ|PO_0030112|PATO_0000591` | `allowed` / `new_class_candidate` | 3 | 3 |
 | `FLOPO_0985017` | corolla lip | `PATO_0000622` | erect | `EQ|FLOPO_0985017|PATO_0000622` | `allowed` / `new_class_candidate` | 2 | 2 |
 | `FLOPO_0985017` | corolla lip | `PATO_0000642` | fused with | `EQ|FLOPO_0985017|PATO_0000642` | `novel` / `new_class_candidate` | 2 | 2 |
@@ -70,7 +71,6 @@
 | `PO_0000003` | whole plant | `PATO_0001154` | elongated | `EQ|PO_0000003|PATO_0001154` | `blocked` / `new_class_candidate` | 2 | 2 |
 | `PO_0000003` | whole plant | `FLOPO_0991071` | monoecious | `EQ|PO_0000003|FLOPO_0991071` | `allowed` / `new_class_candidate` | 2 | 2 |
 | `PO_0000003` | whole plant | `FLOPO_0991072` | dioecious | `EQ|PO_0000003|FLOPO_0991072` | `allowed` / `new_class_candidate` | 2 | 2 |
-| `PO_0000042` | shoot-borne root | `PATO_0000467` | present | `EQ|PO_0000042|PATO_0000467` | `allowed` / `new_class_candidate` | 2 | 2 |
 | `PO_0000049` | leaf lamina abaxial epidermis | `FLOPO_0991049` | puberulous | `EQ|PO_0000049|FLOPO_0991049` | `allowed` / `new_class_candidate` | 2 | 2 |
 | `PO_0000049` | leaf lamina abaxial epidermis | `PATO_0001320` | pubescent hair | `EQ|PO_0000049|PATO_0001320` | `allowed` / `new_class_candidate` | 2 | 2 |
 | `PO_0009010` | seed | `FLOPO_0991025` | obovoid | `EQ|PO_0009010|FLOPO_0991025` | `allowed` / `new_class_candidate` | 2 | 2 |

@@ -2,10 +2,10 @@
 
 - **Records processed**: 82
 - **Extracted trait rows**: 3,543
-- **Formal assertions emitted**: 2,543
+- **Formal assertions emitted**: 2,554
 - **Distinct candidate value terms**: 31
-- **Distinct candidate anatomical bearers**: 4
-- **Distinct novel PO × PATO/FLOPO combinations**: 168
+- **Distinct candidate anatomical bearers**: 3
+- **Distinct novel PO × PATO/FLOPO combinations**: 172
 
 ## Top Candidate FLOPO Value Terms (`value_term_candidates.tsv`)
 
@@ -44,7 +44,6 @@
 | `anthophore` | 1 | 1 | `glabrous` |
 | `calyx awn` | 1 | 1 | `amount` |
 | `calyx tooth margin` | 1 | 1 | `ciliate` |
-| `female floret` | 1 | 1 | `amount` |
 
 ## Top Novel PO × PATO / FLOPO Class Candidates (`novel_po_pato_combinations.tsv`)
 

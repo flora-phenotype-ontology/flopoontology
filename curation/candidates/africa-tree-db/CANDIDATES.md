@@ -2,9 +2,9 @@
 
 - **Records processed**: 642
 - **Extracted trait rows**: 17,876
-- **Formal assertions emitted**: 15,519
+- **Formal assertions emitted**: 15,525
 - **Distinct candidate value terms**: 28
-- **Distinct candidate anatomical bearers**: 11
+- **Distinct candidate anatomical bearers**: 9
 - **Distinct novel PO × PATO/FLOPO combinations**: 176
 
 ## Top Candidate FLOPO Value Terms (`value_term_candidates.tsv`)
@@ -43,13 +43,11 @@
 |---|---:|---:|---|
 | `thyrse` | 5 | 5 | `present` |
 | `pellucid` | 4 | 4 | `present` |
-| `syconium` | 3 | 3 | `present` |
 | `fascicles` | 2 | 2 | `present` |
 | `floral part` | 1 | 1 | `amount` |
 | `flowered cyme` | 1 | 1 | `amount` |
 | `knobbed` | 1 | 1 | `present` |
 | `nerved` | 1 | 1 | `amount` |
-| `racemule` | 1 | 1 | `present` |
 | `thyrsus` | 1 | 1 | `present` |
 | `white streaks` | 1 | 1 | `present` |
 
@@ -73,12 +71,12 @@
 | `PO_0025034` | leaf | `FLOPO_0991161` | trifoliolate | `EQ|PO_0025034|FLOPO_0991161` | `allowed` / `new_class_candidate` | 13 | 13 |
 | `PO_0000003` | whole plant | `FLOPO_0991108` | climbing | `EQ|PO_0000003|FLOPO_0991108` | `allowed` / `new_class_candidate` | 11 | 11 |
 | `PO_0020041` | stipule | `FLOPO_0991341` | interpetiolar | `EQ|PO_0020041|FLOPO_0991341` | `allowed` / `new_class_candidate` | 11 | 11 |
+| `PO_0020138` | leaf lamina vein | `PATO_0000070` | amount | `EQ|PO_0020138|PATO_0000070` | `allowed` / `new_class_candidate` | 11 | 11 |
 | `FLOPO_0986021` | domatium | `PATO_0000454` | hairy | `EQ|FLOPO_0986021|PATO_0000454` | `allowed` / `new_class_candidate` | 9 | 9 |
 | `FLOPO_0986046` | monocarp | `PATO_0000070` | amount | `EQ|FLOPO_0986046|PATO_0000070` | `allowed` / `new_class_candidate` | 9 | 9 |
 | `PO_0004518` | bark | `FLOPO_0991126` | corky | `EQ|PO_0004518|FLOPO_0991126` | `allowed` / `new_class_candidate` | 9 | 9 |
-| `PO_0020138` | leaf lamina vein | `PATO_0000070` | amount | `EQ|PO_0020138|PATO_0000070` | `allowed` / `new_class_candidate` | 9 | 9 |
 | `FLOPO_0986130` | syconium | `PATO_0000070` | amount | `EQ|FLOPO_0986130|PATO_0000070` | `novel` / `new_class_candidate` | 7 | 7 |
+| `FLOPO_0986130` | syconium | `PATO_0000467` | present | `EQ|FLOPO_0986130|PATO_0000467` | `novel` / `new_class_candidate` | 7 | 7 |
 | `PO_0009049` | inflorescence | `FLOPO_0991175` | cauliflorous | `EQ|PO_0009049|FLOPO_0991175` | `allowed` / `new_class_candidate` | 7 | 7 |
 | `PO_0020041` | stipule | `FLOPO_0991105` | sheathing | `EQ|PO_0020041|FLOPO_0991105` | `allowed` / `new_class_candidate` | 7 | 7 |
 | `PO_0009049` | inflorescence | `FLOPO_0991142` | spike-like | `EQ|PO_0009049|FLOPO_0991142` | `allowed` / `new_class_candidate` | 6 | 6 |
-| `PO_0020039` | leaf lamina | `PATO_0000586` | increased size | `EQ|PO_0020039|PATO_0000586` | `allowed` / `new_class_candidate` | 6 | 6 |

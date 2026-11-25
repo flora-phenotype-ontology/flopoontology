@@ -2,10 +2,10 @@
 
 - **Records processed**: 3,112
 - **Extracted trait rows**: 182,980
-- **Formal assertions emitted**: 132,283
-- **Distinct candidate value terms**: 1,242
-- **Distinct candidate anatomical bearers**: 319
-- **Distinct novel PO × PATO/FLOPO combinations**: 6,209
+- **Formal assertions emitted**: 132,923
+- **Distinct candidate value terms**: 1,210
+- **Distinct candidate anatomical bearers**: 263
+- **Distinct novel PO × PATO/FLOPO combinations**: 6,265
 
 ## Top Candidate FLOPO Value Terms (`value_term_candidates.tsv`)
 
@@ -50,29 +50,30 @@
 | `fig` | 13 | 13 | `amount|solitary` |
 | `receptacle margin` | 12 | 7 | `wide|width|appendiculate|glabrous|absent` |
 | `ovule mass` | 10 | 6 | `cordiforme|height|narrow|elliptic|elliptical` |
-| `mucron` | 9 | 4 | `length|glabrous|ovate|acuminate|present` |
 | `labellum margin` | 8 | 6 | `denticulate|entire|hairy|short|undulate` |
 | `discal gland` | 7 | 4 | `smooth|wrinkled|pleated|pyramidal` |
 | `funicular sheath` | 7 | 6 | `long|compressed|small|present|triangular` |
 | `staminode lobe` | 7 | 4 | `amount|length|fused|undulate|widened` |
-| `stigmatic branch` | 7 | 4 | `amount|included|papillose|red|recurved` |
 | `corolla throat` | 6 | 4 | `erect|narrow|diameter|campanulate|glabrous` |
 | `juga` | 6 | 6 | `amount` |
-| `preleaf` | 6 | 3 | `rigid|membranous|amount|obtuse|free` |
-| `staminal phalanx` | 6 | 5 | `length|reduced|fused|spatulate` |
 | `buttresse` | 5 | 5 | `amount` |
-| `glandular zone` | 5 | 3 | `amount|kidney-shaped|rhombic` |
 | `hypantho-calyx` | 5 | 3 | `campanulate|mealy|furfuraceous|cupuliform|width` |
 | `longue` | 5 | 5 | `amount` |
 | `pedicellate spikelet` | 5 | 4 | `reduced|male|longer` |
 | `primary branch` | 5 | 5 | `amount` |
+| `reticulation` | 5 | 4 | `dense|pubescent|irregular|apparent|inconspicuous` |
+| `fruit peduncle` | 4 | 1 | `straight|erect|oblique|length` |
+| `gall flower` | 4 | 4 | `pedicellate|subsessile` |
+| `ovary apex` | 4 | 2 | `swollen|length|scarious|ciliate` |
+| `costal tooth` | 3 | 1 | `retrorse|short|antrorsis` |
 
 ## Top Novel PO × PATO / FLOPO Class Candidates (`novel_po_pato_combinations.tsv`)
 
 | PO ID | PO Label | Quality ID | Quality Label | Signature | Status | Count | Taxa |
 |---|---|---|---|---|---|---:|---:|
-| `PO_0020140` | secondary leaf vein | `PATO_0000070` | amount | `EQC|PO_0020140|2|PATO_0000070` | `allowed` / `new_class_candidate` | 524 | 519 |
-| `PO_0006011` | lateral leaf vein | `PATO_0000070` | amount | `EQC|PO_0006011|2|PATO_0000070` | `allowed` / `new_class_candidate` | 450 | 445 |
+| `PO_0020140` | secondary leaf vein | `PATO_0000070` | amount | `EQC|PO_0020140|2|PATO_0000070` | `allowed` / `new_class_candidate` | 526 | 521 |
+| `PO_0000003` | whole plant | `FLOPO_0991412` | lianescent | `EQ|PO_0000003|FLOPO_0991412` | `allowed` / `new_class_candidate` | 460 | 459 |
+| `PO_0006011` | lateral leaf vein | `PATO_0000070` | amount | `EQC|PO_0006011|2|PATO_0000070` | `allowed` / `new_class_candidate` | 448 | 443 |
 | `PO_0005020` | vascular bundle | `PATO_0000070` | amount | `EQC|PO_0005020|2|PATO_0000070` | `allowed` / `new_class_candidate` | 215 | 201 |
 | `PO_0020140` | secondary leaf vein | `PATO_0104355` | ascending | `EQ|PO_0020140|PATO_0104355` | `allowed` / `new_class_candidate` | 169 | 169 |
 | `PO_0020049` | leaflet | `PATO_0000070` | amount | `EQC|PO_0020049|2|PATO_0000070` | `allowed` / `new_class_candidate` | 154 | 143 |
@@ -82,17 +83,16 @@
 | `FLOPO_0980978` | orchid labellum | `PATO_0000052` | shape | `EQ|FLOPO_0980978|PATO_0000052` | `allowed` / `new_class_candidate` | 118 | 79 |
 | `PO_0020140` | secondary leaf vein | `PATO_0000406` | curved | `EQ|PO_0020140|PATO_0000406` | `allowed` / `new_class_candidate` | 118 | 117 |
 | `PO_0030112` | pedicel | `PATO_0002212` | slender | `EQ|PO_0030112|PATO_0002212` | `allowed` / `new_class_candidate` | 111 | 110 |
+| `PO_0009032` | petal | `FLOPO_0991169` | clawed | `EQ|PO_0009032|FLOPO_0991169` | `allowed` / `new_class_candidate` | 110 | 108 |
 | `PO_0020138` | leaf lamina vein | `FLOPO_0991100` | reticulate | `EQ|PO_0020138|FLOPO_0991100` | `allowed` / `new_class_candidate` | 110 | 110 |
-| `PO_0009032` | petal | `FLOPO_0991169` | clawed | `EQ|PO_0009032|FLOPO_0991169` | `allowed` / `new_class_candidate` | 109 | 108 |
 | `PO_0009073` | stigma | `FLOPO_0991006` | capitate | `EQ|PO_0009073|FLOPO_0991006` | `allowed` / `new_class_candidate` | 105 | 104 |
 | `PO_0009031` | sepal | `FLOPO_0991101` | unequal | `EQ|PO_0009031|FLOPO_0991101` | `allowed` / `new_class_candidate` | 98 | 97 |
 | `PO_0025034` | leaf | `PATO_0104359` | entire | `EQ|PO_0025034|PATO_0104359` | `allowed` / `new_class_candidate` | 95 | 95 |
-| `PO_0000003` | whole plant | `FLOPO_0991108` | climbing | `EQ|PO_0000003|FLOPO_0991108` | `allowed` / `new_class_candidate` | 94 | 92 |
 | `PO_0020140` | secondary leaf vein | `FLOPO_0991128` | anastomosing | `EQ|PO_0020140|FLOPO_0991128` | `allowed` / `new_class_candidate` | 90 | 89 |
 | `PO_0030112` | pedicel | `FLOPO_0991154` | jointed | `EQ|PO_0030112|FLOPO_0991154` | `allowed` / `new_class_candidate` | 90 | 88 |
 | `PO_0020039` | leaf lamina | `PATO_0000150` | texture | `EQ|PO_0020039|PATO_0000150` | `allowed` / `new_class_candidate` | 86 | 77 |
 | `PO_0020140` | secondary leaf vein | `PATO_0001320` | pubescent hair | `EQ|PO_0020140|PATO_0001320` | `allowed` / `new_class_candidate` | 86 | 81 |
 | `PO_0020128` | leaf margin | `PATO_0104359` | entire | `EQ|PO_0020128|PATO_0104359` | `allowed` / `new_class_candidate` | 85 | 85 |
 | `PO_0009031` | sepal | `FLOPO_0991068` | free | `EQ|PO_0009031|FLOPO_0991068` | `allowed` / `new_class_candidate` | 83 | 81 |
+| `PO_0000003` | whole plant | `FLOPO_0991108` | climbing | `EQ|PO_0000003|FLOPO_0991108` | `allowed` / `new_class_candidate` | 81 | 80 |
 | `PO_0006011` | lateral leaf vein | `PATO_0104355` | ascending | `EQ|PO_0006011|PATO_0104355` | `allowed` / `new_class_candidate` | 74 | 74 |
-| `PO_0009032` | petal | `FLOPO_0991068` | free | `EQ|PO_0009032|FLOPO_0991068` | `allowed` / `new_class_candidate` | 74 | 72 |

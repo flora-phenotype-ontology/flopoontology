@@ -2,10 +2,10 @@
 
 - **Records processed**: 354
 - **Extracted trait rows**: 2,323
-- **Formal assertions emitted**: 1,944
+- **Formal assertions emitted**: 1,981
 - **Distinct candidate value terms**: 20
 - **Distinct candidate anatomical bearers**: 2
-- **Distinct novel PO × PATO/FLOPO combinations**: 94
+- **Distinct novel PO × PATO/FLOPO combinations**: 97
 
 ## Top Candidate FLOPO Value Terms (`value_term_candidates.tsv`)
 
@@ -43,12 +43,13 @@
 
 | PO ID | PO Label | Quality ID | Quality Label | Signature | Status | Count | Taxa |
 |---|---|---|---|---|---|---:|---:|
-| `PO_0000003` | whole plant | `FLOPO_0991108` | climbing | `EQ|PO_0000003|FLOPO_0991108` | `allowed` / `new_class_candidate` | 16 | 16 |
+| `PO_0000003` | whole plant | `FLOPO_0991108` | climbing | `EQ|PO_0000003|FLOPO_0991108` | `allowed` / `new_class_candidate` | 36 | 36 |
 | `PO_0000003` | whole plant | `FLOPO_0991072` | dioecious | `EQ|PO_0000003|FLOPO_0991072` | `allowed` / `new_class_candidate` | 4 | 4 |
 | `PO_0000003` | whole plant | `FLOPO_0991110` | epiphytic | `EQ|PO_0000003|FLOPO_0991110` | `allowed` / `new_class_candidate` | 3 | 3 |
 | `PO_0000003` | whole plant | `FLOPO_0991112` | aquatic | `EQ|PO_0000003|FLOPO_0991112` | `allowed` / `new_class_candidate` | 3 | 3 |
+| `PO_0000042` | shoot-borne root | `PATO_0000467` | present | `EQ|PO_0000042|PATO_0000467` | `allowed` / `new_class_candidate` | 3 | 3 |
+| `PO_0000003` | whole plant | `FLOPO_0991411` | twining | `EQ|PO_0000003|FLOPO_0991411` | `allowed` / `new_class_candidate` | 2 | 2 |
 | `PO_0000003` | whole plant | `PATO_0000150` | texture | `EQR|{"bearer":"PO_0000003","parts":[{"filler":"BSPO_0000078","property":"BFO_0000051","qualities":["PATO_0001370"]}],"quality":"PATO_0000150"}` | `allowed` / `new_class_candidate` | 2 | 2 |
-| `PO_0000042` | shoot-borne root | `PATO_0000467` | present | `EQ|PO_0000042|PATO_0000467` | `allowed` / `new_class_candidate` | 2 | 2 |
 | `PO_0000049` | leaf lamina abaxial epidermis | `FLOPO_0988006` | green | `EQ|PO_0000049|FLOPO_0988006` | `allowed` / `new_class_candidate` | 2 | 2 |
 | `PO_0009005` | root | `FLOPO_0991109` | tuberous | `EQ|PO_0009005|FLOPO_0991109` | `allowed` / `new_class_candidate` | 2 | 2 |
 | `PO_0009029` | stamen | `FLOPO_0988019` | yellow (ISCC-NBS level 2) | `EQ|PO_0009029|FLOPO_0988019` | `allowed` / `new_class_candidate` | 2 | 2 |
@@ -67,4 +68,3 @@
 | `PO_0000003` | whole plant | `FLOPO_0991175` | cauliflorous | `EQ|PO_0000003|FLOPO_0991175` | `allowed` / `new_class_candidate` | 1 | 1 |
 | `PO_0000003` | whole plant | `PATO_0000570` | increased height | `EQ|PO_0000003|PATO_0000570` | `allowed` / `new_class_candidate` | 1 | 1 |
 | `PO_0000003` | whole plant | `PATO_0000617` | bent | `EQ|PO_0000003|PATO_0000617` | `novel` / `new_class_candidate` | 1 | 1 |
-| `PO_0000003` | whole plant | `PATO_0001436` | sessile (sensu botany) | `EQ|PO_0000003|PATO_0001436` | `novel` / `new_class_candidate` | 1 | 1 |

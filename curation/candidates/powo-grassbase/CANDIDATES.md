@@ -2,10 +2,10 @@
 
 - **Records processed**: 73
 - **Extracted trait rows**: 6,796
-- **Formal assertions emitted**: 4,787
-- **Distinct candidate value terms**: 40
-- **Distinct candidate anatomical bearers**: 25
-- **Distinct novel PO × PATO/FLOPO combinations**: 265
+- **Formal assertions emitted**: 4,799
+- **Distinct candidate value terms**: 39
+- **Distinct candidate anatomical bearers**: 21
+- **Distinct novel PO × PATO/FLOPO combinations**: 266
 
 ## Top Candidate FLOPO Value Terms (`value_term_candidates.tsv`)
 
@@ -48,7 +48,6 @@
 | `male spikelet` | 3 | 3 | `glabrous|amount|length` |
 | `leaf-blade` | 2 | 2 | `petiolate|angular` |
 | `male spikelet glume` | 2 | 2 | `amount` |
-| `rhachilla internode` | 2 | 2 | `smooth` |
 | `apical sterile floret` | 1 | 1 | `amount` |
 | `axillary buds at base of spikelet` | 1 | 1 | `present` |
 | `barren` | 1 | 1 | `present` |
@@ -59,19 +58,17 @@
 | `floret callus hair` | 1 | 1 | `length` |
 | `hair tuft` | 1 | 1 | `present` |
 | `lemma awn limb` | 1 | 1 | `scabrous` |
-| `lower glume awn` | 1 | 1 | `amount` |
 | `nodal` | 1 | 1 | `present` |
-| `palea palea` | 1 | 1 | `indurate` |
 | `primary panicle branch` | 1 | 1 | `accrescent` |
 | `secondary disseminule` | 1 | 1 | `present` |
 | `sterile floret` | 1 | 1 | `amount` |
-| `upper glume awn` | 1 | 1 | `amount` |
 
 ## Top Novel PO × PATO / FLOPO Class Candidates (`novel_po_pato_combinations.tsv`)
 
 | PO ID | PO Label | Quality ID | Quality Label | Signature | Status | Count | Taxa |
 |---|---|---|---|---|---|---:|---:|
 | `PO_0009084` | pericarp | `FLOPO_0991188` | adherent | `EQ|PO_0009084|FLOPO_0991188` | `allowed` / `new_class_candidate` | 19 | 19 |
+| `PO_0025348` | phyllome lamina vein | `PATO_0000070` | amount | `EQ|PO_0025348|PATO_0000070` | `novel` / `new_class_candidate` | 19 | 17 |
 | `PO_0009039` | glume | `PATO_0000574` | decreased length | `EQ|PO_0009039|PATO_0000574` | `novel` / `new_class_candidate` | 14 | 14 |
 | `PO_0025034` | leaf | `FLOPO_0991117` | cauline | `EQ|PO_0025034|FLOPO_0991117` | `allowed` / `new_class_candidate` | 12 | 12 |
 | `PO_0009001` | fruit | `FLOPO_0991188` | adherent | `EQ|PO_0009001|FLOPO_0991188` | `allowed` / `new_class_candidate` | 10 | 10 |
@@ -95,4 +92,3 @@
 | `PO_0009036` | lodicule | `PATO_0001877` | lanceolate | `EQ|PO_0009036|PATO_0001877` | `allowed` / `new_class_candidate` | 3 | 3 |
 | `PO_0009039` | glume | `PATO_0000610` | open | `EQ|PO_0009039|PATO_0000610` | `allowed` / `new_class_candidate` | 3 | 3 |
 | `PO_0009041` | fertile lemma | `PATO_0002522` | keel-shaped | `EQ|PO_0009041|PATO_0002522` | `novel` / `annotation_extension_only` | 3 | 3 |
-| `PO_0009046` | flower | `PATO_0001732` | non-deciduous (any body part) | `EQ|PO_0009046|PATO_0001732` | `allowed` / `new_class_candidate` | 3 | 3 |

@@ -2,10 +2,10 @@
 
 - **Records processed**: 1,233
 - **Extracted trait rows**: 58,441
-- **Formal assertions emitted**: 47,793
-- **Distinct candidate value terms**: 233
-- **Distinct candidate anatomical bearers**: 77
-- **Distinct novel PO × PATO/FLOPO combinations**: 1,732
+- **Formal assertions emitted**: 47,910
+- **Distinct candidate value terms**: 229
+- **Distinct candidate anatomical bearers**: 71
+- **Distinct novel PO × PATO/FLOPO combinations**: 1,747
 
 ## Top Candidate FLOPO Value Terms (`value_term_candidates.tsv`)
 
@@ -54,7 +54,6 @@
 | `pistillate` | 3 | 3 | `present|amount` |
 | `compound leaflet` | 2 | 2 | `amount` |
 | `inner petal` | 2 | 2 | `amount` |
-| `lower lobe` | 2 | 2 | `amount` |
 | `nearly` | 2 | 2 | `amount` |
 | `plant length` | 2 | 2 | `amount` |
 | `side stem` | 2 | 2 | `amount` |
@@ -66,6 +65,7 @@
 | `achene scale` | 1 | 1 | `amount` |
 | `aerial basal leave` | 1 | 1 | `amount` |
 | `bipinnate` | 1 | 1 | `amount` |
+| `calyx vein` | 1 | 1 | `amount` |
 
 ## Top Novel PO × PATO / FLOPO Class Candidates (`novel_po_pato_combinations.tsv`)
 
@@ -74,6 +74,7 @@
 | `PO_0030112` | pedicel | `PATO_0002212` | slender | `EQ|PO_0030112|PATO_0002212` | `allowed` / `new_class_candidate` | 100 | 99 |
 | `PO_0025034` | leaf | `FLOPO_0991161` | trifoliolate | `EQ|PO_0025034|FLOPO_0991161` | `allowed` / `new_class_candidate` | 65 | 62 |
 | `PO_0009046` | flower | `PATO_0000070` | amount | `EQC|PO_0009046|n|PATO_0000070` | `allowed` / `new_class_candidate` | 64 | 56 |
+| `PO_0000003` | whole plant | `FLOPO_0991108` | climbing | `EQ|PO_0000003|FLOPO_0991108` | `allowed` / `new_class_candidate` | 61 | 55 |
 | `PO_0009055` | bract | `FLOPO_0991012` | leafy | `EQ|PO_0009055|FLOPO_0991012` | `allowed` / `new_class_candidate` | 57 | 57 |
 | `PO_0000003` | whole plant | `FLOPO_0991071` | monoecious | `EQ|PO_0000003|FLOPO_0991071` | `allowed` / `new_class_candidate` | 55 | 55 |
 | `PO_0025034` | leaf | `PATO_0001968` | parallelodromous | `EQ|PO_0025034|PATO_0001968` | `allowed` / `new_class_candidate` | 53 | 53 |
@@ -95,4 +96,3 @@
 | `PO_0020049` | leaflet | `FLOPO_0988023` | green (ISCC-NBS level 2) | `EQ|PO_0020049|FLOPO_0988023` | `allowed` / `new_class_candidate` | 28 | 28 |
 | `PO_0020104` | leaf sheath | `FLOPO_0991046` | membranous | `EQ|PO_0020104|FLOPO_0991046` | `allowed` / `new_class_candidate` | 28 | 28 |
 | `PO_0009049` | inflorescence | `FLOPO_0991142` | spike-like | `EQ|PO_0009049|FLOPO_0991142` | `allowed` / `new_class_candidate` | 27 | 27 |
-| `PO_0009031` | sepal | `FLOPO_0991141` | petaloid | `EQ|PO_0009031|FLOPO_0991141` | `allowed` / `new_class_candidate` | 25 | 25 |

@@ -2,10 +2,10 @@
 
 - **Records processed**: 31
 - **Extracted trait rows**: 1,735
-- **Formal assertions emitted**: 1,117
-- **Distinct candidate value terms**: 21
+- **Formal assertions emitted**: 1,120
+- **Distinct candidate value terms**: 20
 - **Distinct candidate anatomical bearers**: 4
-- **Distinct novel PO × PATO/FLOPO combinations**: 154
+- **Distinct novel PO × PATO/FLOPO combinations**: 157
 
 ## Top Candidate FLOPO Value Terms (`value_term_candidates.tsv`)
 
@@ -13,10 +13,8 @@
 |---|---:|---:|---|---|
 | `semiglossy` | 5 | 4 | `PATO:0000141` (structure) | `PO_0025034|PO_0009047|PO_0025060` |
 | `purple-tinged` | 4 | 2 | `PATO:0000141` (structure) | `PO_0009045|PO_0009055` |
-| `paler green` | 2 | 1 | `PATO:0000141` (structure) | `PO_0025034|FLOPO_0986007` |
 | `barbellulate` | 1 | 1 | `PATO:0000052` (shape) | `PO_0025393` |
 | `bicolored` | 1 | 1 | `PATO:0000141` (structure) | `PO_0025034` |
-| `broadly urceolate` | 1 | 1 | `PATO:0000052` (shape) | `PO_0009100` |
 | `crenate-serrate` | 1 | 1 | `PATO:0000052` (shape) | `PO_0020128` |
 | `cyanic` | 1 | 1 | `PATO:0000141` (structure) | `PO_0025034` |
 | `elliptic-oblanceolate` | 1 | 1 | `PATO:0000052` (shape) | `PO_0020039` |
@@ -24,6 +22,7 @@
 | `lance-ovoid` | 1 | 1 | `PATO:0000052` (shape) | `PO_0009001` |
 | `looped` | 1 | 1 | `PATO:0000141` (structure) | `PO_0009045` |
 | `naked` | 1 | 1 | `PATO:0000141` (structure) | `posterior rib` |
+| `paler green` | 1 | 1 | `PATO:0000141` (structure) | `FLOPO_0986007` |
 | `patterned` | 1 | 1 | `PATO:0000141` (structure) | `rachis` |
 | `raphide` | 1 | 1 | `PATO:0000141` (structure) | `PO_0009084` |
 | `reptilian` | 1 | 1 | `PATO:0000141` (structure) | `PO_0020038` |

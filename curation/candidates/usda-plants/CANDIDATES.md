@@ -2,10 +2,10 @@
 
 - **Records processed**: 678
 - **Extracted trait rows**: 15,003
-- **Formal assertions emitted**: 12,370
-- **Distinct candidate value terms**: 191
-- **Distinct candidate anatomical bearers**: 20
-- **Distinct novel PO × PATO/FLOPO combinations**: 686
+- **Formal assertions emitted**: 12,415
+- **Distinct candidate value terms**: 188
+- **Distinct candidate anatomical bearers**: 19
+- **Distinct novel PO × PATO/FLOPO combinations**: 696
 
 ## Top Candidate FLOPO Value Terms (`value_term_candidates.tsv`)
 
@@ -48,7 +48,6 @@
 | `seed stalk` | 2 | 2 | `amount` |
 | `bur` | 1 | 1 | `amount` |
 | `common` | 1 | 1 | `amount` |
-| `fascicle sheath` | 1 | 1 | `short` |
 | `female spike` | 1 | 1 | `amount` |
 | `glabrou` | 1 | 1 | `amount` |
 | `insect guideline` | 1 | 1 | `present` |
@@ -73,6 +72,7 @@
 | `PO_0009001` | fruit | `PATO_0104354` | winged | `EQ|PO_0009001|PATO_0104354` | `allowed` / `new_class_candidate` | 14 | 14 |
 | `PO_0020039` | leaf lamina | `PATO_0002258` | pointed | `EQ|PO_0020039|PATO_0002258` | `allowed` / `new_class_candidate` | 12 | 12 |
 | `PO_0020104` | leaf sheath | `FLOPO_0991002` | basal | `EQ|PO_0020104|FLOPO_0991002` | `allowed` / `new_class_candidate` | 12 | 12 |
+| `PO_0000003` | whole plant | `FLOPO_0991108` | climbing | `EQ|PO_0000003|FLOPO_0991108` | `allowed` / `new_class_candidate` | 11 | 10 |
 | `PO_0009049` | inflorescence | `FLOPO_0991142` | spike-like | `EQ|PO_0009049|FLOPO_0991142` | `allowed` / `new_class_candidate` | 11 | 11 |
 | `PO_0020039` | leaf lamina | `PATO_0001500` | tapered | `EQ|PO_0020039|PATO_0001500` | `allowed` / `new_class_candidate` | 11 | 10 |
 | `PO_0030099` | samara fruit | `PATO_0000467` | present | `EQ|PO_0030099|PATO_0000467` | `blocked` / `new_class_candidate` | 11 | 11 |
@@ -80,6 +80,7 @@
 | `PO_0025034` | leaf | `FLOPO_0980232` | simple grass-like | `EQ|PO_0025034|FLOPO_0980232` | `allowed` / `new_class_candidate` | 9 | 9 |
 | `PO_0025034` | leaf | `PATO_0001968` | parallelodromous | `EQ|PO_0025034|PATO_0001968` | `allowed` / `new_class_candidate` | 9 | 9 |
 | `PO_0000003` | whole plant | `FLOPO_0991244` | colonial | `EQ|PO_0000003|FLOPO_0991244` | `allowed` / `new_class_candidate` | 8 | 8 |
+| `PO_0000049` | leaf lamina abaxial epidermis | `PATO_0000328` | low saturation | `EQ|PO_0000049|PATO_0000328` | `novel` / `new_class_candidate` | 8 | 8 |
 | `PO_0000049` | leaf lamina abaxial epidermis | `PATO_0001320` | pubescent hair | `EQ|PO_0000049|PATO_0001320` | `allowed` / `new_class_candidate` | 8 | 8 |
 | `PO_0004518` | bark | `FLOPO_0991026` | fibrous | `EQ|PO_0004518|FLOPO_0991026` | `allowed` / `new_class_candidate` | 8 | 8 |
 | `PO_0020104` | leaf sheath | `PATO_0002488` | overlapping | `EQ|PO_0020104|PATO_0002488` | `allowed` / `new_class_candidate` | 8 | 8 |
@@ -89,5 +90,3 @@
 | `PO_0009010` | seed | `PATO_0000586` | increased size | `EQ|PO_0009010|PATO_0000586` | `allowed` / `new_class_candidate` | 6 | 6 |
 | `PO_0009046` | flower | `PATO_0000330` | irregular spatial pattern | `EQ|PO_0009046|PATO_0000330` | `blocked` / `new_class_candidate` | 6 | 6 |
 | `PO_0009077` | staminode | `FLOPO_0991118` | bearded | `EQ|PO_0009077|FLOPO_0991118` | `allowed` / `new_class_candidate` | 6 | 6 |
-| `PO_0020039` | leaf lamina | `PATO_0002450` | firm | `EQ|PO_0020039|PATO_0002450` | `allowed` / `new_class_candidate` | 6 | 6 |
-| `PO_0020104` | leaf sheath | `PATO_0002254` | flattened | `EQ|PO_0020104|PATO_0002254` | `allowed` / `new_class_candidate` | 6 | 6 |
