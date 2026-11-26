@@ -16,6 +16,7 @@ const PREFIXES = {
   rdf: "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
   owl: "http://www.w3.org/2002/07/owl#",
   skos: "http://www.w3.org/2004/02/skos/core#",
+  oboInOwl: "http://www.geneontology.org/formats/oboInOwl#",
   dcterms: "http://purl.org/dc/terms/",
   sio: "http://semanticscience.org/resource/",
   prov: "http://www.w3.org/ns/prov#",
@@ -32,6 +33,8 @@ function withPrefixes(query) {
 }
 const sparqlUrl = (query, extra = {}) => ENDPOINT + "?" + new URLSearchParams({ query: withPrefixes(query), ...extra });
 document.getElementById("endpoint")?.replaceChildren(ENDPOINT);
+// The skip link must not change the address (the address is the page): it moves the focus to the page.
+document.getElementById("skip")?.addEventListener("click", (e) => { e.preventDefault(); document.getElementById("view").focus(); });
 const view = document.getElementById("view");
 const cache = new Map();
 
@@ -86,12 +89,16 @@ const taxonHref = (iri) => `#/taxon/${encodeURIComponent(taxonKey(iri))}`;
 const local = (iri) => iri.replace(/^.*[#/]/, "");
 const curie = (iri) => local(iri).replace("_", ":");
 const n = (x) => Number(x).toLocaleString("en");
+const OBO = "http://purl.obolibrary.org/obo/";
+const isObo = (iri) => iri.startsWith(OBO);
+const termHref = (iri) => `#/term/${curie(iri)}`;
+const SITE = "FLOPO Trait Atlas";
+const setTitle = (text) => { document.title = text ? `${text} · ${SITE}` : SITE; };
 const sourceClass = (label) => (/collenette/i.test(label) ? "collenette" : /ncvc/i.test(label) ? "ncvc" : "");
 const inaturalistData = () => cached("inaturalist", () => requestJson(INATURALIST));
+// The block is shown only for a taxon with a confirmed match; without one it would be an empty box.
 function inaturalistPanel(entry, label, generated) {
-  if (!entry || entry.status !== "matched") return `<section class="inat-panel"><h2>iNaturalist</h2>
-    <p class="muted">No confirmed iNaturalist match yet.</p>
-    <a href="https://www.inaturalist.org/taxa/search?q=${encodeURIComponent(label || "")}" target="_blank" rel="noopener">Search iNaturalist by name</a></section>`;
+  if (!entry || entry.status !== "matched") return "";
   const id = Number(entry.id);
   if (!Number.isSafeInteger(id) || id <= 0) return "";
   const allowedLicenses = new Set(["cc0", "cc-by", "cc-by-sa", "cc-by-nc", "cc-by-nc-sa"]);
@@ -120,9 +127,11 @@ function heat(value, max) {
   const t = Math.sqrt(value / max);
   return `color-mix(in srgb, var(--ochre) ${Math.round(12 + t * 78)}%, var(--paper))`;
 }
+// Ontology terms open the atlas's own page for the term (#/term/PO:0009046); other IRIs open outside.
 function termLink(iri, label) {
   if (!iri) return esc(label);
-  return `<a href="${esc(iri)}" target="_blank" rel="noopener" title="${esc(curie(iri))}">${esc(label)}</a>`;
+  if (isObo(iri)) return `<a href="${esc(termHref(iri))}" title="${esc(curie(iri))}">${esc(label)}</a>`;
+  return `<a href="${esc(iri)}" target="_blank" rel="noopener" title="${esc(local(iri))}">${esc(label)}</a>`;
 }
 function highlight(context, text) {
   if (!context) return `<span class="quote">${esc(text)}</span>`;
@@ -153,14 +162,16 @@ const precomputed = (name) =>
 const sources = () =>
   cached("sources", () => sparql(`SELECT ?s (SAMPLE(?l) AS ?label) (SAMPLE(?t) AS ?title) WHERE { ?s a fb:Source ; rdfs:label ?l ; <http://purl.org/dc/terms/title> ?t } GROUP BY ?s`));
 
-function atlasTable(cells, organs, traits, { link = true, caption = "" } = {}) {
+// Short column names for the narrow fingerprint of a taxon; the full name stays as a tooltip.
+const SHORT_TRAIT = { "Size and measurements": "Size", "Surface and hairs": "Surface", "Arrangement and position": "Position", "Habit and life cycle": "Habit", "Presence of structures": "Presence", "Structure and texture": "Structure", "Other qualities": "Other" };
+function atlasTable(cells, organs, traits, { link = true, caption = "", short = false } = {}) {
   const max = Math.max(1, ...cells.map((c) => +c.value));
   const lookup = new Map(cells.map((c) => [c.og + "|" + c.tg, c]));
   const usedOrgans = organs.filter((o) => cells.some((c) => c.og === o.g));
   const usedTraits = traits.filter((t) => cells.some((c) => c.tg === t.g));
   return html`<table class="atlas">
     ${caption ? `<caption>${caption}</caption>` : ""}
-    <thead><tr><th></th>${usedTraits.map((t) => `<th scope="col">${esc(t.label)}</th>`).join("")}</tr></thead>
+    <thead><tr><th></th>${usedTraits.map((t) => `<th scope="col" title="${esc(t.label)}">${esc(short ? SHORT_TRAIT[t.label] || t.label : t.label)}</th>`).join("")}</tr></thead>
     <tbody>${usedOrgans
       .map(
         (o) => `<tr><th scope="row">${esc(o.label)}</th>${usedTraits
@@ -188,7 +199,9 @@ async function overview() {
     precomputed("atlas"),
   ]);
   const keys = Object.keys(s).filter((k) => s[k] && s[k].phenotype_rows !== undefined);
-  const records = keys.reduce((a, k) => a + (s[k].assertions || 0), 0);
+  // Records that failed a check are kept for the record but are not traits: they are not counted.
+  const usable = (sk) => (sk.assertions || 0) - (sk.gate_blocked || 0);
+  const records = keys.reduce((a, k) => a + usable(s[k]), 0);
   const rows = keys.reduce((a, k) => a + (s[k].phenotype_rows || 0), 0);
   const formal = keys.reduce((a, k) => a + (s[k].rows_formalized || 0), 0);
   const occurrences = keys.reduce((a, k) => a + (s[k].occurrences || 0), 0);
@@ -200,16 +213,32 @@ async function overview() {
       const share = sk.phenotype_rows ? sk.rows_formalized / sk.phenotype_rows : 0;
       return `<div class="source-row">
         <div><b>${esc(meta.label)}</b><br><span class="muted">${esc(meta.title)}</span><br>
-          <span class="muted num">${n(s.taxa.per_source[k] || 0)} taxa, ${n(sk.assertions)} trait records, ${n(sk.occurrences || 0)} place records</span></div>
+          <span class="muted num">${n(s.taxa.per_source[k] || 0)} taxa, ${n(usable(sk))} trait records, ${n(sk.occurrences || 0)} place records</span></div>
         <div><div class="bar" title="${Math.round(share * 100)}% of transcribed statements are FLOPO annotations"><i style="width:${share * 100}%"></i></div>
           <span class="muted num">${n(sk.rows_formalized)} of ${n(sk.phenotype_rows)} transcribed trait statements annotated (${Math.round(share * 100)}%)</span></div>
       </div>`;
     })
     .join("");
   setView(html`
+    <section class="hero">
+      <h1>Plant traits across floras</h1>
+      <form class="hero-search" id="home-form" role="search" autocomplete="off">
+        <label for="home-search">Search ${n(s.taxa.taxa)} taxa and their traits</label>
+        <div class="hero-row">
+          <input id="home-search" type="search" placeholder="A plant, a family or a trait: Vachellia tortilis, Lamiaceae, yellow flower" aria-controls="home-results" aria-describedby="home-hint" autocomplete="off">
+          <button type="submit">Search</button>
+        </div>
+        <p class="muted" id="home-hint">Scientific names, families, and trait words such as “glabrous leaf”.</p>
+        <div id="home-results" class="home-results" aria-live="polite"></div>
+      </form>
+      <div class="starters">
+        <a class="starter" href="#/taxon/ipni-520167-1"><b>Read one plant in many floras</b><span><i class="sci">Tamarindus indica</i> is described in 14 floras. Open it to see the statements side by side.</span></a>
+        <a class="starter" href="#/compare/ipni-520167-1/ipni-491231-1"><b>Compare two plants</b><span><i class="sci">Tamarindus indica</i> and <i class="sci">Delonix regia</i>, trait by trait.</span></a>
+        <a class="starter" href="#/identify"><b>Name a plant from its traits</b><span>Say what you see, such as flower colour and leaf shape, and get a ranked list of taxa.</span></a>
+      </div>
+    </section>
     <section class="intro">
       <div>
-        <h1>Plant traits across floras</h1>
         <p class="lede">Explore annotated plant traits from ${n(keys.length)} flora sources. Each annotation links a taxon,
           a FLOPO phenotype built from a Plant Ontology part and a PATO quality, and its source sentence.
           Most floras are included in full; the <a href="#/coverage">coverage</a> page gives the numbers for each, and the <a href="#/map">map</a> shows where the taxa are recorded.</p>
@@ -226,33 +255,55 @@ async function overview() {
     <h2>Sources</h2>
     <p class="muted">Counts describe the extracts currently included. Annotation percentages refer to transcribed statements, not the complete source. Taxon mappings and provisional traits remain under review.</p>
     <div class="sources">${srcRows}</div>`);
+  homeSearch();
 }
 
 /* ---------------------------------------------------------------- taxa */
 // The release ships a static index of all taxa (tools/atlas_taxa_index.py): one compressed file,
-// filtered in the browser, instead of four large queries.
+// filtered in the browser, instead of four large queries. Rows keep the order of the file (the map
+// refers to them by position); `sorted` is the same rows ordered by name without leading punctuation.
+// The last field of a row, names printed in the floras, is missing in older releases.
 const taxonIndex = () =>
   cached("taxa", async () => {
     const data = await requestJson(new URL("taxa.json", document.baseURI).href);
-    const rows = data.taxa.map(([key, label, auth, fam, n, srcs, vern]) => ({
-      t: TAXON + key, key, label, auth, family: data.families[fam] || "", n, src: srcs, vern,
-      find: (label + " " + (data.families[fam] || "") + " " + vern).toLowerCase(),
-    }));
-    return { rows, sourceKeys: data.sources };
+    const rows = data.taxa.map(([key, label, auth, fam, n, srcs, vern, syns]) => {
+      const family = data.families[fam] || "";
+      return {
+        t: TAXON + key, key, label, auth, family, n, src: srcs, vern, syn: syns ? syns.split("|") : [],
+        sk: label.replace(/^[^\p{L}\p{N}]+/u, "").toLowerCase(),
+        find: (label + " " + family + " " + vern + " " + (syns || "").replace(/\|/g, " ")).toLowerCase(),
+      };
+    });
+    const sorted = [...rows].sort((a, b) => (a.sk < b.sk ? -1 : a.sk > b.sk ? 1 : 0));
+    return { rows, sorted, sourceKeys: data.sources, withData: rows.filter((r) => r.n > 0).length };
   });
 
 const LIST_LIMIT = 200;
-function taxonMatches(index, filter, source) {
+function taxonMatches(index, filter, source, onlyData = false) {
   const words = filter.trim().toLowerCase().split(/\s+/).filter(Boolean);
   const s = source === "" ? -1 : index.sourceKeys.indexOf(source);
-  return index.rows.filter((r) => (s < 0 || r.src.includes(s)) && words.every((w) => r.find.includes(w)));
+  return index.sorted.filter((r) => (!onlyData || r.n > 0) && (s < 0 || r.src.includes(s)) && words.every((w) => r.find.includes(w)));
 }
-function taxonList(shown, filter, current, limit) {
+// A taxon found by a name printed in a flora: that name, shown beside the accepted one.
+function matchedSynonym(r, filter) {
+  const words = filter.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  if (!words.length || !r.syn.length) return "";
+  const own = (r.label + " " + r.family + " " + r.vern).toLowerCase();
+  if (words.every((w) => own.includes(w))) return "";
+  return r.syn.find((x) => words.some((w) => x.toLowerCase().includes(w))) || "";
+}
+// The list shows a window of the matches: the first page, or the page around the taxon that is open.
+function taxonList(shown, filter, current, start, end) {
   if (!shown.length) return `<p class="muted">No taxon matches “${esc(filter)}”.</p>`;
-  const items = shown.slice(0, limit).map((r) => `<a href="${taxonHref(r.t)}" class="${r.t === current ? "current" : ""}"><span class="sci">${esc(r.label)}</span>${r.family ? ` <span class="muted fam">${esc(r.family)}</span>` : ""}<small class="num" title="trait records">${r.n}</small></a>`).join("");
-  const more = shown.length > limit ? `<button type="button" class="ghost" id="tmore">Show ${n(Math.min(LIST_LIMIT, shown.length - limit))} more of ${n(shown.length - limit)}</button>` : "";
-  return items + more;
+  const items = shown.slice(start, end).map((r) => {
+    const syn = matchedSynonym(r, filter);
+    return `<a href="${taxonHref(r.t)}" class="${r.t === current ? "current" : ""}"><span class="sci">${esc(r.label)}${syn ? ` <span class="syn">= ${esc(syn)}</span>` : ""}</span>${r.family ? ` <span class="muted fam">${esc(r.family)}</span>` : ""}<small class="num" title="trait records">${r.n}</small></a>`;
+  }).join("");
+  const less = start > 0 ? `<button type="button" class="ghost" id="tless">Show ${n(Math.min(LIST_LIMIT, start))} earlier of ${n(start)}</button>` : "";
+  const more = shown.length > end ? `<button type="button" class="ghost" id="tmore">Show ${n(Math.min(LIST_LIMIT, shown.length - end))} more of ${n(shown.length - end)}</button>` : "";
+  return less + items + more;
 }
+const narrowScreen = () => window.matchMedia && window.matchMedia("(max-width: 900px)").matches;
 
 async function taxa(key) {
   const current = key ? TAXON + decodeURIComponent(key) : "";
@@ -262,67 +313,100 @@ async function taxa(key) {
     document.querySelectorAll(`#tlist a[href="${CSS.escape(taxonHref(current))}"]`).forEach((a) => a.classList.add("current"));
     if (current) {
       document.getElementById("tpane").innerHTML = `<p class="loading">Loading…</p>`;
+      if (narrowScreen()) { setDrawer(false); window.scrollTo(0, 0); }
       await taxonPage(current);
     }
     return;
   }
-  let filterValue = "", sourceValue = "";
+  let filterValue = "", sourceValue = "", onlyData = true;
   try {
     filterValue = sessionStorage.getItem("taxonFilter") || "";
     sourceValue = sessionStorage.getItem("taxonSourceFilter") || "";
+    onlyData = sessionStorage.getItem("taxonShowAll") !== "1";
   } catch (e) { /* storage unavailable */ }
+  setTitle(current ? "Taxon" : "Taxa");
   setView(html`<div class="split">
-      <aside class="listpane">
-        <label for="tfilter" class="col-title">Find a taxon by scientific name, family or common name</label>
-        <input id="tfilter" type="search" value="${esc(filterValue)}" placeholder="e.g. Abies grandis, Lamiaceae" autocomplete="off">
-        <label for="sfilter" class="col-title">Flora</label>
-        <select id="sfilter" style="width:100%;margin-bottom:.5rem"><option value="">All floras</option></select>
-        <p class="muted" id="tcount" aria-live="polite">Loading the taxon list…</p>
-        <div class="taxonlist" id="tlist"></div>
+      <aside class="listpane${current && narrowScreen() ? " collapsed" : ""}" id="listpane">
+        <button type="button" class="drawer-toggle" id="drawer-toggle" aria-controls="listbody" aria-expanded="${!(current && narrowScreen())}">Find or switch taxon</button>
+        <div class="listbody" id="listbody">
+          <label for="tfilter" class="col-title">Find a taxon by name, family or a name printed in a flora</label>
+          <input id="tfilter" type="search" value="${esc(filterValue)}" placeholder="e.g. Acacia tortilis, Lamiaceae" autocomplete="off">
+          <label for="sfilter" class="col-title">Flora</label>
+          <select id="sfilter" style="width:100%;margin-bottom:.5rem"><option value="">All floras</option></select>
+          <label class="check"><input type="checkbox" id="thastrait" ${onlyData ? "checked" : ""}> <span id="thastrait-label">Only taxa with trait records</span></label>
+          <p class="muted" id="tcount" aria-live="polite">Loading the taxon list…</p>
+          <div class="taxonlist" id="tlist"></div>
+        </div>
       </aside>
       <section id="tpane">${current ? `<p class="loading">Loading…</p>` : ""}</section>
     </div>`);
+  document.getElementById("drawer-toggle").addEventListener("click", () => setDrawer(document.getElementById("listpane").classList.contains("collapsed")));
   const pagePromise = current ? taxonPage(current) : null; // the taxon does not wait for the list
   const [index, srcList] = await Promise.all([taxonIndex(), sources()]);
   const sourceLabel = (k) => (srcList.find((x) => x.s.endsWith("/" + k)) || {}).label || k;
   const input = document.getElementById("tfilter");
   const sselect = document.getElementById("sfilter");
+  const check = document.getElementById("thastrait");
   const list = document.getElementById("tlist");
   if (!input || !list) return;
-  sselect.innerHTML = `<option value="">All floras (${n(index.rows.length)} taxa)</option>` +
+  sselect.innerHTML = `<option value="">All floras</option>` +
     index.sourceKeys.map((k) => [k, sourceLabel(k)]).sort((a, b) => a[1].localeCompare(b[1]))
       .map(([k, l]) => `<option value="${esc(k)}" ${k === sourceValue ? "selected" : ""}>${esc(l)}</option>`).join("");
+  document.getElementById("thastrait-label").textContent = `Only taxa with trait records (${n(index.withData)} of ${n(index.rows.length)})`;
   if (!current) {
-    document.getElementById("tpane").innerHTML = `<h1>${n(index.rows.length)} taxa</h1><p class="muted">Type part of a name to find a taxon; several words narrow the list (“Acacia Fabaceae”). The number after each name counts its trait records.</p>`;
+    document.getElementById("tpane").innerHTML = `<h1>${n(index.withData)} taxa with trait records</h1><p class="muted">Type part of a name to find a taxon, or a name that a flora prints for it; several words narrow the list (“Acacia Fabaceae”). The number after each name counts its trait records. ${n(index.rows.length - index.withData)} more taxa have no trait records yet; tick “Only taxa with trait records” off to list them too.</p>`;
   }
-  let shown = [], limit = LIST_LIMIT, timer = 0;
+  // A filter left from an earlier visit to this page must not hide the taxon that was opened.
+  if (current && !taxonMatches(index, input.value, sselect.value, check.checked).some((r) => r.t === current)) {
+    input.value = "";
+    sselect.value = "";
+    if (!taxonMatches(index, "", "", check.checked).some((r) => r.t === current)) check.checked = false;
+  }
+  let shown = [], start = 0, end = LIST_LIMIT, timer = 0;
   const draw = () => {
-    list.innerHTML = taxonList(shown, input.value, current, limit);
-    document.getElementById("tcount").textContent = shown.length === index.rows.length ? `${n(shown.length)} taxa, alphabetical` : `${n(shown.length)} of ${n(index.rows.length)} taxa match`;
-    const more = document.getElementById("tmore");
-    if (more) more.addEventListener("click", () => { limit += LIST_LIMIT; draw(); });
+    list.innerHTML = taxonList(shown, input.value, current, start, end);
+    const base = check.checked ? index.withData : index.rows.length;
+    document.getElementById("tcount").textContent = shown.length === base ? `${n(shown.length)} taxa${check.checked ? " with trait records" : ""}, alphabetical` : `${n(shown.length)} of ${n(base)} taxa match`;
+    document.getElementById("tmore")?.addEventListener("click", () => { end += LIST_LIMIT; draw(); });
+    document.getElementById("tless")?.addEventListener("click", () => {
+      const keep = list.querySelector("a")?.getAttribute("href");
+      start = Math.max(0, start - LIST_LIMIT);
+      draw();
+      if (keep) list.querySelector(`a[href="${CSS.escape(keep)}"]`)?.scrollIntoView({ block: "start" });
+    });
   };
-  const update = () => {
+  const update = (opened = false) => {
     try {
       sessionStorage.setItem("taxonFilter", input.value);
       sessionStorage.setItem("taxonSourceFilter", sselect.value);
+      sessionStorage.setItem("taxonShowAll", check.checked ? "0" : "1");
     } catch (e) { /* storage unavailable */ }
-    shown = taxonMatches(index, input.value, sselect.value);
-    limit = LIST_LIMIT;
+    shown = taxonMatches(index, input.value, sselect.value, check.checked);
+    const at = opened ? shown.findIndex((r) => r.t === current) : -1;
+    start = at > LIST_LIMIT / 2 ? at - LIST_LIMIT / 2 : 0;
+    end = start + LIST_LIMIT;
     draw();
   };
-  input.addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(update, 120); });
-  sselect.addEventListener("change", update);
-  update();
+  input.addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(() => update(), 120); });
+  sselect.addEventListener("change", () => update());
+  check.addEventListener("change", () => update());
+  update(true);
   const active = list.querySelector("a.current");
-  if (active) active.scrollIntoView({ block: "center" });
+  if (active && !narrowScreen()) active.scrollIntoView({ block: "center" });
   if (pagePromise) await pagePromise;
+}
+// On a phone the list of taxa sits behind a button, so that the taxon comes first.
+function setDrawer(open) {
+  const pane = document.getElementById("listpane");
+  if (!pane) return;
+  pane.classList.toggle("collapsed", !open);
+  document.getElementById("drawer-toggle")?.setAttribute("aria-expanded", String(open));
 }
 
 // A taxon's trait records, as three small queries joined here. One grouped query with all the
 // optional fields took up to 17 s for taxa with hundreds of records; these take under a second.
 async function taxonRecords(T) {
-  const [core, extra, labels] = await Promise.all([
+  const [core, extra, numbers, labels] = await Promise.all([
     sparql(`SELECT ?r ?label ?organ ?trait ?source ?status ?text ?quality ?bearer ?negated WHERE {
       ?r fb:taxon ${T} . ?r a fb:TraitRecord ; rdfs:label ?label ; fb:organGroup ?organ ; fb:traitGroup ?trait ;
          fb:source ?s ; fb:status ?status ; fb:text ?text ; fb:quality ?quality ; fb:bearer ?bearer ; fb:negated ?negated . ?s rdfs:label ?source }`),
@@ -331,21 +415,23 @@ async function taxonRecords(T) {
       OPTIONAL { ?r fb:attribute ?attribute } OPTIONAL { ?r fb:phenotypeClass ?fac } OPTIONAL { ?r fb:flopoClass ?fclass }
       OPTIONAL { ?r fb:unit ?unit } OPTIONAL { ?r fb:relation ?relation ; fb:fromValue ?from ; fb:toValue ?to .
         OPTIONAL { ?r fb:fromText ?fromText } OPTIONAL { ?r fb:toText ?toText } } }`),
+    // the numbers of a record are asked apart: with the other optional fields in one query the answer takes seconds
+    sparql(`SELECT ?r ?usym ?low ?high WHERE { ?r a fb:TraitRecord ; fb:taxon ${T} . OPTIONAL { ?r fb:unitSymbol ?usym } OPTIONAL { ?r fb:low ?low } OPTIONAL { ?r fb:high ?high } }`),
     sparql(`SELECT DISTINCT ?x ?l WHERE { ?r a fb:TraitRecord ; fb:taxon ${T} .
       { ?r fb:quality ?x } UNION { ?r fb:bearer ?x } UNION { ?r fb:fromValue ?x } UNION { ?r fb:toValue ?x }
-      UNION { ?r fb:unit ?x } UNION { ?r fb:flopoClass ?x } ?x rdfs:label ?l }`),
+      UNION { ?r fb:unit ?x } UNION { ?r fb:flopoClass ?x } UNION { ?r fb:attribute ?x } ?x rdfs:label ?l }`),
   ]);
   const label = new Map(labels.map((x) => [x.x, x.l]));
   const byR = new Map();
   for (const row of core) if (!byR.has(row.r)) byR.set(row.r, { ...row });
-  for (const row of extra) {
+  for (const row of [...extra, ...numbers]) {
     const rec = byR.get(row.r);
     if (!rec) continue;
     for (const [k, v] of Object.entries(row)) if (v !== undefined && rec[k] === undefined) rec[k] = v;
   }
   return [...byR.values()].map((r) => ({
     ...r, qlabel: label.get(r.quality), blabel: label.get(r.bearer), fromLabel: r.from && label.get(r.from),
-    toLabel: r.to && label.get(r.to), unitLabel: r.unit && label.get(r.unit), flabel: r.fclass && label.get(r.fclass),
+    toLabel: r.to && label.get(r.to), unitLabel: r.unit && label.get(r.unit), flabel: r.fclass && label.get(r.fclass), alabel: r.attribute && label.get(r.attribute),
   }));
 }
 
@@ -359,7 +445,7 @@ async function taxonPage(t) {
       return;
     }
   }
-  const [g, info, names, records, merged, places, growth, pending, notes, conflicts] = await Promise.all([
+  const [g, info, names, allRecords, merged, places, growth, pending, notes, conflicts] = await Promise.all([
     groups(),
     sparql(`SELECT (SAMPLE(?l) AS ?label) (SAMPLE(?a) AS ?auth) (SAMPLE(?f) AS ?family) (SAMPLE(?o) AS ?order) (SAMPLE(?w) AS ?wfo) (SAMPLE(?ip) AS ?ipni)
       (GROUP_CONCAT(DISTINCT ?ar; separator="، ") AS ?arabic) (SAMPLE(?elo) AS ?emin) (SAMPLE(?ehi) AS ?emax) (SAMPLE(?nr) AS ?range) WHERE {
@@ -378,8 +464,8 @@ async function taxonPage(t) {
       ?o a fb:Occurrence ; fb:taxon ${T} ; fb:source/rdfs:label ?src .
       OPTIONAL { ?o fb:region ?region . ?region rdfs:label ?rl } OPTIONAL { ?o fb:locality ?loc }
       OPTIONAL { ?o fb:lat ?lat ; fb:lon ?lon } } GROUP BY ?region ?loc`),
-    sparql(`SELECT ?label (GROUP_CONCAT(DISTINCT ?v; separator="; ") AS ?value) (SAMPLE(?src) AS ?source) WHERE {
-      ?g a fb:GrowthTrait ; fb:taxon ${T} ; rdfs:label ?label ; fb:value ?v ; fb:source/rdfs:label ?src FILTER(lang(?v) = "") } GROUP BY ?label`),
+    sparql(`SELECT ?label ?source (GROUP_CONCAT(DISTINCT ?v; separator="; ") AS ?value) WHERE {
+      ?g a fb:GrowthTrait ; fb:taxon ${T} ; rdfs:label ?label ; fb:value ?v ; fb:source/rdfs:label ?source FILTER(lang(?v) = "") } GROUP BY ?label ?source`),
     sparql(`SELECT ?text ?reason ?context ?src WHERE { ?p a fb:PendingStatement ; fb:taxon ${T} ; fb:text ?text ; fb:reason ?reason ;
       fb:source/rdfs:label ?src . OPTIONAL { ?p fb:context ?context } }`),
     sparql(`SELECT ?kind ?text ?src WHERE { VALUES ?kind { fb:abundance fb:habitat } ${T} ?kind ?node . ?node rdfs:label ?text ; fb:source/rdfs:label ?src }`),
@@ -389,8 +475,12 @@ async function taxonPage(t) {
   const pane = document.getElementById("tpane");
   if (!pane) return;
   const i = info[0] || {};
+  setTitle(i.label || "Taxon");
+  // Records that failed a check are not traits: they are listed apart, below the table.
+  const records = allRecords.filter((r) => r.status !== "blocked");
+  const blocked = allRecords.filter((r) => r.status === "blocked");
   const nameRows = names
-    .map((x) => `<li><span class="sci">${esc(x.name)}</span> <span class="chip ${sourceClass(x.src)}">${esc(x.src)}</span>${x.pages ? ` <span class="muted">p. ${esc(x.pages)}</span>` : ""}${x.standard && x.standard !== x.name ? ` <span class="muted">IPNI: <a href="https://www.ipni.org/n/${esc(x.ipni)}" target="_blank" rel="noopener"><i>${esc(x.standard)}</i></a></span>` : ""}${x.status && x.status !== "Accepted" && x.status !== "Exact" ? ` <span class="muted">(${esc(x.status.toLowerCase())} in ${x.ipni || x.standard ? "WCVP" : "WFO"})</span>` : ""}</li>`)
+    .map((x) => `<li><span class="sci">${esc(x.name)}</span> <span class="chip ${sourceClass(x.src)}">${esc(x.src)}</span>${x.pages ? ` <span class="muted">p. ${esc(x.pages)}</span>` : ""}${x.standard && x.standard !== x.name ? ` <span class="muted">IPNI: <a href="https://www.ipni.org/n/${esc(x.ipni)}" target="_blank" rel="noopener"><i>${esc(x.standard)}</i></a></span>` : ""}${x.status && !["accepted", "exact", "n/a"].includes(x.status.toLowerCase()) ? ` <span class="muted">(${esc(x.status.toLowerCase())} in ${x.ipni || x.standard ? "WCVP" : "WFO"})</span>` : ""}</li>`)
     .join("");
 
   // fingerprint
@@ -406,41 +496,75 @@ async function taxonPage(t) {
   const byOrgan = new Map(g.organs.map((o) => [o.g, []]));
   for (const r of records) (byOrgan.get(r.organ) || byOrgan.set(r.organ, []).get(r.organ)).push(r);
   let rowId = 0;
-  const STATUS_TIP = "Admitted for review, not yet accepted by the gates";
+  const STATUS_TIP = "Admitted for review, not yet accepted by the checks";
+  const amount = (v) => Number(v).toLocaleString("en", { maximumFractionDigits: 6 });
+  // What the record says, in the order of what it carries: a relation, then numbers with their unit,
+  // then the class of the annotation, then the quality; "not" comes first in each case.
   const valueCell = (r) => {
+    const not = r.negated === "true" ? `<span class="muted">not</span> ` : "";
     if (r.relation) {
       const kind = { continuum: "continuum", taxon_level_alternatives: "alternatives in the taxon", temporal_transition: "change over time" }[r.relation] || r.relation;
       const end = (iri, label, verbatim) => {
         const link = termLink(iri, label || curie(iri));
         return verbatim && label && verbatim.toLowerCase() !== label.toLowerCase() ? `${link} <span class="muted">“${esc(verbatim)}”</span>` : link;
       };
-      return `${end(r.from, r.fromLabel, r.fromText)} → ${end(r.to, r.toLabel, r.toText)} <span class="muted">(${esc(kind)})</span>`;
+      return `${not}${end(r.from, r.fromLabel, r.fromText)} → ${end(r.to, r.toLabel, r.toText)} <span class="muted">(${esc(kind)})</span>`;
     }
-    if (r.fclass) return termLink(r.fclass, r.flabel || curie(r.fclass));
-    if (r.unit) return `${termLink(r.attribute || r.quality, r.qlabel || curie(r.quality))} <span class="muted">in</span> ${termLink(r.unit, r.unitLabel || curie(r.unit))}`;
-    const base = termLink(r.quality, r.qlabel || curie(r.quality));
-    return r.negated === "true" ? `<span class="muted">not</span> ${base}` : base;
+    if (r.low !== undefined || r.high !== undefined) {
+      const range = r.low !== undefined && r.high !== undefined ? (+r.low === +r.high ? amount(r.low) : `${amount(r.low)}–${amount(r.high)}`)
+        : r.low !== undefined ? `at least ${amount(r.low)}` : `up to ${amount(r.high)}`;
+      const unit = r.usym !== undefined ? r.usym : r.unit && !/^(count unit|ratio)$/.test(r.unitLabel || "") ? r.unitLabel || "" : "";
+      const what = r.attribute || r.quality;
+      return `${not}<span class="num">${esc(`${range} ${unit}`.trim())}</span> <span class="muted">${termLink(what, r.alabel || r.qlabel || curie(what))}</span>`;
+    }
+    if (r.unit) return `${not}${termLink(r.attribute || r.quality, r.alabel || r.qlabel || curie(r.quality))} <span class="muted">in</span> ${termLink(r.unit, r.unitLabel || curie(r.unit))}`;
+    if (r.fclass) return not + termLink(r.fclass, r.flabel || curie(r.fclass));
+    return not + termLink(r.quality, r.qlabel || curie(r.quality));
   };
   const owlLink = (iri) => iri ? ` <a href="#/query?describe=${encodeURIComponent(iri)}" title="OWL definition of the annotation class">OWL class</a>` : "";
-  // Contradictions: record -> notes of the conflicts it takes part in
-  const byIriAll = new Map(records.map((r) => [r.r, r]));
+  // Contradictions come as pairs. They are grouped by the statement that most of them concern
+  // (a leaf stated absent against every leaf statement of the other floras is one group).
+  const byIriAll = new Map(allRecords.map((r) => [r.r, r]));
   const conflictOf = new Map();
-  const conflictItems = conflicts.map((c) => {
-    const members = c.members.split(" ").map((x) => byIriAll.get(x)).filter(Boolean);
-    members.forEach((m) => (conflictOf.get(m.r) || conflictOf.set(m.r, []).get(m.r)).push(c.note));
-    const where = c.between === "true" ? "the sources disagree" : "within one source";
-    return `<li>${members.map((m) => `<b>${esc(m.label)}</b> <span class="chip ${sourceClass(m.source)}">${esc(m.source)}</span>`).join(" <span class=\"muted\">versus</span> ")}
-      <br><span class="muted">${esc(c.kind)}, ${where}: ${esc(c.note)}</span></li>`;
-  }).join("");
+  const pairs = conflicts
+    .map((c) => ({ c, members: c.members.split(" ").map((x) => byIriAll.get(x)).filter(Boolean) }))
+    .filter(({ members }) => members.length && members.every((m) => m.status !== "blocked"));
+  const weight = new Map();
+  for (const { c, members } of pairs) {
+    members.forEach((m) => {
+      (conflictOf.get(m.r) || conflictOf.set(m.r, []).get(m.r)).push(c.note);
+      weight.set(m.r, (weight.get(m.r) || 0) + 1);
+    });
+  }
+  const conflictGroups = new Map();
+  for (const pair of pairs) {
+    const anchor = pair.members.reduce((best, m) => (weight.get(m.r) > weight.get(best.r) ? m : best));
+    (conflictGroups.get(anchor.r) || conflictGroups.set(anchor.r, { anchor, pairs: [] }).get(anchor.r)).pairs.push({ ...pair, others: pair.members.filter((m) => m !== anchor) });
+  }
+  const chipOf = (m) => `<b>${esc(m.label)}</b> <span class="chip ${sourceClass(m.source)}">${esc(m.source)}</span>`;
+  const sayWhere = (c) => `${esc(c.kind)}, ${c.between === "true" ? "the sources disagree" : "within one source"}: ${esc(c.note)}`;
+  const conflictHtml = [...conflictGroups.values()].sort((a, b) => b.pairs.length - a.pairs.length || a.anchor.label.localeCompare(b.anchor.label)).map((grp) => {
+    if (grp.pairs.length === 1) {
+      const { c, members } = grp.pairs[0];
+      return `<li>${members.map(chipOf).join(` <span class="muted">versus</span> `)}<br><span class="muted">${sayWhere(c)}</span></li>`;
+    }
+    return `<li>${chipOf(grp.anchor)} <span class="muted">is contradicted by ${n(grp.pairs.length)} statements</span>
+      <details><summary>Show them</summary><ul>${grp.pairs.map(({ c, others }) => `<li>${others.map(chipOf).join(", ")}<br><span class="muted">${sayWhere(c)}</span></li>`).join("")}</ul></details></li>`;
+  });
+  const CONFLICT_SHOWN = 5;
+  const conflictBox = pairs.length ? `<div class="conflicts"><h3>${n(pairs.length)} contradiction${pairs.length > 1 ? "s" : ""}, in ${n(conflictHtml.length)} group${conflictHtml.length > 1 ? "s" : ""}</h3>
+    <p class="muted">These statements cannot both be true of one plant. A taxon covers many plants, so the sources may describe different plants or one may be wrong.</p>
+    <ul>${conflictHtml.slice(0, CONFLICT_SHOWN).join("")}</ul>
+    ${conflictHtml.length > CONFLICT_SHOWN ? `<details class="more"><summary>${n(conflictHtml.length - CONFLICT_SHOWN)} more group${conflictHtml.length - CONFLICT_SHOWN > 1 ? "s" : ""}</summary><ul>${conflictHtml.slice(CONFLICT_SHOWN).join("")}</ul></details>` : ""}</div>` : "";
   const recordRow = (r, sub = false) => {
     const id = `d${rowId++}`;
     const clash = conflictOf.has(r.r) ? ` <span class="chip conflict" title="${esc(conflictOf.get(r.r).join("; "))}">conflict</span>` : "";
     const status = (r.status === "accepted" ? "" : `<span class="chip review" title="${STATUS_TIP}">${esc(r.status)}</span>`) + clash;
-    return `<tr class="rec${sub ? " sub" : ""}" data-detail="${id}" tabindex="0"><td class="q">${sub ? "<span class=\"muted\">↳</span> " : ""}${esc(r.label)}${r.qualifier ? ` <span class="muted">(${esc(r.qualifier)})</span>` : ""}</td>
+    return `<tr class="rec${sub ? " sub" : ""}" data-detail="${id}"><td class="q"><button type="button" class="rowtoggle" aria-expanded="false" aria-controls="${id}"><span class="chev" aria-hidden="true">▸</span><span>${sub ? "↳ " : ""}${esc(r.label)}${r.qualifier ? ` <span class="muted">(${esc(r.qualifier)})</span>` : ""}</span></button></td>
       <td>${valueCell(r)}</td>
       <td><span class="chip ${sourceClass(r.source)}">${esc(r.source)}</span> ${status} <span class="tally" data-tally="${esc(r.r)}"></span></td></tr>
       <tr class="detail" id="${id}" hidden><td colspan="3">${highlight(r.context, r.text)}<br>
-        <span class="muted">Annotation <a href="#/query?describe=${encodeURIComponent(r.r)}">${esc(local(r.r))}</a>: bearer ${termLink(r.bearer, r.blabel || curie(r.bearer))}${r.relation ? "" : `, quality ${termLink(r.quality, r.qlabel || curie(r.quality))}`}${r.unit ? `, unit ${termLink(r.unit, curie(r.unit))}` : ""}${r.fclass ? `, FLOPO class ${termLink(r.fclass, curie(r.fclass))}` : ""}${owlLink(r.fac)}</span>
+        <span class="muted">Annotation <a href="#/query?describe=${encodeURIComponent(r.r)}">${esc(local(r.r))}</a>: bearer ${termLink(r.bearer, r.blabel || curie(r.bearer))}${r.relation ? "" : `, quality ${termLink(r.quality, r.qlabel || curie(r.quality))}`}${r.unit ? `, unit ${termLink(r.unit, r.unitLabel || curie(r.unit))}` : ""}${r.fclass ? `, FLOPO class ${termLink(r.fclass, r.flabel || curie(r.fclass))}` : ""}${owlLink(r.fac)}</span>
         <div class="review" data-record="${esc(r.r)}"></div></td></tr>`;
   };
   const byIri = new Map(records.map((r) => [r.r, r]));
@@ -461,7 +585,7 @@ async function taxonPage(t) {
       const mergedRows = (mergedByOrgan.get(og) || []).map((m) => `<tr class="merged"><td class="q"><b>${esc(m.label)}</b></td>
           <td>range over ${m.members.length} values from ${m.sources} source${m.sources > 1 ? "s" : ""}${owlLink(m.fac)}</td><td></td></tr>`
           + m.members.map((x) => recordRow(x, true)).join("")).join("");
-      return `<tr><th colspan="3">${esc(g.label[og] || "Other")}</th></tr>` + mergedRows
+      return `<tr><th colspan="3" scope="colgroup">${esc(g.label[og] || "Other")}</th></tr>` + mergedRows
         + list.filter((r) => !inMerged.has(r.r)).map((r) => recordRow(r)).join("");
     })
     .join("");
@@ -471,7 +595,13 @@ async function taxonPage(t) {
   const points = places.filter((p) => p.la && p.lo);
   const localities = [...new Set(places.filter((p) => p.loc).map((p) => p.loc))];
   const notesHtml = notes.map((x) => `<dt>${x.kind.endsWith("abundance") ? "Abundance" : "Habitat"}</dt><dd>${esc(x.text)} <span class="chip ${sourceClass(x.src)}">${esc(x.src)}</span></dd>`).join("");
-  const growthHtml = growth.map((x) => `<dt>${esc(x.label)}</dt><dd>${esc(x.value)}</dd>`).join("");
+  // Each condition of growth keeps the flora that states it.
+  const growthBy = new Map();
+  for (const x of growth) (growthBy.get(x.label) || growthBy.set(x.label, []).get(x.label)).push(x);
+  const growthHtml = [...growthBy].map(([label, rows]) => `<dt>${esc(label)}</dt><dd>${rows.map((x) => `<div>${esc(x.value)} <span class="chip ${sourceClass(x.source)}">${esc(x.source)}</span></div>`).join("")}</dd>`).join("");
+  const blockedHtml = blocked.length ? `<details class="pending blocked"><summary>Not used: failed a check (${n(blocked.length)})</summary>
+    <p class="muted">These statements failed an automatic check. They are kept for the record and are not counted as traits.</p>
+    <ul>${blocked.map((r) => `<li><b>${esc(r.label)}</b> <span class="chip ${sourceClass(r.source)}">${esc(r.source)}</span><br>${highlight(r.context, r.text)}</li>`).join("")}</ul></details>` : "";
 
   pane.innerHTML = html`
     <div class="taxon-head">
@@ -488,46 +618,45 @@ async function taxonPage(t) {
     <div class="taxon-grid">
       <div>
         <h2>Traits</h2>
-        ${conflicts.length ? `<div class="conflicts"><h3>${n(conflicts.length)} contradictory statement${conflicts.length > 1 ? "s" : ""}</h3>
-          <p class="muted">These statements cannot both be true of one plant. A taxon covers many plants, so the sources may describe different plants or one may be wrong.</p><ul>${conflictItems}</ul></div>` : ""}
-        ${records.length ? `<p class="muted">${n(records.length)} annotations. Select one to see the sentence it was read from, and to say whether the annotation is right.</p><p class="reviewbar" id="reviewbar" hidden></p><table class="traits">${traitRows}</table>` : `<p class="muted">No trait annotations yet.</p>`}
+        ${conflictBox}
+        ${records.length ? `<p class="muted">${n(records.length)} annotations. Select a row to see the sentence it was read from, and to say whether the annotation is right.</p><p class="reviewbar" id="reviewbar" hidden></p><div class="tablewrap"><table class="traits"><thead><tr><th scope="col">Statement</th><th scope="col">Value</th><th scope="col">Source and review</th></tr></thead><tbody>${traitRows}</tbody></table></div>` : `<p class="muted">No trait annotations yet.</p>`}
+        ${blockedHtml}
         ${pending.length ? `<details class="pending"><summary>${n(pending.length)} statements not yet annotated</summary><ul>${pending.map((p) => `<li>${highlight(p.context, p.text)} <span class="muted">— ${esc(p.reason.replace(/_/g, " "))}</span></li>`).join("")}</ul></details>` : ""}
       </div>
       <div>
         <h2>Trait fingerprint</h2>
-        <div class="fingerprint tablewrap" tabindex="0" role="region" aria-label="Trait fingerprint">${records.length ? atlasTable(fpCells, g.organs, g.traits, { link: false }) : `<p class="muted">Nothing to show.</p>`}</div>
+        <div class="fingerprint tablewrap" tabindex="0" role="region" aria-label="Trait fingerprint">${records.length ? atlasTable(fpCells, g.organs, g.traits, { link: false, short: true }) : `<p class="muted">Nothing to show.</p>`}</div>
         <h2>Where it grows</h2>
         ${regions.size ? `<div class="regions">${[...regions].map(([, l]) => `<span class="region on">${esc(l)}</span>`).join("")}</div>` : `<p class="muted">No region recorded.</p>`}
         ${points.length ? `<div class="map" id="map" role="img" aria-label="Map of recorded localities"></div>` : ""}
         ${localities.length ? `<p class="muted" style="font-size:.88rem">Localities: ${localities.map(esc).join("; ")}</p>` : ""}
-        ${i.emin ? `<p>Elevation ${n(i.emin)}${i.emax !== i.emin ? `–${n(i.emax)}` : ""} m <span class="muted">(Collenette, converted from feet)</span></p>` : ""}
+        ${i.emin ? `<p>Elevation ${n(i.emin)}${i.emax !== i.emin ? `–${n(i.emax)}` : ""} m</p>` : ""}
         ${notesHtml || i.range ? `<h3>Notes</h3><dl class="kv">${i.range ? `<dt>Native range</dt><dd>${esc(i.range)}</dd>` : ""}${notesHtml}</dl>` : ""}
-        ${growthHtml ? `<h3>Ecology and cultivation <span class="chip">NCVC 2024</span></h3><dl class="kv">${growthHtml}</dl>` : ""}
+        ${growthHtml ? `<h3>Ecology and cultivation</h3><dl class="kv">${growthHtml}</dl>` : ""}
         <h3>Names in the sources</h3><ul>${nameRows}</ul>
         <p><a href="#/compare/${encodeURIComponent(taxonKey(t))}">Compare with another taxon</a> · <a href="#/query?taxon=${encodeURIComponent(t)}">Query this taxon in SPARQL</a></p>
       </div>
     </div>`;
   const photoPane = pane.querySelector("#inat-panel");
-  const loadPhotos = () => inaturalistData().then((data) => {
+  // The catalogue is optional: without a match (or without the catalogue) the taxon page has no photo block.
+  inaturalistData().then((data) => {
     if (!photoPane.isConnected) return;
     photoPane.innerHTML = inaturalistPanel(data.taxa?.[t], i.label, data.generated);
     photoPane.querySelectorAll("img").forEach((img) => img.addEventListener("error", () => {
       img.replaceWith(Object.assign(document.createElement("span"), { textContent: "Photograph unavailable; open the source to view it." }));
     }));
-  }).catch(() => {
-    if (!photoPane.isConnected) return;
-    photoPane.innerHTML = `<section class="inat-panel"><h2>iNaturalist</h2><p>Could not load the image catalogue.</p><button type="button">Retry images</button></section>`;
-    photoPane.querySelector("button").addEventListener("click", loadPhotos);
-  });
-  loadPhotos();
+  }).catch(() => { /* no photo block */ });
   setupReview(pane, t, records, i.label || taxonKey(t));
   pane.querySelectorAll("tr.rec").forEach((tr) => {
+    const button = tr.querySelector("button.rowtoggle");
     const toggle = () => {
       const d = document.getElementById(tr.dataset.detail);
       d.hidden = !d.hidden;
+      button.setAttribute("aria-expanded", String(!d.hidden));
+      tr.classList.toggle("open", !d.hidden);
     };
-    tr.addEventListener("click", (e) => { if (!e.target.closest("a")) toggle(); });
-    tr.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
+    button.addEventListener("click", (e) => { e.stopPropagation(); toggle(); });
+    tr.addEventListener("click", (e) => { if (!e.target.closest("a, button")) toggle(); });
   });
   if (points.length && window.L) {
     const map = L.map("map", { scrollWheelZoom: false });
@@ -538,15 +667,22 @@ async function taxonPage(t) {
 }
 
 /* ---------------------------------------------------------------- traits browser */
-async function traits(organKey, traitKey, valueKey) {
+// Records that failed a check are not traits; every count and list of traits leaves them out.
+const NOT_BLOCKED = `FILTER NOT EXISTS { ?r fb:status "blocked" }`;
+const PAGE = 200;
+async function traits(organKey, traitKey, valueKey, params = new URLSearchParams()) {
   const g = await groups();
   const og = organKey ? FB + organKey : "";
   const tg = traitKey ? FB + traitKey : "";
-  setView(`<h1>Browse traits</h1><p class="muted">Search for a trait by any of its names, or choose a plant part, then a kind of trait, then a value to list the taxa that have it.</p>
-    <div class="field"><label for="tsearch">Search traits by name or synonym</label><input id="tsearch" type="search" placeholder="e.g. shrub, awn, hairless, umbel" autocomplete="off" style="max-width:28rem;width:100%"></div>
-    <div id="tsearch-results"></div>
-    <div class="cols"><div id="c1"></div><div id="c2"></div><div id="c3"></div></div>`);
-  traitSearch(document.getElementById("tsearch"), document.getElementById("tsearch-results"));
+  setTitle(organKey ? `Traits: ${(g.label[og] || organKey).toLowerCase()}` : "Traits");
+  setView(`<h1>Browse traits</h1><p class="muted">Search for a trait by any of its names (several words are fine: “yellow flower”), or choose a plant part, then a kind of trait, then a value to list the taxa that have it.</p>
+    <div class="field"><label for="tsearch">Search traits by name or synonym</label><input id="tsearch" type="search" placeholder="e.g. shrub, awn, glabrous leaf, yellow flower" autocomplete="off" style="max-width:28rem;width:100%"></div>
+    <div id="tsearch-results" aria-live="polite"></div>
+    <div class="cols"><div id="c1"></div><div id="c2"></div><div id="c3"></div></div>
+    <section id="trait-taxa" aria-live="polite"></section>`);
+  const search = document.getElementById("tsearch");
+  traitSearch(search, document.getElementById("tsearch-results"));
+  if (params.get("q")) { search.value = params.get("q"); search.dispatchEvent(new Event("input")); }
   const organCounts = await precomputed("organCounts");
   const oc = Object.fromEntries(organCounts.map((r) => [r.og, r.n]));
   document.getElementById("c1").innerHTML = `<p class="col-title">Plant part</p><ul class="pick">${g.organs
@@ -554,43 +690,63 @@ async function traits(organKey, traitKey, valueKey) {
     .map((o) => `<li><a class="${o.g === og ? "current" : ""}" href="#/traits/${local(o.g)}">${esc(o.label)}<small class="num">${n(oc[o.g])}</small></a></li>`)
     .join("")}</ul>`;
   if (!og) return;
-  const traitCounts = await sparql(`SELECT ?tg (COUNT(DISTINCT ?t) AS ?n) WHERE { ?r a fb:TraitRecord ; fb:organGroup ${iriLiteral(og)} ; fb:traitGroup ?tg ; fb:taxon ?t } GROUP BY ?tg`);
+  const traitCounts = await sparql(`SELECT ?tg (COUNT(DISTINCT ?t) AS ?n) WHERE { ?r a fb:TraitRecord ; fb:organGroup ${iriLiteral(og)} ; fb:traitGroup ?tg ; fb:taxon ?t . ${NOT_BLOCKED} } GROUP BY ?tg`);
   const tc = Object.fromEntries(traitCounts.map((r) => [r.tg, r.n]));
   document.getElementById("c2").innerHTML = `<p class="col-title">Kind of trait</p><ul class="pick">${g.traits
     .filter((t) => tc[t.g])
     .map((t) => `<li><a class="${t.g === tg ? "current" : ""}" href="#/traits/${organKey}/${local(t.g)}">${esc(t.label)}<small class="num">${n(tc[t.g])}</small></a></li>`)
     .join("")}</ul>`;
-  if (!tg) return;
+  if (!tg) { if (narrowScreen()) document.getElementById("c2").scrollIntoView({ block: "start" }); return; }
   const values = await sparql(`SELECT ?b ?q (SAMPLE(?bl) AS ?blabel) (SAMPLE(?ql) AS ?qlabel) (COUNT(DISTINCT ?t) AS ?n) WHERE {
     ?r a fb:TraitRecord ; fb:organGroup ${iriLiteral(og)} ; fb:traitGroup ${iriLiteral(tg)} ; fb:bearer ?b ; fb:quality ?q ; fb:taxon ?t ; fb:negated false .
-    ?b rdfs:label ?bl . ?q rdfs:label ?ql } GROUP BY ?b ?q ORDER BY DESC(?n)`);
+    ?b rdfs:label ?bl . ?q rdfs:label ?ql . ${NOT_BLOCKED} } GROUP BY ?b ?q ORDER BY DESC(?n)`);
   const c3 = document.getElementById("c3");
   const selected = valueKey ? decodeURIComponent(valueKey) : "";
-  c3.innerHTML = `<p class="col-title">Value (part and quality), with number of taxa</p><ul class="pick">${values
-    .map((v) => {
-      const key = `${local(v.b)}~${local(v.q)}`;
-      return `<li><a class="${key === selected ? "current" : ""}" href="#/traits/${organKey}/${traitKey}/${encodeURIComponent(key)}">${esc(v.blabel)} ${esc(v.qlabel)}<small class="num">${n(v.n)}</small></a></li>`;
-    })
-    .join("")}</ul>`;
-  if (!selected) return;
+  const keyOf = (v) => `${local(v.b)}~${local(v.q)}`;
+  // A long list is shown in pages; the page of the chosen value is always among them.
+  let limit = Math.max(PAGE, Math.ceil((values.findIndex((v) => keyOf(v) === selected) + 1) / PAGE) * PAGE), vfilter = "";
+  c3.innerHTML = `<p class="col-title">Value (part and quality), with number of taxa</p>
+    ${values.length > 20 ? `<input id="vfilter" type="search" placeholder="Filter these ${n(values.length)} values" aria-label="Filter values" autocomplete="off" style="margin-bottom:.5rem;width:100%">` : ""}
+    <ul class="pick" id="vlist"></ul><div id="vmore"></div>`;
+  const drawValues = () => {
+    const shown = values.filter((v) => !vfilter || `${v.blabel} ${v.qlabel}`.toLowerCase().includes(vfilter));
+    document.getElementById("vlist").innerHTML = shown.slice(0, limit)
+      .map((v) => `<li><a class="${keyOf(v) === selected ? "current" : ""}" href="#/traits/${organKey}/${traitKey}/${encodeURIComponent(keyOf(v))}">${esc(v.blabel)} ${esc(v.qlabel)}<small class="num">${n(v.n)}</small></a></li>`)
+      .join("") || `<li class="muted">No value matches.</li>`;
+    document.getElementById("vmore").innerHTML = shown.length > limit ? `<button type="button" class="ghost">Show ${n(Math.min(PAGE, shown.length - limit))} more of ${n(shown.length - limit)}</button>` : "";
+    document.querySelector("#vmore button")?.addEventListener("click", () => { limit += PAGE; drawValues(); });
+  };
+  drawValues();
+  document.getElementById("vfilter")?.addEventListener("input", (e) => { vfilter = e.target.value.trim().toLowerCase(); limit = PAGE; drawValues(); });
+  if (!selected) { if (narrowScreen()) c3.scrollIntoView({ block: "start" }); return; }
   const [b, q] = selected.split("~");
+  const box = document.getElementById("trait-taxa");
+  if (!/^\w+$/.test(b || "") || !/^\w+$/.test(q || "")) { box.innerHTML = `<p class="muted">That value does not exist.</p>`; return; }
+  box.innerHTML = `<p class="loading">Loading the taxa…</p>`;
   const taxaRows = await sparql(`SELECT ?t (SAMPLE(?l) AS ?label) (SAMPLE(?f) AS ?family) (GROUP_CONCAT(DISTINCT ?lab; separator="; ") AS ?values) (GROUP_CONCAT(DISTINCT ?src; separator="|") AS ?sources) WHERE {
     ?r a fb:TraitRecord ; fb:bearer obo:${b} ; fb:quality obo:${q} ; fb:organGroup ${iriLiteral(og)} ; fb:taxon ?t ; rdfs:label ?lab ; fb:negated false ; fb:source/rdfs:label ?src .
-    ?t rdfs:label ?l . OPTIONAL { ?t fb:family ?f } } GROUP BY ?t ORDER BY ?label`);
-  const value = values.find((v) => `${local(v.b)}~${local(v.q)}` === selected);
-  c3.insertAdjacentHTML(
-    "beforeend",
-    `<h2>${esc(value ? value.blabel + " " + value.qlabel : selected)}: ${n(taxaRows.length)} taxa</h2>
-     <table class="results"><thead><tr><th>Taxon</th><th>Family</th><th>Annotation</th><th>Source</th></tr></thead><tbody>${taxaRows
-       .map((r) => `<tr><td><a class="sci" href="${taxonHref(r.t)}">${esc(r.label)}</a></td><td>${esc(r.family || "")}</td><td>${esc(r.values)}</td><td>${r.sources.split("|").map((s) => `<span class="chip ${sourceClass(s)}">${esc(s)}</span>`).join(" ")}</td></tr>`)
-       .join("")}</tbody></table>`
-  );
-  c3.querySelector("h2").scrollIntoView({ block: "nearest" });
+    ?t rdfs:label ?l . OPTIONAL { ?t fb:family ?f } ${NOT_BLOCKED} } GROUP BY ?t ORDER BY ?label`);
+  const value = values.find((v) => keyOf(v) === selected);
+  const row = (r) => `<tr><td><a class="sci" href="${taxonHref(r.t)}">${esc(r.label)}</a></td><td>${esc(r.family || "")}</td><td>${esc(r.values)}</td><td>${r.sources.split("|").map((s) => `<span class="chip ${sourceClass(s)}">${esc(s)}</span>`).join(" ")}</td></tr>`;
+  box.innerHTML = `<h2>${esc(value ? value.blabel + " " + value.qlabel : selected)}: ${n(taxaRows.length)} taxa</h2>
+    <div class="tablewrap"><table class="results"><thead><tr><th scope="col">Taxon</th><th scope="col">Family</th><th scope="col">Annotation</th><th scope="col">Source</th></tr></thead><tbody id="trows"></tbody></table></div>
+    <div id="trmore"></div>`;
+  let shownRows = 0;
+  const more = () => {
+    const next = taxaRows.slice(shownRows, shownRows + PAGE);
+    document.getElementById("trows").insertAdjacentHTML("beforeend", next.map(row).join(""));
+    shownRows += next.length;
+    document.getElementById("trmore").innerHTML = shownRows < taxaRows.length ? `<button type="button" class="ghost">Show ${n(Math.min(PAGE, taxaRows.length - shownRows))} more of ${n(taxaRows.length - shownRows)}</button>` : "";
+    document.querySelector("#trmore button")?.addEventListener("click", more);
+  };
+  more();
+  box.querySelector("h2").scrollIntoView({ block: "nearest" });
 }
 
 /* Search by concept: a word is looked up in the labels and the synonyms (of every scope) of the
-   ontology terms, so "shrub" finds 'frutescent habit' (synonym: shrub habit). The result lists
-   the part-and-quality values that use a matching term, with the number of taxa. */
+   ontology terms, so "shrub" finds 'frutescent habit' (synonym: shrub habit). Several words must each
+   match the part or the quality ("yellow flower": yellow the colour, flower the part). The result
+   lists the part-and-quality values that use matching terms, with the number of taxa. */
 const positionedQuery = (part, quality) => `PREFIX fb: <${FB}>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -600,6 +756,55 @@ SELECT ?taxon ?annotation ?text ?source WHERE {
      rdfs:label ?annotation ; fb:text ?text ; fb:taxon ?t ; fb:source/rdfs:label ?source .
   ?t rdfs:label ?taxon } ORDER BY ?taxon LIMIT 500`;
 
+const traitData = () =>
+  cached("traitData", async () => {
+    const [values, names, positioned] = await Promise.all([precomputed("traitValues"), precomputed("termNames"), precomputed("positionedValues")]);
+    const label = {}, all = {};
+    for (const t of names) { label[t.id] = t.label; all[t.id] = [t.label, ...(t.names ? t.names.split("|") : [])]; }
+    return { values, positioned, label, all };
+  });
+// How a word matches a term: 0 as a word of its label, 0.5 as a word of a synonym, 1 and 1.5 inside a label or a synonym.
+function termMatch(all, word) {
+  let best = null;
+  (all || []).forEach((x, i) => {
+    const l = x.toLowerCase();
+    const rank = l === word || l.split(/[^a-z0-9]+/).includes(word) ? (i ? 0.5 : 0) : l.includes(word) ? (i ? 1.5 : 1) : null;
+    if (rank !== null && (!best || rank < best.rank)) best = { name: x, rank };
+  });
+  return best;
+}
+function findTraits(query, data) {
+  const words = query.toLowerCase().split(/\s+/).filter((w) => w.length > 1);
+  if (!words.length) return [];
+  const memo = new Map();
+  const match = (id, w) => {
+    const k = id + "|" + w;
+    if (!memo.has(k)) memo.set(k, termMatch(data.all[id], w));
+    return memo.get(k);
+  };
+  const score = (p, v, needPart) => {
+    let rank = 0, onPart = 0, onQuality = 0;
+    const found = [];
+    for (const w of words) {
+      const a = match(p, w), b = match(v, w);
+      if (!a && !b) return null;
+      const useQuality = b && (!a || b.rank <= a.rank);
+      const m = useQuality ? b : a;
+      if (useQuality) onQuality++; else onPart++;
+      rank += m.rank;
+      if (!found.includes(m.name)) found.push(m.name);
+    }
+    if (needPart && !words.some((w) => match(p, w))) return null;
+    return { rank: rank - (onPart && onQuality ? 0.5 : 0), found };
+  };
+  const rows = [];
+  for (const r of data.values) { const s = score(r.p, r.v, false); if (s) rows.push({ ...r, ...s, n: +r.n }); }
+  // a part in a position that has a name ('basal leaf', 'lateral vein'): found by that name only
+  for (const r of data.positioned) { const s = score(r.p, r.v, true); if (s) rows.push({ ...r, ...s, n: +r.n, named: true }); }
+  return rows.sort((a, b) => a.rank - b.rank || b.n - a.n);
+}
+const traitHref = (r) => (r.named ? "#/query?q=" + encodeURIComponent(positionedQuery(r.p, r.v)) : `#/traits/${r.o}/${r.g}/${encodeURIComponent(r.p + "~" + r.v)}`);
+
 function traitSearch(input, box) {
   let timer = 0;
   input.addEventListener("input", () => {
@@ -608,30 +813,75 @@ function traitSearch(input, box) {
       const q = input.value.trim().toLowerCase();
       if (q.length < 3) { box.innerHTML = ""; return; }
       box.innerHTML = `<p class="muted">Searching…</p>`;
-      const [values, names, positioned] = await Promise.all([precomputed("traitValues"), precomputed("termNames"), precomputed("positionedValues")]);
+      let data;
+      try { data = await traitData(); } catch (err) { box.innerHTML = `<p class="error">${esc(err.message)}</p>`; return; }
       if (input.value.trim().toLowerCase() !== q) return;
-      const label = {}, hit = {};
-      for (const t of names) {
-        label[t.id] = t.label;
-        const all = [t.label, ...(t.names ? t.names.split("|") : [])];
-        const exact = all.find((x) => x.toLowerCase() === q) || all.find((x) => x.toLowerCase().split(/[^a-z0-9]+/).includes(q));
-        const found = exact || all.find((x) => x.toLowerCase().includes(q));
-        if (found) hit[t.id] = { name: found, rank: exact ? 0 : 1 };
-      }
-      // a part in a position that has a name ('basal leaf', 'lateral vein'): found by that name only
-      const named = positioned.filter((r) => hit[r.p]).map((r) => ({ ...r, h: hit[r.p], n: +r.n, named: true }));
-      const rows = values
-        .filter((r) => hit[r.v] || hit[r.p])
-        .map((r) => ({ ...r, h: hit[r.v] || hit[r.p], n: +r.n }))
-        .concat(named)
-        .sort((a, b) => a.h.rank - b.h.rank || b.n - a.n)
-        .slice(0, 60);
+      const all = findTraits(q, data);
+      const rows = all.slice(0, 60);
       box.innerHTML = rows.length
-        ? `<table class="results"><thead><tr><th>Trait</th><th>Found as</th><th class="num">Taxa</th></tr></thead><tbody>${rows
-            .map((r) => `<tr><td><a href="${r.named ? "#/query?q=" + encodeURIComponent(positionedQuery(r.p, r.v)) : `#/traits/${r.o}/${r.g}/${encodeURIComponent(r.p + "~" + r.v)}`}">${esc(label[r.p] || r.p)} ${esc(label[r.v] || r.v)}</a></td><td class="muted">${esc(r.h.name)}</td><td class="num">${n(r.n)}</td></tr>`)
-            .join("")}</tbody></table>`
-        : `<p class="muted">No trait has a name or synonym with “${esc(q)}”.</p>`;
+        ? `<div class="tablewrap"><table class="results"><thead><tr><th scope="col">Trait</th><th scope="col">Found as</th><th scope="col" class="num">Taxa</th></tr></thead><tbody>${rows
+            .map((r) => `<tr><td><a href="${esc(traitHref(r))}">${esc(data.label[r.p] || r.p)} ${esc(data.label[r.v] || r.v)}</a></td><td class="muted">${esc(r.found.join(" · "))}</td><td class="num">${n(r.n)}</td></tr>`)
+            .join("")}</tbody></table></div>${all.length > rows.length ? `<p class="muted">The first ${rows.length} of ${n(all.length)}; add a word to narrow the list.</p>` : ""}`
+        : `<p class="muted">No trait has a name or synonym with ${q.includes(" ") ? "each of these words: " : ""}“${esc(q)}”.</p>`;
     }, 250);
+  });
+}
+
+/* The search box of the overview: taxa (names, families, names printed in floras) and traits, as one
+   short list while typing. The taxon index and the trait names load when the box is first used. */
+function homeSearch() {
+  const form = document.getElementById("home-form"), input = document.getElementById("home-search"), box = document.getElementById("home-results");
+  if (!input) return;
+  let timer = 0, token = 0, first = "";
+  const warm = () => { taxonIndex().catch(() => {}); traitData().catch(() => {}); };
+  input.addEventListener("focus", warm, { once: true });
+  const run = async () => {
+    const q = input.value.trim();
+    const mine = ++token;
+    first = "";
+    if (q.length < 2) { box.innerHTML = ""; return; }
+    box.innerHTML = `<p class="muted">Searching…</p>`;
+    let index, data;
+    try { [index, data] = await Promise.all([taxonIndex(), traitData()]); } catch (err) { if (mine === token) box.innerHTML = `<p class="error">${esc(err.message)}</p>`; return; }
+    if (mine !== token || !input.isConnected) return;
+    const lower = q.toLowerCase();
+    const found = taxonMatches(index, q, "");
+    const rank = (r) => (r.label.toLowerCase().startsWith(lower) ? 0 : 1) + (r.n > 0 ? 0 : 2);
+    const taxa = found.sort((a, b) => rank(a) - rank(b) || b.n - a.n).slice(0, 6);
+    const kinds = findTraits(q, data);
+    const traitRows = kinds.slice(0, 6);
+    const list = [];
+    const taxaHtml = taxa.length ? `<h3>Taxa</h3><ul>${taxa.map((r) => {
+      const syn = matchedSynonym(r, q);
+      list.push(taxonHref(r.t));
+      return `<li><a href="${taxonHref(r.t)}"><span class="sci">${esc(r.label)}${syn ? ` <span class="syn">= ${esc(syn)}</span>` : ""}</span>${r.family ? ` <span class="muted">${esc(r.family)}</span>` : ""}<small class="num">${r.n ? `${n(r.n)} records` : "no records"}</small></a></li>`;
+    }).join("")}</ul>${found.length > taxa.length ? `<a href="#/taxa" id="home-all">All ${n(found.length)} matching taxa</a>` : ""}` : "";
+    const traitHtml = traitRows.length ? `<h3>Traits</h3><ul>${traitRows.map((r) => {
+      list.push(traitHref(r));
+      return `<li><a href="${esc(traitHref(r))}">${esc(data.label[r.p] || r.p)} ${esc(data.label[r.v] || r.v)}<small class="num">${n(r.n)} taxa</small></a></li>`;
+    }).join("")}</ul>${kinds.length > traitRows.length ? `<a href="#/traits?q=${encodeURIComponent(q)}">All ${n(kinds.length)} matching traits</a>` : ""}` : "";
+    first = list[0] || "";
+    box.innerHTML = taxaHtml || traitHtml ? `<div class="home-cols"><div>${taxaHtml}</div><div>${traitHtml}</div></div>` : `<p class="muted">Nothing matches “${esc(q)}”. Try fewer words, or a family name.</p>`;
+    document.getElementById("home-all")?.addEventListener("click", () => {
+      try { sessionStorage.setItem("taxonFilter", q); sessionStorage.setItem("taxonSourceFilter", ""); sessionStorage.setItem("taxonShowAll", "0"); } catch (e) { /* storage unavailable */ }
+    });
+  };
+  input.addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(run, 150); });
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    clearTimeout(timer);
+    await run();
+    if (first) location.hash = first.replace(/^#/, "");
+  });
+  // arrow keys move between the box and the results
+  const links = () => [...box.querySelectorAll("a")];
+  form.addEventListener("keydown", (e) => {
+    if (e.key !== "ArrowDown" && e.key !== "ArrowUp" && e.key !== "Escape") return;
+    const all = links(), at = all.indexOf(document.activeElement);
+    if (e.key === "Escape") { input.focus(); return; }
+    e.preventDefault();
+    const next = e.key === "ArrowDown" ? at + 1 : at - 1;
+    if (next < 0) input.focus(); else if (all[next]) all[next].focus();
   });
 }
 
@@ -639,28 +889,39 @@ function traitSearch(input, box) {
 const valueChoices = () => precomputed("valueChoices");
 
 async function identify() {
+  setTitle("Identify");
   const [g, choices] = await Promise.all([groups(), valueChoices()]);
   const organs = g.organs.filter((o) => choices.some((c) => c.og === o.g));
+  // the values of each plant part, the ones that many taxa have first
+  const byOrgan = new Map(organs.map((o) => [o.g, choices.filter((c) => c.og === o.g).map((c) => ({ ...c, n: +c.n })).sort((a, b) => b.n - a.n || a.label.localeCompare(b.label))]));
   const conditionHtml = (i) => `<div class="condition" data-i="${i}">
       <div class="field"><label for="og${i}">Plant part</label><select id="og${i}">${organs.map((o) => `<option value="${o.g}">${esc(o.label)}</option>`).join("")}</select></div>
-      <div class="field"><label for="q${i}">Quality</label><select id="q${i}"></select></div>
+      <div class="field"><label for="q${i}">Value</label><input id="qf${i}" type="search" class="qfilter" placeholder="Type to filter the values" aria-label="Filter the values of this plant part" autocomplete="off"><select id="q${i}"></select></div>
       <button type="button" class="ghost" data-remove="${i}" aria-label="Remove this condition">Remove</button></div>`;
   setView(`<h1>Identify</h1><p class="muted">Describe a plant by the traits you can see. Taxa are ranked by how many of your traits their annotations state; a colour also matches its shades (pale yellow matches yellow).</p>
     <div class="conditions" id="conds"></div>
     <div class="toolbar"><button type="button" class="ghost" id="add">Add a trait</button><button type="button" id="run">Find taxa</button></div>
-    <div id="idresults"></div>`);
+    <div id="idresults" aria-live="polite"></div>`);
   const conds = document.getElementById("conds");
   let next = 0;
   const fill = (i) => {
     const og = document.getElementById("og" + i).value;
-    document.getElementById("q" + i).innerHTML = choices.filter((c) => c.og === og).map((c) => `<option value="${c.q}">${esc(c.label)} (${c.n})</option>`).join("");
+    const select = document.getElementById("q" + i);
+    const filter = document.getElementById("qf" + i).value.trim().toLowerCase();
+    const all = byOrgan.get(og) || [];
+    const list = all.filter((c) => !filter || c.label.toLowerCase().includes(filter));
+    const prev = select.value;
+    select.innerHTML = `<option value="">Choose a value${filter ? ` (${n(list.length)} of ${n(all.length)} match)` : ` (${n(all.length)})`}</option>` +
+      list.map((c) => `<option value="${esc(c.q)}"${c.q === prev ? " selected" : ""}>${esc(c.label)} (${n(c.n)} taxa)</option>`).join("");
+    document.getElementById("qf" + i).hidden = all.length <= 12;
   };
   const add = (organ) => {
     const i = next++;
     conds.insertAdjacentHTML("beforeend", conditionHtml(i));
     if (organ) document.getElementById("og" + i).value = organ;
     fill(i);
-    document.getElementById("og" + i).addEventListener("change", () => fill(i));
+    document.getElementById("og" + i).addEventListener("change", () => { document.getElementById("qf" + i).value = ""; fill(i); });
+    document.getElementById("qf" + i).addEventListener("input", () => fill(i));
     conds.querySelector(`[data-remove="${i}"]`).addEventListener("click", () => conds.querySelector(`[data-i="${i}"]`).remove());
   };
   add(FB + "organ-flower");
@@ -669,21 +930,21 @@ async function identify() {
   document.getElementById("run").addEventListener("click", async () => {
     const picked = [...conds.querySelectorAll(".condition")].map((c) => ({ og: c.querySelector("select[id^=og]").value, q: c.querySelector("select[id^=q]").value })).filter((c) => c.q);
     const out = document.getElementById("idresults");
-    if (!picked.length) { out.innerHTML = `<p class="muted">Add at least one trait.</p>`; return; }
+    if (!picked.length) { out.innerHTML = `<p class="muted">Choose a value for at least one trait.</p>`; return; }
     out.innerHTML = `<p class="loading">Searching…</p>`;
     const values = picked.map((c, i) => `(${i} ${iriLiteral(c.og)} ${iriLiteral(c.q)})`).join(" ");
     const rows = await sparql(`SELECT ?t (SAMPLE(?l) AS ?label) (SAMPLE(?f) AS ?family) (COUNT(DISTINCT ?i) AS ?hits) (GROUP_CONCAT(DISTINCT STR(?i); separator=",") AS ?which) (GROUP_CONCAT(DISTINCT ?lab; separator="; ") AS ?evidence) WHERE {
       VALUES (?i ?og ?q) { ${values} }
       ?r a fb:TraitRecord ; fb:organGroup ?og ; fb:quality ?rq ; fb:taxon ?t ; fb:negated false ; rdfs:label ?lab .
-      ?rq rdfs:subClassOf* ?q .
+      ?rq rdfs:subClassOf* ?q . ${NOT_BLOCKED}
       ?t rdfs:label ?l . OPTIONAL { ?t fb:family ?f } } GROUP BY ?t ORDER BY DESC(?hits) ?label LIMIT 200`);
     out.innerHTML = rows.length
-      ? `<p class="muted">${n(rows.filter((r) => +r.hits === picked.length).length)} taxa state all ${picked.length} traits.</p><table class="results"><thead><tr><th>Match</th><th>Taxon</th><th>Family</th><th>Matching annotations</th></tr></thead><tbody>${rows
+      ? `<p class="muted">${n(rows.filter((r) => +r.hits === picked.length).length)} taxa state all ${picked.length} traits.</p><div class="tablewrap"><table class="results"><thead><tr><th scope="col">Match</th><th scope="col">Taxon</th><th scope="col">Family</th><th scope="col">Matching annotations</th></tr></thead><tbody>${rows
           .map((r) => {
             const hit = new Set(r.which.split(","));
-            return `<tr><td><span class="score" title="${r.hits} of ${picked.length}">${picked.map((_, i) => `<i class="${hit.has(String(i)) ? "hit" : ""}"></i>`).join("")}</span></td><td><a class="sci" href="${taxonHref(r.t)}">${esc(r.label)}</a></td><td>${esc(r.family || "")}</td><td>${esc(r.evidence)}</td></tr>`;
+            return `<tr><td><span class="score" role="img" aria-label="${r.hits} of ${picked.length} traits matched" title="${r.hits} of ${picked.length}">${picked.map((_, i) => `<i class="${hit.has(String(i)) ? "hit" : ""}"></i>`).join("")}</span> <span class="num muted" aria-hidden="true">${r.hits}/${picked.length}</span></td><td><a class="sci" href="${taxonHref(r.t)}">${esc(r.label)}</a></td><td>${esc(r.family || "")}</td><td>${esc(r.evidence)}</td></tr>`;
           })
-          .join("")}</tbody></table>`
+          .join("")}</tbody></table></div>`
       : `<p class="muted">No taxon states any of these traits. Try a broader quality.</p>`;
   });
 }
@@ -694,9 +955,10 @@ const EXAMPLES = {
 PREFIX obo: <http://purl.obolibrary.org/obo/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-SELECT ?taxon ?name ?annotation WHERE {
+SELECT DISTINCT ?taxon ?name ?annotation WHERE {
   ?r a fb:TraitRecord ; fb:taxon ?taxon ; fb:bearer obo:PO_0009046 ;
      fb:quality ?colour ; rdfs:label ?annotation ; fb:negated false .
+  FILTER NOT EXISTS { ?r fb:status "blocked" }   # leave out records that failed a check
   ?colour rdfs:subClassOf* obo:FLOPO_0988004 .   # ISCC-NBS yellow
   ?taxon rdfs:label ?name .
 } ORDER BY ?name`,
@@ -760,13 +1022,14 @@ SELECT ?source ?reason (COUNT(*) AS ?statements) WHERE {
 async function query(params) {
   const first = Object.keys(EXAMPLES)[0];
   let text = EXAMPLES[first];
-  if (params.get("describe")) text = `DESCRIBE <${params.get("describe")}>`;
+  if (params.get("describe")) text = `DESCRIBE ${iriLiteral(params.get("describe"))}`;
   if (params.get("q")) text = params.get("q");
   if (params.get("taxon")) text = `PREFIX fb: <${FB}>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n\nSELECT ?annotation ?bearer ?quality ?flopoClass ?source WHERE {\n  ?r fb:taxon <${params.get("taxon")}> ; rdfs:label ?annotation ;\n     fb:bearer ?bearer ; fb:quality ?quality ; fb:source/rdfs:label ?source .\n  OPTIONAL { ?r fb:flopoClass ?flopoClass }\n} ORDER BY ?annotation`;
+  setTitle(params.get("describe") ? "Annotation or class" : "Query");
   setView(`<h1>Query</h1><p class="muted">All annotations are RDF. Write SPARQL 1.1 against the endpoint at <code>${esc(ENDPOINT)}</code> (all graphs are queried together; the FLOPO class hierarchy is loaded too). Common prefixes such as <code>fb:</code>, <code>obo:</code> and <code>rdfs:</code> are predefined.</p>
     <div class="toolbar"><label for="ex" class="muted">Examples</label><select id="ex">${Object.keys(EXAMPLES).map((k) => `<option>${esc(k)}</option>`).join("")}</select></div>
     <textarea class="sparql" id="q" spellcheck="false" aria-label="SPARQL query">${esc(text)}</textarea>
-    <div class="toolbar"><button type="button" id="runq">Run query</button><a id="csv" href="#">Download as CSV</a><span class="muted" id="qinfo"></span></div>
+    <div class="toolbar"><button type="button" id="runq">Run query</button><label class="check"><input type="checkbox" id="nolimit"> No limit</label><a id="csv" href="#">Download all as CSV</a><a id="tsv" href="#">Download all as TSV</a><span class="muted" id="qinfo" role="status"></span></div>
     <div class="tablewrap" id="qout"></div>`);
   const area = document.getElementById("q");
   document.getElementById("ex").addEventListener("change", (e) => { area.value = EXAMPLES[e.target.value]; });
@@ -774,26 +1037,36 @@ async function query(params) {
     const out = document.getElementById("qout");
     const info = document.getElementById("qinfo");
     out.innerHTML = `<p class="loading">Running…</p>`;
+    info.textContent = "";
     const started = performance.now();
     try {
       if (/^\s*(PREFIX[^\n]*\n\s*)*(DESCRIBE|CONSTRUCT)/i.test(area.value)) {
         const r = await fetch(sparqlUrl(area.value), { headers: { Accept: "text/turtle" } });
         const body = await r.text();
         if (!r.ok) throw new Error(body);
-        out.innerHTML = `<pre>${esc(body)}</pre>`;
+        out.innerHTML = await describeHtml(body);
+        wireRaw(out, body);
+        info.textContent = `${Math.round(performance.now() - started)} ms`;
       } else {
-        const rows = await sparql(area.value);
+        // A query without LIMIT could return millions of rows: it is run with one unless the box is ticked.
+        const { text: effective, added } = withLimit(area.value, !document.getElementById("nolimit").checked);
+        const rows = await sparql(effective);
         const cols = rows.length ? Object.keys(rows.reduce((a, r) => Object.assign(a, r), {})) : [];
-        out.innerHTML = rows.length
-          ? `<table class="results"><thead><tr>${cols.map((c) => `<th>${esc(c)}</th>`).join("")}</tr></thead><tbody>${rows
-              .map((r) => `<tr>${cols.map((c) => {
-                const v = r[c] ?? "";
-                if (v.startsWith(TAXON)) return `<td><a href="${taxonHref(v)}">${esc(taxonKey(v))}</a></td>`;
-                if (/^https?:\/\//.test(v)) return `<td><a href="${esc(v)}" target="_blank" rel="noopener">${esc(v.includes("purl.obolibrary.org") ? curie(v) : v)}</a></td>`;
-                return `<td>${esc(v)}</td>`;
-              }).join("")}</tr>`)
-              .join("")}</tbody></table>`
-          : `<p class="muted">The query returned no results.</p>`;
+        const shown = rows.slice(0, QUERY_ROWS);
+        const cell = (c, r) => {
+          const v = r[c] ?? "";
+          if (v.startsWith(TAXON)) return `<td><a href="${taxonHref(v)}">${esc(taxonKey(v))}</a></td>`;
+          if (isObo(v) && /^[A-Za-z]+_\d+$/.test(local(v))) return `<td><a href="${esc(termHref(v))}">${esc(curie(v))}</a></td>`;
+          if (/^https?:\/\//.test(v)) return `<td><a href="${esc(v)}" target="_blank" rel="noopener">${esc(v)}</a></td>`;
+          return `<td>${esc(v)}</td>`;
+        };
+        const tsv = `<a href="${esc(sparqlUrl(area.value, { format: "tsv" }))}" target="_blank" rel="noopener">Download all as TSV</a>`;
+        const notes = [];
+        if (rows.length > QUERY_ROWS) notes.push(`Showing the first ${n(QUERY_ROWS)} of ${n(rows.length)}${added && rows.length >= QUERY_LIMIT ? " or more" : ""} rows. ${tsv}.`);
+        if (added && rows.length >= QUERY_LIMIT) notes.push(`The query has no LIMIT, so it was run with LIMIT ${n(QUERY_LIMIT)}. Tick “No limit” to run it as written; the downloads always contain every row.`);
+        out.innerHTML = (rows.length
+          ? `<table class="results"><thead><tr>${cols.map((c) => `<th scope="col">${esc(c)}</th>`).join("")}</tr></thead><tbody>${shown.map((r) => `<tr>${cols.map((c) => cell(c, r)).join("")}</tr>`).join("")}</tbody></table>`
+          : `<p class="muted">The query returned no results.</p>`) + notes.map((x) => `<p class="muted">${x}</p>`).join("");
         info.textContent = `${n(rows.length)} rows in ${Math.round(performance.now() - started)} ms`;
       }
     } catch (err) {
@@ -803,11 +1076,153 @@ async function query(params) {
   };
   document.getElementById("runq").addEventListener("click", run);
   area.addEventListener("keydown", (e) => { if ((e.ctrlKey || e.metaKey) && e.key === "Enter") run(); });
-  document.getElementById("csv").addEventListener("click", (e) => {
-    e.preventDefault();
-    window.open(sparqlUrl(area.value, { format: "csv" }));
-  });
+  for (const format of ["csv", "tsv"]) {
+    // the file is the endpoint's answer to the query as written, all rows
+    document.getElementById(format).addEventListener("click", (e) => { e.currentTarget.href = sparqlUrl(area.value, { format }); e.currentTarget.target = "_blank"; e.currentTarget.rel = "noopener"; });
+  }
   if (params.get("describe") || params.get("taxon") || params.get("q")) run();
+}
+const QUERY_ROWS = 500;
+const QUERY_LIMIT = 5000;
+// The query with LIMIT added when it is a SELECT without one (and the reader has not asked for none).
+function withLimit(text, enforce) {
+  const plain = text.replace(/<[^<>\s]*>/g, " ").replace(/"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'/g, " ").replace(/#[^\n]*/g, "");
+  const select = /\bSELECT\b/i.test(plain) && !/\b(ASK|CONSTRUCT|DESCRIBE)\b/i.test(plain);
+  const limited = /\bLIMIT\s+\d+(\s+OFFSET\s+\d+)?\s*$/i.test(plain.trim()) || /\bOFFSET\s+\d+\s+LIMIT\s+\d+\s*$/i.test(plain.trim());
+  if (!enforce || !select || limited) return { text, added: false };
+  return { text: text.replace(/\s+$/, "") + `\nLIMIT ${QUERY_LIMIT}`, added: true };
+}
+
+/* ---------------------------------------------------------------- readable DESCRIBE */
+// DESCRIBE answers in N-Triples, with blank nodes for the parts of OWL class expressions. They are
+// shown as labelled lines first, with the triples as they are behind a button.
+const RDF_NS = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+const RDFS_NS = "http://www.w3.org/2000/01/rdf-schema#";
+const OWL_NS = "http://www.w3.org/2002/07/owl#";
+function parseTerm(x) {
+  if (x[0] === "<") return { t: "i", v: x.slice(1, -1) };
+  if (x[0] === "_") return { t: "b", v: x };
+  const m = /^"((?:[^"\\]|\\.)*)"(?:@([\w-]+)|\^\^<([^>]*)>)?$/.exec(x);
+  if (!m) return { t: "l", v: x }; // a number or true/false written without quotes
+  let v = m[1];
+  try { v = JSON.parse(`"${m[1]}"`); } catch (e) { /* keep the escaped text */ }
+  return { t: "l", v, lang: m[2], dt: m[3] };
+}
+function parseNTriples(text) {
+  const re = /^(<[^>]*>|_:\S+)\s+<([^>]*)>\s+(<[^>]*>|_:\S+|"(?:[^"\\]|\\.)*"(?:@[A-Za-z0-9-]+|\^\^<[^>]*>)?|[-+]?\d[\d.eE+-]*|true|false)\s*\.$/;
+  const triples = [];
+  for (const raw of text.split(/\r?\n/)) {
+    const line = raw.trim();
+    if (!line || line[0] === "#") continue;
+    const m = re.exec(line);
+    if (!m) return null; // Turtle with prefixes or lists: shown as it is
+    triples.push([parseTerm(m[1]), m[2], parseTerm(m[3])]);
+  }
+  return triples;
+}
+async function labelsOf(iris) {
+  const labels = new Map();
+  const list = [...iris].slice(0, 300);
+  for (let i = 0; i < list.length; i += 100) {
+    const rows = await sparql(`SELECT ?x (SAMPLE(?l) AS ?label) WHERE { VALUES ?x { ${list.slice(i, i + 100).map(iriLiteral).join(" ")} } ?x rdfs:label ?l FILTER(LANG(?l) = "" || LANGMATCHES(LANG(?l), "en")) } GROUP BY ?x`);
+    rows.forEach((r) => labels.set(r.x, r.label));
+  }
+  return labels;
+}
+const tidyName = (iri) => { const w = local(iri).replace(/[_-]+/g, " ").replace(/([a-z])([A-Z])/g, "$1 $2").toLowerCase(); return w.charAt(0).toUpperCase() + w.slice(1); };
+const iriText = (labels, iri) => labels.get(iri) || (isObo(iri) ? curie(iri) : tidyName(iri).toLowerCase());
+function iriHtml(labels, iri) {
+  const text = esc(iriText(labels, iri));
+  if (isObo(iri)) return `<a href="${esc(termHref(iri))}" title="${esc(curie(iri))}">${text}</a>`;
+  if (iri.startsWith(TAXON)) return `<a href="${taxonHref(iri)}">${text}</a>`;
+  if (iri.startsWith("http://phenomebrowser.net/flopo/")) return `<a href="#/query?describe=${encodeURIComponent(iri)}">${text}</a>`;
+  return `<a href="${esc(iri)}" target="_blank" rel="noopener">${text}</a>`;
+}
+// A class expression, in the words of Manchester syntax: has part some (leaf and has characteristic some glabrous).
+function expressionHtml(g, labels, node, depth = 0) {
+  const get = (n, p) => (g.get(n.t + n.v) || new Map()).get(p) || [];
+  const quoted = (iri) => { const t = esc(iriText(labels, iri)); return /\s/.test(iriText(labels, iri)) ? `‘${t}’` : t; };
+  const atom = (n) => (n.t === "i" ? iriHtml(labels, n.v) : n.t === "l" ? `<span class="lit">${esc(n.v)}</span>` : "");
+  if (node.t !== "b") return atom(node);
+  if (depth > 12) return "…";
+  const sub = (n) => expressionHtml(g, labels, n, depth + 1);
+  const wrap = (n) => (n.t === "b" && !get(n, OWL_NS + "onDatatype").length ? `(${sub(n)})` : sub(n));
+  const list = (head) => { const items = []; let at = head; for (let i = 0; at && at.v !== RDF_NS + "nil" && i < 300; i++) { items.push(...get(at, RDF_NS + "first")); at = get(at, RDF_NS + "rest")[0]; } return items; };
+  const prop = get(node, OWL_NS + "onProperty")[0];
+  if (prop) {
+    const kinds = [["someValuesFrom", "some"], ["allValuesFrom", "only"], ["hasValue", "value"]];
+    for (const [k, word] of kinds) { const f = get(node, OWL_NS + k)[0]; if (f) return `${prop.t === "i" ? iriHtml(labels, prop.v) : "…"} <b>${word}</b> ${wrap(f)}`; }
+    const cards = { minCardinality: "min", maxCardinality: "max", cardinality: "exactly", minQualifiedCardinality: "min", maxQualifiedCardinality: "max", qualifiedCardinality: "exactly" };
+    for (const [k, word] of Object.entries(cards)) {
+      const c = get(node, OWL_NS + k)[0];
+      if (c) { const on = get(node, OWL_NS + "onClass")[0] || get(node, OWL_NS + "onDataRange")[0]; return `${iriHtml(labels, prop.v)} <b>${word} ${esc(c.v)}</b>${on ? " " + wrap(on) : ""}`; }
+    }
+  }
+  const joins = [["intersectionOf", " <b>and</b> "], ["unionOf", " <b>or</b> "]];
+  for (const [k, word] of joins) { const l = get(node, OWL_NS + k)[0]; if (l) return list(l).map(wrap).join(word); }
+  const not = get(node, OWL_NS + "complementOf")[0];
+  if (not) return `<b>not</b> ${wrap(not)}`;
+  const one = get(node, OWL_NS + "oneOf")[0];
+  if (one) return `{${list(one).map(sub).join(", ")}}`;
+  const datatype = get(node, OWL_NS + "onDatatype")[0];
+  if (datatype) {
+    const facets = { minInclusive: "≥", maxInclusive: "≤", minExclusive: ">", maxExclusive: "<" };
+    const parts = list(get(node, OWL_NS + "withRestrictions")[0] || { v: RDF_NS + "nil" }).flatMap((r) => Object.entries(facets).flatMap(([f, sign]) => get(r, "http://www.w3.org/2001/XMLSchema#" + f).map((v) => `${sign} ${esc(v.v)}`)));
+    return `${local(datatype.v)}${parts.length ? ` [${parts.join(", ")}]` : ""}`;
+  }
+  const first = get(node, RDF_NS + "first");
+  if (first.length) return `(${list(node).map(sub).join(", ")})`;
+  return "…";
+}
+async function describeHtml(body) {
+  const triples = parseNTriples(body);
+  if (!triples || !triples.length) return `<pre>${esc(body)}</pre>`;
+  const g = new Map();
+  for (const [s, p, o] of triples) {
+    const k = s.t + s.v;
+    if (!g.has(k)) g.set(k, new Map());
+    if (!g.get(k).has(p)) g.get(k).set(p, []);
+    g.get(k).get(p).push(o);
+  }
+  // terms to name: the properties and the IRIs inside class expressions, not the records of a taxon
+  const want = new Set();
+  for (const [s, p, o] of triples) {
+    if (p !== "http://phenomebrowser.net/flopo/browse#record") want.add(p);
+    for (const x of [s, o]) if (x.t === "i" && (isObo(x.v) || s.t === "i")) want.add(x.v);
+  }
+  let labels = new Map();
+  try { labels = await labelsOf(want); } catch (e) { /* the readable view then uses the identifiers */ }
+  const ORDER = [RDFS_NS + "label", RDF_NS + "type", OWL_NS + "equivalentClass", RDFS_NS + "subClassOf", RDFS_NS + "comment"];
+  const NAME = { [RDF_NS + "type"]: "Type", [RDFS_NS + "label"]: "Label", [OWL_NS + "equivalentClass"]: "Equivalent to", [RDFS_NS + "subClassOf"]: "Subclass of", [RDFS_NS + "comment"]: "Comment" };
+  const subjects = [...g.keys()].filter((k) => k[0] === "i");
+  const view = subjects.slice(0, 5).map((k) => {
+    const iri = k.slice(1);
+    const props = [...g.get(k)].sort(([a], [b]) => (ORDER.indexOf(a) < 0 ? 99 : ORDER.indexOf(a)) - (ORDER.indexOf(b) < 0 ? 99 : ORDER.indexOf(b)) || iriText(labels, a).localeCompare(iriText(labels, b)));
+    let lines = 0;
+    const items = props.map(([p, objects]) => {
+      const seen = new Map();
+      for (const o of objects) {
+        const h = expressionHtml(g, labels, o);
+        seen.set(h, (seen.get(h) || 0) + 1);
+      }
+      return [...seen].slice(0, 60).map(([h, count]) => { lines++; return `<li><span class="axiom-p">${esc(NAME[p] || labels.get(p) || tidyName(p))}</span> <span class="axiom-v">${h}</span>${count > 1 ? ` <span class="muted">(stated ${count} times)</span>` : ""}</li>`; }).join("") + (seen.size > 60 ? `<li class="muted">${n(seen.size - 60)} more ${esc(NAME[p] || tidyName(p)).toLowerCase()} values</li>` : "");
+    }).join("");
+    const title = (g.get(k).get(RDFS_NS + "label") || [])[0];
+    return `<section class="describe"><h2>${esc(title ? title.v : labels.get(iri) || local(iri))}</h2><p class="muted"><code>${esc(iri)}</code></p><ul class="axioms">${items}</ul></section>`;
+  }).join("");
+  return `${view}${subjects.length > 5 ? `<p class="muted">${n(subjects.length - 5)} more subjects are in the raw triples.</p>` : ""}
+    <p><button type="button" class="ghost" id="rawbtn" aria-expanded="false" aria-controls="raw">Show raw triples</button> <span class="muted">${n(triples.length)} triples</span></p><pre id="raw" hidden></pre>`;
+}
+function wireRaw(out, body) {
+  const button = out.querySelector("#rawbtn"), pre = out.querySelector("#raw");
+  if (!button) return;
+  button.addEventListener("click", () => {
+    const open = pre.hidden;
+    if (open && !pre.textContent) pre.textContent = body;
+    pre.hidden = !open;
+    button.setAttribute("aria-expanded", String(open));
+    button.textContent = open ? "Hide raw triples" : "Show raw triples";
+  });
 }
 
 /* ---------------------------------------------------------------- coverage */
@@ -849,7 +1264,7 @@ async function coverage() {
     const { key, dir } = coverageSort;
     const sorted = [...data].sort((a, b) => (typeof a[key] === "string" ? a[key].localeCompare(b[key]) : a[key] - b[key]) * dir);
     const body = sorted
-      .map((d) => `<tr class="cov-row" data-src="${esc(d.label)}" tabindex="0" title="${esc(d.title)}">
+      .map((d) => `<tr class="cov-row" data-src="${esc(d.label)}" tabindex="0" aria-expanded="false" title="${esc(d.title)}">
         <th scope="row">${esc(d.label)}</th><td class="num">${n(d.taxa)}</td><td class="num">${n(d.rows)}</td>
         <td><span class="cov-bar" title="${n(d.formal)} of ${n(d.rows)}"><i style="width:${(100 * d.accepted) / Math.max(1, d.rows)}%"></i><i class="part" style="width:${(100 * d.review) / Math.max(1, d.rows)}%"></i></span><span class="num cov-pct">${pct(d.formal, d.rows)}%</span></td>
         <td class="num">${n(d.accepted)}</td><td class="num">${n(d.review)}</td><td class="num">${n(d.pending)}</td></tr>
@@ -871,6 +1286,7 @@ async function coverage() {
       const detail = row.nextElementSibling;
       detail.hidden = !detail.hidden;
       row.classList.toggle("open", !detail.hidden);
+      row.setAttribute("aria-expanded", String(!detail.hidden));
       if (detail.hidden || detail.dataset.loaded) return;
       detail.dataset.loaded = "1";
       const mine = reasons.filter((r) => r.src === row.dataset.src && !r.reason.startsWith("merged_into"));
@@ -923,10 +1339,14 @@ async function placesMap() {
   const shades = ["#e3ede8", "#bcd6cb", "#8cbba9", "#5d9c86", "#3a7b66", "#1f5a49"];
   const shade = (taxa) => (taxa ? shades[Math.min(shades.length - 1, 1 + Math.floor(Math.log10(taxa)))] : "transparent");
   const total = Object.keys(countries).length;
+  const countryName = (a3) => ((shapes.features.find((f) => f.properties.a3 === a3) || { properties: { name: a3 } }).properties.name);
+  setTitle("Map");
   setView(html`<h1>Map</h1>
     <p class="lede">Where the taxa of the atlas grow. A taxon counts for a country when a regional flora of that country describes it (every taxon of the Flora of China, of NCVC and Collenette for Saudi Arabia), or when a place record names the country, one of its provinces or a coded region; ${n(places.matched)} of ${n(places.records)} place records could be assigned to one of ${n(total)} countries. Worldwide sources (World Flora Online, Plazi, GrassBase…) count only through their place records. Select a country for its floras and taxa.</p>
     <div class="map-layout">
       <div>
+        <div class="field country-pick"><label for="country-select">Choose a country from the list (the map can also be clicked)</label>
+          <select id="country-select"><option value="">Choose a country…</option>${Object.keys(countries).map((a3) => [a3, countryName(a3)]).sort((a, b) => a[1].localeCompare(b[1])).map(([a3, name]) => `<option value="${a3}">${esc(name)} (${n(countries[a3].taxa)})</option>`).join("")}</select></div>
         <div id="world" class="worldmap" role="img" aria-label="World map of taxa recorded per country"></div>
         <div class="map-legend"><span class="muted">Taxa recorded</span>${steps
           .map((v, i) => `<span><i style="background:${shades[i + 1]}"></i>${n(v)}${i === steps.length - 1 ? "+" : "–" + n(steps[i + 1] - 1)}</span>`)
@@ -934,14 +1354,11 @@ async function placesMap() {
       </div>
       <aside id="country" class="country-panel" aria-live="polite"><p class="muted">No country selected.</p>
         <h3>Most taxa</h3><ol class="country-top">${Object.entries(countries).sort((a, b) => b[1].taxa - a[1].taxa).slice(0, 12)
-          .map(([a3, c]) => `<li><button type="button" class="link" data-a3="${a3}">${esc((shapes.features.find((f) => f.properties.a3 === a3) || { properties: { name: a3 } }).properties.name)}</button> <span class="num muted">${n(c.taxa)}</span></li>`)
+          .map(([a3, c]) => `<li><button type="button" class="link" data-a3="${a3}">${esc(countryName(a3))}</button> <span class="num muted">${n(c.taxa)}</span></li>`)
           .join("")}</ol>
         ${places.unmatched && places.unmatched.length ? `<h3>Not placed in a country</h3><p class="muted">${places.unmatched.slice(0, 14).map(([name, count]) => `${esc(name)} (${n(count)})`).join(", ")}, …</p>` : ""}
       </aside>
     </div>`);
-  if (!window.L) return;
-  const map = L.map("world", { scrollWheelZoom: false, worldCopyJump: true, minZoom: 1, maxZoom: 6, attributionControl: true }).setView([22, 15], 2);
-  map.attributionControl.setPrefix("").addAttribution("Country outlines: Natural Earth");
   const panel = document.getElementById("country");
   const show = async (a3, name) => {
     const c = countries[a3];
@@ -976,23 +1393,35 @@ async function placesMap() {
       if (box) box.innerHTML = `<p class="error">${esc(err.message)}</p>`;
     }
   };
+  // Every country can be chosen from the list, with or without the map.
+  const pickSelect = document.getElementById("country-select");
+  let pick = (a3) => show(a3, countryName(a3));
+  pickSelect.addEventListener("change", () => { if (pickSelect.value) pick(pickSelect.value); });
+  view.querySelectorAll("[data-a3]").forEach((b) => b.addEventListener("click", () => { pickSelect.value = b.dataset.a3; pick(b.dataset.a3); }));
+  if (!window.L) return;
+  const map = L.map("world", { scrollWheelZoom: false, worldCopyJump: true, minZoom: 1, maxZoom: 6, attributionControl: true }).setView([22, 15], 2);
+  map.attributionControl.setPrefix("").addAttribution("Country outlines: Natural Earth");
   let selected = null;
+  const layers = new Map();
   const layer = L.geoJSON(shapes, {
     style: (f) => ({ color: "#7d8a83", weight: 0.6, fillColor: shade((countries[f.properties.a3] || {}).taxa), fillOpacity: (countries[f.properties.a3] || {}).taxa ? 0.9 : 0.05 }),
     onEachFeature: (f, l) => {
       const c = countries[f.properties.a3];
       l.bindTooltip(`${esc(f.properties.name)}: ${c ? n(c.taxa) + " taxa" : "none"}`, { sticky: true });
+      layers.set(f.properties.a3, l);
       l.on("click", () => {
         if (selected) layer.resetStyle(selected);
         selected = l;
         l.setStyle({ weight: 2, color: "#b8862b" });
+        pickSelect.value = f.properties.a3;
         show(f.properties.a3, f.properties.name);
       });
     },
   }).addTo(map);
-  view.querySelectorAll("[data-a3]").forEach((b) =>
-    b.addEventListener("click", () => layer.eachLayer((l) => { if (l.feature.properties.a3 === b.dataset.a3) { map.fitBounds(l.getBounds(), { maxZoom: 4 }); l.fire("click"); } }))
-  );
+  pick = (a3) => {
+    const l = layers.get(a3);
+    if (l) { map.fitBounds(l.getBounds(), { maxZoom: 4 }); l.fire("click"); } else show(a3, countryName(a3));
+  };
 }
 
 const reasonLabel = (reason) => reason.replace(/_/g, " ").replace(/^no ontology term:/, "no ontology term: ");
@@ -1329,7 +1758,7 @@ async function compare(keyA, keyB) {
     if (!list.length) return "";
     return `<h2>${title} <span class="muted">(${n(list.length)})</span></h2>${note ? `<p class="muted">${note}</p>` : ""}
       <div class="tablewrap"><table class="results compare"><thead><tr><th>Part and attribute</th><th><i>${esc(nameA)}</i></th><th><i>${esc(nameB)}</i></th><th>Comparison</th></tr></thead><tbody>
-      ${list.map(([k, [x, y]]) => `<tr><th scope="row">${termLink(x.bearer, x.blabel)} ${termLink("http://purl.obolibrary.org/obo/" + x.attribute, x.alabel)}</th><td>${traitValue(x)}</td><td>${traitValue(y)}</td><td>${verdict[k](x)}</td></tr>`).join("")}
+      ${list.map(([k, [x, y]]) => `<tr><th scope="row">${termLink(x.bearer, x.blabel)} ${termLink("http://purl.obolibrary.org/obo/" + x.attribute, x.alabel)}</th><td data-label="${esc(nameA)}">${traitValue(x)}</td><td data-label="${esc(nameB)}">${traitValue(y)}</td><td>${verdict[k](x)}</td></tr>`).join("")}
       </tbody></table></div>`;
   };
   const only = (list, who) => list.length ? `<details class="pending"><summary>${n(list.length)} described only for <i>${esc(who)}</i></summary><ul>${list.sort(byName).map((x) => `<li>${traitName(x)}: ${traitValue(x)}</li>`).join("")}</ul></details>` : "";
@@ -1519,6 +1948,74 @@ async function downloads() {
     </ul>`);
 }
 
+/* ---------------------------------------------------------------- an ontology term */
+// #/term/PO:0009046 : what the endpoint knows about a term of PO, PATO, FLOPO, UO and the like, and where
+// the atlas uses it. The loaded ontology files carry labels, definitions, synonyms and the hierarchy.
+const SYNONYM_KINDS = [["hasExactSynonym", "exact"], ["hasNarrowSynonym", "narrower"], ["hasBroadSynonym", "broader"], ["hasRelatedSynonym", "related"], ["altLabel", "also called"]];
+async function termPage(id) {
+  const m = /^([A-Za-z][A-Za-z0-9]*)[:_](\d+)$/.exec(decodeURIComponent(id || ""));
+  if (!m) {
+    setTitle("Term not found");
+    setView(`<h1>Term not found</h1><p>“${esc(decodeURIComponent(id || ""))}” is not an ontology term identifier such as <a href="#/term/PO:0009046">PO:0009046</a>.</p>`);
+    return;
+  }
+  const iri = `${OBO}${m[1]}_${m[2]}`, cur = `${m[1]}:${m[2]}`, T = iriLiteral(iri);
+  setTitle(cur);
+  setView(`<p class="loading">Loading ${esc(cur)}…</p>`);
+  const used = `{ { ?r fb:bearer ${T} } UNION { ?r fb:quality ?q0 . ?q0 rdfs:subClassOf* ${T} } UNION { ?r fb:flopoClass ?c0 . ?c0 rdfs:subClassOf* ${T} } UNION { ?r fb:unit ${T} } }`;
+  const [info, parents, children] = await Promise.all([
+    sparql(`SELECT ?p ?o WHERE { VALUES ?p { rdfs:label obo:IAO_0000115 rdfs:comment skos:altLabel oboInOwl:hasExactSynonym oboInOwl:hasNarrowSynonym oboInOwl:hasBroadSynonym oboInOwl:hasRelatedSynonym obo:IAO_0000114 owl:deprecated } ${T} ?p ?o }`),
+    sparql(`SELECT DISTINCT ?c ?l WHERE { ${T} rdfs:subClassOf ?c FILTER(isIRI(?c)) OPTIONAL { ?c rdfs:label ?l } }`),
+    sparql(`SELECT DISTINCT ?c ?l WHERE { ?c rdfs:subClassOf ${T} ; rdfs:label ?l FILTER(isIRI(?c)) } ORDER BY ?l LIMIT 301`),
+  ]);
+  const one = (p) => (info.find((x) => x.p === p) || {}).o;
+  const label = one(RDFS_NS + "label");
+  if (label) setTitle(`${label} (${cur})`);
+  const definition = one(OBO + "IAO_0000115") || one(RDFS_NS + "comment");
+  // the "also called" names of SKOS often repeat the others (PO adds the scope in brackets): each name is listed once
+  const bare = (x) => x.toLowerCase().replace(/ \((?:[a-z]+, )?(?:exact|narrow|broad|related)\)$/i, "");
+  const listed = new Set();
+  const synonyms = [];
+  for (const [k, kind] of SYNONYM_KINDS) {
+    const list = [...new Set(info.filter((x) => x.p.endsWith("#" + k) || x.p.endsWith("/" + k)).map((x) => x.o))].filter((x) => !listed.has(bare(x))).sort();
+    list.forEach((x) => listed.add(bare(x)));
+    if (list.length) synonyms.push([kind, list]);
+  }
+  const status = one(OBO + "IAO_0000114");
+  const provisional = status && local(status) === "IAO_0000125";
+  const external = `https://www.ebi.ac.uk/ols4/ontologies/${m[1].toLowerCase()}/classes?iri=${encodeURIComponent(iri)}`;
+  const termList = (rows) => `<ul class="plain termlist">${rows.map((r) => `<li>${termLink(r.c, r.l || curie(r.c))}</li>`).join("")}</ul>`;
+  const known = info.length || parents.length || children.length;
+  setView(`<h1>${esc(label || cur)}</h1>
+    <p class="muted"><code>${esc(cur)}</code> · <a href="${esc(external)}" target="_blank" rel="noopener">Open in the ontology browser (OLS)</a> · <a href="${esc(iri)}" target="_blank" rel="noopener">${esc(iri)}</a></p>
+    ${provisional ? `<p class="note-box">This is a provisional term, still waiting for a curator to check it.</p>` : ""}
+    ${known ? "" : `<p>The atlas has no data on this term. It may belong to an ontology that is not loaded here; try the link above.</p>`}
+    ${definition ? `<h2>Definition</h2><p>${esc(definition)}</p>` : ""}
+    ${synonyms.length ? `<h2>Synonyms</h2><dl class="kv">${synonyms.map(([kind, list]) => `<dt>${esc(kind)}</dt><dd>${list.map(esc).join("; ")}</dd>`).join("")}</dl>` : ""}
+    ${parents.length || children.length ? `<h2>Place in the hierarchy</h2><div class="term-cols"><div><h3>Broader terms</h3>${parents.length ? termList(parents) : `<p class="muted">None in the atlas data.</p>`}</div>
+      <div><h3>Narrower terms</h3>${children.length ? termList(children.slice(0, 300)) + (children.length > 300 ? `<p class="muted">More than 300; the first 300 are shown.</p>` : "") : `<p class="muted">None.</p>`}</div></div>` : ""}
+    ${known ? `<h2>Use in the atlas</h2><div id="term-use"><p class="loading">Counting…</p></div>` : ""}`);
+  const box = document.getElementById("term-use");
+  if (!box) return;
+  try {
+    const totals = await sparql(`SELECT (COUNT(DISTINCT ?t) AS ?taxa) (COUNT(DISTINCT ?r) AS ?records) WHERE { ${used} ?r a fb:TraitRecord ; fb:taxon ?t . ${NOT_BLOCKED} }`);
+    if (!box.isConnected) return;
+    const taxaN = +(totals[0] || {}).taxa || 0, recordsN = +(totals[0] || {}).records || 0;
+    if (!recordsN) { box.innerHTML = `<p class="muted">No trait record uses this term, directly or through a narrower term.</p>`; return; }
+    box.innerHTML = `<p><b class="num">${n(taxaN)}</b> taxa and <b class="num">${n(recordsN)}</b> records use this term, or a narrower one. Records that failed a check are not counted.</p><p class="loading">Listing the traits…</p>`;
+    const combos = await sparql(`SELECT ?og ?tg ?b ?q (SAMPLE(?bl) AS ?blabel) (SAMPLE(?ql) AS ?qlabel) (COUNT(DISTINCT ?t) AS ?taxa) WHERE {
+      ${used} ?r a fb:TraitRecord ; fb:organGroup ?og ; fb:traitGroup ?tg ; fb:bearer ?b ; fb:quality ?q ; fb:taxon ?t . ?b rdfs:label ?bl . ?q rdfs:label ?ql . ${NOT_BLOCKED} }
+      GROUP BY ?og ?tg ?b ?q ORDER BY DESC(?taxa) LIMIT 50`);
+    if (!box.isConnected) return;
+    box.innerHTML = `<p><b class="num">${n(taxaN)}</b> taxa and <b class="num">${n(recordsN)}</b> records use this term, or a narrower one. Records that failed a check are not counted.</p>
+      <p class="muted">The traits that use it most, each linked to the list of taxa in the Traits browser:</p>
+      <div class="tablewrap"><table class="results"><thead><tr><th scope="col">Trait</th><th scope="col" class="num">Taxa</th></tr></thead><tbody>${combos.map((r) => `<tr><td><a href="#/traits/${local(r.og)}/${local(r.tg)}/${encodeURIComponent(local(r.b) + "~" + local(r.q))}">${esc(r.blabel)} ${esc(r.qlabel)}</a></td><td class="num">${n(r.taxa)}</td></tr>`).join("")}</tbody></table></div>
+      <p><a href="#/identify">Identify a plant by its traits</a></p>`;
+  } catch (err) {
+    if (box.isConnected) box.innerHTML = `<p class="error">${esc(err.message)}</p>`;
+  }
+}
+
 /* ---------------------------------------------------------------- router */
 // Pages render one at a time, in order: a slow page that finishes after the reader has moved on
 // would otherwise overwrite the newer page (or fail on its vanished elements and show an error).
@@ -1531,19 +2028,26 @@ function route() {
   routing = routing.then(() => { routeQueued = false; return renderRoute(); });
   return routing;
 }
+const PAGE_TITLES = { overview: "", taxa: "Taxa", taxon: "Taxon", traits: "Traits", identify: "Identify", query: "Query", coverage: "Coverage", map: "Map", patterns: "Patterns", compare: "Compare", about: "About", downloads: "Downloads", term: "Term" };
 async function renderRoute() {
   const [path, qs] = location.hash.replace(/^#/, "").split("?");
   const parts = (path || "/").split("/").filter(Boolean);
   const section = parts[0] || "overview";
+  setTitle(PAGE_TITLES[section] ?? "Page not found"); // pages that know more (a taxon, a term) refine it
+  const nav = { taxon: "taxa", term: "traits" }[section] || section;
   document.querySelectorAll(".mainnav a").forEach((a) => {
-    const on = a.dataset.nav === (section === "taxon" || section === "compare" ? "taxa" : section);
-    if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+    if (a.dataset.nav === nav) {
+      a.setAttribute("aria-current", "page");
+      const bar = a.parentElement; // a phone shows part of the row: the current section is brought into view
+      if (bar.scrollWidth > bar.clientWidth) bar.scrollLeft = Math.max(0, a.offsetLeft - (bar.clientWidth - a.offsetWidth) / 2);
+    } else a.removeAttribute("aria-current");
   });
   try {
     if (section === "overview") await overview();
     else if (section === "taxa") await taxa();
     else if (section === "taxon") await taxa(parts.slice(1).join("/"));
-    else if (section === "traits") await traits(parts[1], parts[2], parts[3]);
+    else if (section === "term") await termPage(parts.slice(1).join("/"));
+    else if (section === "traits") await traits(parts[1], parts[2], parts[3], new URLSearchParams(qs || ""));
     else if (section === "identify") await identify();
     else if (section === "query") await query(new URLSearchParams(qs || ""));
     else if (section === "coverage") await coverage();
