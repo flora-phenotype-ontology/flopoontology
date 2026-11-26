@@ -112,6 +112,7 @@ view: a head returns a distribution for every photograph, including a photograph
 The heads and the code are released under the MIT licence. BioCLIP 2 is MIT-licensed by its authors. The flora texts come
 from World Flora Online and other published floras; the photographs from iNaturalist Open Data (CC0 and Creative Commons
 licences; no photograph is redistributed here). Code and training pipeline:
-<https://github.com/flora-phenotype-ontology/flopoontology> (`flopovision/`, `flopo2/traitvision/`).
+<https://github.com/flora-phenotype-ontology/flopoontology> (`flopovision/`, `flopo2/traitvision/`). Model:
+<https://huggingface.co/bio-ontology-research-group/FLOPOVision>.
 
 A paper describing the method is in preparation.
