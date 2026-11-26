@@ -65,3 +65,25 @@ def test_taxon_index(tmp_path):
     acacia = index["taxa"][position["ipni-2"]]
     assert index["families"][acacia[3]] == "Fabaceae" and acacia[4] == 2 and index["sources"][acacia[5][0]] == "ncvc"
     json.dumps(index)
+
+
+def test_taxon_index_has_printed_names_and_sorts_past_punctuation(tmp_path):
+    label = "http://www.w3.org/2000/01/rdf-schema#label"
+    typ = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    name = lambda flora, h, text: f'<http://phenomebrowser.net/flopo/taxon-name/ipni-7/{flora}/{h}> <{B}name> "{text}" .'
+    _write(tmp_path / "taxa.nt", [
+        f'<{T}ipni-7> <{label}> "Vachellia tortilis" .',
+        f"<{T}ipni-7> <{typ}> <{B}Taxon> .",
+        f"<{T}ipni-8> <{label}> \"'Lithospermum' corsonianum\" .",
+        f"<{T}ipni-8> <{typ}> <{B}Taxon> .",
+        f'<{T}ipni-9> <{label}> "Mimosa pudica" .',
+        f"<{T}ipni-9> <{typ}> <{B}Taxon> .",
+        name("collenette", "a1", "Acacia tortilis (Forssk.) Hayne"),
+        name("kew-african", "a2", "Acacia tortilis subsp. raddiana (Savi) Brenan"),
+        name("ncvc", "a3", "Vachellia tortilis"),  # the accepted name is not a synonym
+        name("wfo", "a4", "Acacia"),  # a genus alone is not a name to search by
+    ])
+    index, position = taxa_index(tmp_path)
+    assert [t[0] for t in index["taxa"]] == ["ipni-8", "ipni-9", "ipni-7"]  # L, M, V
+    assert index["taxa"][position["ipni-7"]][7] == "Acacia tortilis|Acacia tortilis subsp. raddiana"
+    assert index["taxa"][position["ipni-9"]][7] == ""
