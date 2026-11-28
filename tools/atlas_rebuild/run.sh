@@ -16,7 +16,7 @@ mkdir -p "$L"
 room() { awk '/CommitLimit/{l=$2}/Committed_AS/{c=$2}END{print int((l-c)/1048576)}' /proc/meminfo; }
 wait_room() { for _ in $(seq 1440); do [ "$(room)" -ge "$1" ] && return 0; sleep 60; done; return 1; }
 say() { echo "== $(date '+%m-%d %H:%M') $*"; }
-pgrep -af "tools/deploy_atlas.sh" | grep -v -e "--monitor" -e pgrep >/dev/null && { say "a deploy is running; stopping"; exit 3; }
+pgrep -af "deploy_atlas.sh --(stamp|resume)" | grep -v pgrep >/dev/null && { say "a deploy is running; stopping"; exit 3; }
 [ -n "$NOTE" ] || [ "${DEPLOY:-1}" = 0 ] || { say "NOTE is not set (the line for the release history)"; exit 9; }
 
 if [ "$FROM" = reannotate ]; then
